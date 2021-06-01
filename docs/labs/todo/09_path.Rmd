@@ -1,0 +1,175 @@
+```{r, echo=FALSE}
+HIDDEN_SOLS=FALSE
+```
+
+# Path Analysis   
+
+### Packages {-}  
+
+```{r message=FALSE}
+library(lavaan)
+library(semPlot)
+```
+
+### Lecture Slides {-}  
+
++ The lecture slides can be accessed [here](https://uoe-psychology.github.io/uoe_psystats/multivar/lectures/week9_path.pdf).   
+
+## Quick recap {-}  
+
+Over the last two weeks we applied exploratory and then confirmatory factor analysis to develop and then test a factor model for conduct problems. This week's lab focuses on the technique of path analysis, which is used to test sets of regression paths simultaneously.  In this week's example, a researcher has collected data on n=557 adolescents and would like to know whether there are associations between conduct problems (both aggressive and non-aggressive) and academic performance and whether the relations are mediated by the quality of relationships with teachers.  
+
+## Exercises {-}   
+
+`r msmbstyle::question_begin(header="&#x25BA; Question 1")`
+First, read in the dataset: `cp_teach_acad.csv`.   
+
+It is available at [https://edin.ac/38yYz2P](https://edin.ac/38yYz2P). Either download it and read it in locally, or read it directly from the url.  
+
+`r msmbstyle::question_end()` 
+`r msmbstyle::solution_begin(hidden=HIDDEN_SOLS)`
+```{r message=FALSE}
+cp_teach_acad<-read_csv("https://edin.ac/38yYz2P")
+```
+`r msmbstyle::solution_end()`
+---
+`r msmbstyle::question_begin(header="&#x25BA; Question 2a")`
+Use the `sem()` function in lavaan to specify and estimate a linear regression model to test whether aggressive and non-aggressive conduct problems significantly predict academic performance.  
+
+How do your results compare to those you obtain using the `lm()` function?
+`r msmbstyle::question_end()` 
+`r msmbstyle::solution_begin(hidden=HIDDEN_SOLS)`
+``` {r simple regression in lavaan}
+# we can fit the model in lavaan as follows:
+# firt we specify the model using lavaan syntax
+sr_lavaan<-'Acad~Non_agg+Agg'
+# next we can estimate the model using the sem() function
+sr_lavaan.est<-sem(sr_lavaan, data=cp_teach_acad)
+# we can inspect the results using the summary() function
+summary(sr_lavaan.est)
+
+# the same model can be fit using lm():
+
+sr_lm<-lm(Acad~Non_agg+Agg, data=cp_teach_acad)
+summary(sr_lm)
+```
+
+We can see that both non-aggressive and aggressive conduct problems significantly predict academic perfofmance.We can also see that we get the same results when we use the `sem()` function as we do when we use the `lm()` function. Lavaan will give essentially the same results as `lm()` for simple  and multiple regression problems. However, if we have multiple outcome variables in our model it is advantageous to do this using path mediation model with lavaan. This allows us to include all the regressions in a single model.
+`r msmbstyle::solution_end()`
+---
+`r msmbstyle::question_begin(header="&#x25BA; Question 2b")`
+Now specify a model in which non-aggressive conduct problems have both a direct and indirect effect (via teacher relationships) on academic performance
+`r msmbstyle::question_end()` 
+`r msmbstyle::solution_begin(hidden=HIDDEN_SOLS)`
+```{r path analysis for non-aggressive conduct problems}
+model1<-'Acad~Non_agg    #we regress academic performance on non-aggressive conduct problems (the direct effect)
+         Acad~Teach_r    #we regress academic peformance on teacher relationship quality
+         Teach_r~Non_agg #we regress teacher relationship quality on non-aggressive conduct problems'
+```
+`r msmbstyle::solution_end()`
+---
+`r msmbstyle::question_begin(header="&#x25BA; Question 2c")`
+Now test the hypothesis that non-aggressive conduct problems have both a direct and an indirect effect (via teacher relationships) on academic performance
+`r msmbstyle::question_end()` 
+`r msmbstyle::solution_begin(hidden=HIDDEN_SOLS)`
+To test this we need to create a new parameter for the indirect effect and examine its 95% confidence interval.
+```{r path analysis for non-aggressive conduct problems with constraints}
+
+#model specification
+
+model1<-'Acad~Non_agg    
+         Acad~b*Teach_r    #we label the two parameters that comprise the indirect effect b and c
+         Teach_r~c*Non_agg  # the indirect effect is the product of b and c
+
+ind:=b*c   #we can create a new parameter (ind) to estimate the indirect effect'
+
+#model estimation
+model1.est<-sem(model1, data=cp_teach_acad,se='bootstrap') 
+
+# we request bootstrapped standard errors to assess the signifance of the indirect effect
+summary(model1.est, ci=T)
+```
+
+We can see that the 95% bootstrapped confidence interval for the indirect effect of non-aggressive conduct problems on academic performance ('ind') does not include zero. We can conclude that the indirect effect is significant at $p <.05$. The direct effect is also statistically significant at $p < .05$.
+`r msmbstyle::solution_end()`
+---
+`r msmbstyle::question_begin(header="&#x25BA; Question 2d")`
+Calculate the total (direct+indirect) effect of non-aggressive conduct problems on academic performance
+`r msmbstyle::question_end()` 
+`r msmbstyle::solution_begin(hidden=HIDDEN_SOLS)`
+We can create a new parameter that is the sum of the direct and indirect effect to evaluate the total effect of non-aggressive conduct problems on academic performance.
+
+```{r path analyis total}
+
+#model specification
+
+model1<-'Acad~a*Non_agg    # we now also label the indirect effect of non-aggressive conduct problems on academic performance
+         Acad~b*Teach_r    
+         Teach_r~c*Non_agg  
+
+ind:=b*c   #we can create a new parameter (ind) to estimate the indirect effect
+total:=b*c+a  #the total effect is the indirect effect plus the direct effect'
+
+
+#model estimation
+model1.est<-sem(model1, data=cp_teach_acad,se='bootstrap') 
+
+# we request bootstrapped standard errors to assess the signifance of the indirect effect
+summary(model1.est, ci=T)
+```
+`r msmbstyle::solution_end()`
+---
+`r msmbstyle::question_begin(header="&#x25BA; Question 2e")`
+Now visualise the estimated model and its parameters using the `semPaths()` function from the `semPlot` package.  
+`r msmbstyle::question_end()` 
+`r msmbstyle::solution_begin(hidden=HIDDEN_SOLS)`
+```{r visualise the model}
+semPaths(model1.est, what='est') #to include the parameter estimates we set what='est'
+```
+
+We can use `semPaths()` to help us visualise and interpret the model; however, for reporting purposes we should create our own diagram using a programme such as powerpoint as the output from the `semPaths()` function would not be considered 'publication quality'
+`r msmbstyle::solution_end()`
+---
+---
+`r msmbstyle::question_begin(header="&#x25BA; Question 3a")`
+Now specify a model in which both aggressive and non-aggressive conduct problems have both direct and indirect effects (via teacher relationships) on academic performance. Include the parameters for the indirect effects.
+`r msmbstyle::question_end()` 
+`r msmbstyle::solution_begin(hidden=HIDDEN_SOLS)`
+```{r two predictors}
+model2<-
+   'Acad~Agg+Non_agg+b*Teach_r
+    Teach_r~c1*Agg+c2*Non_agg
+   
+    
+    ind1:=b*c1 #indirect effect for aggressive conduct problems
+    ind2:=b*c2 #indirect effect for non-aggressive conduct problems
+'
+```
+
+We now have two predictors, one mediator and one outcome (and two indirect effects, one for each predictor). We can represent this in two lines: one where we specify academic performance as the outcome variable and one where we specify teacher relationships (the mediator) as the outcome variable. `r msmbstyle::solution_end()`
+---
+`r msmbstyle::question_begin(header="&#x25BA; Question 3b")`
+Now estimate the model and test the significance of the indirect effects
+`r msmbstyle::question_end()` 
+`r msmbstyle::solution_begin(hidden=HIDDEN_SOLS)`
+
+```{r estimate two predictor model}
+model2.est<-sem(model2,  data=cp_teach_acad,se='bootstrap') 
+summary(model2.est, ci=T)
+```
+
+We can see that the 95% confidence intervals for both indirect effects do not include zero, therefore, we can conclude that they are significant at $p < .05$. 
+`r msmbstyle::solution_end()`
+---
+`r msmbstyle::question_begin(header="&#x25BA; Question 3c")`
+Write a brief paragraph reporting on the results of the model estimates in Question 3b. Include a Figure or Table to display the parameter estimates.
+`r msmbstyle::question_end()` 
+`r msmbstyle::solution_begin(hidden=HIDDEN_SOLS)`
+A path mediation model was used to test the direct and indirect effects (via teacher relationship quality) of aggressive and non-aggressive conduct problems on academic performance. In the model, academic performance was regressed on teacher relationship quality, non-aggressive conduct problems and aggressive conduct problems while teacher relationship quality (the mediator) was regressed on aggressive and non-aggressive conduct problems. The indirect effects were tested using the product of the coefficient for the regression of outcome on mediator and the coefficient for the regression of mediator on predictor. The statistical significance of the indirect effects were evaluated using boostrapped 95% confidence intervals with 1000 draws.
+
+Unstandardised parameter estimates are provided in Figure 1. Solid lines indicate that a parameter is significant at $p <. 05$, while dashed lines represent non-significant paths.The indirect effects of both non-aggressive  ($b = 0.09$, 95% CI=0.05-0.14) and aggressive ($b = 0.15$, 95% CI=0.08-0.22) conduct problems on academic performance were statistcally significant. 
+
+```{r out.width="1200px"}
+knitr::include_graphics("images/pathanaly.png")
+```
+`r msmbstyle::solution_end()`

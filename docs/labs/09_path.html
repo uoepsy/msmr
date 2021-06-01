@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Path Analysis</title>
+
+<script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<script>
+function toggle_visibility(id1, id2) {
+var e = document.getElementById(id1);
+var f = document.getElementById(id2);
+e.style.display = ((e.style.display!='none') ? 'none' : 'block');
+if(f.classList.contains('fa-plus')) {
+    f.classList.add('fa-minus')
+    f.classList.remove('fa-plus')
+} else {
+    f.classList.add('fa-plus')
+    f.classList.remove('fa-minus')
+}
+}
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+<link rel="stylesheet" href="assets/style-labs.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><strong>MSMR</strong></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fas fa-home"></span>
+     
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Mixed Effects Models
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01_intromlm.html">1: Intro to Multi-Level Modelling</a>
+    </li>
+    <li>
+      <a href="02_lmm_log.html">2: Logistic | Longitudinal (linear)</a>
+    </li>
+    <li>
+      <a href="03_nonlin.html">3: Longitudinal (non-linear)</a>
+    </li>
+    <li>
+      <a href="04_other_ranef.html">4: Other Random Effect Structures</a>
+    </li>
+    <li>
+      <a href="05_multilevel_recap.html">5: Recap | Individual Differences</a>
+    </li>
+    <li>
+      <a href="06_rev.html">Break Week</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Data Reduction &amp; SEM
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="07_efapca.html">PCA | EFA</a>
+    </li>
+    <li>
+      <a href="08_cfa.html">CFA</a>
+    </li>
+    <li>
+      <a href="09_path.html">Path Analysis</a>
+    </li>
+    <li>
+      <a href="10_sem1.html">SEM 1</a>
+    </li>
+    <li>
+      <a href="11_sem2.html">SEM 2</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa-info-circle"></span>
+     
+    Help
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="00_tidyverse_markdown.html">Recap - Tidyverse &amp; Markdown</a>
+    </li>
+    <li>
+      <a href="zz_writeuplogistic.html">Write-up &amp; Logistic GCA</a>
+    </li>
+    <li>
+      <a href="zz_assumpts.html">MLM Assumptions &amp; Diagnostics</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Path Analysis</h1>
+
+</div>
+
+
+<div class="red">
+<p><strong>Packages for today</strong></p>
+<ul>
+<li>lavaan<br />
+</li>
+<li>semPlot or tidySEM</li>
+</ul>
+</div>
+<div id="introducing-path-analysis" class="section level1">
+<h1>Introducing Path Analysis</h1>
+<p>over last couple of weeks we have applied exploratory and then confirmatory factor analysis to develop and then test factor analysis models of ‘conduct problems.’ Factor models posit the existence of some underlying latent variable which is thought of as resulting in the scores on our measured items. Especially in Week 8 we began to depict the variables and parameters involved in these models visually, in what get called ‘path’ or ‘SEM’ diagrams. Specifically, by using rectangles (observed variables), ovals (latent variables), single headed arrows (regression paths) and double headed arrows (covariances), we could draw various model structures.</p>
+<p>This week, we are temporarily putting aside the latent variables (no ovals in the drawings today!) and focusing on some of the fundamentals that motivate this modeling approach.</p>
+<div class="blue">
+<p><strong>Mountains cannot be surmounted except by winding paths</strong></p>
+</div>
+<p>Over the course of USMR and the first block of this course, you have hopefully become pretty comfortable with the regression world, and can see how it is extended to lots of different types of outcome and data stuctures.</p>
+<p>If we are for the time being ignoring the latent variables, then what exactly do we gain by this approach of drawing out our variables and drawing various lines between them? Surely our regression toolkit can do all the things we need?</p>
+<p>Let’s imagine we are interested in peoples’ intention to get vaccinated, and we observe the following variables:</p>
+<ul>
+<li>Intention to vaccinate (scored on a range of 0-100)<br />
+</li>
+<li>Health Locus of Control (HLC) score (average score on a set of items relating to perceived control over ones own health)<br />
+</li>
+<li>Religiosity (average score on a set of items relating to an individual’s religiosity).</li>
+</ul>
+<p>We are assuming here that we do not have the individual items, but only the scale scores (if we had the individual items we might be inclined to model religiosity and HLC as latent variables!).<br />
+If we draw out our variables, and think about this in the form of a standard regression model with “Intention to vaccinate” as our outcome variable, then all the lines are filled in for us (see Figure <a href="#fig:mregpath">1</a>)</p>
+<div class="figure" style="text-align: center"><span id="fig:mregpath"></span>
+<img src="images/path/path1.png" alt="Multiple regression as a path model" width="80%" />
+<p class="caption">
+Figure 1: Multiple regression as a path model
+</p>
+</div>
+<p>But what if our theory suggests that some other model might be of more relevance? For instance, what if we believe that participants’ religiosity has an effect on their Health Locus of Control score, which in turn affects the intention to vaccinate (see Figure <a href="#fig:medpath1">2</a>)?<br />
+In this case, the HLC variable is thought of as a <strong>mediator</strong>, because is mediates the effect of religiosity on intention to vaccinate. We are specifying presence of a distinct type of effect: <strong>direct</strong> and <strong>indirect</strong>.</p>
+<div class="red">
+<p><strong>Direct vs Indirect</strong></p>
+<p>In path diagrams:</p>
+<ul>
+<li>Direct effect = one single-headed arrow between the two variables concerned<br />
+</li>
+<li>Indirect effect = An effect transmitted via some other variables</li>
+</ul>
+</div>
+<div class="figure" style="text-align: center"><span id="fig:medpath1"></span>
+<img src="images/path/path2.png" alt="Mediation as a path model" width="80%" />
+<p class="caption">
+Figure 2: Mediation as a path model
+</p>
+</div>
+<p>The only option here is to conduct several regression models, because we have multiple <strong>endogenous</strong> variables. Fortunately, path analysis allows us to do just that - fit simultaneous regression equations!</p>
+<div class="yellow">
+<p><strong>Terminology refresher</strong></p>
+<ul>
+<li><strong>Exogenous variables</strong> are a bit like what we have been describing with words like “independent variable” or “predictor.” In a path diagram, they have no paths coming from other variables in the system, but have paths <em>going to</em> other variables.<br />
+</li>
+<li><strong>Endogenous variables</strong> are more like the “outcome”/“dependent”/“response” variables we are used to. They have some path coming from another variable in the system (and may also - but not necessarily - have paths going out from them).</li>
+</ul>
+</div>
+<p>Recall our way of drawing path diagrams <em>(excluding any mention of latent variables and factors for now)</em>:</p>
+<ul>
+<li><strong>Observed variables</strong> are represented by squares or rectangles. These are the named variables of interest which exist in our dataset - i.e. the ones which we have measured directly.</li>
+<li><strong>Covariances</strong> are represented by double-headed arrows. In many diagrams these are curved.</li>
+<li><strong>Regressions</strong> are shown by single headed arrows (e.g., an arrow from <span class="math inline">\(x\)</span> to <span class="math inline">\(y\)</span> for the path <span class="math inline">\(y~x\)</span>).</li>
+</ul>
+<div id="some-key-assumptions" class="section level2">
+<h2>Some key assumptions</h2>
+<p>There are a few assumptions of a complete path diagram:</p>
+<ul>
+<li>all our exogenous variables are correlated (unless we specifically assume that their correlation is zero)</li>
+<li>All models are ‘recursive’ (no two-way causal relations, no feedback loops)</li>
+<li>Residuals are uncorrelated with exogenous variables</li>
+<li>Endogenous variables are not connected by correlations (we would use correlations between residuals here, because the residuals are not endogenous)</li>
+<li>All ‘causal’ relations are linear and additive</li>
+<li>‘causes’ are unitary (if A -&gt; B and A -&gt; C, then it is presumed that this is the same aspect of A resulting in a change in both B and C, and not two distinct aspects of A, which would be better represented by two correlated variables A1 and A2).</li>
+</ul>
+<div class="red">
+<p><strong>Causal??</strong></p>
+<p>It is a slippery slope to start using the word ‘cause,’ and personally I am not that comfortable using it here. However, you will likely hear it a lot in resources about path analysis and SEM, so it is best to be warned.</p>
+<p>Please keep in mind that we are using a very broad definition of ‘causal,’ simply to reflect the one way nature of the relationship we are modeling. In Figure <a href="#fig:causes">3</a>, a change in the variable <strong>X1</strong> is associated with a change in <strong>Y</strong>, but not vice versa.</p>
+<div class="figure" style="text-align: center"><span id="fig:causes"></span>
+<img src="images/path/causes.png" alt="Paths are still just regressions." width="80%" />
+<p class="caption">
+Figure 3: Paths are still just regressions.
+</p>
+</div>
+</div>
+</div>
+<div id="tracing-rules" class="section level2">
+<h2>Tracing rules</h2>
+<p>Thanks to <a href="https://www.jstor.org/stable/pdf/2527551.pdf?casa_token=3QF0ad2ZoBcAAAAA:MbEkDNNdoLZr1SXE4LrnK--qrhhsTXLgsRtcWre1UvWxiQiGNUl5vWytGp34XIxhAYMZJe-MbIcBnEwXSfX6MAONevz04-sMXpEDI3IaYKk6mMX46QvX">Sewal Wright</a>, we can express the correlation between any two variables in the system as the sum of all <em>compound paths</em> between the two variables.</p>
+<p><em>compound paths</em> are any paths you can trace between A and B for which there are:</p>
+<ul>
+<li>no loops</li>
+<li>no going forward then backward</li>
+<li>maximum of one curved arrow per path</li>
+</ul>
+<p>Let’s consider the example below, for which the paths are all labelled with lower case letters <span class="math inline">\(a, b, c, \text{and } d\)</span>.</p>
+<div class="figure" style="text-align: center"><span id="fig:patheq1"></span>
+<img src="images/path/patheq1.png" alt="A multiple regression model as a path diagram" width="80%" />
+<p class="caption">
+Figure 4: A multiple regression model as a path diagram
+</p>
+</div>
+<p>According to Wright’s tracing rules above, write out the equations corresponding to the 3 correlations between our observed variables (remember that <span class="math inline">\(r_{a,b} = r_{b,a}\)</span>, so it doesn’t matter at which variable we start the paths).</p>
+<ul>
+<li><span class="math inline">\(r_{x1,x2} = c\)</span><br />
+</li>
+<li><span class="math inline">\(r_{x1,y} = a + bc\)</span><br />
+</li>
+<li><span class="math inline">\(r_{x2,y} = b + ac\)</span></li>
+</ul>
+<p>Now let’s suppose we observed the following correlation matrix:</p>
+<pre class="r"><code>egdat &lt;- read_csv(&quot;https://uoepsy.github.io/data/patheg.csv&quot;)
+round(cor(egdat),2)</code></pre>
+<pre><code>##      x1   x2    y
+## x1 1.00 0.36 0.75
+## x2 0.36 1.00 0.60
+## y  0.75 0.60 1.00</code></pre>
+<p>We can plug these into our system of equations:</p>
+<ul>
+<li><span class="math inline">\(r_{x1,x2} = c = 0.36\)</span><br />
+</li>
+<li><span class="math inline">\(r_{x1,y} = a + bc = 0.75\)</span><br />
+</li>
+<li><span class="math inline">\(r_{x2,y} = b + ac = 0.60\)</span></li>
+</ul>
+<p>And with some substituting and rearranging, we can work out the values of <span class="math inline">\(a\)</span>, <span class="math inline">\(b\)</span> and <span class="math inline">\(c\)</span>.</p>
+<div class="optional-begin">
+We’ve hidden the answers so you can test yourself. Grab a piece of paper and solve some equations!<span id="opt-start-144" class="fa fa-plus optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-144&#39;, &#39;opt-start-144&#39;)"></span>
+</div>
+<div id="opt-body-144" class="optional-body" style="display: none;">
+<p>This is what I get:</p>
+<p>a = 0.61<br />
+b = 0.38<br />
+c = 0.36</p>
+</div>
+<p class="optional-end">
+</p>
+<p>We can even work out what the path labeled <span class="math inline">\(d\)</span> (the residual variance) is.
+First we sum up all the equations for the paths from Y to Y. These are:</p>
+<ul>
+<li><span class="math inline">\(a^2\)</span> (from Y to X1 and back)<br />
+</li>
+<li><span class="math inline">\(b^2\)</span> (from Y to X2 and back)<br />
+</li>
+<li><span class="math inline">\(acb\)</span> (from Y to X1 to X2 to Y)</li>
+<li><span class="math inline">\(bca\)</span> (from Y to X2 to X1 to Y)</li>
+</ul>
+<p>Summing them all up and solving gives us:<br />
+<span class="math display">\[
+\begin{align}
+ r_{y \cdot x1, x2} &amp; = a^2 + b^2 + acb + bca\\
+ &amp; = 0.61^2 + 0.38^2 + 2 \times(0.61 \times 0.38 \times 0.36)\\
+ &amp; = 0.68 \\
+\end{align}
+\]</span>
+We can think of this as the portion of the correlation of Y with itself that occurs <em>via the predictors</em>. Put another way, this is the amount of variance in Y explained jointly by X1 and X2, which sounds an awful lot like an <span class="math inline">\(R^2\)</span>!<br />
+This means that the path <span class="math inline">\(d = \sqrt{1-R^2}\)</span>.</p>
+<p>Hooray! We’ve just worked out regression coefficients when all we had was the correlation matrix of the variables! It’s important to note that we have been using the correlation matrix, so, somewhat unsurprisingly, our estimates are <em>standardised</em> coefficients.</p>
+<p>Because we have the data itself, let’s quickly find them with <code>lm()</code></p>
+<pre class="r"><code># quickly scale all the columns in the data
+egdat &lt;- egdat %&gt;% mutate_all(~scale(.)[,1])
+# extract the coefs
+coef(lm(y~x1+x2, egdat))</code></pre>
+<pre><code>##  (Intercept)           x1           x2 
+## 1.943428e-16 6.118072e-01 3.816321e-01</code></pre>
+<pre class="r"><code># extract the r^2
+summary(lm(y~x1+x2, egdat))$r.squared</code></pre>
+<pre><code>## [1] 0.6884071</code></pre>
+</div>
+</div>
+<div id="path-mediation" class="section level1">
+<h1>Path Mediation</h1>
+Now that we’ve seen how path analysis works, we can use that same logic to investigate models which have quite different structures, such as those including mediating variables. So if we can’t fit our theoretical model into a regression framework, let’s just fit it into a framework which is lots of regressions smushed together!<br />
+Luckily, we can just get the <strong>lavaan</strong> package to do all of this for us. So let’s look at fitting the model below.
+<div class="figure" style="text-align: center"><span id="fig:medpath2"></span>
+<img src="images/path/path2.png" alt="If you're interested, you can find the inspiration for this data from the paper [here](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7596314/). I haven't properly read it though!" width="80%" />
+<p class="caption">
+Figure 5: If you’re interested, you can find the inspiration for this data from the paper <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7596314/">here</a>. I haven’t properly read it though!
+</p>
+</div>
+<p>First we read in our data:</p>
+<pre class="r"><code>vax &lt;- read_csv(&quot;https://uoepsy.github.io/data/vaxdat.csv&quot;)
+summary(vax)</code></pre>
+<pre><code>##   religiosity          hlc          intention    
+##  Min.   :-1.000   Min.   :0.400   Min.   :39.00  
+##  1st Qu.: 1.800   1st Qu.:2.000   1st Qu.:59.00  
+##  Median : 2.400   Median :3.000   Median :64.00  
+##  Mean   : 2.396   Mean   :2.992   Mean   :65.09  
+##  3rd Qu.: 3.000   3rd Qu.:3.600   3rd Qu.:74.00  
+##  Max.   : 4.600   Max.   :5.800   Max.   :88.00</code></pre>
+<p>Then we specify the relevant paths:</p>
+<pre class="r"><code>med_model &lt;- &quot; 
+    intention ~ religiosity
+    intention ~ hlc
+    hlc ~ religiosity
+&quot;</code></pre>
+<p>If we fit this model as it is, we won’t actually be testing the indirect effect, we will simply be fitting a couple of regressions.</p>
+<p>To do that, we need to explicitly define the indirect effect in the model, by first creating a label for each of its sub-component paths, and then defining the indirect effect itself as the product (why the product? <a href="https://uoepsy.github.io/msmr/indirect_effects.pdf">Click here for a lovely pdf explainer from Aja</a>).<br />
+To do this, we use a new operator, <code>:=</code>.</p>
+<pre class="r"><code>med_model &lt;- &quot; 
+    intention ~ religiosity
+    intention ~ a*hlc
+    hlc ~ b*religiosity
+    
+    indirect:=a*b
+&quot;</code></pre>
+<div class="yellow">
+<p><strong>:=</strong></p>
+<p><em>This operator ‘defines’ new parameters which take on values that are an arbitrary function of the original model parameters. The function, however, must be specified in terms of the parameter labels that are explicitly mentioned in the model syntax.</em></p>
+<p>(<a href="https://lavaan.ugent.be/">the lavaan project</a>)</p>
+<p>Note. The labels we use are completely up to us. This would be equivalent:</p>
+<pre class="r"><code>med_model &lt;- &quot; 
+    intention ~ religiosity
+    intention ~ peppapig * hlc
+    hlc ~ kermit * religiosity
+    
+    indirect:= kermit * peppapig
+&quot;</code></pre>
+</div>
+<div id="estimating-the-model" class="section level2">
+<h2>Estimating the model</h2>
+<p>It is common to estimate the indirect effect using bootstrapping (a method of resampling the data with replacement, thousands of times, in order to empirically generate a sampling distribution). We can do this easily in lavaan:</p>
+<pre class="r"><code>mm1.est &lt;- sem(med_model, data=vax, se = &quot;bootstrap&quot;) 
+summary(mm1.est, ci = TRUE)</code></pre>
+<pre><code>## lavaan 0.6-8 ended normally after 26 iterations
+## 
+##   Estimator                                         ML
+##   Optimization method                           NLMINB
+##   Number of model parameters                         5
+##                                                       
+##   Number of observations                           100
+##                                                       
+## Model Test User Model:
+##                                                       
+##   Test statistic                                 0.000
+##   Degrees of freedom                                 0
+## 
+## Parameter Estimates:
+## 
+##   Standard errors                            Bootstrap
+##   Number of requested bootstrap draws             1000
+##   Number of successful bootstrap draws            1000
+## 
+## Regressions:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+##   intention ~                                                           
+##     religiosty        0.270    1.041    0.260    0.795   -1.700    2.470
+##     hlc        (a)    5.971    0.944    6.325    0.000    4.037    7.768
+##   hlc ~                                                                 
+##     religiosty (b)    0.508    0.087    5.853    0.000    0.337    0.686
+## 
+## Variances:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+##    .intention        62.090    7.837    7.923    0.000   45.128   75.825
+##    .hlc               0.753    0.108    7.009    0.000    0.539    0.951
+## 
+## Defined Parameters:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+##     indirect          3.033    0.678    4.475    0.000    1.844    4.463</code></pre>
+</div>
+</div>
+<div id="exercises" class="section level1">
+<h1>Exercises</h1>
+<p>This week’s lab focuses on the technique of path analysis using the same context as previous weeks: conduct problems in adolescence. In this week’s example, a researcher has collected data on n=557 adolescents and would like to know whether there are associations between conduct problems (both aggressive and non-aggressive) and academic performance and whether the relations are mediated by the quality of relationships with teachers.</p>
+<div class="question-begin">
+Question A1
+</div>
+<div class="question-body">
+<p>First, read in the dataset from <a href="https://uoepsy.github.io/data/cp_teachacad.csv" class="uri">https://uoepsy.github.io/data/cp_teachacad.csv</a></p>
+<p class="question-end">
+</p>
+</div>
+<div class="solution-begin">
+Solution <span id="sol-start-145" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-145&#39;, &#39;sol-start-145&#39;)"></span>
+</div>
+<div id="sol-body-145" class="solution-body" style="display: none;">
+<pre class="r"><code>cp_teach&lt;-read_csv(&quot;https://uoepsy.github.io/data/cp_teachacad.csv&quot;)
+summary(cp_teach)</code></pre>
+<pre><code>##        ID           Acad             Teach_r            Non_agg        
+##  Min.   :  1   Min.   :-3.04218   Min.   :-3.68090   Min.   :-3.28306  
+##  1st Qu.:140   1st Qu.:-0.73573   1st Qu.:-0.88734   1st Qu.:-0.68964  
+##  Median :279   Median :-0.02592   Median : 0.01081   Median :-0.09320  
+##  Mean   :279   Mean   :-0.06130   Mean   :-0.09497   Mean   :-0.06278  
+##  3rd Qu.:418   3rd Qu.: 0.60620   3rd Qu.: 0.61758   3rd Qu.: 0.56956  
+##  Max.   :557   Max.   : 3.05654   Max.   : 3.52253   Max.   : 3.43912  
+##       Agg          
+##  Min.   :-3.27096  
+##  1st Qu.:-0.72768  
+##  Median :-0.01646  
+##  Mean   :-0.02455  
+##  3rd Qu.: 0.68199  
+##  Max.   : 3.30539</code></pre>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question A2
+</div>
+<div class="question-body">
+<p>Use the <code>sem()</code> function in lavaan to specify and estimate a straightforward linear regression model to test whether aggressive and non-aggressive conduct problems significantly predict academic performance.</p>
+<p>How do your results compare to those you obtain using the <code>lm()</code> function?</p>
+<p class="question-end">
+</p>
+</div>
+<div class="solution-begin">
+Solution <span id="sol-start-146" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-146&#39;, &#39;sol-start-146&#39;)"></span>
+</div>
+<div id="sol-body-146" class="solution-body" style="display: none;">
+<pre class="r"><code># we can fit the model in lavaan as follows:
+# first we specify the model using lavaan syntax
+sr_lavaan&lt;-&#39;Acad~Non_agg+Agg&#39;
+# next we can estimate the model using the sem() function
+sr_lavaan.est&lt;-sem(sr_lavaan, data=cp_teach)
+# we can inspect the results using the summary() function
+summary(sr_lavaan.est)</code></pre>
+<pre><code>## lavaan 0.6-8 ended normally after 13 iterations
+## 
+##   Estimator                                         ML
+##   Optimization method                           NLMINB
+##   Number of model parameters                         3
+##                                                       
+##   Number of observations                           557
+##                                                       
+## Model Test User Model:
+##                                                       
+##   Test statistic                                 0.000
+##   Degrees of freedom                                 0
+## 
+## Parameter Estimates:
+## 
+##   Standard errors                             Standard
+##   Information                                 Expected
+##   Information saturated (h1) model          Structured
+## 
+## Regressions:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|)
+##   Acad ~                                              
+##     Non_agg           0.182    0.057    3.178    0.001
+##     Agg               0.318    0.057    5.599    0.000
+## 
+## Variances:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|)
+##    .Acad              0.943    0.057   16.688    0.000</code></pre>
+<pre class="r"><code># the same model can be fit using lm():
+
+sr_lm&lt;-lm(Acad~Non_agg+Agg, data=cp_teach)
+summary(sr_lm)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Acad ~ Non_agg + Agg, data = cp_teach)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2.89617 -0.59575  0.00731  0.62189  3.13248 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -0.04204    0.04135  -1.017  0.30973    
+## Non_agg      0.18238    0.05755   3.169  0.00161 ** 
+## Agg          0.31809    0.05697   5.583  3.7e-08 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.9737 on 554 degrees of freedom
+## Multiple R-squared:  0.1937, Adjusted R-squared:  0.1908 
+## F-statistic: 66.54 on 2 and 554 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>We can see that both non-aggressive and aggressive conduct problems significantly predict academic perfofmance.We can also see that we get the same results when we use the <code>sem()</code> function as we do when we use the <code>lm()</code> function. Lavaan will give essentially the same results as <code>lm()</code> for simple and multiple regression problems. However, if we have multiple outcome variables in our model it is advantageous to do this using path mediation model with lavaan. This allows us to include all the regressions in a single model.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question A3
+</div>
+<div class="question-body">
+<p>Now specify a model in which non-aggressive conduct problems have both a direct and indirect effect (via teacher relationships) on academic performance</p>
+<p class="question-end">
+</p>
+</div>
+<div class="solution-begin">
+Solution <span id="sol-start-147" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-147&#39;, &#39;sol-start-147&#39;)"></span>
+</div>
+<div id="sol-body-147" class="solution-body" style="display: none;">
+<pre class="r"><code>model1&lt;-&#39;
+    #we regress academic performance on non-aggressive conduct problems (the direct effect)
+    Acad~Non_agg
+    
+    #we regress academic peformance on teacher relationship quality
+    Acad~Teach_r
+    
+    #we regress teacher relationship quality on non-aggressive conduct problems
+    Teach_r~Non_agg 
+&#39;</code></pre>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question A4
+</div>
+<div class="question-body">
+<p>Now define the indirect effect in order to test the hypothesis that non-aggressive conduct problems have both a direct and an indirect effect (via teacher relationships) on academic performance.</p>
+<p>Fit the model and examine the 95% CI.</p>
+<p class="question-end">
+</p>
+</div>
+<div class="solution-begin">
+Solution <span id="sol-start-148" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-148&#39;, &#39;sol-start-148&#39;)"></span>
+</div>
+<div id="sol-body-148" class="solution-body" style="display: none;">
+<pre class="r"><code>#model specification
+model1&lt;-&#39;
+    Acad~Non_agg
+    #we label the two parameters that comprise the indirect effect b and c
+    Acad~b*Teach_r    
+    Teach_r~c*Non_agg  
+    
+    # the indirect effect is the product of b and c. We create a new parameter (ind) to estimate the indirect effect
+    ind:=b*c   
+&#39;
+
+#model estimation
+model1.est&lt;-sem(model1, data=cp_teach, se=&#39;bootstrap&#39;) 
+
+# we request bootstrapped standard errors to assess the signifance of the indirect effect
+summary(model1.est, ci=T)</code></pre>
+<pre><code>## lavaan 0.6-8 ended normally after 13 iterations
+## 
+##   Estimator                                         ML
+##   Optimization method                           NLMINB
+##   Number of model parameters                         5
+##                                                       
+##   Number of observations                           557
+##                                                       
+## Model Test User Model:
+##                                                       
+##   Test statistic                                 0.000
+##   Degrees of freedom                                 0
+## 
+## Parameter Estimates:
+## 
+##   Standard errors                            Bootstrap
+##   Number of requested bootstrap draws             1000
+##   Number of successful bootstrap draws            1000
+## 
+## Regressions:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+##   Acad ~                                                                
+##     Non_agg           0.158    0.060    2.643    0.008    0.035    0.281
+##     Teach_r    (b)    0.328    0.050    6.525    0.000    0.223    0.425
+##   Teach_r ~                                                             
+##     Non_agg    (c)    0.769    0.034   22.783    0.000    0.701    0.833
+## 
+## Variances:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+##    .Acad              0.919    0.058   15.935    0.000    0.804    1.036
+##    .Teach_r           0.713    0.043   16.653    0.000    0.629    0.799
+## 
+## Defined Parameters:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+##     ind               0.252    0.039    6.476    0.000    0.171    0.330</code></pre>
+<p>We can see that the 95% bootstrapped confidence interval for the indirect effect of non-aggressive conduct problems on academic performance (‘ind’) does not include zero. We can conclude that the indirect effect is significant at <span class="math inline">\(p &lt;.05\)</span>. The direct effect is also statistically significant at <span class="math inline">\(p &lt; .05\)</span>.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question A5
+</div>
+<div class="question-body">
+<p>Specify a new parameter which is the total (direct+indirect) effect of non-aggressive conduct problems on academic performance</p>
+<p class="question-end">
+</p>
+</div>
+<div class="solution-begin">
+Solution <span id="sol-start-149" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-149&#39;, &#39;sol-start-149&#39;)"></span>
+</div>
+<div id="sol-body-149" class="solution-body" style="display: none;">
+<p>We can create a new parameter that is the sum of the direct and indirect effect to evaluate the total effect of non-aggressive conduct problems on academic performance.</p>
+<pre class="r"><code>#model specification
+
+model1&lt;-&#39;
+    # we now also label the indirect effect of non-aggressive conduct problems on academic performance
+    Acad~a*Non_agg    
+    Acad~b*Teach_r    
+    Teach_r~c*Non_agg  
+    
+    ind:=b*c   
+    #the total effect is the indirect effect plus the direct effect
+    total:=b*c+a
+&#39;
+
+#model estimation
+model1.est&lt;-sem(model1, data=cp_teach,se=&#39;bootstrap&#39;) 
+
+# we request bootstrapped standard errors to assess the signifance of the indirect effect
+summary(model1.est, ci=T)</code></pre>
+<pre><code>## lavaan 0.6-8 ended normally after 13 iterations
+## 
+##   Estimator                                         ML
+##   Optimization method                           NLMINB
+##   Number of model parameters                         5
+##                                                       
+##   Number of observations                           557
+##                                                       
+## Model Test User Model:
+##                                                       
+##   Test statistic                                 0.000
+##   Degrees of freedom                                 0
+## 
+## Parameter Estimates:
+## 
+##   Standard errors                            Bootstrap
+##   Number of requested bootstrap draws             1000
+##   Number of successful bootstrap draws            1000
+## 
+## Regressions:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+##   Acad ~                                                                
+##     Non_agg    (a)    0.158    0.057    2.765    0.006    0.048    0.273
+##     Teach_r    (b)    0.328    0.050    6.562    0.000    0.235    0.423
+##   Teach_r ~                                                             
+##     Non_agg    (c)    0.769    0.034   22.881    0.000    0.698    0.833
+## 
+## Variances:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+##    .Acad              0.919    0.058   15.778    0.000    0.805    1.033
+##    .Teach_r           0.713    0.042   16.905    0.000    0.631    0.799
+## 
+## Defined Parameters:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+##     ind               0.252    0.039    6.406    0.000    0.180    0.334
+##     total             0.410    0.043    9.555    0.000    0.330    0.492</code></pre>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question A6
+</div>
+<div class="question-body">
+<p>Now visualise the estimated model and its parameters using the <code>semPaths()</code> function from the <code>semPlot</code> package.</p>
+<p class="question-end">
+</p>
+</div>
+<div class="solution-begin">
+Solution <span id="sol-start-150" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-150&#39;, &#39;sol-start-150&#39;)"></span>
+</div>
+<div id="sol-body-150" class="solution-body" style="display: none;">
+<pre class="r"><code>#to include the parameter estimates we set what=&#39;est&#39;
+semPaths(model1.est, what=&#39;est&#39;) </code></pre>
+<p><img src="09_path_files/figure-html/visualise%20the%20model-1.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+<p class="solution-end">
+</p>
+<div id="a-more-complex-model" class="section level2">
+<h2>A more complex model</h2>
+<div class="question-begin">
+Question B1
+</div>
+<div class="question-body">
+<p>Now specify a model in which both aggressive and non-aggressive conduct problems have both direct and indirect effects (via teacher relationships) on academic performance. Include the parameters for the indirect effects.</p>
+<p class="question-end">
+</p>
+</div>
+<div class="solution-begin">
+Solution <span id="sol-start-151" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-151&#39;, &#39;sol-start-151&#39;)"></span>
+</div>
+<div id="sol-body-151" class="solution-body" style="display: none;">
+<pre class="r"><code>model2&lt;-
+   &#39;Acad~Agg+Non_agg+b*Teach_r
+    Teach_r~c1*Agg+c2*Non_agg
+   
+    ind1:=b*c1 #indirect effect for aggressive conduct problems
+    ind2:=b*c2 #indirect effect for non-aggressive conduct problems
+&#39;</code></pre>
+<p>We now have two predictors, one mediator and one outcome (and two indirect effects, one for each predictor). We can represent this in two lines: one where we specify academic performance as the outcome variable and one where we specify teacher relationships (the mediator) as the outcome variable.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question B2
+</div>
+<div class="question-body">
+<p>Now estimate the model and test the significance of the indirect effects</p>
+<p class="question-end">
+</p>
+</div>
+<div class="solution-begin">
+Solution <span id="sol-start-152" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-152&#39;, &#39;sol-start-152&#39;)"></span>
+</div>
+<div id="sol-body-152" class="solution-body" style="display: none;">
+<pre class="r"><code>model2.est&lt;-sem(model2,  data=cp_teach,se=&#39;bootstrap&#39;) 
+summary(model2.est, ci=T)</code></pre>
+<pre><code>## lavaan 0.6-8 ended normally after 18 iterations
+## 
+##   Estimator                                         ML
+##   Optimization method                           NLMINB
+##   Number of model parameters                         7
+##                                                       
+##   Number of observations                           557
+##                                                       
+## Model Test User Model:
+##                                                       
+##   Test statistic                                 0.000
+##   Degrees of freedom                                 0
+## 
+## Parameter Estimates:
+## 
+##   Standard errors                            Bootstrap
+##   Number of requested bootstrap draws             1000
+##   Number of successful bootstrap draws            1000
+## 
+## Regressions:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+##   Acad ~                                                                
+##     Agg               0.171    0.061    2.792    0.005    0.049    0.299
+##     Non_agg           0.091    0.065    1.392    0.164   -0.036    0.221
+##     Teach_r    (b)    0.256    0.055    4.650    0.000    0.146    0.367
+##   Teach_r ~                                                             
+##     Agg       (c1)    0.574    0.045   12.797    0.000    0.488    0.667
+##     Non_agg   (c2)    0.358    0.042    8.557    0.000    0.278    0.438
+## 
+## Variances:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+##    .Acad              0.908    0.055   16.399    0.000    0.793    1.016
+##    .Teach_r           0.540    0.030   18.246    0.000    0.479    0.596
+## 
+## Defined Parameters:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+##     ind1              0.147    0.033    4.392    0.000    0.082    0.214
+##     ind2              0.092    0.022    4.085    0.000    0.049    0.138</code></pre>
+<p>We can see that the 95% confidence intervals for both indirect effects do not include zero, therefore, we can conclude that they are significant at <span class="math inline">\(p &lt; .05\)</span>.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question B3
+</div>
+<div class="question-body">
+<p>Write a brief paragraph reporting on the results of the model estimates in Question B2. Include a Figure or Table to display the parameter estimates.</p>
+<p class="question-end">
+</p>
+</div>
+<div class="solution-begin">
+Solution <span id="sol-start-153" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-153&#39;, &#39;sol-start-153&#39;)"></span>
+</div>
+<div id="sol-body-153" class="solution-body" style="display: none;">
+<div class="int">
+<p>A path mediation model was used to test the direct and indirect effects (via teacher relationship quality) of aggressive and non-aggressive conduct problems on academic performance. In the model, academic performance was regressed on teacher relationship quality, non-aggressive conduct problems and aggressive conduct problems while teacher relationship quality (the mediator) was regressed on aggressive and non-aggressive conduct problems. The indirect effects were tested using the product of the coefficient for the regression of outcome on mediator and the coefficient for the regression of mediator on predictor. The statistical significance of the indirect effects were evaluated using boostrapped 95% confidence intervals with 1000 draws.</p>
+<p>Unstandardised parameter estimates are provided in Figure <a href="#fig:pathcp">6</a>. Solid lines indicate that a parameter is significant at <span class="math inline">\(p &lt;. 05\)</span>, while dashed lines represent non-significant paths.The indirect effects of both non-aggressive (<span class="math inline">\(b = 0.09\)</span>, 95% CI=0.05-0.14) and aggressive (<span class="math inline">\(b = 0.15\)</span>, 95% CI=0.08-0.22) conduct problems on academic performance were statistcally significant.</p>
+<div class="figure" style="text-align: center"><span id="fig:pathcp"></span>
+<img src="images/path/pathanaly.png" alt="Effect of conduct problems on academic performance mediated by quality of teacher relationship." width="1200px" />
+<p class="caption">
+Figure 6: Effect of conduct problems on academic performance mediated by quality of teacher relationship.
+</p>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="optional-begin">
+Optional: Mediation the more manual way: back to lm()<span id="opt-start-154" class="fa fa-plus optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-154&#39;, &#39;opt-start-154&#39;)"></span>
+</div>
+<div id="opt-body-154" class="optional-body" style="display: none;">
+<p>Following <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.917.2326&amp;rep=rep1&amp;type=pdf">Baron &amp; Kenny 1986</a>, we can conduct mediation analysis by using three separate regression models.</p>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(y \sim x\)</span></li>
+<li><span class="math inline">\(x \sim m\)</span></li>
+<li><span class="math inline">\(y \sim x + m\)</span></li>
+</ol>
+<p>Step 1. Determine the presence of <code>y ~ x</code>:<br />
+<em>if x predicts y, then there is possibility to detect mediation</em></p>
+<pre class="r"><code>vax &lt;- read_csv(&quot;https://uoepsy.github.io/data/vaxdat.csv&quot;)
+
+mod1 &lt;- lm(intention ~ religiosity, data = vax)
+summary(mod1)$coefficients</code></pre>
+<pre><code>##              Estimate Std. Error  t value     Pr(&gt;|t|)
+## (Intercept) 57.175330  2.4217180 23.60941 3.167781e-42
+## religiosity  3.303285  0.9292332  3.55485 5.840235e-04</code></pre>
+<p>Step 2. Determine the presence of <code>m ~ x</code>:
+<em>if x predicts m, then there is possibility to detect mediation</em></p>
+<pre class="r"><code>mod2 &lt;- lm(hlc ~ religiosity, data = vax)
+summary(mod2)$coefficients</code></pre>
+<pre><code>##              Estimate Std. Error  t value     Pr(&gt;|t|)
+## (Intercept) 1.7749083 0.22288830 7.963219 3.039025e-12
+## religiosity 0.5079682 0.08552408 5.939475 4.360399e-08</code></pre>
+<p>Step 3. Examine the effect of <code>y ~ x + m</code>:<br />
+<em>If the x no longer predicts y after partialling out effects due to m, then there is <strong>full</strong> mediation. If the effect of x on y is smaller, then there is <strong>partial</strong> mediation.</em></p>
+<pre class="r"><code>mod3 &lt;- lm(intention ~ religiosity + hlc, data = vax)
+summary(mod3)$coefficients</code></pre>
+<pre><code>##               Estimate Std. Error    t value     Pr(&gt;|t|)
+## (Intercept) 46.5779660  2.6100101 17.8458946 2.102793e-32
+## religiosity  0.2703824  0.9100233  0.2971159 7.670134e-01
+## hlc          5.9706544  0.9216921  6.4779272 3.850955e-09</code></pre>
+<p>Step 4. Test for the mediation.<br />
+There are various ways to do this, but the simplest is probably:</p>
+<pre class="r"><code>library(mediation)
+summary(mediate(mod2, mod3, treat=&#39;religiosity&#39;, mediator=&#39;hlc&#39;, boot=TRUE, sims=500))</code></pre>
+<pre><code>## 
+## Causal Mediation Analysis 
+## 
+## Nonparametric Bootstrap Confidence Intervals with the Percentile Method
+## 
+##                Estimate 95% CI Lower 95% CI Upper p-value    
+## ACME              3.033        1.844         4.42  &lt;2e-16 ***
+## ADE               0.270       -1.584         2.57    0.73    
+## Total Effect      3.303        1.648         5.22  &lt;2e-16 ***
+## Prop. Mediated    0.918        0.488         1.85  &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Sample Size Used: 100 
+## 
+## 
+## Simulations: 500</code></pre>
+<p>ACME: Average Causal Mediation Effects
+ADE: Average Direct Effects
+Total Effect: sum of the mediation (indirect) effect and the direct effect.</p>
+</div>
+<p class="optional-end">
+</p>
+<!-- Formatting -->
+<div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;">
+
+</div>
+</div>
+</div>
+
+<link rel="stylesheet" href="https://uoepsy.github.io/assets/css/ccfooter.css" />
+<div class="ccfooter"></div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
