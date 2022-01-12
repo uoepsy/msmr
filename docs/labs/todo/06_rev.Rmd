@@ -1,0 +1,145 @@
+---
+title: "Break Week Data"
+bibliography: references.bib
+biblio-style: apalike
+link-citations: yes
+params: 
+    SHOW_SOLS: TRUE
+    TOGGLE: TRUE
+---
+
+```{r echo=FALSE}
+source('assets/setup.R')
+```
+
+# Option 1
+
+`r optbegin("Replication Kelly et al., 2010", olabel=FALSE, toggle=params$TOGGLE)`
+
+The stimuli were identical to those used in [Kelly et al. (2010)](https://doi.org/10.1177%2F0956797609357327), and comprised a 1000 ms video of an action being performed followed by a black screen for 500 ms, followed by a 1000 ms video of a pantomime gesture accompanied by a recording of a spoken word. There were sixteen different experimental items (videos of actions). Each of these was presented in nine trials across the experiment — in five different experimental conditions, and in four filler trials — resulting in a total of 144 trials (80 experimental, 64 fillers). The experimental conditions consisted of a baseline condition (where both speech and gesture matched the action in the video) and four conditions where one modality (speech or gesture) mismatched either weakly or strongly with the action in the video, while the other modality matched the action. Examples of stimuli can be see in the sample timeline of procedure of two trials in Figure \@ref(fig:kelly). In the filler trials, neither speech nor gesture matched the action seen in the video.  
+
+The experiment was presented using OpenSesame version 2.9 (Mathot et al., 2012). Stimuli were displayed on a 21 in. CRT monitor with a resolution of 1024 × 768, placed 850 mm from the edge of the table. Audio was presented in stereo, and sampled at 48000~Hz. Videos were played at 30 frames per second, and measured 720 x 480, positioned centrally on a black screen. 
+
+```{r kelly, echo=FALSE, fig.cap="Two example trials"}
+knitr::include_graphics("images/kellyrep.png")
+```
+
+
+Participants were tasked with responding as quickly as possible via keypress whether they thought that either speech or gesture matched the action in the video. Participants were asked to place their index fingers of each hand on the response keys ('m' and 'z'). Proceeding between trials required participants to press the space bar, and they were advised to do so without moving their index fingers (i.e. by using a thumb). Response keys and instructions were dependent upon handedness, such that affirmative responses were on the participants' dominant side. Instructions encouraged participants to respond quickly and accurately. 
+
+Following the instructions, participants completed six practice trials. These comprised two in which speech and gesture both mismatched the action in the video, and four in which one modality (two speech, two gesture) strongly mismatched the action, and the other modality matched.
+
+Data (excluding filler trials) is available at https://uoepsy.github.io/data/kelly2010_replication.csv 
+
+```{r echo=FALSE}
+library(tidyverse)
+krep<-read_csv("https://uoepsy.github.io/data/kelly2010_replication.csv")
+
+tibble(
+  variable = names(krep),
+  description = c("Unique Participant Identifier","Whether participant was left or right handed", "Trial number",paste0("Condition (",paste(levels(factor(krep$condition)),collapse=", "),")"),"Video filename","Item (action viewed in prime video","Modality (speech vs gesture) in which incongruency is presented",
+                  paste0("Strength of incongruency (",paste(levels(factor(krep$strength)),collapse=", "),")"),
+                  "Reaction time (ms)","keypress response (z or m)", "Whether response is correct or not (0 vs 1)")
+) %>% knitr::kable()
+```
+
+:::frame
+
+> **Research questions**  
+> 1. Does semantic incongruency (in either modality) interfere with comprehension?   
+> 
+> 2. Does the strength of incongruency and the modality (speech or gesture) influence comprehension?  
+
+Some things to think about:  
+
+- How is "comprehension" measured here (for your own research you will already know this. In this study we have two possible outcomes which might reflect 'language comprehension': the time it took to respond, and whether or not the correct answer was given) 
+    - Are the outcome variables continuous? categorical? binary? counts? binomial? etc.. 
+- What are the explanatory variables? 
+    - For the first question, you might want to collapse some of the levels of the variables in the data to indicate whether an item is "congruent" vs "incongruent". 
+- How are observations clustered?
+    - Are they nested or crossed?
+
+:::
+
+`r optend()`
+
+```{r message=F,warning=F, eval=FALSE, echo=FALSE}
+library(tidyverse)
+library(patchwork)
+library(lme4)
+krep<-read_csv("https://uoepsy.github.io/data/kelly2010_replication.csv")
+
+ggplot(krep,aes(x=modality=="baseline",y=rtime))+geom_boxplot() + guides(col=FALSE) +
+ggplot(krep,aes(x=modality=="baseline",y=correct))+
+  stat_summary(geom="pointrange")
+
+# log transform maybe?
+mod1 <- lmer(log(rtime)~congruence+(1|subject_nr)+(1+congruence|prime), data=krep)
+# summary(mod1)
+mod1a <- glmer(correct~congruence+(1|subject_nr)+(1+congruence|prime), data=krep,family=binomial) -> mod1a
+# summary(mod1a)
+
+
+
+# does the strength of incongruence and the modality (speech or gesture) influence comprehension (via RT/error)
+ggplot(krep,aes(x=strength,y=rtime,col=modality))+geom_boxplot() +
+  guides(col=FALSE) +
+ggplot(krep %>% 
+         mutate(strength = fct_relevel(strength,"baseline","weak")),
+       aes(x=strength,y=correct,col=modality))+
+  stat_summary(geom="pointrange")+ 
+  stat_summary(geom="line",aes(group=modality))
+
+# not sure strength|prime actually manages to converge.
+
+mod2 <- lmer(log(rtime)~modality*strength+(1+modality+strength|subject_nr)+(1 + modality|prime), data=filter(krep,congruence=="incongruent"),control=lmerControl(optimizer = "bobyqa"))
+#summary(mod2)
+
+mod2a <- glmer(correct~modality*strength+(1+modality+strength|subject_nr)+(1 + modality|prime), data=filter(krep,congruence=="incongruent"),family=binomial,control=glmerControl(optimizer = "bobyqa"))
+#summary(mod2a)
+
+```
+
+
+# Option 2
+
+`r optbegin("Aggressive Behaviour Intervention", olabel=FALSE, toggle=params$TOGGLE)`
+
+In 2010 A US state's commissioner for education approved the trialing of an intervention in which Parent Management Training (PMT) group sessions were offered to the parents of a cohort of students entering 10 different high schools. The sessions took place every parents evening, which occurred at 6-monthly intervals. Every year, the parents were asked to fill out an informant-based version of the Aggressive Behaviour Scale (ABS), measuring verbal and physical abuse, socially inappropriate behavior, and resisting care. Where possible, the same parents were followed up throughout the child's progression through high school.  
+Alongside this, parents from the cohort of students entering 10 further high schools in the state were recruited to also complete the same informant-based ABS, but were not offered the PMT group sessions.  
+
+The data is available at https://uoepsy.github.io/data/abs_intervention.csv 
+
+```{r echo=FALSE}
+absint<-read_csv("https://uoepsy.github.io/data//abs_intervention.csv")
+
+tibble(
+  variable = names(absint),
+  description = c("Name of school","Participant number","Age of participant (in years) at observation","Informant-based Aggressive Behaviour Scale (ABS) score (range 0 to 100)","Whether or not the school was part of the intervention group")
+) %>% knitr::kable()
+```
+
+
+
+
+
+:::frame 
+> **Research questions**  
+> 1. How does the presentation of aggressive behaviours change with age? 
+> 
+> 2. Is there any evidence for the efficacy of Parent Management Training (PMT) group sessions in reducing levels of adolescent aggression?  
+
+Some things to think about:  
+
+- What is the outcome here? 
+
+- What are the explanatory variables? 
+    
+- How are observations clustered?
+    - Are they nested or crossed?
+
+:::
+
+
+`r optend()`
+

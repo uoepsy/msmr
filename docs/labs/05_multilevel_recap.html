@@ -16,7 +16,7 @@
 <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
 <script src="site_libs/jquery-3.5.1/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
@@ -50,12 +50,12 @@ function toggle_visibility(id1, id2) {
 var e = document.getElementById(id1);
 var f = document.getElementById(id2);
 e.style.display = ((e.style.display!='none') ? 'none' : 'block');
-if(f.classList.contains('fa-plus')) {
-    f.classList.add('fa-minus')
-    f.classList.remove('fa-plus')
+if(f.classList.contains('fa-chevron-circle-right')) {
+    f.classList.add('fa-chevron-circle-down')
+    f.classList.remove('fa-chevron-circle-right')
 } else {
-    f.classList.add('fa-plus')
-    f.classList.remove('fa-minus')
+    f.classList.add('fa-chevron-circle-right')
+    f.classList.remove('fa-chevron-circle-down')
 }
 }
 </script>
@@ -745,9 +745,9 @@ abline(h=0)</code></pre>
 This content is very cumulative, which means often going back to try to isolate the place which we need to focus efforts in learning.</p>
 </div>
 <div class="optional-begin">
-Simple Linear Regression<span id="opt-start-79" class="fa fa-plus optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-79&#39;, &#39;opt-start-79&#39;)"></span>
+<span id="opt-start-1" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-1&#39;, &#39;opt-start-1&#39;)"> Simple Linear Regression</span>
 </div>
-<div id="opt-body-79" class="optional-body" style="display: none;">
+<div id="opt-body-1" class="optional-body" style="display: none;">
 <div class="frame">
 <p><strong>Formula:</strong></p>
 <ul>
@@ -764,9 +764,9 @@ Simple Linear Regression<span id="opt-start-79" class="fa fa-plus optional-icon 
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-Clustered (multi-level) data<span id="opt-start-80" class="fa fa-plus optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-80&#39;, &#39;opt-start-80&#39;)"></span>
+<span id="opt-start-2" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-2&#39;, &#39;opt-start-2&#39;)"> Clustered (multi-level) data</span>
 </div>
-<div id="opt-body-80" class="optional-body" style="display: none;">
+<div id="opt-body-2" class="optional-body" style="display: none;">
 <p>When our data is clustered (or ‘grouped’) such that datapoints are no longer independent, but belong to some grouping such as that of multiple observations from the same subject, we have multiple sources of random variability. A simple regression does not capture this.</p>
 <p>If we separate out our data to show an individual plot for each subject, we can see how the fitted regression line from <code>lm()</code> is assumed to be the same for each subject.</p>
 <p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-19-1.png" width="80%" style="display: block; margin: auto;" /></p>
@@ -774,9 +774,9 @@ Clustered (multi-level) data<span id="opt-start-80" class="fa fa-plus optional-i
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-Random intercepts<span id="opt-start-81" class="fa fa-plus optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-81&#39;, &#39;opt-start-81&#39;)"></span>
+<span id="opt-start-3" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-3&#39;, &#39;opt-start-3&#39;)"> Random intercepts</span>
 </div>
-<div id="opt-body-81" class="optional-body" style="display: none;">
+<div id="opt-body-3" class="optional-body" style="display: none;">
 <p>By including a random-intercept term, we are letting our model estimate random variability around an average parameter (represented by the fixed effects) for the clusters.</p>
 <div class="frame">
 <p><strong>Formula:</strong><br />
@@ -802,9 +802,9 @@ Each subject’s line has been moved up or down accordingly.</p>
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-Shrinkage<span id="opt-start-82" class="fa fa-plus optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-82&#39;, &#39;opt-start-82&#39;)"></span>
+<span id="opt-start-4" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-4&#39;, &#39;opt-start-4&#39;)"> Shrinkage</span>
 </div>
-<div id="opt-body-82" class="optional-body" style="display: none;">
+<div id="opt-body-4" class="optional-body" style="display: none;">
 <p>If you think about it, we might have done a similar thing with the tools we already had at our disposal, by using <code>lm(y~x+subject)</code>.
 This would give us a coefficient for the difference between each subject and the reference level intercept, or we could extend this to <code>lm(y~x*subject)</code> to give us an adjustment to the slope for each subject.</p>
 <p>However, the estimate of these models will be slightly different:</p>
@@ -814,9 +814,9 @@ This would give us a coefficient for the difference between each subject and the
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-Random slopes<span id="opt-start-83" class="fa fa-plus optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-83&#39;, &#39;opt-start-83&#39;)"></span>
+<span id="opt-start-5" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-5&#39;, &#39;opt-start-5&#39;)"> Random slopes</span>
 </div>
-<div id="opt-body-83" class="optional-body" style="display: none;">
+<div id="opt-body-5" class="optional-body" style="display: none;">
 <div class="frame">
 <p><strong>Formula:</strong><br />
 Level 1:</p>
@@ -842,9 +842,9 @@ Level 1:</p>
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-Polynomials!<span id="opt-start-84" class="fa fa-plus optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-84&#39;, &#39;opt-start-84&#39;)"></span>
+<span id="opt-start-6" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-6&#39;, &#39;opt-start-6&#39;)"> Polynomials!</span>
 </div>
-<div id="opt-body-84" class="optional-body" style="display: none;">
+<div id="opt-body-6" class="optional-body" style="display: none;">
 <p>Sometimes, data have a clear non-linear pattern, such as a curvilinear trend. In such case, it is reasonable to try modelling the outcome <em>not</em> as a linear function of the variable, but as a curvilinear function of it.</p>
 <p>The following plots show data (as black dots) where the outcome <span class="math inline">\(y\)</span> has a nonlinear and decreasing dependence on <span class="math inline">\(x\)</span>. That is, as <span class="math inline">\(x\)</span> varies from 1 to 10, the outcome <span class="math inline">\(y\)</span> decreases in a non-linear fashion.
 Superimposed to the same data, you can see a linear fit (red line) and a cubic fit (blue).</p>
@@ -883,9 +883,9 @@ code_poly(df, predictor = &#39;time&#39;, poly.order = 3, draw.poly = FALSE)</co
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-Fixed effects<span id="opt-start-85" class="fa fa-plus optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-85&#39;, &#39;opt-start-85&#39;)"></span>
+<span id="opt-start-7" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-7&#39;, &#39;opt-start-7&#39;)"> Fixed effects</span>
 </div>
-<div id="opt-body-85" class="optional-body" style="display: none;">
+<div id="opt-body-7" class="optional-body" style="display: none;">
 <p>We can extract the <em>fixed effects</em> using the <code>fixef()</code> function:</p>
 <p>These are the overall intercept and slope.</p>
 <pre class="r"><code>fixef(random_slopes_model)</code></pre>
@@ -895,9 +895,9 @@ Fixed effects<span id="opt-start-85" class="fa fa-plus optional-icon clickable" 
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-Random effects<span id="opt-start-86" class="fa fa-plus optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-86&#39;, &#39;opt-start-86&#39;)"></span>
+<span id="opt-start-8" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-8&#39;, &#39;opt-start-8&#39;)"> Random effects</span>
 </div>
-<div id="opt-body-86" class="optional-body" style="display: none;">
+<div id="opt-body-8" class="optional-body" style="display: none;">
 <p>The plots below show the fitted values for each subject from each model that we have gone through in these expandable boxes (simple linear regression, random intercept, and random intercept &amp; slope):</p>
 <p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-28-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <p>In the random-intercept model (center panel), the differences from each of the subjects’ intercepts to the fixed intercept (thick green line) have mean 0 and standard deviation <span class="math inline">\(\sigma_0\)</span>. The standard deviation (and variance, which is <span class="math inline">\(\sigma_0^2\)</span>) is what we see in the random effects part of our model summary (or using the <code>VarCorr()</code> function).</p>
@@ -934,9 +934,9 @@ We can extract the deviations for each group from the fixed effect estimates usi
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-Group-level coefficients<span id="opt-start-87" class="fa fa-plus optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-87&#39;, &#39;opt-start-87&#39;)"></span>
+<span id="opt-start-9" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-9&#39;, &#39;opt-start-9&#39;)"> Group-level coefficients</span>
 </div>
-<div id="opt-body-87" class="optional-body" style="display: none;">
+<div id="opt-body-9" class="optional-body" style="display: none;">
 <p>We can also see the actual intercept and slope for each subject <span class="math inline">\(i\)</span> directly, using the <code>coef()</code> function.</p>
 <pre class="r"><code>coef(random_slopes_model)</code></pre>
 <pre><code>## $subject
@@ -995,18 +995,18 @@ Group-level coefficients<span id="opt-start-87" class="fa fa-plus optional-icon 
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-Plotting random effects<span id="opt-start-88" class="fa fa-plus optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-88&#39;, &#39;opt-start-88&#39;)"></span>
+<span id="opt-start-10" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-10&#39;, &#39;opt-start-10&#39;)"> Plotting random effects</span>
 </div>
-<div id="opt-body-88" class="optional-body" style="display: none;">
+<div id="opt-body-10" class="optional-body" style="display: none;">
 <p>The quick and easy way to plot your random effects is to use the <code>dotplot.ranef.mer()</code> function in <code>lme4</code>.</p>
 <pre class="r"><code>randoms &lt;- ranef(random_slopes_model, condVar=TRUE)
 dotplot.ranef.mer(randoms)</code></pre>
 <pre><code>## $subject</code></pre>
 <p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-33-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <div class="optional-begin">
-Completely optional - extracting them for plotting in ggplot<span id="opt-start-89" class="fa fa-plus optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-89&#39;, &#39;opt-start-89&#39;)"></span>
+<span id="opt-start-11" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-11&#39;, &#39;opt-start-11&#39;)"> Completely optional - extracting them for plotting in ggplot</span>
 </div>
-<div id="opt-body-89" class="optional-body" style="display: none;">
+<div id="opt-body-11" class="optional-body" style="display: none;">
 <p>Sometimes, however, we might want to have a bit more control over our plotting, we can extract the estimates and correlations for each subject:</p>
 <pre class="r"><code>#we can get the random effects:
 #(note that we use $subject because there might be other groupings, and the ranef() function will give us a list, with one element for each grouping variable)
@@ -1037,9 +1037,9 @@ ggplot(ranefs_plotting, aes(y=subject, x=estimate))+
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-Nested and Crossed structures<span id="opt-start-90" class="fa fa-plus optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-90&#39;, &#39;opt-start-90&#39;)"></span>
+<span id="opt-start-12" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-12&#39;, &#39;opt-start-12&#39;)"> Nested and Crossed structures</span>
 </div>
-<div id="opt-body-90" class="optional-body" style="display: none;">
+<div id="opt-body-12" class="optional-body" style="display: none;">
 <p>The same principle we have seen for one level of clustering can be extended to clustering at different levels (for instance, observations are clustered within subjects, which are in turn clustered within groups).</p>
 <p>Consider the example where we have observations for each student in every class within a number of schools:</p>
 <p><img src="images/structure_id.png" width="1200px" style="display: block; margin: auto;" /></p>
@@ -1086,13 +1086,13 @@ Question A1
 <p>Recall that the data represent longitudinal measurements on 42 students from two different schools, with id 2020 and 2040 (21 students from each school). The outcome of interest is mathematics achievement.
 The data were collected at the end of first grade and annually thereafter up to sixth grade, but not all students have six observations.
 The variable year has been mean-centred to have mean 0 so that results will have as baseline the average.</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-91" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-91&#39;, &#39;sol-start-91&#39;)"></span>
+<span id="sol-start-13" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-13&#39;, &#39;sol-start-13&#39;)"> Solution </span>
 </div>
-<div id="sol-body-91" class="solution-body" style="display: none;">
+<div id="sol-body-13" class="solution-body" style="display: none;">
 <pre class="r"><code>library(tidyverse)
 
 schools &lt;- read_csv(&#39;https://uoepsy.github.io/data/MathsAchievement.csv&#39;)
@@ -1119,13 +1119,13 @@ Question A2
 <div class="question-body">
 <p>Fit the appropriate model to answer the research question.</p>
 <p>Think carefully - what is the question concerning? Where should you include <code>schoolid</code>? as a grouping level, or as a fixed effect?</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-92" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-92&#39;, &#39;sol-start-92&#39;)"></span>
+<span id="sol-start-14" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-14&#39;, &#39;sol-start-14&#39;)"> Solution </span>
 </div>
-<div id="sol-body-92" class="solution-body" style="display: none;">
+<div id="sol-body-14" class="solution-body" style="display: none;">
 <pre class="r"><code>modschools &lt;- lmer(math ~ 1 + year + schoolid + (1 + year | childid), data = data)
 summary(modschools)</code></pre>
 <pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
@@ -1175,13 +1175,13 @@ Question A3
 </li>
 <li>how do you compute the intercept and slope for the line of child 273030991 using the output from (1) and (2)? Does it agree with (3)?</li>
 </ol>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-93" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-93&#39;, &#39;sol-start-93&#39;)"></span>
+<span id="sol-start-15" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-15&#39;, &#39;sol-start-15&#39;)"> Solution </span>
 </div>
-<div id="sol-body-93" class="solution-body" style="display: none;">
+<div id="sol-body-15" class="solution-body" style="display: none;">
 <pre class="r"><code>fixef(modschools)</code></pre>
 <pre><code>##  (Intercept)         year schoolid2040 
 ##   -0.2107673    0.9497207   -0.3630573</code></pre>
@@ -1295,9 +1295,9 @@ Solution <span id="sol-start-93" class="fa fa-plus solution-icon clickable" oncl
 <div id="the-data" class="section level2">
 <h2>The data</h2>
 <div class="optional-begin">
-Data codebook<span id="opt-start-94" class="fa fa-plus optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-94&#39;, &#39;opt-start-94&#39;)"></span>
+<span id="opt-start-16" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-16&#39;, &#39;opt-start-16&#39;)"> Data codebook</span>
 </div>
-<div id="opt-body-94" class="optional-body" style="display: none;">
+<div id="opt-body-16" class="optional-body" style="display: none;">
 <p>44 participants across 4 groups (between-subjects) were tested 5 times (waves) in 11 domains.
 In each wave, participants received a score (on a 20-point scale) for each domain and a set of questions which were they answered either correctly or incorrectly.</p>
 <pre class="r"><code>load(url(&quot;https://uoepsy.github.io/data/msmr_lab5.RData&quot;))
@@ -1335,13 +1335,13 @@ Question B1
 </div>
 <div class="question-body">
 <p>Make a plot that corresponds to the reseach question. Does it look like there’s a difference?</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-95" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-95&#39;, &#39;sol-start-95&#39;)"></span>
+<span id="sol-start-17" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-17&#39;, &#39;sol-start-17&#39;)"> Solution </span>
 </div>
-<div id="sol-body-95" class="solution-body" style="display: none;">
+<div id="sol-body-17" class="solution-body" style="display: none;">
 <p>Lots of options for this one, here is one that shows Group and Domain differences:</p>
 <pre class="r"><code>ggplot(dat5, aes(Domain, Score, color=Group)) +
   stat_summary(fun.data=mean_se, geom=&quot;pointrange&quot;) +
@@ -1362,13 +1362,13 @@ Question B2
 <li>What should the random effect(s) be? We have observations clustered by subjects and by domains - are they nested?</li>
 </ul>
 <p><em>Tip:</em> For now, forget about the longitudinal aspect to the data.</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-96" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-96&#39;, &#39;sol-start-96&#39;)"></span>
+<span id="sol-start-18" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-18&#39;, &#39;sol-start-18&#39;)"> Solution </span>
 </div>
-<div id="sol-body-96" class="solution-body" style="display: none;">
+<div id="sol-body-18" class="solution-body" style="display: none;">
 <p>We’re interested in the amount to which Groups vary in their overall performance, so we want a fixed effect of Group. Subjects and Domains are not nested - each subject sees different domains, and each domain is seen by multiple subjects.</p>
 <pre class="r"><code># maximal model doesn&#39;t converge, removed random Group slopes for Domain
 mod_grp &lt;- lmer(Score ~ Group + 
@@ -1425,13 +1425,13 @@ Question B3
 </div>
 <div class="question-body">
 <p>Make a plot that corresponds to the research question. Does it look like there was a change? A group difference?</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-97" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-97&#39;, &#39;sol-start-97&#39;)"></span>
+<span id="sol-start-19" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-19&#39;, &#39;sol-start-19&#39;)"> Solution </span>
 </div>
-<div id="sol-body-97" class="solution-body" style="display: none;">
+<div id="sol-body-19" class="solution-body" style="display: none;">
 <pre class="r"><code>ggplot(dat5, aes(Wave, Score, color=Group, fill=Group)) +
   stat_summary(fun.data=mean_se, geom=&quot;ribbon&quot;, alpha=0.3, color=NA) +
   stat_summary(fun.y=mean, geom=&quot;line&quot;)</code></pre>
@@ -1447,13 +1447,13 @@ Question B4
 <p>Use mixed-effects model(s) to test this.<br />
 <br>
 <em>Hint:</em> Fit a baseline model in which scores change over time (wave), then assess improvement in model fit due to inclusion of overall group effect and finally the interaction of group with time.</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-98" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-98&#39;, &#39;sol-start-98&#39;)"></span>
+<span id="sol-start-20" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-20&#39;, &#39;sol-start-20&#39;)"> Solution </span>
 </div>
-<div id="sol-body-98" class="solution-body" style="display: none;">
+<div id="sol-body-20" class="solution-body" style="display: none;">
 <pre class="r"><code>mod_wv &lt;- lmer(Score ~ Wave + 
                    (1 + Wave | Anonymous_Subject_ID) + 
                    (1 + Wave | Domain), 
@@ -1540,13 +1540,13 @@ Question B5
 <p>Plot the group-level data (see Question B3) and model fitted values for each group from your final model from Question B4.<br />
 <br>
 <em>Hint:</em> using <code>broom.mixed::augment(model)</code> as your starting point will help.</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-99" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-99&#39;, &#39;sol-start-99&#39;)"></span>
+<span id="sol-start-21" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-21&#39;, &#39;sol-start-21&#39;)"> Solution </span>
 </div>
-<div id="sol-body-99" class="solution-body" style="display: none;">
+<div id="sol-body-21" class="solution-body" style="display: none;">
 <pre class="r"><code>broom.mixed::augment(mod_wv_x_grp) %&gt;%
   ggplot(., aes(Wave, Score, color=Group)) +
   stat_summary(fun.data=mean_se, geom=&quot;pointrange&quot;) +
@@ -1563,13 +1563,13 @@ Question B6
 <p>Create individual subject plots for the data and the model’s fitted values. Will these show straight lines?<br />
 <br>
 <em>Hint:</em> make use of <code>facet_wrap()</code> to create a different panel for each level of a grouping variable.</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-100" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-100&#39;, &#39;sol-start-100&#39;)"></span>
+<span id="sol-start-22" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-22&#39;, &#39;sol-start-22&#39;)"> Solution </span>
 </div>
-<div id="sol-body-100" class="solution-body" style="display: none;">
+<div id="sol-body-22" class="solution-body" style="display: none;">
 <pre class="r"><code>broom.mixed::augment(mod_wv_x_grp) %&gt;%
   ggplot(., aes(Wave, Score, color=Group)) +
   facet_wrap(~ Anonymous_Subject_ID) +
@@ -1587,13 +1587,13 @@ Question B7
 <p>Make a plot of the actual (linear) model prediction.<br />
 <br>
 <em>Hint:</em> Use the <code>effect()</code> function from the <code>effects</code> package.</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-101" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-101&#39;, &#39;sol-start-101&#39;)"></span>
+<span id="sol-start-23" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-23&#39;, &#39;sol-start-23&#39;)"> Solution </span>
 </div>
-<div id="sol-body-101" class="solution-body" style="display: none;">
+<div id="sol-body-23" class="solution-body" style="display: none;">
 <pre class="r"><code>library(effects)
 ef &lt;- as.data.frame(effect(&quot;Wave:Group&quot;, mod_wv_x_grp))
 ggplot(ef, aes(Wave, fit, color=Group, fill=Group)) +
@@ -1610,13 +1610,13 @@ Question B8
 <p>What important things are different between the plot from question B7 and that from question B5?<br />
 You can see the plots we created for these questions below:</p>
 <p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-52-1.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-102" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-102&#39;, &#39;sol-start-102&#39;)"></span>
+<span id="sol-start-24" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-24&#39;, &#39;sol-start-24&#39;)"> Solution </span>
 </div>
-<div id="sol-body-102" class="solution-body" style="display: none;">
+<div id="sol-body-24" class="solution-body" style="display: none;">
 <p><em>Group B was not actually getting worse. The appearance that it was getting worse is an artifact of selective drop-out: there’s only a few people in this group and the better-performing ones only did the first few waves so they are not represented in the later waves, but the worse-performing ones are contributing to the later waves. The model estimates how the better-performing ones would have done in later waves based on their early-wave performance and the pattern of performance of other participants in the study.</em></p>
 <pre class="r"><code>summary(mod_wv_x_grp)$coefficients</code></pre>
 <pre><code>##                Estimate Std. Error       df    t value     Pr(&gt;|t|)
@@ -1639,13 +1639,13 @@ Question B9
 <div class="question-body">
 <p>Create a plot of the subject and domain random effects.
 Notice the pattern between the random intercept and random slope estimates for the 11 domains - what in our model is this pattern representing?</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-103" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-103&#39;, &#39;sol-start-103&#39;)"></span>
+<span id="sol-start-25" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-25&#39;, &#39;sol-start-25&#39;)"> Solution </span>
 </div>
-<div id="sol-body-103" class="solution-body" style="display: none;">
+<div id="sol-body-25" class="solution-body" style="display: none;">
 <pre class="r"><code>randoms &lt;- ranef(mod_wv_x_grp, condVar=TRUE)
 dotplot.ranef.mer(randoms)</code></pre>
 <pre><code>## $Anonymous_Subject_ID</code></pre>

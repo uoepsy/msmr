@@ -1,25 +1,250 @@
-```{r, echo=FALSE}
-HIDDEN_SOLS=FALSE
-```
+---
+title: "SEM"
+bibliography: references.bib
+biblio-style: apalike
+link-citations: yes
+params:
+    SHOW_SOLS: TRUE
+    TOGGLE: TRUE
+---
 
-# SEM I
-
-### Packages {-}  
-
-```{r message=FALSE}
+```{r setup, include=FALSE}
+source('assets/setup.R')
+library(tidyverse)
 library(lavaan)
 library(semPlot)
+# knitr::opts_chunk$set(cache = TRUE)
+
+theme_set(theme_light(base_size = 12) +
+            theme(
+              panel.grid = element_blank()
+            ))
 ```
 
-### Lecture Slides {-}  
 
-+ The lecture slides can be accessed [here](https://uoe-psychology.github.io/uoe_psystats/multivar/lectures/week10_sem1.pdf).   
+# Why the need for SEM?
+
+We've been mentioning Structural Equation Modelling (SEM) for a few weeks now, but we haven't been very clear on what exactly it is. Is it CFA? Is it Path Analysis? In fact it is both - it is the overarching framework of which CFA and Path Analysis are just parts. 
+
+The beauty comes in when we put these two approaches together.  
+Path analysis, as we saw last week, offers a way of specifying and evaluating a *structural* model, in which variables relate to one another in various ways, via different (sometimes indirect) paths. Common models like our old friend multiple regression can be expressed in a Path Analysis framework.  
+Factor Analysis, on the other hand, brings something absolutely crucial to the table - it allows us to mitigate some of the problems which are associated with measurement error by specifying the existence of some latent variable. 
+
+Combine them and we can reap the rewards of having both a *structural model* and a *measurement model*. The measurement model is our specification between the items we directly observed, and the latent variables of which we consider these items to be manifestations. The structural model is our specified model of the relationships between the latent variables.  
+
+# Measurement Error
+
+You will often find research that foregoes the measurement model by taking a scale score (i.e., the sum or mean of a set of likert-type questions). 
+This is what we did in the example in last week's exercises, e.g.:  
+
+<div style="border-left: 4px solid #a41ae4;font-size: 1em;">
+  
+- Intention to vaccinate (scored on a range of 0-100.
+- Health Locus of Control (HLC) score (**average score on a set of items** relating to perceived control over ones own health).
+- Religiosity (**average score on a set of items** relating to an individual's religiosity). 
+  
+```{r echo=FALSE}
+knitr::include_graphics("images/path/path2.png")
+```
+</div>
 
 
-## Overview {-}
-<div class="noteBox">
+In doing so, we make the assumption that these variables provide measurements of the underlying latent construct *without error*. Furthermore, when taking the *average* score, we also make the assumption that each item is equally representative of our construct. 
 
-Last week we tried our hand at path analysis, which is used to test a set of relations between observed variables. This week's lab is focused on full structural equation modelling, which involves testing sets of relations between observed **AND** latent variables. In this week's example, a researcher wants to apply the theory of planned behaviour to understand engagement in physical activity. The theory of planned behaviour is summarised in Figure \@ref(fig:tpb) (only the latent variables and not the items are shown). Attitudes refer to the extent to which a person had a favourable view of exercising; subjective norms refer to whether they believe others whose opinions they care about believe exercise to be a good thing; and perceived behavioural control refers to the extent to which they believe exercising is under their control. Intentions refer to whether a person intends to exercise and 'behaviour' is a measure of the extent to which they exercised.  Each construct is measured using four items. 
+One option would be to conduct a factor analysis, extract the factor scores, and then conduct a path analysis with those scores. This avoids the problem of equally weighting of items to construct, but does not solve our issue of the fact that these variables are *imperfect* measures  of the latent construct. 
+
+## Scale Scores
+
+If you think about it, taking the mean of a set of items still has the sense of being a 'factor structure' in that we think of the items as being , but it constrains all our item variances to be equal, and all our factor loadings to be equal. So it doesn't really have the benefits of a factor model. 
+
+Let's demonstrate this, using a dataset from the CFA week exercises. 
+It doesn't matter what it is for this example, so I'm just going to keep the first 4 items (it will save me typing out all the others!)  
+```{r}
+df <- read_csv("https://uoepsy.github.io/data/conduct_problems_2.csv")[,1:4]
+head(df)
+```
+Now suppose that we are just going to take the mean of each persons score on the items, and use that as our measure of "conduct problems".  
+We can achieve this easily with `rowMeans()`
+```{r}
+# column bind the data with a column of the row means. 
+# only print the head of the data for now
+cbind(df, mean = rowMeans(df)) %>% head
+```
+Expressed as a factor model, what we are specifying is the below. Notice how we make it so that certain paths are identical by using a label i (for all factor loadings) and j (for all item variances). 
+```{r}
+mean_model <- '
+    CP =~ i*item1 + i*item2 + i*item3 + i*item4
+    item1 ~~ j*item1
+    item2 ~~ j*item2
+    item3 ~~ j*item3
+    item4 ~~ j*item4
+'
+fitmean <- sem(mean_model, data = df)
+```
+We can obtain our factor scores using `predict()`. Let's put them side-by-side with our `rowMeans()`, and we need to standardise them to get them in the same units:
+```{r}
+factor_scores = scale(predict(fitmean))
+rowmeans = scale(rowMeans(df))
+cbind(factor_scores, rowmeans) %>% head
+```
+## Reliability
+
+The accuracy and inconsistency with which an observed variable reflects the underlying construct that we consider it to be measuring is termed the *reliability*.  
+
+:::frame
+**A silly example** 
+
+Suppose I'm trying to weigh [my dog](https://photos.app.goo.gl/f26FrRDyJxTvXvGS9). I have a set of scales, and I put him on the scales. He weighs in at 13.53kg. 
+I immediately do it again, and the scales this time say 13.41kg. I do it again. 13.51kg, and again, 13.60kg. 
+What is happening? Is Dougal's weight (Dougal is the dog, by the way) randomly fluctuating by 100g? Or are my scales just a bit inconsistent, and my observations contain measurement error?  
+
+```{r echo=FALSE}
+tibble(
+    measurement =1:4,
+    dougal = c(13.53,13.41,13.51,13.6)
+) %>% 
+    ggplot(.,aes(x=measurement,y=dougal))+
+    geom_point()+
+    geom_hline(yintercept=13.483,lty="dashed")+
+    geom_text(x=3,y=13.484,label="Dougal's true weight (unknown to us)",
+              vjust=-.5)+
+    labs(y="Dougal's Weight")
+```
+
+I take him to the vets, where they have a much better set of weighing scales, and I do the same thing (measure him 4 times). The weights are 13.47, 13.49, 13.48, 13.48.  
+The scales at the vets are clearly *more __reliable__*. We still don't know Dougal's *true* weight, but we are better informed to estimate it if we go on the measurements from the scales at the vet.^[Of course this all assuming that the scales aren't completely miscalibrated] 
+
+```{r echo=FALSE}
+tibble(
+    scales = rep(c("mine","vets"),each=4),
+    measurement = c(1:4,1:4),
+    dougal = c(13.53,13.41,13.51,13.6, 13.47, 13.49, 13.48, 13.48)
+) %>% 
+    ggplot(.,aes(x=measurement,y=dougal, col=scales))+
+    geom_point()+
+    geom_path()+
+    geom_hline(yintercept=13.483,lty="dashed")+
+    geom_text(inherit.aes=F, x=3,y=13.484,label="Dougal's true weight (unknown to us)",vjust=-.5)+
+    labs(y="Dougal's Weight")
+```
+:::
+
+Another way to think about reliability is to take the view that $\text{observations = truth + error}$.  
+More error = less reliable.  
+
+There are different types of reliability:  
+
+- **test re-test reliability:** correlation between values over repeated measurements. 
+- **alternate-form reliability:** correlation between scores on different forms/versions of a test (we might want different versions to avoid practice effects). 
+- **Inter-rater reliability:** correlation between values obtained from different raters. 
+
+The form of reliability we are going to be most concerned with here is known as **Internal Consistency**. This is the extent to which items within a scale are correlated with one another. There are two main measures of this:
+
+:::yellow
+**alpha and omega**
+
+$$
+\begin{align}
+& \text{Cronbach's }\alpha = \frac{n \cdot \overline{cov(ij)}}{\overline{\sigma^2_i} + (n-1) \cdot \overline{cov(ij)}} & \\
+& \text{Where:}  \\
+& n = \text{number of items} \\
+& \overline{cov(ij)} = \text{average covariance between item-pairs}  \\
+& \overline{\sigma^2_i} = \text{average item variance}  \\
+\end{align}
+$$
+Ranges from 0 to 1 (higher is better).  
+You can get this using the `alpha()` function from the **psych** package. 
+
+
+**McDonald's Omega $\omega$** is substantially more complicated, but avoids the limitation that Cronbach's alpha which assumes that all items are equally related to the construct. You can get it using the `omega()` function from the **psych** package. If you want more info about it then the help docs (`?omega()`) are a good place to start. 
+
+:::
+
+:::frame
+You can't test the structural model if the measurement model is bad
+
+if you test the relationships between a set of latent factors, and they are not reliably measured by the observed items, then this error propagates up to influence the fit of the model.  
+To test the measurement model, it is typical to *saturate* the structural model (i.e., allow all the latent variables to correlate with one another). This way any misfit is due to the measurement model.  
+
+:::
+
+# Fit indices
+
+After spending much of our time in the regression framework, the move to SEM can feel mind-boggling. 
+Give two researchers the same whiteboard on which your variables are drawn, and they may connect them in completely different ways. This flexibility can at first make SEM feel like a free-for-all (i.e., just do whatever you like, get a p-value out of it, and off we go!). However, to some people this is one of the main benefits: it forces you to be explicit in specifying your theory, and allows you to test your theory and examine how well it fits with the data you observed.  
+  
+We have actually already go to grips with the starting point of how structural equation models work in the previous weeks. We begin with an **observed covariance matrix**, we fit our theoretical model to the data, and our estimation method (e.g. maximum likelihood) provides us with the set of parameter estimates for our model which best reproduce the observed covariance matrix. Of course, they will not *perfectly* reproduce the covariance matrix, but our parameter estimates will give us a **model implied covariance matrix**. We can compare this to the observed covariance matrix in order to assess the fit of our theoretical model.  
+
+## Global fit
+
+:::frame
+**$\chi^2$**  
+
+For structural equation models, a chi-square value can be obtained which reflects the discrepancy between the model-implied covariance matrix and the observed covariance matrix. We can then calculate a p-value for this chi-square statistic by using the chi-square distribution with the degrees of freedom equivalent to that of the model. 
+
+If we denote the population covariance matrix as $\Sigma$ and the model-implied covariance matrix as $\Sigma(\Theta)$, then we can think of the null hypothesis here as $H_0: \Sigma - \Sigma(\Theta) = 0$. In this way our null hypothesis is that our theoretical model is correct (and can therefore perfectly reproduce the covariance matrix).  
+
+It is very sensitive to departures from normality, as well as small sample sizes, and can often lead to rejecting otherwise adequate models.  
+:::
+
+### Parsimonious fit
+
+:::frame
+**RMSEA**  
+
+Based on the $\chi^2/df$ ratio, this measure of fit is intended to take into account for the fact the model might hold *approximately* (rather than exactly) in the population. 
+
+Typical cut-offs:  
+$<0.05$ : Close fit   
+$>0.1$ : Poor fit  
+
+:::
+
+:::frame
+**AIC**, **BIC** and **SSBIC**
+
+We have already been introduced to AIC and BIC in the regression world, but we now add to that the *sample size adjusted BIC* (SSBIC). These indices are only meaningful when making comparisons, meaning that two different models must be estimated. Lower values indicate better fit. comparing mode
+The AIC is a comparative measure of fit and so it is meaningful only when two different models are estimated.  Lower values indicate a better fit and so the model with the lowest AIC is the best fitting model.  There are somewhat different formulas given for the AIC in the literature, but those differences are not really meaningful as it is the difference in AIC that really matters:
+
+:::
+
+### Absolute fit
+
+:::frame
+**SRMR**  
+
+Standardised root mean square residual (SRMR) summarises the average covariance residuals (discrepancies between observed and model-implied covariance matrices). Smaller SRMR equates to better fit. 
+
+Typical cut-off:  
+$<0.08$ : Good fit   
+
+:::
+
+### Incremental fit
+
+:::frame
+**TLI** and **CFI**
+
+These fit indices compare the fit of the model to the that of a baseline model. In most cases, this is the *null model*, in which there are no relationships between latent variables (i.e., covariances among latent variables are all assumed to be zero). TLI is somewhat sensitive to the average size of correlations in the data. 
+
+Common cut-offs:
+TLI  
+$<0.9$ : Poor fit  
+$1$ : Very good fit  
+$>1$ : Possible overfitting  
+
+CFI  
+$\sim 1$ : Good fit  
+
+:::
+
+## Local fit
+
+In addition to the overall fit of our model, we can look at specific parameters, the inclusion of which may improve model fit. These are known as **modification indices**, and you can get them from passing a SEM object to `modindices()` or `modificationindices()`. They provide the estimated value for each additional parameter, and the improvement in the $\chi^2$ value that would be obtained with its addition to the model. Note that it will be tempting to look at modification indices and start adding to your model to improve fit, but this should be strongly guided by whether the additional paths make theoretical sense. Additionally, once a path is added, and modification indices are computed on the new model, you may find some completely different paths are suggested as possibly modification indices! 
+    
+# Exercises
+
+A researcher wants to apply the theory of planned behaviour to understand engagement in physical activity. The theory of planned behaviour is summarised in Figure \@ref(fig:tpb) (only the latent variables and not the items are shown). Attitudes refer to the extent to which a person had a favourable view of exercising; subjective norms refer to whether they believe others whose opinions they care about believe exercise to be a good thing; and perceived behavioural control refers to the extent to which they believe exercising is under their control. Intentions refer to whether a person intends to exercise and 'behaviour' is a measure of the extent to which they exercised. Each construct is measured using four items. 
 
 ```{r tpb, echo=FALSE, fig.cap="Theory of planned behaviour (latent variables only)"}
 knitr::include_graphics("images/TPB example.png")
@@ -27,46 +252,45 @@ knitr::include_graphics("images/TPB example.png")
 
 The data is available either:  
 
-+ as a .RData file here: [https://edin.ac/39Uvn7R](https://edin.ac/39Uvn7R)  
-+ as a .txt file here: [https://edin.ac/3d2svI9](https://edin.ac/3d2svI9)   
-  
++ as a .RData file: https://uoepsy.github.io/data/TPB_data.Rdata
++ as a .txt file: https://uoepsy.github.io/data/TPB_data.txt 
 
-</div>
 
-## Exercises {-}
+`r qbegin("A1")`
+Did you do the final exercise (writing up your results) from last week? Our example write-up is now visible (see [last week](https://uoepsy.github.io/msmr/labs/09_path.html#A_more_complex_model)) against which you can compare yours.
 
-`r msmbstyle::question_begin(header="&#x25BA; Last week's write-up")`
-Did you do the final exercise (writing up your results) from last week's lab?   
-Our example write-up is now visible (see [last week's lab](#path-analysis)) against which you can compare yours.   
+__Please note:__ Writing-up is an important skill, and attempting these questions yourself (rather than simply reading through the example write-ups) will help _a lot_ when it comes to writing your assessment.
 
-<!-- __Please note:__ Writing-up is an important skill, and attempting these questions yourself (rather than simply reading through the example write-ups) will help _a lot_ when it comes to writing your assessment.   -->
-`r msmbstyle::question_end()` 
----
-`r msmbstyle::question_begin(header="&#x25BA; Question 1")`
-Read in the data using the appropriate function. Can you sucessfully read in from both types of data?  
-`r msmbstyle::question_end()` 
-`r msmbstyle::solution_begin(hidden=HIDDEN_SOLS)`
+`r qend()` 
+
+`r qbegin("A2")`
+Read in the data using the appropriate function. We've given you **.csv** files for a long time now, but it's good to be prepared to encounter all sorts of weird filetypes. 
+
+Can you successfully read in from both types of data?  
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 Either one or the other of:
 ```{r read in data}
-load(url("https://edin.ac/39Uvn7R"))
+load(url("https://uoepsy.github.io/data/TPB_data.Rdata"))
 
-TPB_data <- read.table("https://edin.ac/3d2svI9", header = TRUE, sep = "\t")
+TPB_data <- read.table("https://uoepsy.github.io/data/TPB_data.txt", header = TRUE, sep = "\t")
 ```
-`r msmbstyle::solution_end()`
----
-`r msmbstyle::question_begin(header="&#x25BA; Question 2")`
-Test a one-factor model for each construct. Are the measurement models satisfactory?
-`r msmbstyle::question_end()` 
-`r msmbstyle::solution_begin(hidden=HIDDEN_SOLS)`
+`r solend()`
+
+`r qbegin("A3")`
+Test separate one-factor models for each construct.  
+Are the measurement models satisfactory? *(check their fit measures)*. 
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 ```{r fit CFA models}
-#specify one factor CFA model for attitudes
-attitude_model<-'att=~attitude1+attitude2+attitude3+attitude4'
-#estimate the model
-attitude_model.est<-cfa(attitude_model, data=TPB_data)
-#inspect the output
+# specify one factor CFA model for attitudes
+attitude_model <- 'att =~ attitude1 + attitude2 + attitude3 + attitude4'
+# estimate the model
+attitude_model.est <- cfa(attitude_model, data=TPB_data)
+# inspect the output
 summary(attitude_model.est, fit.measures=T, standardized=T)
 #check the model fit and that RMSEA<.05, SRMR<.05, TLI>0.95 and CFI>.95 and that all loadings are significant and >|.30|
-modindices(attitude_model.est)
+modificationindices(attitude_model.est)
 #check the largest modification indices to see if the expected parameter changes are large enough to justify any additional parameters in the  model
 ```
 
@@ -78,44 +302,45 @@ The above code shows you the steps you should run through for the attitudes cons
 + intentions  
 + behaviour  
 
-`r msmbstyle::solution_end()`
----
-`r msmbstyle::question_begin(header="&#x25BA; Question 3a")`
-Using lavaan syntax, specify a structural equation model that corresponds to the model in Figure \@ref(fig:tpb); however, for each construct use a latent variable measured by the corresponding items in the dataset
-`r msmbstyle::question_end()` 
-`r msmbstyle::solution_begin(hidden=HIDDEN_SOLS)`
+`r solend()`
+
+`r qbegin("A4")`
+Using lavaan syntax, specify a structural equation model that corresponds to the model in Figure \@ref(fig:tpb). For each construct use a latent variable measured by the corresponding items in the dataset. 
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 ```{r specify TPB model}
 TPB_model<-'
 #measurement models for attitudes, subjective norms and perceived behavioural control
   
-  att=~attitude1+attitude2+attitude3+attitude4
-  SN=~SN1+SN2+SN3+SN4
-  PBC=~PBC1+PBC2+PBC3+PBC4
-  intent=~int1+int2+int3+int4
-  beh=~beh1+beh2+beh3+beh4
+  att =~ attitude1 + attitude2 + attitude3 + attitude4
+  SN =~ SN1 + SN2 + SN3 + SN4
+  PBC =~ PBC1 + PBC2 + PBC3 + PBC4
+  intent =~ int1 + int2 + int3 + int4
+  beh =~ beh1 + beh2 + beh3 + beh4
 
 #regressions  
 
-  beh~intent+PBC
-  intent~att+SN+PBC
+  beh ~ intent + PBC
+  intent ~ att + SN + PBC
 
 #covariances between attitudes, subjective norms and perceived behavioural control
   
-  att~~SN    
-  att~~PBC
-  SN~~PBC'
+  att ~~ SN    
+  att ~~ PBC
+  SN ~~ PBC
+'
 
 ```
-`r msmbstyle::solution_end()`
----
-`r msmbstyle::question_begin(header="&#x25BA; Question 3b")`
-Estimate the model from Q2a and evaluate the model  
+`r solend()`
+
+`r qbegin("A5")`
+Estimate the model from Question A4 and evaluate the model  
 
 + Does the model fit well?  
 + Are the hypothesised paths significant?  
 
-`r msmbstyle::question_end()` 
-`r msmbstyle::solution_begin(hidden=HIDDEN_SOLS)`
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 
 We can estimate the model using the `sem()` function.  
 By default the `sem()` function will scale the latent variables by fixing the loading of the first item for each latent variable to 1 but we can override this by setting `std.lv=T` if we wanted to. By default, maximum likelihood estimation will be used.
@@ -127,53 +352,51 @@ summary(TPB_model.est, fit.measures=T, standardized=T)
 ```
 
 We can see that the model fits well according to RMSEA, SRMR, TLI and CFI. All of the hypothesised paths in the theory of planned behaviour are statistically significant.
-`r msmbstyle::solution_end()`
----
-`r msmbstyle::question_begin(header="&#x25BA; Question 3c")`
+`r solend()`
+
+`r qbegin("A6")`
 Examine the modification indices and expected parameter changes - are there any additional parameters you would consider including?  
-`r msmbstyle::question_end()` 
-`r msmbstyle::solution_begin(hidden=HIDDEN_SOLS)`
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 
 ```{r modindices}
 modindices(TPB_model.est)
 ```
 
 In this case, none of the expected parameter changes are large enough that we would consider including any additional parameters
-`r msmbstyle::solution_end()`
----
-`r msmbstyle::question_begin(header="&#x25BA; Question 3d")`
+`r solend()`
+
+`r qbegin("A7")`
 Test the indirect effect of attitudes, subjective norms, and perceived behavioural control on behaviour via intentions.  
 
-When you fit the model with `sem()`, use `se='bootstrap'` to get boostrapped standard errors (it may take a few minutes).  
-When you inspect the model using `summary()`, get the 95% confidence intervals for parameters with `ci = TRUE`. 
-`r msmbstyle::question_end()` 
-`r msmbstyle::solution_begin(hidden=HIDDEN_SOLS)`
+Remember, when you fit the model with `sem()`, use `se='bootstrap'` to get boostrapped standard errors (it may take a few minutes). When you inspect the model using `summary()`, get the 95% confidence intervals for parameters with `ci = TRUE`. 
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 To test these indirect effects we create new a parameter for each indirect effect:
 
 ```{r indirect effects}
 TPB_model2<-'
 #measurement models for attitudes, subjective norms and perceived behavioural control
   
-  att=~attitude1+attitude2+attitude3+attitude4
-  SN=~SN1+SN2+SN3+SN4
-  PBC=~PBC1+PBC2+PBC3+PBC4
-  intent=~int1+int2+int3+int4
-  beh=~beh1+beh2+beh3+beh4
+  att =~ attitude1 + attitude2 + attitude3 + attitude4
+  SN =~ SN1 + SN2 + SN3 + SN4
+  PBC =~ PBC1 + PBC2 + PBC3 + PBC4
+  intent =~ int1 + int2 + int3 + int4
+  beh =~ beh1 + beh2 + beh3 + beh4
 
 #regressions  
 
-  beh~b*intent+PBC
-  intent~a1*att+a2*SN+a3*PBC
+  beh ~ b*intent + PBC
+  intent ~ a1*att + a2*SN + a3*PBC
 
 ##covariances between attitudes, subjective norms and perceived behavioural control
-  att~~SN    
-  att~~PBC
-  SN~~PBC
+  att ~~ SN    
+  att ~~ PBC
+  SN ~~ PBC
 
-
-ind1:=a1*b  #indirect effect of attitudes via intentions
-ind2:=a2*b  #indirect effect of subjective norms via intentions
-ind3:=a3*b  #indirect effect of perceived behavioural control via intentions
+ind1:= a1*b  #indirect effect of attitudes via intentions
+ind2:= a2*b  #indirect effect of subjective norms via intentions
+ind3:= a3*b  #indirect effect of perceived behavioural control via intentions
 '
 
 ```
@@ -192,13 +415,15 @@ summary(TPB_model2.est, fit.measures=T, standardized=T, ci=T)
 ```
 
 We can see that all of the indirect effects are statistically significant at p<.05 as none of the 95% confidence intervals for the coefficients include zero.
-`r msmbstyle::solution_end()`
----
-`r msmbstyle::question_begin(header="&#x25BA; Question 4")`
+`r solend()`
+
+`r qbegin("A8")`
 Write up your analysis as if you were presenting the work in academic paper, with brief separate 'Method' and 'Results' sections
-`r msmbstyle::question_end()` 
-`r msmbstyle::solution_begin(hidden=HIDDEN_SOLS)`
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 An example write up would be as follows:
+
+:::int
 
 **Method**
 
@@ -215,4 +440,12 @@ All measurement models fit well ($CFI$ and $TLI >.95$ and $RMSEA$ and $SRMR <.05
 ```{r tabsem, echo=FALSE, fig.cap='Unstandardised parameter estimates for structural equation model for a theory of planned behaviour model of physical activity.'}
 knitr::include_graphics("images/lab4 table.png")
 ```
-`r msmbstyle::solution_end()`
+
+:::
+
+`r solend()`
+
+
+<!-- Formatting -->
+
+<div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
