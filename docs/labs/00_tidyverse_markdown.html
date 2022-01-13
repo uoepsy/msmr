@@ -16,7 +16,7 @@
 <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
@@ -42,12 +42,12 @@ function toggle_visibility(id1, id2) {
 var e = document.getElementById(id1);
 var f = document.getElementById(id2);
 e.style.display = ((e.style.display!='none') ? 'none' : 'block');
-if(f.classList.contains('fa-plus')) {
-    f.classList.add('fa-minus')
-    f.classList.remove('fa-plus')
+if(f.classList.contains('fa-chevron-circle-right')) {
+    f.classList.add('fa-chevron-circle-down')
+    f.classList.remove('fa-chevron-circle-right')
 } else {
-    f.classList.add('fa-plus')
-    f.classList.remove('fa-minus')
+    f.classList.add('fa-chevron-circle-right')
+    f.classList.remove('fa-chevron-circle-down')
 }
 }
 </script>
@@ -350,21 +350,11 @@ div.tocify {
     <li>
       <a href="01_intromlm.html">1: Intro to Multi-Level Modelling</a>
     </li>
-    <li>
-      <a href="02_lmm_log.html">2: Logistic | Longitudinal (linear)</a>
-    </li>
-    <li>
-      <a href="03_nonlin.html">3: Longitudinal (non-linear)</a>
-    </li>
-    <li>
-      <a href="04_other_ranef.html">4: Other Random Effect Structures</a>
-    </li>
-    <li>
-      <a href="05_multilevel_recap.html">5: Recap | Individual Differences</a>
-    </li>
-    <li>
-      <a href="06_rev.html">Break Week</a>
-    </li>
+    <li class="dropdown-header">2: Logistic | Longitudinal (linear)</li>
+    <li class="dropdown-header">3: Longitudinal (non-linear)</li>
+    <li class="dropdown-header">4: Other Random Effect Structures</li>
+    <li class="dropdown-header">5: Recap | Individual Differences</li>
+    <li class="dropdown-header">Break Week</li>
   </ul>
 </li>
 <li class="dropdown">
@@ -374,21 +364,11 @@ div.tocify {
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="07_efapca.html">PCA | EFA</a>
-    </li>
-    <li>
-      <a href="08_cfa.html">CFA</a>
-    </li>
-    <li>
-      <a href="09_path.html">Path Analysis</a>
-    </li>
-    <li>
-      <a href="10_sem1.html">SEM 1</a>
-    </li>
-    <li>
-      <a href="11_sem2.html">SEM 2</a>
-    </li>
+    <li class="dropdown-header">PCA | EFA</li>
+    <li class="dropdown-header">CFA</li>
+    <li class="dropdown-header">Path Analysis</li>
+    <li class="dropdown-header">SEM 1</li>
+    <li class="dropdown-header">SEM 2</li>
   </ul>
 </li>
       </ul>
@@ -397,19 +377,13 @@ div.tocify {
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     <span class="fas fa-info-circle"></span>
      
-    Help
+    Extras
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="00_tidyverse_markdown.html">Recap - Tidyverse &amp; Markdown</a>
-    </li>
-    <li>
-      <a href="zz_writeuplogistic.html">Write-up &amp; Logistic GCA</a>
-    </li>
-    <li>
-      <a href="zz_assumpts.html">MLM Assumptions &amp; Diagnostics</a>
     </li>
   </ul>
 </li>
@@ -473,7 +447,7 @@ The data (in .RData format) for the lecture can be found at <a href="https://uoe
 <h2>Geoms &amp; <code>stat_summary</code></h2>
 <p>To learn about some of the different functionalities of <code>ggplot</code>, we’re first going to need some data…</p>
 <div class="optional-begin">
-Kraus et al. (2019): Data Codebook<span id="opt-start-1" class="fa fa-plus optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-1&#39;, &#39;opt-start-1&#39;)"></span>
+<span id="opt-start-1" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-1&#39;, &#39;opt-start-1&#39;)"> Kraus et al. (2019): Data Codebook</span>
 </div>
 <div id="opt-body-1" class="optional-body" style="display: none;">
 <p><strong>Data overview</strong></p>
@@ -498,11 +472,11 @@ Question
 <div class="question-body">
 <p>The <strong>ggplot2</strong> package comes as part of the <strong>tidyverse</strong>, so if we use <code>library(tidyverse)</code> then we are also loading ggplot2!</p>
 <p>Read in the data using <code>load()</code> and <code>url()</code>, and extract some summary statistics.</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-2" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-2&#39;, &#39;sol-start-2&#39;)"></span>
+<span id="sol-start-2" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-2&#39;, &#39;sol-start-2&#39;)"> Solution </span>
 </div>
 <div id="sol-body-2" class="solution-body" style="display: none;">
 <pre class="r"><code>library(ggplot2)
@@ -524,11 +498,11 @@ Question
 <div class="question-body">
 <p>Try to make a summary plot showing mean accuracy for each category of judgment<br />
 <strong>hint:</strong> try looking into <code>?stat_summary</code></p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-3" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-3&#39;, &#39;sol-start-3&#39;)"></span>
+<span id="sol-start-3" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-3&#39;, &#39;sol-start-3&#39;)"> Solution </span>
 </div>
 <div id="sol-body-3" class="solution-body" style="display: none;">
 <p>We need to use <code>stat_summary</code> because we want to summarise the y values on our plot into summary value(s) (in the case the mean).
@@ -548,12 +522,12 @@ Question
 </div>
 <div class="question-body">
 <p>Explore the different ways of showing variability. Construct a plot using each of the following geoms:</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <p>The top three plots (jitter, boxplots and violins) all show <em>all</em> of the data, so we don’t need to use <code>stat_summary</code> for these. However, the bottom two (errorbars and pointranges) require us to summarise the data into means and standard errors, so if you are using <code>stat_summary</code> we need to use <code>stat_summary(fun.data=mean_se)</code>.</p>
 <div class="solution-begin">
-Solution <span id="sol-start-4" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-4&#39;, &#39;sol-start-4&#39;)"></span>
+<span id="sol-start-4" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-4&#39;, &#39;sol-start-4&#39;)"> Solution </span>
 </div>
 <div id="sol-body-4" class="solution-body" style="display: none;">
 <pre class="r"><code># * Boxplot
@@ -580,11 +554,11 @@ Question
 </div>
 <div class="question-body">
 <p>Combine two of the geoms used above to create a visualization of the mean accuracy, a measure of variability, and all of the data points.</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-5" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-5&#39;, &#39;sol-start-5&#39;)"></span>
+<span id="sol-start-5" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-5&#39;, &#39;sol-start-5&#39;)"> Solution </span>
 </div>
 <div id="sol-body-5" class="solution-body" style="display: none;">
 <pre class="r"><code>ggplot(speech_ses, aes(x = Category, y = Accuracy, colour = Category)) +
@@ -601,11 +575,11 @@ Question
 <div class="question-body">
 <p>Refine the plot by, for example, removing unnecessary elements, adding useful annotations (e.g., chance performance = 50%), selecting a good color scheme, etc.<br />
 <strong>tip:</strong> This is where google becomes really helpful, <a href="https://lmgtfy.com/?q=remove+a+legend+in+ggplot2" target="_blank">for example</a></p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-6" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-6&#39;, &#39;sol-start-6&#39;)"></span>
+<span id="sol-start-6" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-6&#39;, &#39;sol-start-6&#39;)"> Solution </span>
 </div>
 <div id="sol-body-6" class="solution-body" style="display: none;">
 <pre class="r"><code>ggplot(speech_ses, aes(x = Category, y = Accuracy, colour = Category)) +
@@ -627,9 +601,9 @@ Question
 </div>
 <div class="question-body">
 <p>Try to recreate the graph below using <code>ggplot</code> (if you like, try to make it better!).</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="figure">
 <img src="images/plot1_npr.png" alt="" />
 <p class="caption">Women in computer science</p>
@@ -637,7 +611,7 @@ Question
 <p>The data (in .csv format) can be downloaded from <a href="https://uoepsy.github.io/data/women_computer_science.csv" class="uri">https://uoepsy.github.io/data/women_computer_science.csv</a><br />
 You can use <code>read_csv("https://uoepsy.github.io/data/women_computer_science.csv")</code> to read it directly into R.</p>
 <div class="solution-begin">
-Solution <span id="sol-start-7" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-7&#39;, &#39;sol-start-7&#39;)"></span>
+<span id="sol-start-7" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-7&#39;, &#39;sol-start-7&#39;)"> Solution </span>
 </div>
 <div id="sol-body-7" class="solution-body" style="display: none;">
 <pre class="r"><code>women_cs&lt;-read_csv(&quot;https://uoepsy.github.io/data/women_computer_science.csv&quot;)
@@ -682,9 +656,9 @@ Question
 </div>
 <div class="question-body">
 <p>Translate the following statements between Base R and sequences of pipes. The first is shown for you.</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div id="section" class="section level4 unnumbered">
 <h4>1</h4>
 <p>Base R:</p>
@@ -701,7 +675,7 @@ Question
 round(exp(diff(log(x))), 2)</code></pre>
 <p>Pipes:</p>
 <div class="solution-begin">
-Solution <span id="sol-start-8" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-8&#39;, &#39;sol-start-8&#39;)"></span>
+<span id="sol-start-8" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-8&#39;, &#39;sol-start-8&#39;)"> Solution </span>
 </div>
 <div id="sol-body-8" class="solution-body" style="display: none;">
 <pre class="r"><code>10:100 %&gt;% log() %&gt;%
@@ -718,7 +692,7 @@ Solution <span id="sol-start-8" class="fa fa-plus solution-icon clickable" oncli
 <pre class="r"><code>6 %&gt;% round(pi, digits=.)</code></pre>
 <p>Base R:</p>
 <div class="solution-begin">
-Solution <span id="sol-start-9" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-9&#39;, &#39;sol-start-9&#39;)"></span>
+<span id="sol-start-9" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-9&#39;, &#39;sol-start-9&#39;)"> Solution </span>
 </div>
 <div id="sol-body-9" class="solution-body" style="display: none;">
 <pre class="r"><code>round(pi, digits=6)</code></pre>
@@ -762,9 +736,9 @@ Question
 <p>Load the <strong>haven</strong> package, and read in the data using <code>read_sav()</code> (.sav is the type of file which comes out of another stats software, SPSS).<br />
 Explore the data a bit for yourself in the way you feel most comfortable.
 You can download the data from <a href="https://uoepsy.github.io/data/exam.sav">https://uoepsy.github.io/data/exam.sav</a> to your computer, and then read it in, or you can do so straight from the url.</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <pre class="r"><code>library(haven)
 exam &lt;- read_sav(&quot;https://uoepsy.github.io/data/exam.sav&quot;) </code></pre>
 <p>Using the <code>exam.sav</code> data:</p>
@@ -773,16 +747,16 @@ Question
 </div>
 <div class="question-body">
 <p>Calculate the mean score for each exam</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-10" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-10&#39;, &#39;sol-start-10&#39;)"></span>
+<span id="sol-start-10" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-10&#39;, &#39;sol-start-10&#39;)"> Solution </span>
 </div>
 <div id="sol-body-10" class="solution-body" style="display: none;">
 <pre class="r"><code>exam %&gt;% group_by(exam) %&gt;% 
   summarize(M = mean(scores))</code></pre>
-<pre><code>## # A tibble: 3 x 2
+<pre><code>## # A tibble: 3 × 2
 ##    exam     M
 ##   &lt;dbl&gt; &lt;dbl&gt;
 ## 1     1  42.9
@@ -796,18 +770,18 @@ Question
 </div>
 <div class="question-body">
 <p>Calculate the mean score for each exam for female students only</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-11" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-11&#39;, &#39;sol-start-11&#39;)"></span>
+<span id="sol-start-11" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-11&#39;, &#39;sol-start-11&#39;)"> Solution </span>
 </div>
 <div id="sol-body-11" class="solution-body" style="display: none;">
 <pre class="r"><code>exam %&gt;% 
   filter(gender==&quot;f&quot;) %&gt;%
   group_by(exam) %&gt;% 
   summarize(M = mean(scores))</code></pre>
-<pre><code>## # A tibble: 3 x 2
+<pre><code>## # A tibble: 3 × 2
 ##    exam     M
 ##   &lt;dbl&gt; &lt;dbl&gt;
 ## 1     1  43.1
@@ -821,11 +795,11 @@ Question
 </div>
 <div class="question-body">
 <p>Make a new dataframe containing only the exam scores for males for exam number 1, with a new variable indicating whether they passed or not (pass = a score of 40)</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-12" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-12&#39;, &#39;sol-start-12&#39;)"></span>
+<span id="sol-start-12" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-12&#39;, &#39;sol-start-12&#39;)"> Solution </span>
 </div>
 <div id="sol-body-12" class="solution-body" style="display: none;">
 <pre class="r"><code>exam_m1 &lt;- exam %&gt;% 
@@ -839,16 +813,16 @@ Question
 </div>
 <div class="question-body">
 <p>Calculate the average score for each exam for male and female students</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-13" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-13&#39;, &#39;sol-start-13&#39;)"></span>
+<span id="sol-start-13" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-13&#39;, &#39;sol-start-13&#39;)"> Solution </span>
 </div>
 <div id="sol-body-13" class="solution-body" style="display: none;">
 <pre class="r"><code>exam %&gt;% group_by(exam, gender) %&gt;% 
   summarize(M = mean(scores))</code></pre>
-<pre><code>## # A tibble: 6 x 3
+<pre><code>## # A tibble: 6 × 3
 ## # Groups:   exam [3]
 ##    exam gender     M
 ##   &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
@@ -862,7 +836,7 @@ Solution <span id="sol-start-13" class="fa fa-plus solution-icon clickable" oncl
 exam %&gt;% group_by(exam, gender) %&gt;% 
   summarize(M = mean(scores)) %&gt;% 
   spread(gender, M)</code></pre>
-<pre><code>## # A tibble: 3 x 3
+<pre><code>## # A tibble: 3 × 3
 ## # Groups:   exam [3]
 ##    exam     f     m
 ##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
@@ -880,7 +854,7 @@ Consider, the below example, showing the same data in <em>long</em> format on th
 <img src="images/tidy-9.png" alt="Long to wide, from ‘R for datascience’" /></p>
 <p>There are some useful functions which we can use to move between these formats: <code>pivot_longer()</code> and <code>pivot_wider()</code>. Check out an explanation of them by typing <code>vignette("pivot")</code> into your console.</p>
 <div class="optional-begin">
-USArrests: Data Codebook<span id="opt-start-14" class="fa fa-plus optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-14&#39;, &#39;opt-start-14&#39;)"></span>
+<span id="opt-start-14" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-14&#39;, &#39;opt-start-14&#39;)"> USArrests: Data Codebook</span>
 </div>
 <div id="opt-body-14" class="optional-body" style="display: none;">
 <p><strong>Data overview</strong></p>
@@ -894,11 +868,11 @@ Question
 </div>
 <div class="question-body">
 <p>Convert the USArrests data set from a wide to a long format so that instead of separate variables for each crime type (Murder, Assault, Rape), there is one variable that identifies the crime type and one variable that contains the rates for each crime type for each state.</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-15" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-15&#39;, &#39;sol-start-15&#39;)"></span>
+<span id="sol-start-15" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-15&#39;, &#39;sol-start-15&#39;)"> Solution </span>
 </div>
 <div id="sol-body-15" class="solution-body" style="display: none;">
 <pre class="r"><code>arrests_long &lt;- USArrests %&gt;% 
@@ -911,11 +885,11 @@ Question
 </div>
 <div class="question-body">
 <p>Make a scatterplot showing the relationship between each type of violent crime rate and percent of population living in urban areas.</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-16" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-16&#39;, &#39;sol-start-16&#39;)"></span>
+<span id="sol-start-16" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-16&#39;, &#39;sol-start-16&#39;)"> Solution </span>
 </div>
 <div id="sol-body-16" class="solution-body" style="display: none;">
 <pre class="r"><code>ggplot(arrests_long, aes(UrbanPop, Rate)) + 
@@ -929,7 +903,7 @@ Solution <span id="sol-start-16" class="fa fa-plus solution-icon clickable" oncl
 <div id="less-guidance" class="section level2 unnumbered">
 <h2>Less guidance</h2>
 <div class="optional-begin">
-Psych::ability Data Codebook<span id="opt-start-17" class="fa fa-plus optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-17&#39;, &#39;opt-start-17&#39;)"></span>
+<span id="opt-start-17" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-17&#39;, &#39;opt-start-17&#39;)"> Psych::ability Data Codebook</span>
 </div>
 <div id="opt-body-17" class="optional-body" style="display: none;">
 <p><strong>Data overview</strong></p>
@@ -946,11 +920,11 @@ Question
 <p>Tidy the data and make a graph of average accuracy for each question type.<br />
 You might have to use <code>as_tibble(ability)</code> or <code>as.data.frame(ability)</code> because it is initially stored as a matrix.<br />
 <strong>Hint:</strong> the <code>separate()</code> function may come in handy at some point.</p>
+</div>
 <p class="question-end">
 </p>
-</div>
 <div class="solution-begin">
-Solution <span id="sol-start-18" class="fa fa-plus solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-18&#39;, &#39;sol-start-18&#39;)"></span>
+<span id="sol-start-18" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-18&#39;, &#39;sol-start-18&#39;)"> Solution </span>
 </div>
 <div id="sol-body-18" class="solution-body" style="display: none;">
 <pre class="r"><code>load(url(&quot;https://uoepsy.github.io/data/psychability.rda&quot;))
