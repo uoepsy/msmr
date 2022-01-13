@@ -1,0 +1,53 @@
+---
+title: "Untitled"
+author: "uoepsy.github.io"
+date: "12/01/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(glue)
+library(tidyverse)
+library(knitr)
+```
+
+```{r}
+
+
+lecs = list.files("msmrlectures", ".html|.pdf", full.names=T)
+labs = list.files("msmrlabs", ".html", full.names=T)
+
+data.frame(
+  Week = 1:1,
+  Lecture = c(
+    glue("[Intro to Multilevel Modeling]({lecs[8]})"),
+    paste0(glue("[Logistic Multilevel Modeling]({lecs[9]})"),"<br>",glue("[Longitudinal Data Analysis using Multilevel Modeling]({lecs[10]})")),
+    glue("[Longitudinal Data Analysis using Multilevel Modeling - Nonlinear Change]({lecs[11]})"),
+    paste0(glue("[Three-Level Nesting]({lecs[12]})"),"<br>",glue("[Crossed Random Effects]({lecs[13]})")),
+    paste0(glue("[Individual Differences I]({lecs[14]})"),"<br>",glue("[Individual Differences II]({lecs[15]})")),
+    glue("Break Week --"),
+    paste0(glue("[Principal Component Analysis (PCA)]({lecs[18]})"),"<br>",glue("[Exploratory Factor Analysis (EFA)]({lecs[19]})")),
+    glue("[Confirmatory Factor Analysis (CFA)]({lecs[20]})"),
+    glue("[Path Analysis]({lecs[21]})"),
+    glue("[Structural Equation Modeling (SEM) I]({lecs[16]})"),
+    glue("[Structural Equation Modeling (SEM) II]({lecs[17]})")
+  ),
+  Workbook = c(
+    glue("[Intro to MLM]({labs[2]})"),
+    glue("[Logistic | Longitudinal (linear)]({labs[3]})"),
+    glue("[Longitudinal (non-linear)]({labs[4]})"),
+    glue("[Other Random Effect Structures]({labs[5]})"),
+    glue("[Recap | Individual Differences]({labs[6]})"),
+    glue("[Revision Data]({labs[7]})"),
+    glue("[PCA | EFA]({labs[8]})"),
+    glue("[CFA]({labs[9]})"),
+    glue("[Path Analysis]({labs[10]})"),
+    glue("[SEM I]({labs[11]})"),
+    glue("[SEM II]({labs[12]})")
+  )
+) %>% kable()
+
+
+```
+
