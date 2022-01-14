@@ -4,6 +4,7 @@
     <title>Week 3: Longitudinal Data Analysis using Multilevel Modeling - Nonlinear Change</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dan Mirman" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
   <body>
@@ -14,7 +15,6 @@ class: center, middle, inverse, title-slide
 ## Multivariate Statistics and Methodology using R (MSMR)<br><br>
 ### Dan Mirman
 ### Department of Psychology<br>The University of Edinburgh
-### AY 2020-2021
 
 ---
 
@@ -377,7 +377,8 @@ m.left &lt;- lmer(meanFix ~ (poly1+poly2+poly3)*Condition + #fixed effects
 ```
 
 ```
-## boundary (singular) fit: see ?isSingular
+## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, :
+## Model failed to converge with max|grad| = 0.00339123 (tol = 0.002, component 1)
 ```
 
 ```r
@@ -386,14 +387,14 @@ coef(summary(m.left))
 
 ```
 ##                      Estimate Std. Error     df   t value  Pr(&gt;|t|)
-## (Intercept)         0.4773228    0.01679 10.003 28.436524 6.691e-11
-## poly1               0.6385604    0.05146 10.000 12.407713 2.133e-07
-## poly2              -0.1095979    0.03717 10.004 -2.948277 1.457e-02
-## poly3              -0.0932612    0.02063 10.039 -4.521487 1.095e-03
-## ConditionLow       -0.0581122    0.02110 10.005 -2.754110 2.033e-02
-## poly1:ConditionLow  0.0003188    0.07479  9.994  0.004263 9.967e-01
-## poly2:ConditionLow  0.1635455    0.06274 10.000  2.606797 2.618e-02
-## poly3:ConditionLow -0.0020869    0.03334 10.676 -0.062602 9.512e-01
+## (Intercept)         0.4773228    0.01679  9.995 28.428492 6.810e-11
+## poly1               0.6385604    0.05146 10.005 12.409428 2.120e-07
+## poly2              -0.1095979    0.03719  9.987 -2.946831 1.463e-02
+## poly3              -0.0932612    0.02061 10.001 -4.524584 1.100e-03
+## ConditionLow       -0.0581122    0.02111  9.994 -2.752959 2.039e-02
+## poly1:ConditionLow  0.0003188    0.07481  9.985  0.004262 9.967e-01
+## poly2:ConditionLow  0.1635455    0.06278  9.982  2.605219 2.629e-02
+## poly3:ConditionLow -0.0020869    0.03332 10.685 -0.062623 9.512e-01
 ```
 
 ---
@@ -409,13 +410,13 @@ VarCorr(m.left)
 ```
 ##  Groups   Name               Std.Dev. Corr                                     
 ##  Subject  (Intercept)        0.0519                                            
-##           poly1              0.1570    0.18                                    
-##           poly2              0.1094   -0.29  0.03                              
-##           poly3              0.0491   -0.28 -0.37  0.63                        
+##           poly1              0.1569    0.17                                    
+##           poly2              0.1095   -0.29  0.03                              
+##           poly3              0.0490   -0.28 -0.37  0.63                        
 ##           ConditionLow       0.0649   -0.89 -0.13  0.49  0.34                  
-##           poly1:ConditionLow 0.2286    0.38 -0.46 -0.62  0.10 -0.56            
-##           poly2:ConditionLow 0.1889    0.20  0.08 -0.81 -0.22 -0.43  0.74      
-##           poly3:ConditionLow 0.0862   -0.08 -0.40 -0.06 -0.47  0.06 -0.27 -0.43
+##           poly1:ConditionLow 0.2286    0.38 -0.46 -0.63  0.10 -0.56            
+##           poly2:ConditionLow 0.1890    0.20  0.08 -0.81 -0.22 -0.43  0.74      
+##           poly3:ConditionLow 0.0861   -0.08 -0.40 -0.06 -0.47  0.06 -0.27 -0.43
 ##  Residual                    0.0430
 ```
 

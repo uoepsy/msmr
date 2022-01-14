@@ -3,7 +3,6 @@ title: "<b>Week 2: Longitudinal Data Analysis using Multilevel Modeling</b>"
 subtitle: "Multivariate Statistics and Methodology using R (MSMR)<br><br> "
 author: "Dan Mirman"
 institute: "Department of Psychology<br>The University of Edinburgh"
-date: "AY 2020-2021"
 output:
   xaringan::moon_reader:
     lib_dir: libs
@@ -145,8 +144,8 @@ ggplot(ef, aes(Time, fit, color=Region)) +
 # Visualize effects, Option 2: estimated parameters
 
 ```{r echo=FALSE}
-est <- broom::tidy(m.1) %>% 
-  filter(group == "fixed") %>% 
+est <- broom.mixed::tidy(m.1) %>% 
+  filter(effect == "fixed") %>% 
   mutate(Type = ifelse(str_detect(term, "Time"), "Slope", "Baseline")) %>%
   arrange(Type, term) %>% 
   mutate(Region = rep(sort(unique(active_dat$Region)), 2))

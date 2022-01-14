@@ -4,6 +4,7 @@
     <title>Week 4, part 1: Three-Level Nesting</title>
     <meta charset="utf-8" />
     <meta name="author" content="Dan Mirman" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
   <body>
@@ -14,7 +15,6 @@ class: center, middle, inverse, title-slide
 ## Multivariate Statistics and Methodology using R (MSMR)<br><br>
 ### Dan Mirman
 ### Department of Psychology<br>The University of Edinburgh
-### AY 2020-2021
 
 ---
 
@@ -88,15 +88,20 @@ math &lt;- read_csv("./data/active_math_sim.csv") %&gt;%
 ```
 
 ```
-## Parsed with column specification:
-## cols(
-##   Math = col_double(),
-##   ActiveTime = col_double(),
-##   ClassSize = col_double(),
-##   Classroom = col_double(),
-##   School = col_character(),
-##   StudentID = col_double()
-## )
+## Rows: 570 Columns: 6
+```
+
+```
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: ","
+## chr (1): School
+## dbl (5): Math, ActiveTime, ClassSize, Classroom, StudentID
+```
+
+```
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
 ---
@@ -138,17 +143,20 @@ m1 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 | Class),
 gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
 ```
 
+<div id="hhjxciztch" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#sviclajwtf .gt_table {
+#hhjxciztch .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
   margin-right: auto;
   color: #333333;
   font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
   background-color: #FFFFFF;
   width: auto;
   border-top-style: solid;
@@ -165,7 +173,7 @@ gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
   border-left-color: #D3D3D3;
 }
 
-#sviclajwtf .gt_heading {
+#hhjxciztch .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -177,7 +185,7 @@ gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
   border-right-color: #D3D3D3;
 }
 
-#sviclajwtf .gt_title {
+#hhjxciztch .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -187,7 +195,7 @@ gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
   border-bottom-width: 0;
 }
 
-#sviclajwtf .gt_subtitle {
+#hhjxciztch .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -197,13 +205,13 @@ gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
   border-top-width: 0;
 }
 
-#sviclajwtf .gt_bottom_border {
+#hhjxciztch .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#sviclajwtf .gt_col_headings {
+#hhjxciztch .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -218,7 +226,7 @@ gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
   border-right-color: #D3D3D3;
 }
 
-#sviclajwtf .gt_col_heading {
+#hhjxciztch .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -238,7 +246,7 @@ gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
   overflow-x: hidden;
 }
 
-#sviclajwtf .gt_column_spanner_outer {
+#hhjxciztch .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -250,15 +258,15 @@ gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
   padding-right: 4px;
 }
 
-#sviclajwtf .gt_column_spanner_outer:first-child {
+#hhjxciztch .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#sviclajwtf .gt_column_spanner_outer:last-child {
+#hhjxciztch .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#sviclajwtf .gt_column_spanner {
+#hhjxciztch .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -270,7 +278,7 @@ gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
   width: 100%;
 }
 
-#sviclajwtf .gt_group_heading {
+#hhjxciztch .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -292,7 +300,7 @@ gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
   vertical-align: middle;
 }
 
-#sviclajwtf .gt_empty_group_heading {
+#hhjxciztch .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -307,19 +315,15 @@ gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
   vertical-align: middle;
 }
 
-#sviclajwtf .gt_striped {
-  background-color: rgba(128, 128, 128, 0.05);
-}
-
-#sviclajwtf .gt_from_md > :first-child {
+#hhjxciztch .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#sviclajwtf .gt_from_md > :last-child {
+#hhjxciztch .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#sviclajwtf .gt_row {
+#hhjxciztch .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -338,7 +342,7 @@ gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
   overflow-x: hidden;
 }
 
-#sviclajwtf .gt_stub {
+#hhjxciztch .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -350,7 +354,7 @@ gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
   padding-left: 12px;
 }
 
-#sviclajwtf .gt_summary_row {
+#hhjxciztch .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -360,7 +364,7 @@ gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
   padding-right: 5px;
 }
 
-#sviclajwtf .gt_first_summary_row {
+#hhjxciztch .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -370,7 +374,7 @@ gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
   border-top-color: #D3D3D3;
 }
 
-#sviclajwtf .gt_grand_summary_row {
+#hhjxciztch .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -380,7 +384,7 @@ gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
   padding-right: 5px;
 }
 
-#sviclajwtf .gt_first_grand_summary_row {
+#hhjxciztch .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -390,7 +394,11 @@ gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
   border-top-color: #D3D3D3;
 }
 
-#sviclajwtf .gt_table_body {
+#hhjxciztch .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#hhjxciztch .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -399,7 +407,7 @@ gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
   border-bottom-color: #D3D3D3;
 }
 
-#sviclajwtf .gt_footnotes {
+#hhjxciztch .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -413,13 +421,13 @@ gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
   border-right-color: #D3D3D3;
 }
 
-#sviclajwtf .gt_footnote {
+#hhjxciztch .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#sviclajwtf .gt_sourcenotes {
+#hhjxciztch .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -433,46 +441,47 @@ gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
   border-right-color: #D3D3D3;
 }
 
-#sviclajwtf .gt_sourcenote {
+#hhjxciztch .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#sviclajwtf .gt_left {
+#hhjxciztch .gt_left {
   text-align: left;
 }
 
-#sviclajwtf .gt_center {
+#hhjxciztch .gt_center {
   text-align: center;
 }
 
-#sviclajwtf .gt_right {
+#hhjxciztch .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#sviclajwtf .gt_font_normal {
+#hhjxciztch .gt_font_normal {
   font-weight: normal;
 }
 
-#sviclajwtf .gt_font_bold {
+#hhjxciztch .gt_font_bold {
   font-weight: bold;
 }
 
-#sviclajwtf .gt_font_italic {
+#hhjxciztch .gt_font_italic {
   font-style: italic;
 }
 
-#sviclajwtf .gt_super {
+#hhjxciztch .gt_super {
   font-size: 65%;
 }
 
-#sviclajwtf .gt_footnote_marks {
+#hhjxciztch .gt_footnote_marks {
   font-style: italic;
+  font-weight: normal;
   font-size: 65%;
 }
 </style>
-<div id="sviclajwtf" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -487,70 +496,59 @@ gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
     </tr>
   </thead>
   <tbody class="gt_table_body">
-    <tr>
-      <td class="gt_row gt_left">fixed</td>
-      <td class="gt_row gt_left">NA</td>
-      <td class="gt_row gt_left">(Intercept)</td>
-      <td class="gt_row gt_right">42.9645</td>
-      <td class="gt_row gt_right">1.5858</td>
-      <td class="gt_row gt_right">27.093</td>
-      <td class="gt_row gt_right">29.93</td>
-      <td class="gt_row gt_right">1.291e-22</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">fixed</td>
-      <td class="gt_row gt_left">NA</td>
-      <td class="gt_row gt_left">ActiveTime.GM</td>
-      <td class="gt_row gt_right">14.9057</td>
-      <td class="gt_row gt_right">0.6044</td>
-      <td class="gt_row gt_right">24.662</td>
-      <td class="gt_row gt_right">540.66</td>
-      <td class="gt_row gt_right">1.509e-90</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">fixed</td>
-      <td class="gt_row gt_left">NA</td>
-      <td class="gt_row gt_left">ClassSize.GM</td>
-      <td class="gt_row gt_right">-1.8662</td>
-      <td class="gt_row gt_right">0.4805</td>
-      <td class="gt_row gt_right">-3.884</td>
-      <td class="gt_row gt_right">30.05</td>
-      <td class="gt_row gt_right">5.244e-04</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">fixed</td>
-      <td class="gt_row gt_left">NA</td>
-      <td class="gt_row gt_left">ActiveTime.GM:ClassSize.GM</td>
-      <td class="gt_row gt_right">0.3613</td>
-      <td class="gt_row gt_right">0.1939</td>
-      <td class="gt_row gt_right">1.863</td>
-      <td class="gt_row gt_right">540.59</td>
-      <td class="gt_row gt_right">6.300e-02</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">ran_pars</td>
-      <td class="gt_row gt_left">Class</td>
-      <td class="gt_row gt_left">sd__(Intercept)</td>
-      <td class="gt_row gt_right">8.5091</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">ran_pars</td>
-      <td class="gt_row gt_left">Residual</td>
-      <td class="gt_row gt_left">sd__Observation</td>
-      <td class="gt_row gt_right">4.1709</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-    </tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">(Intercept)</td>
+<td class="gt_row gt_right">42.9645</td>
+<td class="gt_row gt_right">1.5858</td>
+<td class="gt_row gt_right">27.093</td>
+<td class="gt_row gt_right">29.93</td>
+<td class="gt_row gt_right">1.291e-22</td></tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">ActiveTime.GM</td>
+<td class="gt_row gt_right">14.9057</td>
+<td class="gt_row gt_right">0.6044</td>
+<td class="gt_row gt_right">24.662</td>
+<td class="gt_row gt_right">540.66</td>
+<td class="gt_row gt_right">1.509e-90</td></tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">ClassSize.GM</td>
+<td class="gt_row gt_right">-1.8662</td>
+<td class="gt_row gt_right">0.4805</td>
+<td class="gt_row gt_right">-3.884</td>
+<td class="gt_row gt_right">30.05</td>
+<td class="gt_row gt_right">5.244e-04</td></tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">ActiveTime.GM:ClassSize.GM</td>
+<td class="gt_row gt_right">0.3613</td>
+<td class="gt_row gt_right">0.1939</td>
+<td class="gt_row gt_right">1.863</td>
+<td class="gt_row gt_right">540.59</td>
+<td class="gt_row gt_right">6.300e-02</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">Class</td>
+<td class="gt_row gt_left">sd__(Intercept)</td>
+<td class="gt_row gt_right">8.5091</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">Residual</td>
+<td class="gt_row gt_left">sd__Observation</td>
+<td class="gt_row gt_right">4.1709</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
   </tbody>
   
   
-</table></div>
+</table>
+</div>
 
 --
 
@@ -579,17 +577,20 @@ Maybe classes differ in how strongly active learning influences math achievement
 ```r
 m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class), data=math, REML=F)
 ```
+<div id="kcoihmyjci" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#elgblpvzck .gt_table {
+#kcoihmyjci .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
   margin-right: auto;
   color: #333333;
   font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
   background-color: #FFFFFF;
   width: auto;
   border-top-style: solid;
@@ -606,7 +607,7 @@ m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class),
   border-left-color: #D3D3D3;
 }
 
-#elgblpvzck .gt_heading {
+#kcoihmyjci .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -618,7 +619,7 @@ m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class),
   border-right-color: #D3D3D3;
 }
 
-#elgblpvzck .gt_title {
+#kcoihmyjci .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -628,7 +629,7 @@ m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class),
   border-bottom-width: 0;
 }
 
-#elgblpvzck .gt_subtitle {
+#kcoihmyjci .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -638,13 +639,13 @@ m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class),
   border-top-width: 0;
 }
 
-#elgblpvzck .gt_bottom_border {
+#kcoihmyjci .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#elgblpvzck .gt_col_headings {
+#kcoihmyjci .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -659,7 +660,7 @@ m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class),
   border-right-color: #D3D3D3;
 }
 
-#elgblpvzck .gt_col_heading {
+#kcoihmyjci .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -679,7 +680,7 @@ m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class),
   overflow-x: hidden;
 }
 
-#elgblpvzck .gt_column_spanner_outer {
+#kcoihmyjci .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -691,15 +692,15 @@ m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class),
   padding-right: 4px;
 }
 
-#elgblpvzck .gt_column_spanner_outer:first-child {
+#kcoihmyjci .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#elgblpvzck .gt_column_spanner_outer:last-child {
+#kcoihmyjci .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#elgblpvzck .gt_column_spanner {
+#kcoihmyjci .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -711,7 +712,7 @@ m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class),
   width: 100%;
 }
 
-#elgblpvzck .gt_group_heading {
+#kcoihmyjci .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -733,7 +734,7 @@ m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class),
   vertical-align: middle;
 }
 
-#elgblpvzck .gt_empty_group_heading {
+#kcoihmyjci .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -748,19 +749,15 @@ m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class),
   vertical-align: middle;
 }
 
-#elgblpvzck .gt_striped {
-  background-color: rgba(128, 128, 128, 0.05);
-}
-
-#elgblpvzck .gt_from_md > :first-child {
+#kcoihmyjci .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#elgblpvzck .gt_from_md > :last-child {
+#kcoihmyjci .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#elgblpvzck .gt_row {
+#kcoihmyjci .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -779,7 +776,7 @@ m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class),
   overflow-x: hidden;
 }
 
-#elgblpvzck .gt_stub {
+#kcoihmyjci .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -791,7 +788,7 @@ m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class),
   padding-left: 12px;
 }
 
-#elgblpvzck .gt_summary_row {
+#kcoihmyjci .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -801,7 +798,7 @@ m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class),
   padding-right: 5px;
 }
 
-#elgblpvzck .gt_first_summary_row {
+#kcoihmyjci .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -811,7 +808,7 @@ m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class),
   border-top-color: #D3D3D3;
 }
 
-#elgblpvzck .gt_grand_summary_row {
+#kcoihmyjci .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -821,7 +818,7 @@ m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class),
   padding-right: 5px;
 }
 
-#elgblpvzck .gt_first_grand_summary_row {
+#kcoihmyjci .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -831,7 +828,11 @@ m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class),
   border-top-color: #D3D3D3;
 }
 
-#elgblpvzck .gt_table_body {
+#kcoihmyjci .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#kcoihmyjci .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -840,7 +841,7 @@ m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class),
   border-bottom-color: #D3D3D3;
 }
 
-#elgblpvzck .gt_footnotes {
+#kcoihmyjci .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -854,13 +855,13 @@ m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class),
   border-right-color: #D3D3D3;
 }
 
-#elgblpvzck .gt_footnote {
+#kcoihmyjci .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#elgblpvzck .gt_sourcenotes {
+#kcoihmyjci .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -874,46 +875,47 @@ m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class),
   border-right-color: #D3D3D3;
 }
 
-#elgblpvzck .gt_sourcenote {
+#kcoihmyjci .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#elgblpvzck .gt_left {
+#kcoihmyjci .gt_left {
   text-align: left;
 }
 
-#elgblpvzck .gt_center {
+#kcoihmyjci .gt_center {
   text-align: center;
 }
 
-#elgblpvzck .gt_right {
+#kcoihmyjci .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#elgblpvzck .gt_font_normal {
+#kcoihmyjci .gt_font_normal {
   font-weight: normal;
 }
 
-#elgblpvzck .gt_font_bold {
+#kcoihmyjci .gt_font_bold {
   font-weight: bold;
 }
 
-#elgblpvzck .gt_font_italic {
+#kcoihmyjci .gt_font_italic {
   font-style: italic;
 }
 
-#elgblpvzck .gt_super {
+#kcoihmyjci .gt_super {
   font-size: 65%;
 }
 
-#elgblpvzck .gt_footnote_marks {
+#kcoihmyjci .gt_footnote_marks {
   font-style: italic;
+  font-weight: normal;
   font-size: 65%;
 }
 </style>
-<div id="elgblpvzck" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -928,80 +930,67 @@ m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class),
     </tr>
   </thead>
   <tbody class="gt_table_body">
-    <tr>
-      <td class="gt_row gt_left">fixed</td>
-      <td class="gt_row gt_left">NA</td>
-      <td class="gt_row gt_left">(Intercept)</td>
-      <td class="gt_row gt_right">42.8612</td>
-      <td class="gt_row gt_right">1.5984</td>
-      <td class="gt_row gt_right">26.815</td>
-      <td class="gt_row gt_right">29.95</td>
-      <td class="gt_row gt_right">1.715e-22</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">fixed</td>
-      <td class="gt_row gt_left">NA</td>
-      <td class="gt_row gt_left">ActiveTime.GM</td>
-      <td class="gt_row gt_right">14.8927</td>
-      <td class="gt_row gt_right">1.0450</td>
-      <td class="gt_row gt_right">14.251</td>
-      <td class="gt_row gt_right">30.32</td>
-      <td class="gt_row gt_right">5.614e-15</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">fixed</td>
-      <td class="gt_row gt_left">NA</td>
-      <td class="gt_row gt_left">ClassSize.GM</td>
-      <td class="gt_row gt_right">-1.8703</td>
-      <td class="gt_row gt_right">0.4843</td>
-      <td class="gt_row gt_right">-3.862</td>
-      <td class="gt_row gt_right">30.04</td>
-      <td class="gt_row gt_right">5.561e-04</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left" style="background-color: #FFFF00;">fixed</td>
-      <td class="gt_row gt_left" style="background-color: #FFFF00;">NA</td>
-      <td class="gt_row gt_left" style="background-color: #FFFF00;">ActiveTime.GM:ClassSize.GM</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">0.3329</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">0.3263</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">1.020</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">33.11</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">3.150e-01</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">ran_pars</td>
-      <td class="gt_row gt_left">Class</td>
-      <td class="gt_row gt_left">sd__(Intercept)</td>
-      <td class="gt_row gt_right">8.5821</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">ran_pars</td>
-      <td class="gt_row gt_left">Class</td>
-      <td class="gt_row gt_left">cor__(Intercept).ActiveTime.GM</td>
-      <td class="gt_row gt_right">-0.3107</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">ran_pars</td>
-      <td class="gt_row gt_left">Class</td>
-      <td class="gt_row gt_left">sd__ActiveTime.GM</td>
-      <td class="gt_row gt_right">4.7109</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-    </tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">(Intercept)</td>
+<td class="gt_row gt_right">42.8612</td>
+<td class="gt_row gt_right">1.5984</td>
+<td class="gt_row gt_right">26.815</td>
+<td class="gt_row gt_right">29.95</td>
+<td class="gt_row gt_right">1.715e-22</td></tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">ActiveTime.GM</td>
+<td class="gt_row gt_right">14.8927</td>
+<td class="gt_row gt_right">1.0450</td>
+<td class="gt_row gt_right">14.251</td>
+<td class="gt_row gt_right">30.32</td>
+<td class="gt_row gt_right">5.614e-15</td></tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">ClassSize.GM</td>
+<td class="gt_row gt_right">-1.8703</td>
+<td class="gt_row gt_right">0.4843</td>
+<td class="gt_row gt_right">-3.862</td>
+<td class="gt_row gt_right">30.04</td>
+<td class="gt_row gt_right">5.561e-04</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #FFFF00;">fixed</td>
+<td class="gt_row gt_left" style="background-color: #FFFF00;">NA</td>
+<td class="gt_row gt_left" style="background-color: #FFFF00;">ActiveTime.GM:ClassSize.GM</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">0.3329</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">0.3263</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">1.020</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">33.11</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">3.150e-01</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">Class</td>
+<td class="gt_row gt_left">sd__(Intercept)</td>
+<td class="gt_row gt_right">8.5821</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">Class</td>
+<td class="gt_row gt_left">cor__(Intercept).ActiveTime.GM</td>
+<td class="gt_row gt_right">-0.3107</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">Class</td>
+<td class="gt_row gt_left">sd__ActiveTime.GM</td>
+<td class="gt_row gt_right">4.7109</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
   </tbody>
   
   
-</table></div>
+</table>
+</div>
 
 Adding `ActiveTime` random slopes substantially increased the SE and reduced estimated df for `ActiveTime` fixed effects. Interaction effect is not even marginal in this model: in the first model, omitting the random slope made the corresponding fixed effect anti-conservative.
 
@@ -1090,17 +1079,20 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
 ---
 #  Math Active Learning: 3-level model
 
+<div id="zynvipyzjj" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#uaxtdpmhvc .gt_table {
+#zynvipyzjj .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
   margin-right: auto;
   color: #333333;
   font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
   background-color: #FFFFFF;
   width: auto;
   border-top-style: solid;
@@ -1117,7 +1109,7 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
   border-left-color: #D3D3D3;
 }
 
-#uaxtdpmhvc .gt_heading {
+#zynvipyzjj .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1129,7 +1121,7 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
   border-right-color: #D3D3D3;
 }
 
-#uaxtdpmhvc .gt_title {
+#zynvipyzjj .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1139,7 +1131,7 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
   border-bottom-width: 0;
 }
 
-#uaxtdpmhvc .gt_subtitle {
+#zynvipyzjj .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1149,13 +1141,13 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
   border-top-width: 0;
 }
 
-#uaxtdpmhvc .gt_bottom_border {
+#zynvipyzjj .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#uaxtdpmhvc .gt_col_headings {
+#zynvipyzjj .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1170,7 +1162,7 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
   border-right-color: #D3D3D3;
 }
 
-#uaxtdpmhvc .gt_col_heading {
+#zynvipyzjj .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1190,7 +1182,7 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
   overflow-x: hidden;
 }
 
-#uaxtdpmhvc .gt_column_spanner_outer {
+#zynvipyzjj .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1202,15 +1194,15 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
   padding-right: 4px;
 }
 
-#uaxtdpmhvc .gt_column_spanner_outer:first-child {
+#zynvipyzjj .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#uaxtdpmhvc .gt_column_spanner_outer:last-child {
+#zynvipyzjj .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#uaxtdpmhvc .gt_column_spanner {
+#zynvipyzjj .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1222,7 +1214,7 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
   width: 100%;
 }
 
-#uaxtdpmhvc .gt_group_heading {
+#zynvipyzjj .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1244,7 +1236,7 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
   vertical-align: middle;
 }
 
-#uaxtdpmhvc .gt_empty_group_heading {
+#zynvipyzjj .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1259,19 +1251,15 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
   vertical-align: middle;
 }
 
-#uaxtdpmhvc .gt_striped {
-  background-color: rgba(128, 128, 128, 0.05);
-}
-
-#uaxtdpmhvc .gt_from_md > :first-child {
+#zynvipyzjj .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#uaxtdpmhvc .gt_from_md > :last-child {
+#zynvipyzjj .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#uaxtdpmhvc .gt_row {
+#zynvipyzjj .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1290,7 +1278,7 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
   overflow-x: hidden;
 }
 
-#uaxtdpmhvc .gt_stub {
+#zynvipyzjj .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1302,7 +1290,7 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
   padding-left: 12px;
 }
 
-#uaxtdpmhvc .gt_summary_row {
+#zynvipyzjj .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1312,7 +1300,7 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
   padding-right: 5px;
 }
 
-#uaxtdpmhvc .gt_first_summary_row {
+#zynvipyzjj .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1322,7 +1310,7 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
   border-top-color: #D3D3D3;
 }
 
-#uaxtdpmhvc .gt_grand_summary_row {
+#zynvipyzjj .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1332,7 +1320,7 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
   padding-right: 5px;
 }
 
-#uaxtdpmhvc .gt_first_grand_summary_row {
+#zynvipyzjj .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1342,7 +1330,11 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
   border-top-color: #D3D3D3;
 }
 
-#uaxtdpmhvc .gt_table_body {
+#zynvipyzjj .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#zynvipyzjj .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1351,7 +1343,7 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
   border-bottom-color: #D3D3D3;
 }
 
-#uaxtdpmhvc .gt_footnotes {
+#zynvipyzjj .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1365,13 +1357,13 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
   border-right-color: #D3D3D3;
 }
 
-#uaxtdpmhvc .gt_footnote {
+#zynvipyzjj .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#uaxtdpmhvc .gt_sourcenotes {
+#zynvipyzjj .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1385,46 +1377,47 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
   border-right-color: #D3D3D3;
 }
 
-#uaxtdpmhvc .gt_sourcenote {
+#zynvipyzjj .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#uaxtdpmhvc .gt_left {
+#zynvipyzjj .gt_left {
   text-align: left;
 }
 
-#uaxtdpmhvc .gt_center {
+#zynvipyzjj .gt_center {
   text-align: center;
 }
 
-#uaxtdpmhvc .gt_right {
+#zynvipyzjj .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#uaxtdpmhvc .gt_font_normal {
+#zynvipyzjj .gt_font_normal {
   font-weight: normal;
 }
 
-#uaxtdpmhvc .gt_font_bold {
+#zynvipyzjj .gt_font_bold {
   font-weight: bold;
 }
 
-#uaxtdpmhvc .gt_font_italic {
+#zynvipyzjj .gt_font_italic {
   font-style: italic;
 }
 
-#uaxtdpmhvc .gt_super {
+#zynvipyzjj .gt_super {
   font-size: 65%;
 }
 
-#uaxtdpmhvc .gt_footnote_marks {
+#zynvipyzjj .gt_footnote_marks {
   font-style: italic;
+  font-weight: normal;
   font-size: 65%;
 }
 </style>
-<div id="uaxtdpmhvc" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -1439,120 +1432,99 @@ m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
     </tr>
   </thead>
   <tbody class="gt_table_body">
-    <tr>
-      <td class="gt_row gt_left">fixed</td>
-      <td class="gt_row gt_left">NA</td>
-      <td class="gt_row gt_left">(Intercept)</td>
-      <td class="gt_row gt_right">44.45182</td>
-      <td class="gt_row gt_right">4.6669</td>
-      <td class="gt_row gt_right">9.52485</td>
-      <td class="gt_row gt_right">3.046</td>
-      <td class="gt_row gt_right">0.002305</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">fixed</td>
-      <td class="gt_row gt_left">NA</td>
-      <td class="gt_row gt_left">ActiveTime.GM</td>
-      <td class="gt_row gt_right">14.34849</td>
-      <td class="gt_row gt_right">1.8123</td>
-      <td class="gt_row gt_right">7.91745</td>
-      <td class="gt_row gt_right">3.232</td>
-      <td class="gt_row gt_right">0.003197</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left" style="background-color: #FFFF00;">fixed</td>
-      <td class="gt_row gt_left" style="background-color: #FFFF00;">NA</td>
-      <td class="gt_row gt_left" style="background-color: #FFFF00;">ClassSize.SM</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">-0.03656</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">0.5729</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">-0.06381</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">27.970</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">0.949572</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left" style="background-color: #FFFF00;">fixed</td>
-      <td class="gt_row gt_left" style="background-color: #FFFF00;">NA</td>
-      <td class="gt_row gt_left" style="background-color: #FFFF00;">ActiveTime.GM:ClassSize.SM</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">-0.78321</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">0.4133</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">-1.89503</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">32.518</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">0.067008</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">ran_pars</td>
-      <td class="gt_row gt_left">Class</td>
-      <td class="gt_row gt_left">sd__(Intercept)</td>
-      <td class="gt_row gt_right">6.74418</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">ran_pars</td>
-      <td class="gt_row gt_left">Class</td>
-      <td class="gt_row gt_left">cor__(Intercept).ActiveTime.GM</td>
-      <td class="gt_row gt_right">0.12462</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">ran_pars</td>
-      <td class="gt_row gt_left">Class</td>
-      <td class="gt_row gt_left">sd__ActiveTime.GM</td>
-      <td class="gt_row gt_right">3.60241</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">ran_pars</td>
-      <td class="gt_row gt_left">School</td>
-      <td class="gt_row gt_left">sd__(Intercept)</td>
-      <td class="gt_row gt_right">7.78182</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">ran_pars</td>
-      <td class="gt_row gt_left">School</td>
-      <td class="gt_row gt_left">cor__(Intercept).ActiveTime.GM</td>
-      <td class="gt_row gt_right">-1.00000</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">ran_pars</td>
-      <td class="gt_row gt_left">School</td>
-      <td class="gt_row gt_left">sd__ActiveTime.GM</td>
-      <td class="gt_row gt_right">2.74277</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">ran_pars</td>
-      <td class="gt_row gt_left">Residual</td>
-      <td class="gt_row gt_left">sd__Observation</td>
-      <td class="gt_row gt_right">3.91469</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-    </tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">(Intercept)</td>
+<td class="gt_row gt_right">44.45181</td>
+<td class="gt_row gt_right">4.6667</td>
+<td class="gt_row gt_right">9.52538</td>
+<td class="gt_row gt_right">3.046</td>
+<td class="gt_row gt_right">0.002303</td></tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">ActiveTime.GM</td>
+<td class="gt_row gt_right">14.34850</td>
+<td class="gt_row gt_right">1.8121</td>
+<td class="gt_row gt_right">7.91797</td>
+<td class="gt_row gt_right">3.233</td>
+<td class="gt_row gt_right">0.003193</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #FFFF00;">fixed</td>
+<td class="gt_row gt_left" style="background-color: #FFFF00;">NA</td>
+<td class="gt_row gt_left" style="background-color: #FFFF00;">ClassSize.SM</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">-0.03656</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">0.5729</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">-0.06381</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">27.971</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">0.949572</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #FFFF00;">fixed</td>
+<td class="gt_row gt_left" style="background-color: #FFFF00;">NA</td>
+<td class="gt_row gt_left" style="background-color: #FFFF00;">ActiveTime.GM:ClassSize.SM</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">-0.78320</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">0.4133</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">-1.89499</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">32.516</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">0.067014</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">Class</td>
+<td class="gt_row gt_left">sd__(Intercept)</td>
+<td class="gt_row gt_right">6.74413</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">Class</td>
+<td class="gt_row gt_left">cor__(Intercept).ActiveTime.GM</td>
+<td class="gt_row gt_right">0.12463</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">Class</td>
+<td class="gt_row gt_left">sd__ActiveTime.GM</td>
+<td class="gt_row gt_right">3.60253</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">School</td>
+<td class="gt_row gt_left">sd__(Intercept)</td>
+<td class="gt_row gt_right">7.78136</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">School</td>
+<td class="gt_row gt_left">cor__(Intercept).ActiveTime.GM</td>
+<td class="gt_row gt_right">-1.00000</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">School</td>
+<td class="gt_row gt_left">sd__ActiveTime.GM</td>
+<td class="gt_row gt_right">2.74252</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">Residual</td>
+<td class="gt_row gt_left">sd__Observation</td>
+<td class="gt_row gt_right">3.91469</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
   </tbody>
   
   
-</table></div>
+</table>
+</div>
 
 Effect of Class Size is no longer significant: it was a Simpson's paradox effect (differences between Schools, which are confounded with class size, not effects of class size)
 
@@ -1604,17 +1576,20 @@ VarCorr(m3a)
 ]
 ---
 #  Math Active Learning: 3-level model
+<div id="tmkdvcaofo" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#tajnhpbrkz .gt_table {
+#tmkdvcaofo .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
   margin-right: auto;
   color: #333333;
   font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
   background-color: #FFFFFF;
   width: auto;
   border-top-style: solid;
@@ -1631,7 +1606,7 @@ VarCorr(m3a)
   border-left-color: #D3D3D3;
 }
 
-#tajnhpbrkz .gt_heading {
+#tmkdvcaofo .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1643,7 +1618,7 @@ VarCorr(m3a)
   border-right-color: #D3D3D3;
 }
 
-#tajnhpbrkz .gt_title {
+#tmkdvcaofo .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1653,7 +1628,7 @@ VarCorr(m3a)
   border-bottom-width: 0;
 }
 
-#tajnhpbrkz .gt_subtitle {
+#tmkdvcaofo .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1663,13 +1638,13 @@ VarCorr(m3a)
   border-top-width: 0;
 }
 
-#tajnhpbrkz .gt_bottom_border {
+#tmkdvcaofo .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#tajnhpbrkz .gt_col_headings {
+#tmkdvcaofo .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1684,7 +1659,7 @@ VarCorr(m3a)
   border-right-color: #D3D3D3;
 }
 
-#tajnhpbrkz .gt_col_heading {
+#tmkdvcaofo .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1704,7 +1679,7 @@ VarCorr(m3a)
   overflow-x: hidden;
 }
 
-#tajnhpbrkz .gt_column_spanner_outer {
+#tmkdvcaofo .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1716,15 +1691,15 @@ VarCorr(m3a)
   padding-right: 4px;
 }
 
-#tajnhpbrkz .gt_column_spanner_outer:first-child {
+#tmkdvcaofo .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#tajnhpbrkz .gt_column_spanner_outer:last-child {
+#tmkdvcaofo .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#tajnhpbrkz .gt_column_spanner {
+#tmkdvcaofo .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1736,7 +1711,7 @@ VarCorr(m3a)
   width: 100%;
 }
 
-#tajnhpbrkz .gt_group_heading {
+#tmkdvcaofo .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1758,7 +1733,7 @@ VarCorr(m3a)
   vertical-align: middle;
 }
 
-#tajnhpbrkz .gt_empty_group_heading {
+#tmkdvcaofo .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1773,19 +1748,15 @@ VarCorr(m3a)
   vertical-align: middle;
 }
 
-#tajnhpbrkz .gt_striped {
-  background-color: rgba(128, 128, 128, 0.05);
-}
-
-#tajnhpbrkz .gt_from_md > :first-child {
+#tmkdvcaofo .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#tajnhpbrkz .gt_from_md > :last-child {
+#tmkdvcaofo .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#tajnhpbrkz .gt_row {
+#tmkdvcaofo .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1804,7 +1775,7 @@ VarCorr(m3a)
   overflow-x: hidden;
 }
 
-#tajnhpbrkz .gt_stub {
+#tmkdvcaofo .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1816,7 +1787,7 @@ VarCorr(m3a)
   padding-left: 12px;
 }
 
-#tajnhpbrkz .gt_summary_row {
+#tmkdvcaofo .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1826,7 +1797,7 @@ VarCorr(m3a)
   padding-right: 5px;
 }
 
-#tajnhpbrkz .gt_first_summary_row {
+#tmkdvcaofo .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1836,7 +1807,7 @@ VarCorr(m3a)
   border-top-color: #D3D3D3;
 }
 
-#tajnhpbrkz .gt_grand_summary_row {
+#tmkdvcaofo .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1846,7 +1817,7 @@ VarCorr(m3a)
   padding-right: 5px;
 }
 
-#tajnhpbrkz .gt_first_grand_summary_row {
+#tmkdvcaofo .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1856,7 +1827,11 @@ VarCorr(m3a)
   border-top-color: #D3D3D3;
 }
 
-#tajnhpbrkz .gt_table_body {
+#tmkdvcaofo .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#tmkdvcaofo .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1865,7 +1840,7 @@ VarCorr(m3a)
   border-bottom-color: #D3D3D3;
 }
 
-#tajnhpbrkz .gt_footnotes {
+#tmkdvcaofo .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1879,13 +1854,13 @@ VarCorr(m3a)
   border-right-color: #D3D3D3;
 }
 
-#tajnhpbrkz .gt_footnote {
+#tmkdvcaofo .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#tajnhpbrkz .gt_sourcenotes {
+#tmkdvcaofo .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1899,46 +1874,47 @@ VarCorr(m3a)
   border-right-color: #D3D3D3;
 }
 
-#tajnhpbrkz .gt_sourcenote {
+#tmkdvcaofo .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#tajnhpbrkz .gt_left {
+#tmkdvcaofo .gt_left {
   text-align: left;
 }
 
-#tajnhpbrkz .gt_center {
+#tmkdvcaofo .gt_center {
   text-align: center;
 }
 
-#tajnhpbrkz .gt_right {
+#tmkdvcaofo .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#tajnhpbrkz .gt_font_normal {
+#tmkdvcaofo .gt_font_normal {
   font-weight: normal;
 }
 
-#tajnhpbrkz .gt_font_bold {
+#tmkdvcaofo .gt_font_bold {
   font-weight: bold;
 }
 
-#tajnhpbrkz .gt_font_italic {
+#tmkdvcaofo .gt_font_italic {
   font-style: italic;
 }
 
-#tajnhpbrkz .gt_super {
+#tmkdvcaofo .gt_super {
   font-size: 65%;
 }
 
-#tajnhpbrkz .gt_footnote_marks {
+#tmkdvcaofo .gt_footnote_marks {
   font-style: italic;
+  font-weight: normal;
   font-size: 65%;
 }
 </style>
-<div id="tajnhpbrkz" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+<table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -1953,110 +1929,91 @@ VarCorr(m3a)
     </tr>
   </thead>
   <tbody class="gt_table_body">
-    <tr>
-      <td class="gt_row gt_left">fixed</td>
-      <td class="gt_row gt_left">NA</td>
-      <td class="gt_row gt_left">(Intercept)</td>
-      <td class="gt_row gt_right">44.35577</td>
-      <td class="gt_row gt_right">4.7261</td>
-      <td class="gt_row gt_right">9.38533</td>
-      <td class="gt_row gt_right">3.033</td>
-      <td class="gt_row gt_right">0.002451</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">fixed</td>
-      <td class="gt_row gt_left">NA</td>
-      <td class="gt_row gt_left">ActiveTime.GM</td>
-      <td class="gt_row gt_right">14.32683</td>
-      <td class="gt_row gt_right">1.7365</td>
-      <td class="gt_row gt_right">8.25056</td>
-      <td class="gt_row gt_right">3.177</td>
-      <td class="gt_row gt_right">0.003003</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left" style="background-color: #FFFF00;">fixed</td>
-      <td class="gt_row gt_left" style="background-color: #FFFF00;">NA</td>
-      <td class="gt_row gt_left" style="background-color: #FFFF00;">ClassSize.SM</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">-0.02766</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">0.5772</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">-0.04792</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">27.226</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">0.962128</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left" style="background-color: #FFFF00;">fixed</td>
-      <td class="gt_row gt_left" style="background-color: #FFFF00;">NA</td>
-      <td class="gt_row gt_left" style="background-color: #FFFF00;">ActiveTime.GM:ClassSize.SM</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">-0.77926</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">0.4231</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">-1.84189</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">29.967</td>
-      <td class="gt_row gt_right" style="background-color: #FFFF00;">0.075409</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">ran_pars</td>
-      <td class="gt_row gt_left">Class</td>
-      <td class="gt_row gt_left">sd__(Intercept)</td>
-      <td class="gt_row gt_right">6.79290</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">ran_pars</td>
-      <td class="gt_row gt_left">Class</td>
-      <td class="gt_row gt_left">cor__(Intercept).ActiveTime.GM</td>
-      <td class="gt_row gt_right">0.13698</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">ran_pars</td>
-      <td class="gt_row gt_left">Class</td>
-      <td class="gt_row gt_left">sd__ActiveTime.GM</td>
-      <td class="gt_row gt_right">3.75530</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">ran_pars</td>
-      <td class="gt_row gt_left">School</td>
-      <td class="gt_row gt_left">sd__ActiveTime.GM</td>
-      <td class="gt_row gt_right">2.55827</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">ran_pars</td>
-      <td class="gt_row gt_left">School.1</td>
-      <td class="gt_row gt_left">sd__(Intercept)</td>
-      <td class="gt_row gt_right">7.88169</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">ran_pars</td>
-      <td class="gt_row gt_left">Residual</td>
-      <td class="gt_row gt_left">sd__Observation</td>
-      <td class="gt_row gt_right">3.91480</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-      <td class="gt_row gt_right">NA</td>
-    </tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">(Intercept)</td>
+<td class="gt_row gt_right">44.35577</td>
+<td class="gt_row gt_right">4.7261</td>
+<td class="gt_row gt_right">9.38533</td>
+<td class="gt_row gt_right">3.033</td>
+<td class="gt_row gt_right">0.002451</td></tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">ActiveTime.GM</td>
+<td class="gt_row gt_right">14.32683</td>
+<td class="gt_row gt_right">1.7365</td>
+<td class="gt_row gt_right">8.25056</td>
+<td class="gt_row gt_right">3.177</td>
+<td class="gt_row gt_right">0.003003</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #FFFF00;">fixed</td>
+<td class="gt_row gt_left" style="background-color: #FFFF00;">NA</td>
+<td class="gt_row gt_left" style="background-color: #FFFF00;">ClassSize.SM</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">-0.02766</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">0.5772</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">-0.04792</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">27.226</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">0.962128</td></tr>
+    <tr><td class="gt_row gt_left" style="background-color: #FFFF00;">fixed</td>
+<td class="gt_row gt_left" style="background-color: #FFFF00;">NA</td>
+<td class="gt_row gt_left" style="background-color: #FFFF00;">ActiveTime.GM:ClassSize.SM</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">-0.77926</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">0.4231</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">-1.84189</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">29.967</td>
+<td class="gt_row gt_right" style="background-color: #FFFF00;">0.075409</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">Class</td>
+<td class="gt_row gt_left">sd__(Intercept)</td>
+<td class="gt_row gt_right">6.79290</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">Class</td>
+<td class="gt_row gt_left">cor__(Intercept).ActiveTime.GM</td>
+<td class="gt_row gt_right">0.13698</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">Class</td>
+<td class="gt_row gt_left">sd__ActiveTime.GM</td>
+<td class="gt_row gt_right">3.75530</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">School</td>
+<td class="gt_row gt_left">sd__ActiveTime.GM</td>
+<td class="gt_row gt_right">2.55827</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">School.1</td>
+<td class="gt_row gt_left">sd__(Intercept)</td>
+<td class="gt_row gt_right">7.88169</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">Residual</td>
+<td class="gt_row gt_left">sd__Observation</td>
+<td class="gt_row gt_right">3.91480</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
   </tbody>
   
   
-</table></div>
+</table>
+</div>
 
 ---
 # Key points
