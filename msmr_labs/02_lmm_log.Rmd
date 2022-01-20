@@ -19,23 +19,580 @@ library(broom.mixed)
 library(effects)
 ```
 
-:::red
+:::blue
 **Preliminaries**  
  
-1. Open Rstudio, and create a new RMarkdown document (giving it a title for this week). 
+1. Open Rstudio, create a new R Script or RMarkdown document (whichever you prefer working with) and give it a title for this week. 
+
+Load any of the packages you think you might be using today.  
+
+By now you may have started get into a sort of routine with R, and you might know what functions you like, and which you don't. Because there are so many alternatives for doing the same thing, the packages and functions you use are very much up to you.   
+
+If I'm planning on doing some multi-level modelling, I will tend to load these by default at the top: 
+```{r}
+library(tidyverse) # for everything
+library(lme4) # for fitting models
+library(broom.mixed) # for tidying model output
+```
+:::
+
+# Longitudinal Models
+
+Last week when we introduced multilevel models (or "mixed effects models" or whatever we're calling them!), we saw in the lectures a little bit about the idea of having datapoints from the same participant _over time_. This kind of data tends to get termed "longitudinal" (mainly used to refer to studies which follow-up participants over the course of months or years). The lectures this week have also introduced this idea of 'change over time' by looking at some data from Public Health England.   
+   
+Let's work our way through an example. 
+  
+
+:::frame
+__WeightMaintain Data Codebook__  
+
+The weight maintenance data (`WeightMaintain3`), a made-up data set based on Lowe et al. (2014, Obesity, 22, 94-100), contains information on overweight participants who completed a 12-week weight loss program, and were then randomly assigned to one of three weight maintenance conditions:
+
+* None (Control)  
+* MR (meal replacements): use MR to replace one meal and snack per day  
+* ED (energy density intervention): book and educational materials on purchasing and preparing foods lower in ED (reducing fat content and/or increasing water content of foods)  
+
+Weight was assessed on day 1 of maintenance, 12 months post, 24 months post, and 36 months post.
+
+It is available, in **.rda** format, at https://uoepsy.github.io/data/WeightMaintain3.rda  
+
+```{r echo=FALSE}
+load(url("https://uoepsy.github.io/data/WeightMaintain3.rda"))
+data.frame(
+  variable = names(WeightMaintain3),
+  description = c("Participant ID","Weight Maintenance Condition ('None' = No maintenance program, 'MR' = Meal replacement, 'ED' = Energy Density intervention)", "Assessment number (0 = Day 1, 1 = 12 months, 2 = 24 months, 3 = 36 months)", "Difference in weight (lbs) from end of 12-week weight loss program")
+) %>% knitr::kable()
+```
 
 :::
 
+
+`r qbegin("A1")`
+Load the data, and take a look at what is in there. Hopefully it should match the description above.  
+
+**Hint:** `load(url("https://uoepsy.github.io/data/WeightMaintain3.rda"))`
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+load(url("https://uoepsy.github.io/data/WeightMaintain3.rda"))
+summary(WeightMaintain3)
+head(WeightMaintain3)
+```
+`r solend()`
+
+`r qbegin("A2")`  
+
+> Q: Overall, did the participants maintain their weight loss or did their weights change?
+
+We need to remember that each of our participants has measurements at 4 assessments. We have randomly sampled participants, and then within them have measured multiple observations. So our observations are __not independent__. We're not interested in estimating differences between specific participants - our participants are just a random sample of people. But we do want to account for the dependency they introduce in our data. This is why we would want to fit a multilevel model and incorporate participant-level variation into our model structure.   
+
+1. Fit an "intercept-only" model. 
+2. Fit a model with weight change predicted by assessment.  
+3. Compare the two models (use `anova(model1, model2)` to conduct a likelihood ratio test).
+
+Things to think about:  
+
+- We _cannot_ compare models that differ in both the fixed *and* random parts.  
+- __For now__, ignore messages saying `boundary (singular) fit: see ?isSingular` (that comes in a couple of questions' time).    
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+This is our null model:
+```{r}
+m.null <- lmer(WeightChange ~ 1 + (1 | ID), data=WeightMaintain3)
+summary(m.null)
+```
+We can see the `3.77 / (3.77 + 6.43)`, or `r (3.77 / (3.77 + 6.43)) %>% round(.,2)` of the total variance is attributable to participant-level variation. 
+
+Now lets suppose we want to compare this null model with a model with an effect of `Assessment` (to assess whether there is overall change over time).
+Which model should we compare `m.null` to?  
+```{r}
+modA <- lmer(WeightChange ~ 1 + Assessment + (1 + Assessment | ID), data=WeightMaintain3)
+modB <- lmer(WeightChange ~ 1 + Assessment + (1 | ID), data=WeightMaintain3)
+```
+A comparison between these `m.null` and `modA` will not be assessing the influence of _only_ the fixed effect of Assessment. Remember, we shouldn't compare models with different random effect structures.   
+However, `modB` doesn't include our by-participant random effects of assessment, so comparing this to `m.null` is potentially going to misattribute random deviations in participants' change to being an overall effect of assessment.  
+
+If we want to conduct a model comparison to isolate the effect of overall change over time (a fixed effect of `Assessment`), we _might_ want to compare these two models:
+```{r}
+m.base0 <- lmer(WeightChange ~ 1 + (1 + Assessment | ID), data=WeightMaintain3)
+m.base <- lmer(WeightChange ~ 1 + Assessment + (1 + Assessment | ID), data=WeightMaintain3)
+```
+The first of these models is a bit weird to think about - how can we have by-participant random deviations of `Assessment` if we don't have a fixed effect of `Assessment`? That makes very little sense. What it is actually fitting is a model where there is assumed to be __no overall effect__ of Assessment. So the fixed effect is 0. 
+
+```{r}
+# Straightforward LRT
+anova(m.base0, m.base)
+```
+
+This suggests that the inclusion Assessment does improve model fit, indicating that participants' weights changed over course of 36 month assessment period. 
+
+`r solend()`
+
+`r qbegin("A3")`
+> Q: Did the experimental condition groups differ in overall weight change and rate of weight change (non-maintenance)?  
+
+*Hint:* It helps to break it down. There are two questions here:  
+
+  1. do groups differ overall?  
+  2. do groups differ over time?  
+
+We can begin to see that we're asking two questions about the `Condition` variable here: "is there an effect of Condition?" and "Is there an interaction between Assessment and Condition?".  
+
+Try fitting two more models which incrementally build these levels of complexity, and compare them (perhaps to one another, perhaps to models from the previous question - think about what each comparison is testing!)  
+  
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+m.int <- lmer(WeightChange ~ Assessment + Condition + (1 + Assessment | ID), 
+              data=WeightMaintain3)
+m.full <- lmer(WeightChange ~ Assessment*Condition + (1 + Assessment | ID), 
+               data=WeightMaintain3)
+```
+
+We're going to compare each model to the previous one to examine the improvement in fit due to inclusion of each parameter. 
+We could do this quickly with
+```{r}
+anova(m.base0, m.base, m.int, m.full)
+```
+
+- Conditions differed overall in weight change $\chi^2(2)=9.4, p = .009$  
+- Conditions differed in change over assessment period $\chi^2(2)=40.4, p < .001$
+  
+
+`r solend()`
+
+
+`r qbegin("A4")`
+Okay. Let's talk about those "singular fits" messages we keep getting.  By now, you have hopefully fitted a number of models which incrementally add predictors, like those below: 
+```{r}
+m.base0 <- lmer(WeightChange ~ 1 + (1 + Assessment | ID), data=WeightMaintain3)
+m.base <- lmer(WeightChange ~ Assessment + (1 + Assessment | ID), data=WeightMaintain3)
+m.int <- lmer(WeightChange ~ Assessment + Condition + (1 + Assessment | ID), data=WeightMaintain3)
+m.full <- lmer(WeightChange ~ Assessment * Condition + (1 + Assessment | ID), data=WeightMaintain3)
+```
+
+And many of these models were singular fits, and we just ignored them. We shouldn't have.  
+  
+The easiest way to think of this message is to think of it as telling us that there is _not enough variation in our data_ for our model to be estimated properly.  
+
+Working out precisely _which bit of our model_ this is caused by can be difficult. One thing we should do is examine the variance estimates of the random effects (if you don't know what we mean here, I suggest you look back at Question A6 from last week's lab), to see if some are very small (i.e., the estimated variance is very close to zero).  
+  
+The other thing (just as, if not _more_ important), is to pay close attention to the study design.  
+Re-read the description of the data, then ask yourself this question:  
+
+Do we think participants will vary in:  
+
+  a. their _starting_ weight differences `(1|ID)`?
+  b. their weight change over the course of the assessment period `(0 + Assessment | ID)`?
+  c. both `(1 + Assessment | ID)`?  
+
+_Hint:_  What do we think the baseline weight should be? Should it be the same for everyone? If so, might we want to remove the random intercept, which we do by setting it to 0
+  
+Can you re-fit your models without encountering singular fits?   
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+In this very specific research design, it may actually make a lot of sense to not model by-participant variation around the intercept.  
+As baseline is at the very start of the weight maintenance, it makes sense that we wouldn't have very much (if any) participant variation in change at this point. 
+Note that by removing the estimation of this parameter, our models now converge!
+```{r}
+m.base0 <- lmer(WeightChange ~ 1 + (0 + Assessment | ID), data=WeightMaintain3)
+m.base <- lmer(WeightChange ~ 1 + Assessment + (0 + Assessment | ID), data=WeightMaintain3)
+m.int <- lmer(WeightChange ~ 1 + Assessment + Condition + (0 + Assessment | ID), data=WeightMaintain3)
+m.full <- lmer(WeightChange ~ 1 + Assessment * Condition + (0 + Assessment | ID), data=WeightMaintain3)
+```
+
+We can check if a model has a singular fit:  
+```{r}
+isSingular(m.base)
+```
+
+`r solend()`
+
+`r qbegin("A5")`
+Make a graph of the model fit *and* the observed means and standard errors at each time point for each condition.  
+
+Try using the **effects** package (hint, does this help: `as.data.frame(effect("Assessment:Condition", model))`?)
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+library(effects)
+ef <- as.data.frame(effect("Assessment:Condition", m.full))
+
+ggplot(ef, aes(Assessment, fit, color=Condition)) + 
+  geom_line() +
+  stat_summary(data=WeightMaintain3, aes(y=WeightChange), 
+               fun.data=mean_se, geom="pointrange", size=1) +
+  theme_bw()
+```
+`r solend()`
+
+`r qbegin("A6")`
+Now let's move to interpreting the coefficients. 
+Remember, we can get the coefficients using `fixef(model)`. 
+We can also use `tidy(model)`, and similar to models fitted with `lm()`, we can pull out the bit of the `summary()` using:  
+```{r eval=FALSE}
+summary(model)$coefficients
+```
+  
+From your model from the previous question which investigates whether conditions differed in their rate of weight change, examine the parameter estimates and interpret them (i.e., what does each parameter represent?)
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+round(coef(summary(m.full)), 3)
+```
+
+* `(Intercept)` ==> weight change at baseline in None group
+* `Assessment`  ==> slope of weight change in None group
+* `ConditionED` ==> baseline weight change in ED group relative to None group
+* `ConditionMR` ==> baseline weight change in MR group relative to None group
+* `Assessment:ConditionED`  ==> slope of weight change in ED group relative to None group
+* `Assessment:ConditionMR`  ==> slope of weight change in MR groups relative to None group
+
+`r solend()`
+
+`r qbegin("A7")`
+Can you state how the conditions differed?  
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+summary(m.full)$coefficients
+```
+
+:::int
+Compared to no intervention, weight (re)gain was 1.75 lbs/year slower for the ED intervention and 0.84 lbs/year slower for the MR intervention.
+:::
+
+`r solend()`
+
+
+
+In the exercises this week, we're going to concentrate on this in combination with the other topic this week, *Logistic* multi-level models. Then we're going to look at *contrasts* (they're a confusing topic, and can be pretty unintuitive, but we're going to have to do it sometime!), and talk a little bit about making inferences.  
+
+# Logistic MLM
+
+:::frame
+**Don't forget to look back at other materials!** 
+
+Back in USMR, we introduced logistic regression in week 10. The lectures followed the example of some [singing aliens that either survived or were splatted](https://uoepsy.github.io/usmr/lectures/lecture_9.html#1), and the exercises used some simulated data based on a hypothetical study [about inattentional blindness](https://uoepsy.github.io/usmr/labs/09_glm.html). 
+That content will provide a lot of the groundwork for this week, so we recommend revisiting it if you feel like it might be useful. 
+:::
+
+:::rtip
+__lmer() >> glmer()__
+
+Remember how we simply used `glm()` and could specify the `family = "binomial"` in order to fit a logistic regression? Well it's much the same thing for multi-level models! 
+
++ Gaussian model: 
+  - `lmer(y ~ x1 + x2 + (1 | g), data = data)`  
++ Binomial model:  
+  - `glmer(y ~ x1 + x2 + (1 | g), data = data, family = binomial(link='logit'))`
+  - or just `glmer(y ~ x1 + x2 + (1 | g), data = data, family = "binomial")`
+  - or `glmer(y ~ x1 + x2 + (1 | g), data = data, family = binomial)`
+    
+:::
+
+`r optbegin("Binary? Binomial? Huh?", olabel=F,toggle=params$TOGGLE)`
+Very briefly in the USMR materials we made the distinction between **binary** and **binomial**. This wasn't hugely relevant at the time just because we only looked at binary outcomes.  
+
+For binary regression, all the data in our outcome variable has to be a 0 or a 1.  
+For example, the `correct` variable below:  
+<br>
+```{r echo=FALSE}
+tibble(participant = c(1,1,1),question=c(1,2,3),correct=c(1,0,1)) %>% rbind(rep("...",3)) %>%
+  gt::gt()
+```
+<br>
+But we can re-express this information in a different way, when we know the total number of questions asked: 
+
+```{r echo=FALSE}
+tibble(participant = c(1,2,3),questions_correct=c(2,1,3),questions_incorrect=c(1,2,0)) %>% rbind(rep("...",3)) %>% gt::gt()
+```
+<br>  
+To model data when it is in this form, we can express our outcome as `cbind(questions_correct, questions_incorrect)`
+`r optend()`
+
+
+:::frame
+__Novel Word Learning: Data Codebook__
+
+```{r eval=FALSE}
+load(url("https://uoepsy.github.io/msmr/data/nwl.RData"))
+```
+
+In the `nwl` data set (accessed using the code above), participants with aphasia are separated into two groups based on the general location of their brain lesion: anterior vs. posterior. There is data on the numbers of correct and incorrect responses participants gave in each of a series of experimental blocks. There were 7 learning blocks, immediately followed by a test. Finally, participants also completed a follow-up test.  
+<br>
+Data were also collect from healthy controls. 
+<br>
+Figure \@ref(fig:nwl-fig) shows the differences between groups in the average proportion of correct responses at each point in time (i.e., each block, test, and follow-up)
+
+```{r nwl-fig, echo=FALSE, fig.cap="Differences between groups in the average proportion of correct responses at each block"}
+load(url("https://uoepsy.github.io/msmr/data/nwl.RData"))
+ggplot(filter(nwl, !is.na(lesion_location)), aes(block, PropCorrect, 
+                                            color=lesion_location, 
+                                            shape=lesion_location)) +
+  #geom_line(aes(group=ID),alpha=.2) + 
+  stat_summary(fun.data=mean_se, geom="pointrange") + 
+  stat_summary(data=filter(nwl, !is.na(lesion_location), block <= 7), 
+                           fun=mean, geom="line") + 
+  geom_hline(yintercept=0.5, linetype="dashed") + 
+  geom_vline(xintercept=c(7.5, 8.5), linetype="dashed") + 
+  scale_x_continuous(breaks=1:9, labels=c(1:7, "Test", "Follow-Up")) + 
+  theme_bw(base_size=10) + 
+  labs(x="Block", y="Proportion Correct", shape="Lesion\nLocation", color="Lesion\nLocation")
+```
+
+:::
+
+`r qbegin("B1")`
+Load the data. Take a look around. Any missing values? Can you think of why?  
+`r qend()`
+
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+load(url("https://uoepsy.github.io/msmr/data/nwl.RData"))
+summary(nwl)
+```
+The only missing vales are in the lesion location, and it's probably because the healthy controls don't have any lesions. 
+
+`r solend()`
+
+
+`r qbegin("B2")`
+The broader research aim we are going to address today is to compare two groups (those with anterior vs. posterior lesions) with respect to their accuracy of responses over the course of the study.  
+
+1. What is our outcome? 
+
+*Hint:* Think carefully: there might be several variables which either fully or partly express the information we are considering the "outcome" here. 
+`r qend()`
+`r solbegin(show=TRUE, toggle=params$TOGGLE)`
+1. The outcome here is (in words) "the proportion of correct answers in each block". This makes it tempting to look straight to the variable called `PropCorrect`. Unfortunately, this is encoded as a proportion (i.e., is bounded by 0 and 1), and of the models we have learned about so far, we don't definitely have the necessary tools to model this.  
+    - linear regression = continuous *unbounded* outcome variable  
+    - logistic regression = binomial, expressed as `0` or `1` if the number of trials per observation is 1, and expressed as `cbind(num_successes, num_failures)` if the number of trials per observation is >1. 
+`r solend()`
+
+`r qbegin("B3")`
+> **Research Question 1:**  
+> Is the learning rate (training blocks) different between these two groups?
+
+**Hints**: 
+
+- Do we want `cbind(num_successes, num_failures)`?
+- Make sure we're running models on only the data we are actually interested in.  
+- Think back to what we did in last week's exercises using model comparison via likelihood ratio tests (using `anova(model1, model2, model3, ...)`. We could use this approach for this question, to compare:
+
+    - A model with just the change over the sequence of blocks
+    - A model with the change over the sequence of blocks *and* an overall difference between groups
+    - A model with groups differing with respect to their change over the sequence of blocks  
+
+- What about the random effects part?  
+    
+    1. What are our observations grouped by? 
+    2. What variables can vary within these groups? 
+    3. What do you want your model to allow to vary within these groups?
+
+`r optbegin("Suggested answers to the hints if you don't know where to start", olabel=FALSE, toggle=params$TOGGLE)`
+
+- Make sure we're running models on only the data we are actually interested in. 
+    - We want only the learning blocks, and none of the healthy controls.
+    - You might want to store this data in a separate object, but in the code for the solutio we will just use `filter()` *inside* the `glmer()`.   
+  
+- A model with just the change over the sequence of blocks:
+    - **outcome ~ block**
+- A model with the change over the sequence of blocks *and* an overall difference between groups:
+    - **outcome ~ block + lesion_location**
+- A model with groups differing with respect to their change *over the sequence of blocks:
+    - **outcome ~ block * lesion_location**
+    
+- What are our observations grouped by? 
+    - repeated measures by-participant. i.e., the `ID` variable
+- What variables can vary within these groups? 
+    - `Block` and `Phase`. Be careful though - you can create the `Phase` variable out of the `Block` variable, so really this is just one piece of information, encoded differently in two variables. 
+    - The other variables (`lesion_location` and `group`) do **not** vary for each ID. Lesions don't suddenly change where they are located, nor do participants swap between being a patient vs a control (we don't need the group variable anyway as we are excluding the controls).  
+What do you want your model to allow to vary within these groups?
+    - Do you think the change over the course of the blocks is **the same** for everybody? Or do you think it varies? Is this variation important to think about in terms of your research question?   
+    
+`r optend()`
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+m.base <- glmer(cbind(NumCorrect, NumError) ~ block + (block | ID), 
+                data = filter(nwl, block < 8, !is.na(lesion_location)),
+                family=binomial)
+m.loc0 <- glmer(cbind(NumCorrect, NumError) ~ block + lesion_location + (block | ID), 
+                data=filter(nwl, block < 8, !is.na(lesion_location)),
+                family=binomial)
+m.loc1 <- glmer(cbind(NumCorrect, NumError) ~ block * lesion_location + (block | ID), 
+                data=filter(nwl, block < 8, !is.na(lesion_location)),
+                family=binomial)
+#summary(m.loc1)
+anova(m.base, m.loc0, m.loc1, test="Chisq")
+```
+:::int
+No significant difference in learning rate between groups ($\chi^2(1)=2.2, p = 0.138$).
+:::
+
+`r solend()`
+
+`r qbegin("B4")`
+> **Research Question 2**  
+> In the testing phase, does performance on the immediate test differ between lesion location groups, and does their retention from immediate to follow-up test differ?
+
+Let's try a different approach to this. Instead of fitting various models and comparing them via likelihood ratio tests, just fit the one model which could answer both parts of the question above.  
+
+**Hints:**
+    
+- This might required a bit more data-wrangling before hand. Think about the order of your factor levels
+(alphabetically speaking, "Follow-up" comes before "Immediate")!
+
+`r qend()`
+`r solbegin(show=params$SHOW, toggle=params$TOGGLE)`
+```{r}
+nwl_test <- filter(nwl, block > 7, !is.na(lesion_location)) %>%
+  mutate(
+    Phase = fct_relevel(factor(Phase),"Immediate")
+  )
+
+m.recall.loc <- glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (Phase | ID), 
+                  nwl_test, family="binomial")
+
+summary(m.recall.loc)
+```
+`r solend()`
+
+## Interpreting fixed effects
+
+:::frame
+
+Take some time to remind yourself from USMR of the [interpretation of logistic regression coefficients](https://uoepsy.github.io/usmr/labs/09_glm.html#Introducing_GLM).  
+
+The interpretation of the fixed effects of a logistic multi-level model are no different.  
+We can obtain them using:  
+
+- `fixef(model)`
+- `summary(model)$coefficients`
+- `tidy(model)` **from broom.mixed**  
+- (there are probably more ways, but I can't think of them right now!)
+
+It's just that for multi-level models, we can model by-cluster andom variation around these effects.  
+:::
+
+`r qbegin("B5")`
+
+1. In `family = binomial(link='logit')`. What function is used to relate the linear predictors in the model to the expected value of the response variable?  
+2. How do we convert this into something more interpretable?  
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+ 
+1. The link function is the `logit`, or log-odds (other link functions are available).
+
+2. To convert log-odds to odds, we can use `exp()`, to get odds and odds ratios.  
+
+`r solend()`
+
+`r qbegin("B6")`
+Make sure you pay attention to trying to interpret each fixed effect from your models.  
+These can be difficult, especially when it's logistic, and especially when there are interactions.  
+
+- What is the increase in the odds of answering correctly in the immediate test for someone with a posterior legion compared to someone with an anterior legion?  
+
+`r optbegin("Optional help: Our Solution to B4", olabel=F, toggle=params$TOGGLE)`
+```{r eval=F}
+nwl_test <- filter(nwl, block > 7, !is.na(lesion_location)) %>%
+  mutate(
+    Phase = fct_relevel(factor(Phase),"Immediate")
+  )
+
+m.recall.loc <- glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (Phase | ID), 
+                  nwl_test, family="binomial")
+```
+`r optend()`
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+* `(Intercept)` ==> Anterior lesion group performance in immediate test. This is the log-odds of them answering correctly in the immediate test. 
+* `PhaseFollow-up`  ==> Change in performance (for the anterior lesion group) from immediate to follow-up test. 
+* `lesion_locationposterior` ==> Posterior lesion group performance in immediate test relative to anterior lesion group performance in immediate test
+* `PhaseFollow-up:lesion_locationposterior` ==> Change in performance from immediate to follow-up test, posterior lesion group relative to anterior lesion group
+
+```{r echo=FALSE}
+exp(fixef(m.recall.loc))[3]
+```
+
+:::int
+Those with posterior lesions have `r round(exp(fixef(m.recall.loc))[3],2)` times the odds of answering correctly in the immediate test compared to someone with an anterior lesion. 
+:::
+
+`r solend()`
+
+`r qbegin("OPTIONAL: B7")`
+Recreate the visualisation in Figure \@ref(fig:nwl-fig2).
+
+```{r nwl-fig2, echo=FALSE, fig.cap="Differences between groups in the average proportion of correct responses at each block"}
+load(url("https://uoepsy.github.io/msmr/data/nwl.RData"))
+ggplot(filter(nwl, !is.na(lesion_location)), aes(block, PropCorrect, 
+                                            color=lesion_location, 
+                                            shape=lesion_location)) +
+  #geom_line(aes(group=ID),alpha=.2) + 
+  stat_summary(fun.data=mean_se, geom="pointrange") + 
+  stat_summary(data=filter(nwl, !is.na(lesion_location), block <= 7), 
+                           fun=mean, geom="line") + 
+  geom_hline(yintercept=0.5, linetype="dashed") + 
+  geom_vline(xintercept=c(7.5, 8.5), linetype="dashed") + 
+  scale_x_continuous(breaks=1:9, labels=c(1:7, "Test", "Follow-Up")) + 
+  theme_bw(base_size=10) + 
+  labs(x="Block", y="Proportion Correct", shape="Lesion\nLocation", color="Lesion\nLocation")
+```
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+ggplot(filter(nwl, !is.na(lesion_location)), aes(block, PropCorrect, 
+                                            color=lesion_location, 
+                                            shape=lesion_location)) +
+  #geom_line(aes(group=ID),alpha=.2) + 
+  stat_summary(fun.data=mean_se, geom="pointrange") + 
+  stat_summary(data=filter(nwl, !is.na(lesion_location), block <= 7), 
+                           fun=mean, geom="line") + 
+  geom_hline(yintercept=0.5, linetype="dashed") + 
+  geom_vline(xintercept=c(7.5, 8.5), linetype="dashed") + 
+  scale_x_continuous(breaks=1:9, labels=c(1:7, "Test", "Follow-Up")) + 
+  theme_bw(base_size=10) + 
+  labs(x="Block", y="Proportion Correct", shape="Lesion\nLocation", color="Lesion\nLocation")
+```
+`r solend()`
+
+
+:::frame
+__Hang on.. p-values are back?!__ 
+
+We noted at the end of last week that we don't have p-values for `lmer()`^[We also didn't get $R^2$. Check out [http://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#how-do-i-compute-a-coefficient-of-determination-r2-or-an-analogue-for-glmms](http://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#how-do-i-compute-a-coefficient-of-determination-r2-or-an-analogue-for-glmms)], but you might notice that we do now have them when we've fitted a model with `glmer()`?
+
+The reason is partly just one of convention. There is a standard practice for determining the statistical significance of parameters in the generalised linear model, relying on asymptotic Wald tests which evaluate differences in log-likelihood.  
+
+:::
+
+
 # Inference in MLM  
 
-Recall at the end of last week's lab we briefly noted that we don't have p-values for models fitted with `lmer()` ^[We also didn't get $R^2$. Check out [http://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#how-do-i-compute-a-coefficient-of-determination-r2-or-an-analogue-for-glmms](http://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#how-do-i-compute-a-coefficient-of-determination-r2-or-an-analogue-for-glmms)] (A quick reminder: a p-value is the probability of observing results as or more extreme than the data, _if the data were really generated by a hypothesised chance process_). 
+Recall at the end of last week's lab we briefly noted that we don't have p-values for models fitted with `lmer()` 
+
+:::statbox
+__A quick reminder:__ a p-value is the probability of observing results as or more extreme than the data, _if the data were really generated by a hypothesised chance process_). 
+:::
+
+
+We highlighted a couple of approaches that we might take for drawing inferences, finding ways to compute p-values or confidence intervals.^[It's always important to note that aiming for a p-value or confidence interval to make a dichotomous decision is only _one approach_ to doing statistics. If you continue to develop your learning of statistics after this course (which we hope you will!), then you will find that there are other schools of thought that bring different benefits.]  We're going to now extend this to include a few more, and discuss the strengths and limitations of the different approaches.  
 
 `r optbegin("Optional: Why no p-values?", olabel=F,toggle=params$TOGGLE)`
 When we are in the Gaussian ("normal") world, we're in the world of "sums of squares" (remember from USMR that we talked about the $F$ statistic for a simple linear model `lm()` representing the reduction in sums of squared residuals). But for the multilevel model, we can think of it as having residuals at multiple levels: we have the random variation of clusters around the fixed effects, and then random variation of observations around the cluster-level effects (more on this in Week 4). 
 In the rare occasion that you have a perfectly balanced experimental design, then ratios of sums of squares for multi-level models follow an $F$-distribution, in which we know the numerator and denominator degrees of freedom (this means we can work out the degrees of freedom for the $t$-test of our fixed effect parameters). Unfortunately, in the real world where things are not often perfectly balanced, determining the denominator degrees of freedom becomes unclear. 
 `r optend()`
-
-We highlighted a couple of approaches that we might take for drawing inferences, finding ways to compute p-values or confidence intervals.^[It's always important to note that aiming for a p-value or confidence interval to make a dichotomous decision is only _one approach_ to doing statistics. If you continue to develop your learning of statistics after this course (which we hope you will!), then you will find that there are other schools of thought that bring different benefits.]  We're going to now extend this to include a few more, and discuss the strengths and limitations of the different approaches.  
 
 Suppose that we have our toy dataset, and we are interested in whether practice (`hrs_week` variable) is associated with higher reading ages (`R_AGE` variable).  
 ```{r}
@@ -164,585 +721,9 @@ If you want more information (not required reading for this course), then Julian
 
 :::
 
-# Longitudinal Models
 
 
-Last week we began to cover the idea of longitudinal mixed models (or 'multi-level models' - whatever we're calling them!) in our exercises on Weight Change. The lectures this week have also introduced the idea of 'change over time' by looking at some data from Public Health England.  
-
-In the exercises this week, we're going to concentrate on this in combination with the other topic this week, *Logistic* multi-level models. Then we're going to look at *contrasts* (they're a confusing topic, and can be pretty unintuitive, but we're going to have to do it sometime!), and talk a little bit about making inferences. 
-
-
-Another very crucial advantage is that we can use the same methods to study how people change over time.  
-
-:::frame
-__WeightMaintain Data Codebook__  
-
-The weight maintenance data (`WeightMaintain3`), a made-up data set based on Lowe et al. (2014, Obesity, 22, 94-100), contains information on overweight participants who completed a 12-week weight loss program, and were then randomly assigned to one of three weight maintenance conditions:
-
-* None (Control)  
-* MR (meal replacements): use MR to replace one meal and snack per day  
-* ED (energy density intervention): book and educational materials on purchasing and preparing foods lower in ED (reducing fat content and/or increasing water content of foods)  
-
-Weight was assessed at baseline (start of maintenance), 12 months post, 24 months post, and 36 months post.  
-
-It is available, in **.rda** format, at https://uoepsy.github.io/data/WeightMaintain3.rda 
-:::
-
-
-`r qbegin("C1")`
-Load the data, and take a look at what is in there. Hopefully it should match the description above.  
-
-**Hint:** `load(url("https://uoepsy.github.io/data/WeightMaintain3.rda"))`
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-```{r}
-load(url("https://uoepsy.github.io/data/WeightMaintain3.rda"))
-summary(WeightMaintain3)
-head(WeightMaintain3)
-```
-`r solend()`
-
-`r qbegin("C2")`  
-
-> Q: Overall, did the participants maintain their weight loss or did their weights change?
-
-Each of our participants have measurements at 4 assessments. 
-We need to think about what this means for the **random effects** that we will include in our model (our **random effect structure**). Would we like our models to accommodate individuals to vary in their starting weight change, to vary in their weight change over the course of the assessment period, or both?
-
-To investigate whether weights changed over the course of the assessments, or whether they stayed the same, we can fit and compare 2 models:  
-
-1. The "null" or "intercept-only" model. 
-2. A model with weight change predicted by assessment.  
-
-And we can then compare them in terms of model fit. As discussed in the lecture, there are lots of ways to assess inference in multilevel models. 
-
-Our sample size here (180 participants, each with 4 observations) is reasonably large given the relative simplicity of our model. We might consider running a straightforward Likelihood Ratio Test using `anova(restricted_model, full_model)` to compare our two models. This will assume that the difference in model deviances ( $-2 \times \text{LogLikelihood}$ ) is $\chi^2$-distributed.  
-If we wish to use a more robust test, we might use the `PBmodcomp()` function from the __pbkrtest__ package, in order to bootstrap the likelihood ratio statistic based on simulations based on the parameters of the model.  
-
-**Tip: For now, don't worry too much about "singular fits". We'll talk more about how we might deal with them next week!**  
-
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-
-This is our null model:
-```{r}
-m.null <- lmer(WeightChange ~ 1 + (1 | ID), data=WeightMaintain3)
-summary(m.null)
-```
-We can see the `3.77 / (3.77 + 6.43)`, or `r (3.77 / (3.77 + 6.43)) %>% round(.,2)` of the total variance is attributable to participant-level variation. 
-
-Now lets suppose we want to compare this null model with a model with an effect of `Assessment` (to assess whether there is overall change over time).
-Which model should we compare `m.null` to?  
-```{r}
-modA <- lmer(WeightChange ~ 1 + Assessment + (1 + Assessment | ID), data=WeightMaintain3)
-modB <- lmer(WeightChange ~ 1 + Assessment + (1 | ID), data=WeightMaintain3)
-```
-A comparison between these `m.null` and `modA` will not be assessing the influence of _only_ the fixed effect of Assessment. Remember, we shouldn't compare models with different random effect structures.   
-However, `modB` doesn't include our by-participant random effects of assessment, so comparing this to `m.null` is potentially going to misattribute random deviations in participants' change to being an overall effect of assessment.  
-
-If we want to conduct a model comparison to isolate the effect of overall change over time (a fixed effect of `Assessment`), we _might_ want to compare these two models:
-```{r}
-m.base0 <- lmer(WeightChange ~ 1 + (1 + Assessment | ID), data=WeightMaintain3)
-m.base <- lmer(WeightChange ~ 1 + Assessment + (1 + Assessment | ID), data=WeightMaintain3)
-```
-The first of these models is a bit weird to think about - how can we have by-participant random deviations of `Assessment` if we don't have a fixed effect of `Assessment`? That makes very little sense. What it is actually fitting is a model where there is assumed to be __no overall effect__ of Assessment. So the fixed effect is 0. 
-
-
-```{r}
-# Straightforward LRT
-anova(m.base0, m.base)
-```
-```{r eval=F}
-# parametric bootstrap LRT
-library(pbkrtest)
-PBmodcomp(m.base, m.base0)
-```
-```{r echo=FALSE}
-load("data/02intromlm_pbmod.rdata")
-res0$test
-```
-
-:::int
-
-Parametric Bootstrap Likelihood Ratio test found that the inclusion of Assessment significantly improved model fit over the null model ( $\chi^2(1)$ = `r round(res0$test$stat[2],2)`, `r ifelse(res0$test$p.value[2]<.001, "p < .001", paste0("p = ",round(res0$test$p.value[2], 3)))`), suggesting that participants' weights changed over course of 36 month assessment period. 
-
-:::
-
-`r solend()`
-
-`r qbegin("C3")`
-
-> Q: Did the experimental condition groups differ in overall weight change and rate of weight change (non-maintenance)?  
-
-*Hint:* It helps to break it down. There are two questions here:  
-
-  1. do groups differ overall?  
-  2. do groups differ over time?  
-
-We can begin to see that we're asking two questions about the `Condition` variable here: "is there an effect of Condition?" and "Is there an interaction between Assessment and Condition?".  
-
-Try fitting two more models which incrementally build these levels of complexity, and compare them (perhaps to one another, perhaps to models from the previous question - think about what each comparison is testing!)  
-  
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-```{r}
-m.int <- lmer(WeightChange ~ Assessment + Condition + (Assessment | ID), 
-              data=WeightMaintain3)
-m.full <- lmer(WeightChange ~ Assessment*Condition + (Assessment | ID), 
-               data=WeightMaintain3)
-```
-
-We're going to compare each model to the previous one to examine the improvement in fit due to inclusion of each parameter. 
-We could do this quickly with
-```{r}
-anova(m.base0, m.base, m.int, m.full)
-```
-:::int 
-Conditions differed overall in weight change $\chi^2(2)=9.4, p = .009$  
-Conditions differed in change over assessment period $\chi^2(2)=40.4, p < .001$
-:::
-  
-However, we may instead want to bootstrap this test instead (especially if we have a small sample size):
-```{r eval=FALSE}
-PBmodcomp(m.int, m.base)
-```
-```{r echo=FALSE}
-res1$test
-```
-```{r eval=FALSE}
-PBmodcomp(m.full, m.int)
-```
-```{r echo=FALSE}
-res2$test
-```
-
-:::int 
-Conditions differed overall in weight change (bootstrap likelihood ratio = 9.4, $p = .014$ ).  
-Conditions differed in change over assessment period (bootstrap likelihood ratio = 40.4, $p = .001$ ).  
-:::
-
-`r solend()`
-
-`r qbegin("C4")`
-We saw that we can get the coefficients using `fixef(model)`. 
-We can also use `tidy(model)`, and similar to models fitted with `lm()`, we can pull out the bit of the `summary()` using:  
-```{r eval=FALSE}
-summary(model)$coefficients
-```
-
-From your model from the previous question which investigates whether conditions differed over in their rate of weight change, can you state how the conditions differed?  
-
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-
-```{r}
-summary(m.full)$coefficients
-```
-
-:::int
-Compared to no intervention, weight (re)gain was 1.75 lbs/year slower for the ED intervention and 0.84 lbs/year slower for the MR intervention.
-:::
-
-`r solend()`
-
-`r qbegin("C5")`
-Make a graph of the model fit *and* the observed data.  
-
-*Hint:* There are lots of ways you can do this, try a couple:  
-  
-  1. Using the **effects** package, does this help? `as.data.frame(effect("Assessment:Condition", model))`  
-  2. Using `fitted(model)`
-  3. Using `augment()` from the **broom.mixed** package.  
-
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-
-1. Using the `effect()` function (and then adding the means and SEs from the original data):  
-```{r}
-ef <- as.data.frame(effect("Assessment:Condition", m.full))
-
-ggplot(ef, aes(Assessment, fit, color=Condition)) + 
-  geom_line() +
-  stat_summary(data=WeightMaintain3, aes(y=WeightChange), 
-               fun.data=mean_se, geom="pointrange", size=1) +
-  theme_bw()
-```
-
-2. Using the `fitted()` function to extract and plot fitted values from the model: 
-
-```{r}
-ggplot(WeightMaintain3, aes(Assessment, WeightChange, color=Condition)) + 
-  stat_summary(fun.data=mean_se, geom="pointrange", size=1) + 
-  stat_summary(aes(y=fitted(m.full)), fun=mean, geom="line") + 
-  theme_bw()
-```
-
-3. Or using `augment()`:
-```{r}
-augment(m.full) %>%
-ggplot(., aes(Assessment, WeightChange, color=Condition)) + 
-  stat_summary(fun.data=mean_se, geom="pointrange", size=1) + 
-  stat_summary(aes(y=.fitted), fun=mean, geom="line") + 
-  theme_bw()
-```
-`r solend()`
-
-`r qbegin("C6")`
-Examine the parameter estimates and interpret them (i.e., what does each parameter represent?)
-
-```{r eval=FALSE}
-m.full <- lmer(WeightChange ~ Assessment*Condition + (Assessment | ID), 
-               data=WeightMaintain)
-summary(m.full)
-```
-
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-```{r}
-round(coef(summary(m.full)), 3)
-```
-
-* `(Intercept)` ==> weight change at baseline in None group
-* `Assessment`  ==> slope of weight change in None group
-* `ConditionED` ==> baseline weight change in ED group relative to None group
-* `ConditionMR` ==> baseline weight change in MR group relative to None group
-* `Assessment:ConditionED`  ==> slope of weight change in ED group relative to None group
-* `Assessment:ConditionMR`  ==> slope of weight change in MR groups relative to None group
-
-`r solend()`
-
-
-
-
-
-# Logistic MLM
-
-:::frame
-**Don't forget to look back at other materials!** 
-
-Back in USMR, we introduced logistic regression in week 10. The lectures followed the example of some [singing aliens that either survived or were splatted](https://uoepsy.github.io/usmr/lectures/lecture_9.html#1), and the exercises used some simulated data based on a hypothetical study [about inattentional blindness](https://uoepsy.github.io/usmr/labs/09_glm.html). 
-That content will provide a lot of the groundwork for this week, so we recommend revisiting it if you feel like it might be useful. 
-:::
-
-## `lmer()` >> `glmer()`
-
-Remember how we simply used `glm()` and could specify the `family = "binomial"` in order to fit a logistic regression? Well it's much the same thing for multi-level models! 
-
-+ Gaussian model: `lmer(y ~ x1 + x2 + (1 | g), data = data)`  
-+ Binomial model: `glmer(y ~ x1 + x2 + (1 | g), data = data, family = binomial(link='logit'))`
-    + or just `glmer(y ~ x1 + x2 + (1 | g), data = data, family = "binomial")`
-    + or `glmer(y ~ x1 + x2 + (1 | g), data = data, family = binomial)`
-    
-:::frame
-Binary? Binomial? Huh?  
-
-Very briefly in the USMR materials we made the distinction between **binary** and **binomial**. This wasn't hugely relevant at the time just because we only looked at binary outcomes.  
-
-For binary regression, all the data in our outcome variable has to be a 0 or a 1.  
-For example, the `correct` variable below:  
-```{r echo=FALSE}
-tibble(participant = c(1,1,1),question=c(1,2,3),correct=c(1,0,1)) %>% rbind(rep("...",3)) %>%
-  gt::gt()
-```
-
-But we can re-express this information in a different way, when we know the total number of questions asked.
-```{r echo=FALSE}
-tibble(participant = c(1,2,3),questions_correct=c(2,1,3),questions_incorrect=c(1,2,0)) %>% rbind(rep("...",3)) %>% gt::gt()
-```
-
-To model data when it is in this form, we can express our outcome as `cbind(questions_correct, questions_incorrect)`
-:::
-
-`r qbegin("A1")`
-Load any of the packages you think you might be using today.  
-
-By now you may have started get into a sort of routine with R, and you might know what functions you like, and which you don't. Because there are so many alternatives for doing the same thing, the packages and functions you use are very much up to you.   
-
-If I'm planning on doing some multi-level modelling, I will tend to load these by default at the top: 
-```{r}
-library(tidyverse) # for everything
-library(lme4) # for fitting models
-library(broom.mixed) # for tidying model output
-```
-`r qend()`
-
-
-`r optbegin("Novel Word Learning: Data Codebook", olabel=FALSE, toggle=params$TOGGLE)`
-
-```{r eval=FALSE}
-load(url("https://uoepsy.github.io/msmr/data/nwl.RData"))
-```
-
-In the `nwl` data set (accessed using the code above), participants with aphasia are separated into two groups based on the general location of their brain lesion: anterior vs. posterior. There is data on the numbers of correct and incorrect responses participants gave in each of a series of experimental blocks. There were 7 learning blocks, immediately followed by a test. Finally, participants also completed a follow-up test.  
-<br>
-Data were also collect from healthy controls. 
-<br>
-Figure \@ref(fig:nwl-fig) shows the differences between groups in the average proportion of correct responses at each point in time (i.e., each block, test, and follow-up)
-
-```{r nwl-fig, echo=FALSE, fig.cap="Differences between groups in the average proportion of correct responses at each block"}
-load(url("https://uoepsy.github.io/msmr/data/nwl.RData"))
-ggplot(filter(nwl, !is.na(lesion_location)), aes(block, PropCorrect, 
-                                            color=lesion_location, 
-                                            shape=lesion_location)) +
-  #geom_line(aes(group=ID),alpha=.2) + 
-  stat_summary(fun.data=mean_se, geom="pointrange") + 
-  stat_summary(data=filter(nwl, !is.na(lesion_location), block <= 7), 
-                           fun=mean, geom="line") + 
-  geom_hline(yintercept=0.5, linetype="dashed") + 
-  geom_vline(xintercept=c(7.5, 8.5), linetype="dashed") + 
-  scale_x_continuous(breaks=1:9, labels=c(1:7, "Test", "Follow-Up")) + 
-  theme_bw(base_size=10) + 
-  labs(x="Block", y="Proportion Correct", shape="Lesion\nLocation", color="Lesion\nLocation")
-```
-
-`r optend()`
-
-`r qbegin("A2")`
-Load the data. Take a look around. Any missing values? Can you think of why?  
-`r qend()`
-
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-
-```{r}
-load(url("https://uoepsy.github.io/msmr/data/nwl.RData"))
-summary(nwl)
-```
-The only missing vales are in the lesion location, and it's probably because the healthy controls don't have any lesions. 
-
-`r solend()`
-
-
-> **Research Aims**  
-> Compare the two groups (those with anterior vs. posterior lesions) with respect to their accuracy of responses over the course of the study
-
-
-`r qbegin("A3: Initial thoughts")`
-
-1. What is our outcome? 
-2. Is it longitudinal? (simply, is there a temporal sequence to observations within a participant?) 
-
-*Hint:* Think carefully about question 1. There might be several variables which either fully or partly express the information we are considering the "outcome" here. 
-`r qend()`
-`r solbegin(show=TRUE, toggle=params$TOGGLE)`
-1. The outcome here is (in words) "the proportion of correct answers in each block". This makes it tempting to look straight to the variable called `PropCorrect`. Unfortunately, this is encoded as a proportion (i.e., is bounded by 0 and 1), and of the models we have learned about so far, we don't definitely have the necessary tools to model this.  
-    - linear regression = continuous *unbounded* outcome variable  
-    - logistic regression = binomial, expressed as `0` or `1` if the number of trials per observation is 1, and expressed as `cbind(num_successes, num_failures)` if the number of trials per observation is >1. 
-2. It is longitudinal in the sense that blocks are sequential. However, we probably wouldn't call it a "longitudinal study" as that tends to get reserved for when we follow-up participants over a fairly long time period (months or years). 
-`r solend()`
-
-`r qbegin("A4")`
-> **Research Question 1:**  
-> Is the learning rate (training blocks) different between these two groups?
-
-**Hints**: 
-
-- Do we want `cbind(num_successes, num_failures)`?
-- Make sure we're running models on only the data we are actually interested in.  
-- Think back to what we did in last week's exercises using model comparison via likelihood ratio tests (using `anova(model1, model2, model3, ...)`. We could use this approach for this question, to compare:
-
-    - A model with just the change over the sequence of blocks
-    - A model with the change over the sequence of blocks *and* an overall difference between groups
-    - A model with groups differing with respect to their change over the sequence of blocks
-
-  
-- What about the random effects part?  
-    
-    1. What are our observations grouped by? 
-    2. What variables can vary within these groups? 
-    3. What do you want your model to allow to vary within these groups?
-
-`r optbegin("Suggested answers to the hints if you don't know where to start", olabel=FALSE, toggle=params$TOGGLE)`
-
-- Make sure we're running models on only the data we are actually interested in. 
-    - We want only the learning blocks, and none of the healthy controls.
-    - You might want to store this data in a separate object, but in the code for the solutio we will just use `filter()` *inside* the `glmer()`.   
-  
-- A model with just the change over the sequence of blocks:
-    - **outcome ~ block**
-- A model with the change over the sequence of blocks *and* an overall difference between groups:
-    - **outcome ~ block + lesion_location**
-- A model with groups differing with respect to their change *over the sequence of blocks:
-    - **outcome ~ block * lesion_location**
-    
-- What are our observations grouped by? 
-    - repeated measures by-participant. i.e., the `ID` variable
-- What variables can vary within these groups? 
-    - `Block` and `Phase`. Be careful though - you can create the `Phase` variable out of the `Block` variable, so really this is just one piece of information, encoded differently in two variables. 
-    - The other variables (`lesion_location` and `group`) do **not** vary for each ID. Lesions don't suddenly change where they are located, nor do participants swap between being a patient vs a control (we don't need the group variable anyway as we are excluding the controls).  
-What do you want your model to allow to vary within these groups?
-    - Do you think the change over the course of the blocks is **the same** for everybody? Or do you think it varies? Is this variation important to think about in terms of your research question?   
-    
-`r optend()`
-
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-
-```{r}
-m.base <- glmer(cbind(NumCorrect, NumError) ~ block + (block | ID), 
-                data = filter(nwl, block < 8, !is.na(lesion_location)),
-                family=binomial)
-m.loc0 <- glmer(cbind(NumCorrect, NumError) ~ block + lesion_location + (block | ID), 
-                data=filter(nwl, block < 8, !is.na(lesion_location)),
-                family=binomial)
-m.loc1 <- glmer(cbind(NumCorrect, NumError) ~ block * lesion_location + (block | ID), 
-                data=filter(nwl, block < 8, !is.na(lesion_location)),
-                family=binomial)
-#summary(m.loc1)
-anova(m.base, m.loc0, m.loc1, test="Chisq")
-```
-:::int
-No significant difference in learning rate between groups ($\chi^2(1)=2.2, p = 0.138$).
-:::
-
-`r solend()`
-
-`r qbegin("A5")`
-> **Research Question 2**  
-> In the testing phase, does performance on the immediate test differ between lesion location groups, and does their retention from immediate to follow-up test differ?
-
-Let's try a different approach to this. Instead of fitting various models and comparing them via likelihood ratio tests, just fit the one model which could answer both parts of the question above.  
-
-**Hints:**
-    
-- This might required a bit more data-wrangling before hand. Think about the order of your factor levels
-(alphabetically speaking, "Follow-up" comes before "Immediate")!
-
-`r qend()`
-`r solbegin(show=params$SHOW, toggle=params$TOGGLE)`
-```{r}
-nwl_test <- filter(nwl, block > 7, !is.na(lesion_location)) %>%
-  mutate(
-    Phase = fct_relevel(factor(Phase),"Immediate")
-  )
-
-m.recall.loc <- glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (Phase | ID), 
-                  nwl_test, family="binomial")
-
-summary(m.recall.loc)
-```
-`r solend()`
-
-## Interpreting fixed effects
-
-:::frame
-
-Take some time to remind yourself from USMR of the [interpretation of logistic regression coefficients](https://uoepsy.github.io/usmr/labs/09_glm.html#Introducing_GLM).  
-
-The interpretation of the fixed effects of a logistic multi-level model are no different.  
-We can obtain them using:  
-
-- `fixef(model)`
-- `summary(model)$coefficients`
-- `tidy(model)` **from broom.mixed**  
-- (there are probably more ways, but I can't think of them right now!)
-
-It's just that for multi-level models, we can model by-cluster andom variation around these effects.  
-:::
-
-`r qbegin("A6")`
-
-1. In `family = binomial(link='logit')`. What function is used to relate the linear predictors in the model to the expected value of the response variable?  
-2. How do we convert this into something more interpretable?  
-
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
- 
-1. The link function is the `logit`, or log-odds (other link functions are available).
-
-2. To convert log-odds to odds, we can use `exp()`, to get odds and odds ratios.  
-
-`r solend()`
-
-`r qbegin("A7")`
-Make sure you pay attention to trying to interpret each fixed effect from your models.  
-These can be difficult, especially when it's logistic, and especially when there are interactions.  
-
-- What is the increase in the odds of answering correctly in the immediate test for someone with a posterior legion compared to someone with an anterior legion?  
-
-`r optbegin("Optional help: Our Solution to A5", olabel=F, toggle=params$TOGGLE)`
-```{r eval=F}
-nwl_test <- filter(nwl, block > 7, !is.na(lesion_location)) %>%
-  mutate(
-    Phase = fct_relevel(factor(Phase),"Immediate")
-  )
-
-m.recall.loc <- glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (Phase | ID), 
-                  nwl_test, family="binomial")
-```
-`r optend()`
-
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-* `(Intercept)` ==> Anterior lesion group performance in immediate test. This is the log-odds of them answering correctly in the immediate test. 
-* `PhaseFollow-up`  ==> Change in performance (for the anterior lesion group) from immediate to follow-up test. 
-* `lesion_locationposterior` ==> Posterior lesion group performance in immediate test relative to anterior lesion group performance in immediate test
-* `PhaseFollow-up:lesion_locationposterior` ==> Change in performance from immediate to follow-up test, posterior lesion group relative to anterior lesion group
-
-```{r echo=FALSE}
-exp(fixef(m.recall.loc))[3]
-```
-
-:::int
-Those with posterior lesions have `r round(exp(fixef(m.recall.loc))[3],2)` times the odds of answering correctly in the immediate test compared to someone with an anterior lesion. 
-:::
-
-`r solend()`
-
-## Optional extra exercise
-
-`r qbegin("A8: **Extra**")`
-Recreate the visualisation in Figure \@ref(fig:nwl-fig2).
-
-```{r nwl-fig2, echo=FALSE, fig.cap="Differences between groups in the average proportion of correct responses at each block"}
-load(url("https://uoepsy.github.io/msmr/data/nwl.RData"))
-ggplot(filter(nwl, !is.na(lesion_location)), aes(block, PropCorrect, 
-                                            color=lesion_location, 
-                                            shape=lesion_location)) +
-  #geom_line(aes(group=ID),alpha=.2) + 
-  stat_summary(fun.data=mean_se, geom="pointrange") + 
-  stat_summary(data=filter(nwl, !is.na(lesion_location), block <= 7), 
-                           fun=mean, geom="line") + 
-  geom_hline(yintercept=0.5, linetype="dashed") + 
-  geom_vline(xintercept=c(7.5, 8.5), linetype="dashed") + 
-  scale_x_continuous(breaks=1:9, labels=c(1:7, "Test", "Follow-Up")) + 
-  theme_bw(base_size=10) + 
-  labs(x="Block", y="Proportion Correct", shape="Lesion\nLocation", color="Lesion\nLocation")
-```
-
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-```{r}
-ggplot(filter(nwl, !is.na(lesion_location)), aes(block, PropCorrect, 
-                                            color=lesion_location, 
-                                            shape=lesion_location)) +
-  #geom_line(aes(group=ID),alpha=.2) + 
-  stat_summary(fun.data=mean_se, geom="pointrange") + 
-  stat_summary(data=filter(nwl, !is.na(lesion_location), block <= 7), 
-                           fun=mean, geom="line") + 
-  geom_hline(yintercept=0.5, linetype="dashed") + 
-  geom_vline(xintercept=c(7.5, 8.5), linetype="dashed") + 
-  scale_x_continuous(breaks=1:9, labels=c(1:7, "Test", "Follow-Up")) + 
-  theme_bw(base_size=10) + 
-  labs(x="Block", y="Proportion Correct", shape="Lesion\nLocation", color="Lesion\nLocation")
-```
-`r solend()`
-
-
-:::frame
-__Hang on.. p-values are back?!__ 
-
-We've talked a bit above about why we don't have p-values for `lmer()`, but you might notice that we do now have them when we've fitted a model with `glmer()`?
-
-The reason is partly just one of convention. There is a standard practice for determining the statistical significance of parameters in the generalised linear model, relying on asymptotic Wald tests which evaluate differences in log-likelihood.  
-
-
-
-
-
-:::
-
-
-# Contrasts
+# Contrasts - A quick overview
 
 We largely avoided the discussion of cotrasts in USMR because they can be quite incomprehensible at first, and we wanted to focus on really consolidating our learning of the linear model basics.  
 
@@ -950,6 +931,7 @@ No solution, just play!
 
 
 <div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
+
 
 
 

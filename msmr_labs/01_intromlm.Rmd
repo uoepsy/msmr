@@ -653,8 +653,15 @@ Throughout each trial, participants' heart rate variability (HRV) was measured v
 
 The data is in stored in two separate files.  
 
-- Information on the conditions for each trial for each participant is stored in __.csv__ format at https://uoepsy.github.io/data/basketballconditions.csv. 
+- Information on the conditions for each trial for each participant is stored in __.csv__ format at https://uoepsy.github.io/data/basketballconditions.csv (data collected is detailed in the table below).  
 - Information on participants' HRV for each trial is stored in **.csv** format, and can be downloaded from https://uoepsy.github.io/data/bballhrv.csv 
+
+
+```{r echo=F}
+data.frame(
+  variable = names(read_csv("https://uoepsy.github.io/data/basketballconditions.csv")),
+  description = c("Points at stake (e.g. size of reward","Whether the participants are in the monetary condition or the reputation condition. In the monetary condition (labelled 'money'), points = £. In the reptutation condition (labelled 'kudos'), points = points on the scoreboard","participant ID", "whether the participant successfully threw the ball in the basekt","Trial number for each participant (each participant completed 20 trials)","Success rate of throws at each trial")) %>% knitr::kable()
+```
 
 :::
 
@@ -678,10 +685,11 @@ The Basketball/HRV research study is concerned with how the size and type of pot
 > How do size and type of reward/loss interact to influence levels of stress?  
 
 Remember to think about:  
-  - what is our outcome variable of interest?
-  - what is the clustering?
-  - does size of reward vary within clusters, or between?
-  - does type of reward vary within clusters, or between?
+
+- what is our outcome variable of interest?  
+- what is the clustering?  
+- does size of reward vary within clusters, or between?  
+- does type of reward vary within clusters, or between?  
   
 Can you fit a linear mixed model to examine the effects of size and type of reward on HRV, and their interaction?  
 
