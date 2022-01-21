@@ -411,22 +411,22 @@ div.tocify {
 <p>Let’s consider a coin toss. For a fair coin, the chance of getting a heads/tails for any given toss is 0.5.<br />
 We can simulate the number of “heads” in a single fair coin toss with the following code (because it is a single toss, it’s just going to return 0 or 1):</p>
 <pre class="r"><code>rbinom(n = 1, size = 1, prob = 0.5)</code></pre>
-<pre><code>## [1] 0</code></pre>
+<pre><code>## [1] 1</code></pre>
 <p>We can simulate the number of “heads” in 8 fair coin tosses with the following code:</p>
 <pre class="r"><code>rbinom(n = 1, size = 8, prob = 0.5)</code></pre>
-<pre><code>## [1] 6</code></pre>
+<pre><code>## [1] 5</code></pre>
 <p>As the coin is fair, what number of heads would we expect to see out of 8 coin tosses? Answer: 4!
 Doing another 8 tosses:</p>
 <pre class="r"><code>rbinom(n = 1, size = 8, prob = 0.5)</code></pre>
-<pre><code>## [1] 5</code></pre>
+<pre><code>## [1] 4</code></pre>
 <p>and another 8:</p>
 <pre class="r"><code>rbinom(n = 1, size = 8, prob = 0.5)</code></pre>
-<pre><code>## [1] 3</code></pre>
+<pre><code>## [1] 5</code></pre>
 <p>We see that they tend to be around our intuition expected number of 4 heads. We can change <code>n = 1</code> to ask <code>rbinom()</code> to not just do 1 set of 8 coin tosses, but to do 1000 sets of 8 tosses:</p>
 <pre class="r"><code>table(rbinom(n = 1000, size = 8, prob = 0.5))</code></pre>
 <pre><code>## 
 ##   0   1   2   3   4   5   6   7   8 
-##   5  26 103 211 282 214 121  33   5</code></pre>
+##   4  40 102 208 266 223 127  24   6</code></pre>
 </div>
 <div id="probability" class="section level2">
 <h2>Probability</h2>
@@ -439,15 +439,15 @@ Let’s calculate the probability of observing 2 heads in 8 tosses.</p>
 <pre><code>## # A tibble: 10 × 1
 ##    `Ways to get 2 heads in 8 tosses`
 ##    &lt;chr&gt;                            
-##  1 TTHTHTTT                         
-##  2 THTTTTTH                         
-##  3 TTHHTTTT                         
-##  4 HTTTTTTH                         
-##  5 THTHTTTT                         
-##  6 HHTTTTTT                         
-##  7 TTHTTHTT                         
-##  8 HTTTTTHT                         
-##  9 THTTTTHT                         
+##  1 HTTTTTHT                         
+##  2 HTTTHTTT                         
+##  3 TTHTTTTH                         
+##  4 TTHTHTTT                         
+##  5 TTHTTHTT                         
+##  6 HTHTTTTT                         
+##  7 TTTTTHTH                         
+##  8 TTTTHTHT                         
+##  9 TTTTTHHT                         
 ## 10 ...</code></pre>
 <p>In fact there are 28 different ways this could happen:</p>
 <pre class="r"><code>dim(combn(8, 2))</code></pre>
