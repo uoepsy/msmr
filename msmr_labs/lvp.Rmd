@@ -57,23 +57,30 @@ table(rbinom(n = 1000, size = 8, prob = 0.5))
 We can get to the __probability__ of observing $k$ heads in 8 tosses of a fair coin using `dbinom()`.  
 Let's calculate the probability of observing 2 heads in 8 tosses. 
 
-As coin tosses are independent, we can calculate probability using the product rule ("$P(AB) = P(A)\cdot P(B)$ where $A$ and $B$ are independent). So the probability of observing 2 heads in 2 tosses is $0.5 \cdot 0.5 = 0.25$:
+As coin tosses are independent, we can calculate probability using the product rule: $P(AB) = P(A) \times P(B)$ where $A$ and $B$ are independent.  
+So the probability of observing 2 heads in 2 tosses is $0.5 \times 0.5 = 0.25$:
 ```{r}
 dbinom(2, size=2, prob=0.5)
 ```
+
+What about the probability of 2 heads in 8 tosses?  
 In 8 tosses, those two heads could occur in various ways:
 ```{r echo=FALSE}
 ways = replicate(10, paste0(sample(c(rep("T",6),rep("H",2)), 8),collapse=""))
 library(tidyverse)
 tibble(
   `Ways to get 2 heads in 8 tosses` = c(ways[!duplicated(ways)], "...")
-)
+) %>% pander::pander()
 ```
 In fact there are 28 different ways this could happen:
 ```{r}
 dim(combn(8, 2))
 ```
-The probability of getting 2 heads in 8 tosses of a fair coin is, therefore:
+The probability of getting 2 heads in 8 tosses of a fair coin is, therefore:  
+$28 \times (0.5 \times 0.5 \times 0.5 \times 0.5 \times 0.5 \times 0.5 \times 0.5 \times 0.5 \times 0.5)$.  
+Or, more succinctly:  
+$28 \times 0.5^8$.  
+We can calculate this in R:  
 ```{r}
 28 * (0.5^8)
 ```
@@ -132,10 +139,6 @@ curve(
 )
 ```
 
-
-Formalizing the intuition
-We have a stochastic process that takes discrete values (i.e. outcomes of tossing a coin 10 times). We calculated the probability of observing a particular set of outcomes (8 correct predictions) by making assumptions about the underlying stochastic process, that is, the probability that our test subject can correctly predict the outcome of the coin toss is \(p\) (e.g. 0.8). We also assumed implicitly that the coin tosses are independent.
-
 ## A slightly more formal approach
 
 Let $d$ be our data (our _observed_ outcome), and let $\theta$ be the parameters that govern the data generating process. 
@@ -143,4 +146,21 @@ Let $d$ be our data (our _observed_ outcome), and let $\theta$ be the parameters
 When talking about "probability" we are talking about $P(d | \theta)$ for a given value of $\theta$. 
 
 In reality, we don't actually know what $\theta$ is, but we do observe some data $d$. 
-Given that we know that _if we have a specific value for $\theta$_, then $P(d | \theta)$ gives us the probability of observing $d$, it follows that we would like to figure out what values of $\theta$ maximise $\mathcal{L}(\theta \vert d) = P(d \vert \theta)$, where $\mathcal{L}(\theta \vert d)$ is the "likelihood function" of our unknown parameters $\theta$, conditioned upon our observed data $d$.
+Given that we know that _if we have a specific value for $\theta$_, then $P(d | \theta)$ gives us the probability of observing $d$, it follows that we would like to figure out what values of $\theta$ maximise $\mathcal{L}(\theta \vert d) = P(d \vert \theta)$, where $\mathcal{L}(\theta \vert d)$ is the "likelihood function" of our unknown parameters $\theta$, conditioned upon our observed data $d$.  
+
+## Why log-likelihood?  
+
+While the usefulness of considering likelihoods is hopefully quite clear, you will often find that statistical methods actually involve computing __log-likelihoods__.  
+
+The reason is actually a practical one.  
+In the example above, we were considering 2 heads in 8 coin tosses.  
+To calculate likelihood, we have to calculate the __product__ of the likelihoods of each observation.  
+This is computationally quite difficult, but what we can do instead is calculate the __sum__ of the log-likelihoods (because $log(ab) = log(a) + log(b)$). 
+
+<!-- It is extremely useful for example when you want to calculate the joint likelihood for a set of independent and identically distributed points. Assuming that you have your points: -->
+<!-- X={x1,x2,…,xN} -->
+<!-- The total likelihood is the product of the likelihood for each point, i.e.: -->
+<!-- p(X∣Θ)=∏i=1Np(xi∣Θ) -->
+<!-- where Θ are the model parameters: vector of means μ and covariance matrix Σ. If you use the log-likelihood you will end up with sum instead of product: -->
+<!-- lnp(X∣Θ)=∑i=1Nlnp(xi∣Θ) -->
+
