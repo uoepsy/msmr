@@ -4,7 +4,7 @@ bibliography: references.bib
 biblio-style: apalike
 link-citations: yes
 params: 
-    SHOW_SOLS: FALSE
+    SHOW_SOLS: TRUE
     TOGGLE: TRUE
 editor_options: 
   chunk_output_type: console
@@ -518,17 +518,17 @@ These can be difficult, especially when it's logistic, and especially when there
 
 - What is the increase in the odds of answering correctly in the immediate test for someone with a posterior legion compared to someone with an anterior legion?  
 
-`r optbegin("Optional help: Our Solution to B4", olabel=F, toggle=params$TOGGLE)`
-```{r eval=F}
-nwl_test <- filter(nwl, block > 7, !is.na(lesion_location)) %>%
-  mutate(
-    Phase = fct_relevel(factor(Phase),"Immediate")
-  )
+<!-- `r optbegin("Optional help: Our Solution to B4", olabel=F, toggle=params$TOGGLE)` -->
+<!-- ```{r eval=F} -->
+<!-- nwl_test <- filter(nwl, block > 7, !is.na(lesion_location)) %>% -->
+<!--   mutate( -->
+<!--     Phase = fct_relevel(factor(Phase),"Immediate") -->
+<!--   ) -->
 
-m.recall.loc <- glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (Phase | ID), 
-                  nwl_test, family="binomial")
-```
-`r optend()`
+<!-- m.recall.loc <- glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (Phase | ID),  -->
+<!--                   nwl_test, family="binomial") -->
+<!-- ``` -->
+<!-- `r optend()` -->
 
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
@@ -864,7 +864,7 @@ Weekly hours of reading practice was associated increased reading age ($\beta = 
 :::
 
 `r optend()` 
-`r optbegin("Case-based Bootstrap Confidence Intervals",olabel=F,toggle=params$TOGGLE)`
+`r optbegin("Optional: Case-based Bootstrap Confidence Intervals",olabel=F,toggle=params$TOGGLE)`
 It's worth noting that there are many different types of bootstrapping that we can conduct. Different methods of bootstrapping vary with respect to the assumptions we will have to make when using them for drawing inferences. For instance, the parametric bootstrap discussed above assumes that explanatory variables are fixed and that model specification and the distributions such as $\zeta_i \sim N(0,\sigma_{\zeta})$ and $\varepsilon_i \sim N(0,\sigma_{\varepsilon})$ are correct.  
 An alternative is to generate a distribution by __resampling with replacement__ from our data, fitting our model to the resample, and then repeating this over and over. This doesn't have to rely on assumptions about the shape of the distributions of $\zeta_i$ and $\varepsilon_i$ - we just need to ensure that we correctly specify the hierarchical dependency of data. It does, however, require the decision of at which levels to resample (this is discussed more in week 4, and is what the __lmeresampler__ package is all about).    
 `r optend()`

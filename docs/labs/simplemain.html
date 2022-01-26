@@ -11,7 +11,7 @@
 
 
 
-<title>Contrasts - A quick overview</title>
+<title>Simple Effects, Main Effects, Contrasts</title>
 
 <script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -398,161 +398,86 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Contrasts - A quick overview</h1>
+<h1 class="title toc-ignore">Simple Effects, Main Effects, Contrasts</h1>
 
 </div>
 
 
-<p>We largely avoided the discussion of cotrasts in USMR because they can be quite incomprehensible at first, and we wanted to focus on really consolidating our learning of the linear model basics.</p>
-<div class="frame">
-<p><strong>What are contrasts and when are they relevant?</strong></p>
-Recall when we have a categorical predictors? To continue the example in USMR, Martin’s lectures considered the utility of different types of toys (Playmo, SuperZings, and Lego).<br />
-
-<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-1"></span>
-<img src="images/loglong/leccontrasts.png" alt="[USMR Week 9 Lecture](https://uoepsy.github.io/usmr/lectures/lecture_8.html#36) utility of different toy_types" width="400px" />
-<p class="caption">
-Figure 1: <a href="https://uoepsy.github.io/usmr/lectures/lecture_8.html#36">USMR Week 9 Lecture</a> utility of different toy_types
-</p>
+<div id="setup" class="section level1">
+<h1>Setup</h1>
+<p>Suppose we conduct an experiment in which there are two conditions (1 and 2) and there are two groups of people (A and B).</p>
+<p><img src="simplemain_files/figure-html/unnamed-chunk-2-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p>We want to examine whether there are differences between conditions in our outcome variable, Y, whether there are group differences in our outcome, and whether the difference in conditions is different between our two groups A and B.<br />
+This leads us to fit the following model:<br />
+<span class="math display">\[
+y = \beta_0 + \beta_1(\text{Group}) + \beta_2(\text{Condition}) + \beta_3(\text{Group}\times \text{Condition}) + \varepsilon
+\]</span>
+What we are going to discuss here is how we can change what our estimated coefficients (<span class="math inline">\(\beta_0, \beta_1, \beta_2, \beta_3\)</span>) represent, by changing the way in which <code>Group</code> and <code>Condition</code> are encoded.</p>
+<div class="statbox">
+<p><strong>No matter how we encode these categorical predictors, the model stays the same. We are simply extracting different estimates from it</strong></p>
 </div>
-<p>When we put a categorical variable into our model as a predictor, we are always relying on <strong>contrasts</strong>, which are essentially just combinations of 0s &amp; 1s which we use to define the differences which we wish to test.</p>
-<p>The default, <em>treatment</em> coding, treats one level as a <strong>reference group</strong>, and results in coefficients which compare each group to that reference.<br />
-When a variable is defined as a <strong>factor</strong> in R, there will always be an attached “attribute” defining the contrasts:</p>
-<pre class="r"><code>#read the data
-toy_utils &lt;- read_csv(&quot;https://uoepsy.github.io/msmr/data/toyutility.csv&quot;)
-
-#make type a factor
-toy_utils &lt;- toy_utils %&gt;%
-  mutate(
-    type = factor(type)
-  )</code></pre>
-<pre class="r"><code># look at the contrasts
-contrasts(toy_utils$type)</code></pre>
-<pre><code>##        playmo zing
-## lego        0    0
-## playmo      1    0
-## zing        0    1</code></pre>
-<p>Currently, the resulting coefficients from the contrasts above will correspond to:</p>
-<ul>
-<li>Intercept = estimated mean utility for Lego (reference group)</li>
-<li>typeplaymo = estimated difference in mean utility Playmo vs Lego</li>
-<li>typezing = estimated different in mean utility Zing vs Lego</li>
-</ul>
+<p>Our model fitted values are plotted below:<br />
+<img src="simplemain_files/figure-html/unnamed-chunk-3-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<div class="statbox">
+<p><strong>“contrasts”</strong></p>
+<p>One last thing that we need to be aware of is that categorical variables, in R, have a feature called “contrasts,” which designates how they get encoded into a model.</p>
+<p>We can see the contrasts quickly like so:</p>
+<pre class="r"><code>contrasts(df$condition)</code></pre>
+<pre><code>##            condition2
+## condition1          0
+## condition2          1</code></pre>
+<p>The columns will correspond to the predictors that will be inputted into our model, and the rows show what each level will correspond to (in this case, a 0 or a 1).</p>
+<p><strong>Important:</strong> Your variable <em>must</em> be a factor in order for <code>contrasts()</code> to show you anything.</p>
+<pre class="r"><code>catvar &lt;- c(&quot;cat&quot;,&quot;cat&quot;,&quot;dog&quot;,&quot;cat&quot;,&quot;dog&quot;,&quot;cat&quot;)
+contrasts(catvar)</code></pre>
+<pre><code>## Error in contrasts(catvar): contrasts apply only to factors</code></pre>
+<pre class="r"><code>catvar &lt;- factor(catvar)
+contrasts(catvar)</code></pre>
+<pre><code>##     dog
+## cat   0
+## dog   1</code></pre>
 </div>
-<div class="question-begin">
-Question 1
 </div>
-<div class="question-body">
-<p>Read in the toy utility data from <a href="https://uoepsy.github.io/msmr/data/toyutility.csv">https://uoepsy.github.io/msmr/data/toyutility.csv</a>.<br />
-We’re going to switch back to the normal <code>lm()</code> world here for a bit, so no multi-level stuff while we learn more about contrasts.</p>
-<ol style="list-style-type: decimal">
-<li><p>Fit the model below</p>
-<pre class="r"><code>model_treatment &lt;- lm(UTILITY ~ type, data = toy_utils)</code></pre></li>
-<li><p>Calculate the means for each group, and the differences between them, to match them to the coefficients from the model above</p></li>
+<div id="treatment-contrasts-the-default" class="section level1">
+<h1>“Treatment” Contrasts (the default)</h1>
+<p>R’s default way of treating factors is to have contrasts where one level is the reference level, and we model each other level compared to this reference level.<br />
+We can see this by</p>
+<pre class="r"><code>contrasts(df$group)</code></pre>
+<pre><code>##        GroupB
+## GroupA      0
+## GroupB      1</code></pre>
+<pre class="r"><code>contrasts(df$condition)</code></pre>
+<pre><code>##            condition2
+## condition1          0
+## condition2          1</code></pre>
+<p>In our case, think about what moving from 0 to 1 represents. We are essentially fitting the model:
+When we have our model, to work out what each coefficient represents, we need to think about:</p>
+<ol style="list-style-type: lower-alpha">
+<li>What group and condition is represented when both the group contrast and the condition contrast are 0?<br />
+<strong>Answer:</strong> Group A, Condition 1</li>
+<li>What is represented by a change from 0 to 1 in the group contrast?<br />
+<strong>Answer:</strong> Moving from Group A to Group B</li>
+<li>What is represented by a change from 0 to 1 in the condition contrast?<br />
+<strong>Answer:</strong> Moving from Condition 1 to Condition 2</li>
 </ol>
+<pre class="r"><code>as.data.frame(effects::effect(&quot;condition*group&quot;,model)) %&gt;%
+  ggplot(.,aes(x=condition, y=fit, ymin=lower,ymax=upper, col=group))+
+  geom_pointrange(size=1.3, alpha=.5) +
+  labs(title=&quot;The model&quot;, subtitle=&quot;lm(y ~ condition * group)&quot;)+ylim(-5,25)</code></pre>
+<p><img src="simplemain_files/figure-html/unnamed-chunk-8-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>as.data.frame(effects::effect(&quot;condition*group&quot;,model)) %&gt;%
+  ggplot(.,aes(x=condition, y=fit, ymin=lower,ymax=upper, col=group))+
+  geom_pointrange(size=1.3, alpha=.5) +
+  labs(title=&quot;The model&quot;, subtitle=&quot;lm(y ~ condition * group)&quot;)+ylim(-5,25)+
+  geom_point(inherit.aes=FALSE, aes(x=1,y=coef(model)[1]),size=3)+
+  geom_segment(inherit.aes=FALSE, aes(x=1,xend=2,y=coef(model)[1],yend=sum(coef(model)[1:2])))+
+  geom_segment(inherit.aes=FALSE, aes(x=1,xend=1,y=coef(model)[1],yend=sum(coef(model)[c(1,3)])))+
+  #interaction
+  geom_segment(inherit.aes=FALSE, aes(x=1.02,xend=1.02,y=coef(model)[1],yend=sum(coef(model)[c(1,3)])),lty=&quot;dotted&quot;)+
+  geom_segment(inherit.aes=FALSE, aes(x=1,xend=2,y=sum(coef(model)[c(1,3)]),yend=sum(coef(model)[c(1:3)])),lty=&quot;dotted&quot;)+
+  geom_segment(inherit.aes=FALSE, aes(x=2,xend=2,y=sum(coef(model)[1:3]),yend=sum(coef(model)[c(1:4)])))</code></pre>
+<p><img src="simplemain_files/figure-html/unnamed-chunk-9-1.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
-<p class="question-end">
-</p>
-<div class="solution-begin">
-<span id="sol-start-66" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-66&#39;, &#39;sol-start-66&#39;)"> Solution </span>
-</div>
-<div id="sol-body-66" class="solution-body" style="display: none;">
-<p>You don’t have to do it this way. This was just the first way to calculate the difference in means that came to my head. <code>group_by()</code> will definitely come in handy though.</p>
-<pre class="r"><code>toy_utils %&gt;% group_by(type) %&gt;%
-  summarise(
-    mutil = mean(UTILITY)
-  ) %&gt;% 
-  mutate(
-    diff = mutil - mutil[type == &quot;lego&quot;]
-  )</code></pre>
-<pre><code>## # A tibble: 3 × 3
-##   type   mutil   diff
-##   &lt;fct&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-## 1 lego    2.82  0    
-## 2 playmo  6.62  3.8  
-## 3 zing    2.54 -0.280</code></pre>
-<pre class="r"><code>coef(model_treatment)</code></pre>
-<pre><code>## (Intercept)  typeplaymo    typezing 
-##        2.82        3.80       -0.28</code></pre>
-</div>
-<p class="solution-end">
-</p>
-<div class="frame">
-<p><strong>How can we change the way contrasts are coded?</strong></p>
-<p>In our regression model we are fitting an intercept plus a coefficient for each explanatory variable, and any categorical predictors are coded as 0s and 1s.</p>
-<p>We can add constraints to our the way our contrasts are coded. In fact, with the default <strong>treatment</strong> coding, we already have applied one - we constrained them such that the intercept (<span class="math inline">\(\beta_0\)</span>) = the mean of one of the groups.</p>
-<div class="optional-begin">
-<span id="opt-start-67" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-67&#39;, &#39;opt-start-67&#39;)"> Optional: Why constraints?</span>
-</div>
-<div id="opt-body-67" class="optional-body" style="display: none;">
-<p>Why do we not have:</p>
-<ul>
-<li><code>Intercept</code></li>
-<li><code>typelego</code></li>
-<li><code>typeplaymo</code></li>
-<li><code>typezing</code></li>
-</ul>
-<p>The model has would become <strong>not identifiable</strong>. We cannot distinguish any more whether the group mean is due to a group effect or not. For example, we can get the same group mean <span class="math inline">\(μ_{lego}=10\)</span>, say, either by setting:</p>
-<ul>
-<li><span class="math inline">\(\beta_0=0\)</span> and <span class="math inline">\(\beta_1=10\)</span>, which interprets as “there is an effect due to being lego”</li>
-<li><span class="math inline">\(\beta_0=10\)</span> and <span class="math inline">\(\beta_1=0\)</span>, which interprets as “there is no effect due to being lego”</li>
-</ul>
-</div>
-<p class="optional-end">
-</p>
-<p>The other common constraint that is used is the <strong>sum-to-zero</strong> constraint. This approach gets called “effects coding.”<br />
-Under this constraint the interpretation of the coefficients becomes:</p>
-<ul>
-<li><span class="math inline">\(\beta_0\)</span> represents the global mean (sometimes referred to as the “grand mean”).</li>
-<li><span class="math inline">\(\beta_1\)</span> the effect due to group <span class="math inline">\(i\)</span> — that is, the mean response in group <span class="math inline">\(i\)</span> minus the global mean.</li>
-</ul>
-<p><strong>Changing contrasts in R</strong><br />
-There are two main ways to change the contrasts in R.</p>
-<ol style="list-style-type: decimal">
-<li><p>Change them in your data object.</p>
-<pre class="r"><code>contrasts(toy_utils$type) &lt;- &quot;contr.sum&quot;</code></pre></li>
-<li><p>Change them <em>only</em> in the fit of your model (don’t change them in the data object)</p>
-<pre class="r"><code>model_sum &lt;- lm(UTILITY ~ type, contrasts = list(type = &quot;contr.sum&quot;), data = toy_utils)</code></pre></li>
-</ol>
-</div>
-<div class="question-begin">
-Question 2
-</div>
-<div class="question-body">
-<ol style="list-style-type: decimal">
-<li>Refit the same model of utility by toy-type, using effects coding for the <code>type</code> variable</li>
-<li>Then calculate the global mean, and the differences from each mean to the global mean, to match them to the coefficients</li>
-</ol>
-</div>
-<p class="question-end">
-</p>
-<div class="solution-begin">
-<span id="sol-start-68" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-68&#39;, &#39;sol-start-68&#39;)"> Solution </span>
-</div>
-<div id="sol-body-68" class="solution-body" style="display: none;">
-<pre class="r"><code>model_sum &lt;- lm(UTILITY ~ type, contrasts = list(type = &quot;contr.sum&quot;), data = toy_utils)
-
-globmean &lt;- mean(toy_utils$UTILITY)
-globmean</code></pre>
-<pre><code>## [1] 3.993333</code></pre>
-<pre class="r"><code>toy_utils %&gt;% group_by(type) %&gt;%
-  summarise(
-    mutil = mean(UTILITY)
-  ) %&gt;% 
-  mutate(
-    diff = mutil - globmean
-  )</code></pre>
-<pre><code>## # A tibble: 3 × 3
-##   type   mutil  diff
-##   &lt;fct&gt;  &lt;dbl&gt; &lt;dbl&gt;
-## 1 lego    2.82 -1.17
-## 2 playmo  6.62  2.63
-## 3 zing    2.54 -1.45</code></pre>
-<pre class="r"><code>coef(model_sum)</code></pre>
-<pre><code>## (Intercept)       type1       type2 
-##    3.993333   -1.173333    2.626667</code></pre>
-</div>
-<p class="solution-end">
-</p>
 
 <link rel="stylesheet" href="https://uoepsy.github.io/assets/css/ccfooter.css" />
 <div class="ccfooter"></div>
