@@ -123,7 +123,7 @@ b. What is represented by a change from 0 to 1 in the group contrast?
 c. What is represented by a change from 0 to 1 in the condition contrast?  
   __Answer:__ Moving from Condition 1 to Condition 2
 
-```{r}
+```{r echo=FALSE}
 as.data.frame(effects::effect("condition*group",model)) %>%
   ggplot(.,aes(x=condition, y=fit, ymin=lower,ymax=upper, col=group))+
   geom_pointrange(size=1.3, alpha=.5) +
@@ -148,4 +148,31 @@ as.data.frame(effects::effect("condition*group",model)) %>%
 
 
 
+```{r}
+#balanced
+model1 <- lm(formula = y ~ condition * group, data = df)
+model2 <- lm(formula = y ~ condition * group, data = df,
+             contrasts=list(group="contr.sum",condition="contr.sum"))
+
+car::Anova(model2, type="III")
+anova(model2)
+coef(summary(model2))[,3]^2
+
+car::Anova(model1, type="III")
+anova(model1)
+coef(summary(model1))[,3]^2
+
+# unbalanced
+model1 <- lm(formula = y ~ condition * group, data = df2)
+model2 <- lm(formula = y ~ condition * group, data = df2,
+             contrasts=list(group="contr.sum",condition="contr.sum"))
+
+car::Anova(model2, type="III")
+anova(model2)
+coef(summary(model2))[,3]^2
+
+car::Anova(model1, type="III")[,"F value"]
+anova(model1)[,"F value"]
+coef(summary(model1))[,3]^2
+```
 
