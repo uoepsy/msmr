@@ -353,7 +353,9 @@ div.tocify {
     <li>
       <a href="02_lmm_log.html">2: Logistic | Longitudinal (linear)</a>
     </li>
-    <li class="dropdown-header">3: Longitudinal (non-linear)</li>
+    <li>
+      <a href="03_nonlin.html">3: Longitudinal (non-linear)</a>
+    </li>
     <li class="dropdown-header">4: Other Random Effect Structures</li>
     <li class="dropdown-header">5: Recap | Individual Differences</li>
     <li class="dropdown-header">Break Week</li>
@@ -472,9 +474,9 @@ Question A1
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-1" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-1&#39;, &#39;sol-start-1&#39;)"> Solution </span>
+<span id="sol-start-35" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-35&#39;, &#39;sol-start-35&#39;)"> Solution </span>
 </div>
-<div id="sol-body-1" class="solution-body" style="display: none;">
+<div id="sol-body-35" class="solution-body" style="display: none;">
 <pre class="r"><code>load(url(&quot;https://uoepsy.github.io/data/WeightMaintain3.rda&quot;))
 summary(WeightMaintain3)</code></pre>
 <pre><code>##        ID      Condition    Assessment    WeightChange    
@@ -520,9 +522,9 @@ Question A2
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-2" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-2&#39;, &#39;sol-start-2&#39;)"> Solution </span>
+<span id="sol-start-36" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-36&#39;, &#39;sol-start-36&#39;)"> Solution </span>
 </div>
-<div id="sol-body-2" class="solution-body" style="display: none;">
+<div id="sol-body-36" class="solution-body" style="display: none;">
 <p>This is our null model:</p>
 <pre class="r"><code>m.null &lt;- lmer(WeightChange ~ 1 + (1 | ID), data=WeightMaintain3)
 summary(m.null)</code></pre>
@@ -590,9 +592,9 @@ Question A3
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-3" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-3&#39;, &#39;sol-start-3&#39;)"> Solution </span>
+<span id="sol-start-37" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-37&#39;, &#39;sol-start-37&#39;)"> Solution </span>
 </div>
-<div id="sol-body-3" class="solution-body" style="display: none;">
+<div id="sol-body-37" class="solution-body" style="display: none;">
 <pre class="r"><code>m.int &lt;- lmer(WeightChange ~ Assessment + Condition + (1 + Assessment | ID), 
               data=WeightMaintain3)
 m.full &lt;- lmer(WeightChange ~ Assessment*Condition + (1 + Assessment | ID), 
@@ -656,9 +658,9 @@ Question A4
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-4" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-4&#39;, &#39;sol-start-4&#39;)"> Solution </span>
+<span id="sol-start-38" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-38&#39;, &#39;sol-start-38&#39;)"> Solution </span>
 </div>
-<div id="sol-body-4" class="solution-body" style="display: none;">
+<div id="sol-body-38" class="solution-body" style="display: none;">
 <p>In this very specific research design, it may actually make a lot of sense to not model by-participant variation around the intercept.<br />
 As baseline is at the very start of the weight maintenance, it makes sense that we wouldn’t have very much (if any) participant variation in change at this point.
 Note that by removing the estimation of this parameter, our models now converge!</p>
@@ -682,9 +684,9 @@ Question A5
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-5" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-5&#39;, &#39;sol-start-5&#39;)"> Solution </span>
+<span id="sol-start-39" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-39&#39;, &#39;sol-start-39&#39;)"> Solution </span>
 </div>
-<div id="sol-body-5" class="solution-body" style="display: none;">
+<div id="sol-body-39" class="solution-body" style="display: none;">
 <pre class="r"><code>library(effects)
 ef &lt;- as.data.frame(effect(&quot;Assessment:Condition&quot;, m.full))
 
@@ -710,9 +712,9 @@ We can also use <code>tidy(model)</code>, and similar to models fitted with <cod
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-6" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-6&#39;, &#39;sol-start-6&#39;)"> Solution </span>
+<span id="sol-start-40" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-40&#39;, &#39;sol-start-40&#39;)"> Solution </span>
 </div>
-<div id="sol-body-6" class="solution-body" style="display: none;">
+<div id="sol-body-40" class="solution-body" style="display: none;">
 <pre class="r"><code>round(coef(summary(m.full)), 3)</code></pre>
 <pre><code>##                        Estimate Std. Error t value
 ## (Intercept)               0.060      0.098   0.616
@@ -741,9 +743,9 @@ Question A7
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-7" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-7&#39;, &#39;sol-start-7&#39;)"> Solution </span>
+<span id="sol-start-41" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-41&#39;, &#39;sol-start-41&#39;)"> Solution </span>
 </div>
-<div id="sol-body-7" class="solution-body" style="display: none;">
+<div id="sol-body-41" class="solution-body" style="display: none;">
 <pre class="r"><code>summary(m.full)$coefficients</code></pre>
 <pre><code>##                           Estimate Std. Error    t value
 ## (Intercept)             0.06038642 0.09800169  0.6161773
@@ -783,19 +785,19 @@ That content will provide a lot of the groundwork for this week, so we recommend
 </ul></li>
 </ul>
 <div class="optional-begin">
-<span id="opt-start-8" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-8&#39;, &#39;opt-start-8&#39;)"> Binary? Binomial? Huh?</span>
+<span id="opt-start-42" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-42&#39;, &#39;opt-start-42&#39;)"> Binary? Binomial? Huh?</span>
 </div>
-<div id="opt-body-8" class="optional-body" style="display: none;">
+<div id="opt-body-42" class="optional-body" style="display: none;">
 <p>Very briefly in the USMR materials we made the distinction between <strong>binary</strong> and <strong>binomial</strong>. This wasn’t hugely relevant at the time just because we only looked at binary outcomes.</p>
 <p>For binary regression, all the data in our outcome variable has to be a 0 or a 1.<br />
 For example, the <code>correct</code> variable below:<br />
 <br></p>
-<div id="abdedmidkx" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="kgeehpphul" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#abdedmidkx .gt_table {
+#kgeehpphul .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -820,7 +822,7 @@ For example, the <code>correct</code> variable below:<br />
   border-left-color: #D3D3D3;
 }
 
-#abdedmidkx .gt_heading {
+#kgeehpphul .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -832,7 +834,7 @@ For example, the <code>correct</code> variable below:<br />
   border-right-color: #D3D3D3;
 }
 
-#abdedmidkx .gt_title {
+#kgeehpphul .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -842,7 +844,7 @@ For example, the <code>correct</code> variable below:<br />
   border-bottom-width: 0;
 }
 
-#abdedmidkx .gt_subtitle {
+#kgeehpphul .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -852,13 +854,13 @@ For example, the <code>correct</code> variable below:<br />
   border-top-width: 0;
 }
 
-#abdedmidkx .gt_bottom_border {
+#kgeehpphul .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#abdedmidkx .gt_col_headings {
+#kgeehpphul .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -873,7 +875,7 @@ For example, the <code>correct</code> variable below:<br />
   border-right-color: #D3D3D3;
 }
 
-#abdedmidkx .gt_col_heading {
+#kgeehpphul .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -893,7 +895,7 @@ For example, the <code>correct</code> variable below:<br />
   overflow-x: hidden;
 }
 
-#abdedmidkx .gt_column_spanner_outer {
+#kgeehpphul .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -905,15 +907,15 @@ For example, the <code>correct</code> variable below:<br />
   padding-right: 4px;
 }
 
-#abdedmidkx .gt_column_spanner_outer:first-child {
+#kgeehpphul .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#abdedmidkx .gt_column_spanner_outer:last-child {
+#kgeehpphul .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#abdedmidkx .gt_column_spanner {
+#kgeehpphul .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -925,7 +927,7 @@ For example, the <code>correct</code> variable below:<br />
   width: 100%;
 }
 
-#abdedmidkx .gt_group_heading {
+#kgeehpphul .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -947,7 +949,7 @@ For example, the <code>correct</code> variable below:<br />
   vertical-align: middle;
 }
 
-#abdedmidkx .gt_empty_group_heading {
+#kgeehpphul .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -962,15 +964,15 @@ For example, the <code>correct</code> variable below:<br />
   vertical-align: middle;
 }
 
-#abdedmidkx .gt_from_md > :first-child {
+#kgeehpphul .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#abdedmidkx .gt_from_md > :last-child {
+#kgeehpphul .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#abdedmidkx .gt_row {
+#kgeehpphul .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -989,7 +991,7 @@ For example, the <code>correct</code> variable below:<br />
   overflow-x: hidden;
 }
 
-#abdedmidkx .gt_stub {
+#kgeehpphul .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1001,7 +1003,7 @@ For example, the <code>correct</code> variable below:<br />
   padding-left: 12px;
 }
 
-#abdedmidkx .gt_summary_row {
+#kgeehpphul .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1011,7 +1013,7 @@ For example, the <code>correct</code> variable below:<br />
   padding-right: 5px;
 }
 
-#abdedmidkx .gt_first_summary_row {
+#kgeehpphul .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1021,7 +1023,7 @@ For example, the <code>correct</code> variable below:<br />
   border-top-color: #D3D3D3;
 }
 
-#abdedmidkx .gt_grand_summary_row {
+#kgeehpphul .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1031,7 +1033,7 @@ For example, the <code>correct</code> variable below:<br />
   padding-right: 5px;
 }
 
-#abdedmidkx .gt_first_grand_summary_row {
+#kgeehpphul .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1041,11 +1043,11 @@ For example, the <code>correct</code> variable below:<br />
   border-top-color: #D3D3D3;
 }
 
-#abdedmidkx .gt_striped {
+#kgeehpphul .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#abdedmidkx .gt_table_body {
+#kgeehpphul .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1054,7 +1056,7 @@ For example, the <code>correct</code> variable below:<br />
   border-bottom-color: #D3D3D3;
 }
 
-#abdedmidkx .gt_footnotes {
+#kgeehpphul .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1068,13 +1070,13 @@ For example, the <code>correct</code> variable below:<br />
   border-right-color: #D3D3D3;
 }
 
-#abdedmidkx .gt_footnote {
+#kgeehpphul .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#abdedmidkx .gt_sourcenotes {
+#kgeehpphul .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1088,41 +1090,41 @@ For example, the <code>correct</code> variable below:<br />
   border-right-color: #D3D3D3;
 }
 
-#abdedmidkx .gt_sourcenote {
+#kgeehpphul .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#abdedmidkx .gt_left {
+#kgeehpphul .gt_left {
   text-align: left;
 }
 
-#abdedmidkx .gt_center {
+#kgeehpphul .gt_center {
   text-align: center;
 }
 
-#abdedmidkx .gt_right {
+#kgeehpphul .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#abdedmidkx .gt_font_normal {
+#kgeehpphul .gt_font_normal {
   font-weight: normal;
 }
 
-#abdedmidkx .gt_font_bold {
+#kgeehpphul .gt_font_bold {
   font-weight: bold;
 }
 
-#abdedmidkx .gt_font_italic {
+#kgeehpphul .gt_font_italic {
   font-style: italic;
 }
 
-#abdedmidkx .gt_super {
+#kgeehpphul .gt_super {
   font-size: 65%;
 }
 
-#abdedmidkx .gt_footnote_marks {
+#kgeehpphul .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -1157,12 +1159,12 @@ For example, the <code>correct</code> variable below:<br />
 </div>
 <p><br>
 But we can re-express this information in a different way, when we know the total number of questions asked:</p>
-<div id="lygaegagia" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="weewgysruw" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#lygaegagia .gt_table {
+#weewgysruw .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1187,7 +1189,7 @@ But we can re-express this information in a different way, when we know the tota
   border-left-color: #D3D3D3;
 }
 
-#lygaegagia .gt_heading {
+#weewgysruw .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1199,7 +1201,7 @@ But we can re-express this information in a different way, when we know the tota
   border-right-color: #D3D3D3;
 }
 
-#lygaegagia .gt_title {
+#weewgysruw .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1209,7 +1211,7 @@ But we can re-express this information in a different way, when we know the tota
   border-bottom-width: 0;
 }
 
-#lygaegagia .gt_subtitle {
+#weewgysruw .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1219,13 +1221,13 @@ But we can re-express this information in a different way, when we know the tota
   border-top-width: 0;
 }
 
-#lygaegagia .gt_bottom_border {
+#weewgysruw .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#lygaegagia .gt_col_headings {
+#weewgysruw .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1240,7 +1242,7 @@ But we can re-express this information in a different way, when we know the tota
   border-right-color: #D3D3D3;
 }
 
-#lygaegagia .gt_col_heading {
+#weewgysruw .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1260,7 +1262,7 @@ But we can re-express this information in a different way, when we know the tota
   overflow-x: hidden;
 }
 
-#lygaegagia .gt_column_spanner_outer {
+#weewgysruw .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1272,15 +1274,15 @@ But we can re-express this information in a different way, when we know the tota
   padding-right: 4px;
 }
 
-#lygaegagia .gt_column_spanner_outer:first-child {
+#weewgysruw .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#lygaegagia .gt_column_spanner_outer:last-child {
+#weewgysruw .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#lygaegagia .gt_column_spanner {
+#weewgysruw .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1292,7 +1294,7 @@ But we can re-express this information in a different way, when we know the tota
   width: 100%;
 }
 
-#lygaegagia .gt_group_heading {
+#weewgysruw .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1314,7 +1316,7 @@ But we can re-express this information in a different way, when we know the tota
   vertical-align: middle;
 }
 
-#lygaegagia .gt_empty_group_heading {
+#weewgysruw .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1329,15 +1331,15 @@ But we can re-express this information in a different way, when we know the tota
   vertical-align: middle;
 }
 
-#lygaegagia .gt_from_md > :first-child {
+#weewgysruw .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#lygaegagia .gt_from_md > :last-child {
+#weewgysruw .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#lygaegagia .gt_row {
+#weewgysruw .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1356,7 +1358,7 @@ But we can re-express this information in a different way, when we know the tota
   overflow-x: hidden;
 }
 
-#lygaegagia .gt_stub {
+#weewgysruw .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1368,7 +1370,7 @@ But we can re-express this information in a different way, when we know the tota
   padding-left: 12px;
 }
 
-#lygaegagia .gt_summary_row {
+#weewgysruw .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1378,7 +1380,7 @@ But we can re-express this information in a different way, when we know the tota
   padding-right: 5px;
 }
 
-#lygaegagia .gt_first_summary_row {
+#weewgysruw .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1388,7 +1390,7 @@ But we can re-express this information in a different way, when we know the tota
   border-top-color: #D3D3D3;
 }
 
-#lygaegagia .gt_grand_summary_row {
+#weewgysruw .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1398,7 +1400,7 @@ But we can re-express this information in a different way, when we know the tota
   padding-right: 5px;
 }
 
-#lygaegagia .gt_first_grand_summary_row {
+#weewgysruw .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1408,11 +1410,11 @@ But we can re-express this information in a different way, when we know the tota
   border-top-color: #D3D3D3;
 }
 
-#lygaegagia .gt_striped {
+#weewgysruw .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#lygaegagia .gt_table_body {
+#weewgysruw .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1421,7 +1423,7 @@ But we can re-express this information in a different way, when we know the tota
   border-bottom-color: #D3D3D3;
 }
 
-#lygaegagia .gt_footnotes {
+#weewgysruw .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1435,13 +1437,13 @@ But we can re-express this information in a different way, when we know the tota
   border-right-color: #D3D3D3;
 }
 
-#lygaegagia .gt_footnote {
+#weewgysruw .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#lygaegagia .gt_sourcenotes {
+#weewgysruw .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1455,41 +1457,41 @@ But we can re-express this information in a different way, when we know the tota
   border-right-color: #D3D3D3;
 }
 
-#lygaegagia .gt_sourcenote {
+#weewgysruw .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#lygaegagia .gt_left {
+#weewgysruw .gt_left {
   text-align: left;
 }
 
-#lygaegagia .gt_center {
+#weewgysruw .gt_center {
   text-align: center;
 }
 
-#lygaegagia .gt_right {
+#weewgysruw .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#lygaegagia .gt_font_normal {
+#weewgysruw .gt_font_normal {
   font-weight: normal;
 }
 
-#lygaegagia .gt_font_bold {
+#weewgysruw .gt_font_bold {
   font-weight: bold;
 }
 
-#lygaegagia .gt_font_italic {
+#weewgysruw .gt_font_italic {
   font-style: italic;
 }
 
-#lygaegagia .gt_super {
+#weewgysruw .gt_super {
   font-size: 65%;
 }
 
-#lygaegagia .gt_footnote_marks {
+#weewgysruw .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -1598,9 +1600,9 @@ Question B1
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-9" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-9&#39;, &#39;sol-start-9&#39;)"> Solution </span>
+<span id="sol-start-43" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-43&#39;, &#39;sol-start-43&#39;)"> Solution </span>
 </div>
-<div id="sol-body-9" class="solution-body" style="display: none;">
+<div id="sol-body-43" class="solution-body" style="display: none;">
 <pre class="r"><code>load(url(&quot;https://uoepsy.github.io/msmr/data/nwl.RData&quot;))
 summary(nwl)</code></pre>
 <pre><code>##      group      lesion_location     block    PropCorrect       NumCorrect   
@@ -1636,9 +1638,9 @@ Question B2
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-10" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-10&#39;, &#39;sol-start-10&#39;)"> Solution </span>
+<span id="sol-start-44" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-44&#39;, &#39;sol-start-44&#39;)"> Solution </span>
 </div>
-<div id="sol-body-10" class="solution-body" style="display: none;">
+<div id="sol-body-44" class="solution-body" style="display: none;">
 <ol style="list-style-type: decimal">
 <li>The outcome here is (in words) “the proportion of correct answers in each block.” This makes it tempting to look straight to the variable called <code>PropCorrect</code>. Unfortunately, this is encoded as a proportion (i.e., is bounded by 0 and 1), and of the models we have learned about so far, we don’t definitely have the necessary tools to model this.
 <ul>
@@ -1677,9 +1679,9 @@ Is the learning rate (training blocks) different between these two groups?</p>
 </ol></li>
 </ul>
 <div class="optional-begin">
-<span id="opt-start-11" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-11&#39;, &#39;opt-start-11&#39;)"> Suggested answers to the hints if you don’t know where to start</span>
+<span id="opt-start-45" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-45&#39;, &#39;opt-start-45&#39;)"> Suggested answers to the hints if you don’t know where to start</span>
 </div>
-<div id="opt-body-11" class="optional-body" style="display: none;">
+<div id="opt-body-45" class="optional-body" style="display: none;">
 <ul>
 <li>Make sure we’re running models on only the data we are actually interested in.
 <ul>
@@ -1717,9 +1719,9 @@ What do you want your model to allow to vary within these groups?</li>
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-12" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-12&#39;, &#39;sol-start-12&#39;)"> Solution </span>
+<span id="sol-start-46" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-46&#39;, &#39;sol-start-46&#39;)"> Solution </span>
 </div>
-<div id="sol-body-12" class="solution-body" style="display: none;">
+<div id="sol-body-46" class="solution-body" style="display: none;">
 <pre class="r"><code>m.base &lt;- glmer(cbind(NumCorrect, NumError) ~ block + (block | ID), 
                 data = filter(nwl, block &lt; 8, !is.na(lesion_location)),
                 family=binomial)
@@ -1764,9 +1766,9 @@ In the testing phase, does performance on the immediate test differ between lesi
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-13" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-13&#39;, &#39;sol-start-13&#39;)"> Solution </span>
+<span id="sol-start-47" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-47&#39;, &#39;sol-start-47&#39;)"> Solution </span>
 </div>
-<div id="sol-body-13" class="solution-body" style="display: none;">
+<div id="sol-body-47" class="solution-body" style="display: none;">
 <pre class="r"><code>nwl_test &lt;- filter(nwl, block &gt; 7, !is.na(lesion_location)) %&gt;%
   mutate(
     Phase = fct_relevel(factor(Phase),&quot;Immediate&quot;)
@@ -1844,9 +1846,9 @@ Question B5
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-14" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-14&#39;, &#39;sol-start-14&#39;)"> Solution </span>
+<span id="sol-start-48" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-48&#39;, &#39;sol-start-48&#39;)"> Solution </span>
 </div>
-<div id="sol-body-14" class="solution-body" style="display: none;">
+<div id="sol-body-48" class="solution-body" style="display: none;">
 <ol style="list-style-type: decimal">
 <li><p>The link function is the <code>logit</code>, or log-odds (other link functions are available).</p></li>
 <li><p>To convert log-odds to odds, we can use <code>exp()</code>, to get odds and odds ratios.</p></li>
@@ -1865,7 +1867,7 @@ These can be difficult, especially when it’s logistic, and especially when the
 </ul>
 <!-- 
 
-<div class="optional-begin"><span id='opt-start-15' class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility('opt-body-15', 'opt-start-15')">  Optional help: Our Solution to B4</span></div><div class="optional-body" id = "opt-body-15" style="display: none;">
+<div class="optional-begin"><span id='opt-start-49' class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility('opt-body-49', 'opt-start-49')">  Optional help: Our Solution to B4</span></div><div class="optional-body" id = "opt-body-49" style="display: none;">
 
  -->
 <!-- ```{r eval=F} -->
@@ -1885,9 +1887,9 @@ These can be difficult, especially when it’s logistic, and especially when the
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-16" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-16&#39;, &#39;sol-start-16&#39;)"> Solution </span>
+<span id="sol-start-50" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-50&#39;, &#39;sol-start-50&#39;)"> Solution </span>
 </div>
-<div id="sol-body-16" class="solution-body" style="display: none;">
+<div id="sol-body-50" class="solution-body" style="display: none;">
 <ul>
 <li><code>(Intercept)</code> ==&gt; Anterior lesion group performance in immediate test. This is the log-odds of them answering correctly in the immediate test.</li>
 <li><code>PhaseFollow-up</code> ==&gt; Change in performance (for the anterior lesion group) from immediate to follow-up test.</li>
@@ -1917,9 +1919,9 @@ Figure 2: Differences between groups in the average proportion of correct respon
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-17" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-17&#39;, &#39;sol-start-17&#39;)"> Solution </span>
+<span id="sol-start-51" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-51&#39;, &#39;sol-start-51&#39;)"> Solution </span>
 </div>
-<div id="sol-body-17" class="solution-body" style="display: none;">
+<div id="sol-body-51" class="solution-body" style="display: none;">
 <pre class="r"><code>ggplot(filter(nwl, !is.na(lesion_location)), aes(block, PropCorrect, 
                                             color=lesion_location, 
                                             shape=lesion_location)) +
@@ -1963,9 +1965,9 @@ m.recall.loc.effcoding &lt;- glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-18" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-18&#39;, &#39;sol-start-18&#39;)"> Solution </span>
+<span id="sol-start-52" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-52&#39;, &#39;sol-start-52&#39;)"> Solution </span>
 </div>
-<div id="sol-body-18" class="solution-body" style="display: none;">
+<div id="sol-body-52" class="solution-body" style="display: none;">
 <ul>
 <li><code>(Intercept)</code> ==&gt; Overall performance in immediate test. This is the overall log-odds of answering correctly in the immediate test.</li>
 <li><code>PhaseFollow-up</code> ==&gt; Average change in performance from immediate to follow-up test.</li>
@@ -1982,9 +1984,9 @@ contrasts(nwl_test$lesion_location)</code></pre>
 ## posterior   -1</code></pre>
 <p>Because there are only two levels to this variable, the estimate will simply flip sign (positive/negative) depending on which way the contrast is leveled.</p>
 <div class="optional-begin">
-<span id="opt-start-19" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-19&#39;, &#39;opt-start-19&#39;)"> Optional: I liked my coefficients being named properly</span>
+<span id="opt-start-53" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-53&#39;, &#39;opt-start-53&#39;)"> Optional: I liked my coefficients being named properly</span>
 </div>
-<div id="opt-body-19" class="optional-body" style="display: none;">
+<div id="opt-body-53" class="optional-body" style="display: none;">
 <pre class="r"><code>colnames(contrasts(nwl_test$lesion_location)) &lt;- &quot;PeppaPig&quot;
 
 contrasts(nwl_test$lesion_location)</code></pre>
@@ -2108,9 +2110,9 @@ To accommodate for the clustered nature of the data, we are going to fit a model
 full_model &lt;- lmer(R_AGE ~ hrs_week + (1 + hrs_week | toy_type), data = toys_read)</code></pre>
 </div>
 <div class="optional-begin">
-<span id="opt-start-20" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-20&#39;, &#39;opt-start-20&#39;)"> Use a normal approximation (not advisable)</span>
+<span id="opt-start-54" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-54&#39;, &#39;opt-start-54&#39;)"> Use a normal approximation (not advisable)</span>
 </div>
-<div id="opt-body-20" class="optional-body" style="display: none;">
+<div id="opt-body-54" class="optional-body" style="display: none;">
 <p>Remember that the <span class="math inline">\(t\)</span> distribution starts to look more and more like the <span class="math inline">\(z\)</span> (“normal”) distribution when degrees of freedom increase? We could just assume we have infinite degrees of freedom in our test statistics, and pretend that the <span class="math inline">\(t\)</span>-values we get are actually <span class="math inline">\(z\)</span>-values. This is “anti-conservative” inasmuch as it is not a very cautious approach, and we are likely to have a higher false positive rate (e.g. more chance of saying “there <strong>is</strong> an effect!” when there actually isn’t.)</p>
 <pre class="r"><code>coefs &lt;- as.data.frame(summary(full_model)$coefficients)
 coefs$p.z &lt;- 2 * (1 - pnorm(abs(coefs[,3])))
@@ -2122,9 +2124,9 @@ coefs</code></pre>
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-21" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-21&#39;, &#39;opt-start-21&#39;)"> Satterthwaite df approximation</span>
+<span id="opt-start-55" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-55&#39;, &#39;opt-start-55&#39;)"> Satterthwaite df approximation</span>
 </div>
-<div id="opt-body-21" class="optional-body" style="display: none;">
+<div id="opt-body-55" class="optional-body" style="display: none;">
 <p>There have been a couple of methods proposed to estimate the degrees of freedom in order to provide a better approximation to the null distribution of our tests. The way the Satterthwaite method has been implemented in R will just add a column for p-values to your <code>summary(model)</code> output).</p>
 <p>Load the <strong>lmerTest</strong> package, refit the model, and voila!</p>
 <pre class="r"><code>library(lmerTest)
@@ -2146,9 +2148,9 @@ Weekly hours of reading practice was associated increased reading age (<span cla
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-22" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-22&#39;, &#39;opt-start-22&#39;)"> Kenward Rogers df approximations</span>
+<span id="opt-start-56" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-56&#39;, &#39;opt-start-56&#39;)"> Kenward Rogers df approximations</span>
 </div>
-<div id="opt-body-22" class="optional-body" style="display: none;">
+<div id="opt-body-56" class="optional-body" style="display: none;">
 <p>The Kenward-Rogers approach is slightly more conservative than the Satterthwaite method, and has been implemented for model comparison between a full model and a restricted model (a model without the parameter of interest), using the KR adjustment for the denominator degrees of freedom in the <span class="math inline">\(F\)</span>-test.<br />
 For this, models must be fitted with REML, <strong>not</strong> ML. The function <code>KRmodcomp()</code> will take care of this and re-fit them for you.</p>
 <pre class="r"><code>library(pbkrtest)
@@ -2172,9 +2174,9 @@ Inclusion of weekly hours of reading practice as a predictor was associated with
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-23" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-23&#39;, &#39;opt-start-23&#39;)"> Likelihood Ratio Test (LRT)</span>
+<span id="opt-start-57" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-57&#39;, &#39;opt-start-57&#39;)"> Likelihood Ratio Test (LRT)</span>
 </div>
-<div id="opt-body-23" class="optional-body" style="display: none;">
+<div id="opt-body-57" class="optional-body" style="display: none;">
 <p>Conduct a model comparison between your model and a restricted model (a model without the parameter of interest), evaluating the change in log-likelihood.</p>
 <div class="statbox">
 <p><strong>Likelihood</strong></p>
@@ -2221,9 +2223,9 @@ anova(restricted_model, full_model, test = &quot;Chisq&quot;)</code></pre>
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-24" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-24&#39;, &#39;opt-start-24&#39;)"> Optional: Parametric Bootstrap LRT</span>
+<span id="opt-start-58" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-58&#39;, &#39;opt-start-58&#39;)"> Optional: Parametric Bootstrap LRT</span>
 </div>
-<div id="opt-body-24" class="optional-body" style="display: none;">
+<div id="opt-body-58" class="optional-body" style="display: none;">
 <p>There are also various “bootstrapping” methods which it is worth looking into. Think back to USMR when we first learned about hypothesis testing. Remember that we did lots of simulating data, so that we can compare what we actually observe with what we would expect if the null hypothesis were true? By doing this, we were essentially <em>creating</em> a null distribution, so that our calculating a p-value can become an issue of summarising data (e.g. calculate the proportion of our simulated null distribution that is more extreme than our observed statistic)</p>
 <p>Instead of assuming that the likelihood ratio test statistics are <span class="math inline">\(\chi^2\)</span>-distributed, we can bootstrap this test instead. This approach simulates data from the simpler model, fits both the simple model and the complex model and evaluates the change in log-likelihood. By doing this over and over again, we build a distribution of what changes in log-likelihood we would be likely to see if the more complex model is not any better. In this way it actually constructs a distribution reflecting our null hypothesis, against which we can then compare our actual observed effect</p>
 <pre class="r"><code>library(pbkrtest)
@@ -2236,9 +2238,9 @@ PBmodcomp(full_model, restricted_model, nsim=1000)</code></pre>
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-25" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-25&#39;, &#39;opt-start-25&#39;)"> Optional: Parametric Bootstrap Confidence Intervals</span>
+<span id="opt-start-59" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-59&#39;, &#39;opt-start-59&#39;)"> Optional: Parametric Bootstrap Confidence Intervals</span>
 </div>
-<div id="opt-body-25" class="optional-body" style="display: none;">
+<div id="opt-body-59" class="optional-body" style="display: none;">
 <p>Much the same as above, but with just one model we simulate data many times and refit the model, so that we get an empirical distribution that we can use to construct confidence intervals for our effects.</p>
 <pre class="r"><code>confint(full_model, method=&quot;boot&quot;)  </code></pre>
 <div class="int">
@@ -2252,9 +2254,9 @@ Weekly hours of reading practice was associated increased reading age (<span cla
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-26" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-26&#39;, &#39;opt-start-26&#39;)"> Optional: Case-based Bootstrap Confidence Intervals</span>
+<span id="opt-start-60" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-60&#39;, &#39;opt-start-60&#39;)"> Optional: Case-based Bootstrap Confidence Intervals</span>
 </div>
-<div id="opt-body-26" class="optional-body" style="display: none;">
+<div id="opt-body-60" class="optional-body" style="display: none;">
 <p>It’s worth noting that there are many different types of bootstrapping that we can conduct. Different methods of bootstrapping vary with respect to the assumptions we will have to make when using them for drawing inferences. For instance, the parametric bootstrap discussed above assumes that explanatory variables are fixed and that model specification and the distributions such as <span class="math inline">\(\zeta_i \sim N(0,\sigma_{\zeta})\)</span> and <span class="math inline">\(\varepsilon_i \sim N(0,\sigma_{\varepsilon})\)</span> are correct.<br />
 An alternative is to generate a distribution by <strong>resampling with replacement</strong> from our data, fitting our model to the resample, and then repeating this over and over. This doesn’t have to rely on assumptions about the shape of the distributions of <span class="math inline">\(\zeta_i\)</span> and <span class="math inline">\(\varepsilon_i\)</span> - we just need to ensure that we correctly specify the hierarchical dependency of data. It does, however, require the decision of at which levels to resample (this is discussed more in week 4, and is what the <strong>lmeresampler</strong> package is all about).</p>
 </div>

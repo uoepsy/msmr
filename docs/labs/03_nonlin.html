@@ -353,7 +353,9 @@ div.tocify {
     <li>
       <a href="02_lmm_log.html">2: Logistic | Longitudinal (linear)</a>
     </li>
-    <li class="dropdown-header">3: Longitudinal (non-linear)</li>
+    <li>
+      <a href="03_nonlin.html">3: Longitudinal (non-linear)</a>
+    </li>
     <li class="dropdown-header">4: Other Random Effect Structures</li>
     <li class="dropdown-header">5: Recap | Individual Differences</li>
     <li class="dropdown-header">Break Week</li>
@@ -483,13 +485,13 @@ We need to find some way of incorporating the non-linear relationship between y 
 <p>As the order of polynomials increases, we tend to be less interested in these terms in our model. Linear change is the easiest to think about: are things going up over the course of <span class="math inline">\(x\)</span>, or down? (or neither?). Quadratic change is the next most interesting, and it may help to think of this as the “rate of change.” For instance, in the plot below, it is the quadratic term which differs between the two groups trajectories.</p>
 <p><img src="03_nonlin_files/figure-html/unnamed-chunk-4-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <div class="optional-begin">
-<span id="opt-start-47" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-47&#39;, &#39;opt-start-47&#39;)"> Positive and negative quadratic terms</span>
+<span id="opt-start-1" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-1&#39;, &#39;opt-start-1&#39;)"> Positive and negative quadratic terms</span>
 </div>
-<div id="opt-body-47" class="optional-body" style="display: none;">
+<div id="opt-body-1" class="optional-body" style="display: none;">
 <p><img src="03_nonlin_files/figure-html/quadfig-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <!-- 
 
-<div class="optional-begin"><span id='opt-start-48' class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility('opt-body-48', 'opt-start-48')">  Code to create plot</span></div><div class="optional-body" id = "opt-body-48" style="display: none;">
+<div class="optional-begin"><span id='opt-start-2' class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility('opt-body-2', 'opt-start-2')">  Code to create plot</span></div><div class="optional-body" id = "opt-body-2" style="display: none;">
 
  -->
 <!-- ```{r eval=FALSE} -->
@@ -759,9 +761,9 @@ head(mydata)</code></pre>
 ## 6     6  97.2          6     6    36   216</code></pre>
 <p>Both will produce the same model output (but Dan’s method produces these nice neat names for the coefficients!), and we can just put the terms into our model directly as <code>lm(y ~ poly1 + poly2 + poly3, data = mydata)</code>.</p>
 <div class="optional-begin">
-<span id="opt-start-49" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-49&#39;, &#39;opt-start-49&#39;)"> Demonstration</span>
+<span id="opt-start-3" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-3&#39;, &#39;opt-start-3&#39;)"> Demonstration</span>
 </div>
-<div id="opt-body-49" class="optional-body" style="display: none;">
+<div id="opt-body-3" class="optional-body" style="display: none;">
 <p>Our data:</p>
 <pre class="r"><code>head(df)</code></pre>
 <pre><code>## # A tibble: 6 × 2
@@ -944,9 +946,9 @@ Question A1
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-50" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-50&#39;, &#39;sol-start-50&#39;)"> Solution </span>
+<span id="sol-start-4" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-4&#39;, &#39;sol-start-4&#39;)"> Solution </span>
 </div>
-<div id="sol-body-50" class="solution-body" style="display: none;">
+<div id="sol-body-4" class="solution-body" style="display: none;">
 <pre class="r"><code>load(url(&quot;https://uoepsy.github.io/data/Az.rda&quot;))
 summary(Az)</code></pre>
 <pre><code>##     Subject         Time          Task      Performance   
@@ -971,9 +973,9 @@ Plot the performance over time for each type of task.</p>
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-51" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-51&#39;, &#39;sol-start-51&#39;)"> Solution </span>
+<span id="sol-start-5" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-5&#39;, &#39;sol-start-5&#39;)"> Solution </span>
 </div>
-<div id="sol-body-51" class="solution-body" style="display: none;">
+<div id="sol-body-5" class="solution-body" style="display: none;">
 <pre class="r"><code>ggplot(Az, aes(Time, Performance, color=Task, fill=Task)) + 
   stat_summary(fun.data=mean_se, geom=&quot;ribbon&quot;, color=NA, alpha=0.5) +
   stat_summary(fun=mean, geom=&quot;line&quot;)</code></pre>
@@ -990,9 +992,9 @@ Question A3
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-52" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-52&#39;, &#39;sol-start-52&#39;)"> Solution </span>
+<span id="sol-start-6" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-6&#39;, &#39;sol-start-6&#39;)"> Solution </span>
 </div>
-<div id="sol-body-52" class="solution-body" style="display: none;">
+<div id="sol-body-6" class="solution-body" style="display: none;">
 <p>Because we’re likely to be interested in whether there are task differences at the starting baseline point</p>
 </div>
 <p class="solution-end">
@@ -1009,9 +1011,9 @@ Question A4
 </ol>
 <p>We need to think about our random effect structure. We’ll talk you through this bit because it’s getting a bit more complicated now.</p>
 <div class="optional-begin">
-<span id="opt-start-53" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-53&#39;, &#39;opt-start-53&#39;)"> 1. What are the observations grouped by?</span>
+<span id="opt-start-7" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-7&#39;, &#39;opt-start-7&#39;)"> 1. What are the observations grouped by?</span>
 </div>
-<div id="opt-body-53" class="optional-body" style="display: none;">
+<div id="opt-body-7" class="optional-body" style="display: none;">
 <p>We have multiple observations for each participant. We can see this easily if we plot performance over time, and make a separate facet for each subject:</p>
 <pre class="r"><code>ggplot(Az, aes(x=Time,y=Performance))+
   geom_point()+
@@ -1022,9 +1024,9 @@ Question A4
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-54" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-54&#39;, &#39;opt-start-54&#39;)"> 2. Are observations nested?</span>
+<span id="opt-start-8" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-8&#39;, &#39;opt-start-8&#39;)"> 2. Are observations nested?</span>
 </div>
-<div id="opt-body-54" class="optional-body" style="display: none;">
+<div id="opt-body-8" class="optional-body" style="display: none;">
 <p>There’s another grouping <em>within</em> each subjects’ data, and that is the task they are measured on:</p>
 <pre class="r"><code>ggplot(Az, aes(x=Time,y=Performance,col=Task))+
   geom_point()+
@@ -1034,9 +1036,9 @@ Question A4
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-55" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-55&#39;, &#39;opt-start-55&#39;)"> 3. What effects can vary by-groups?</span>
+<span id="opt-start-9" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-9&#39;, &#39;opt-start-9&#39;)"> 3. What effects can vary by-groups?</span>
 </div>
-<div id="opt-body-55" class="optional-body" style="display: none;">
+<div id="opt-body-9" class="optional-body" style="display: none;">
 <p>For a given subject, on a given task, we can see that there is “an effect of time.”
 So we can conceivably think of the effect of time on performance as varying by subject and tasks within subjects.</p>
 <pre class="r"><code>Az %&gt;% filter(Subject == 4) %&gt;%
@@ -1049,9 +1051,9 @@ ggplot(., aes(x=Time,y=Performance,col=Task))+
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-56" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-56&#39;, &#39;opt-start-56&#39;)"> 4. What should our random effect structure be?</span>
+<span id="opt-start-10" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-10&#39;, &#39;opt-start-10&#39;)"> 4. What should our random effect structure be?</span>
 </div>
-<div id="opt-body-56" class="optional-body" style="display: none;">
+<div id="opt-body-10" class="optional-body" style="display: none;">
 <p>So we know that we want to account for subject-level variation, and we also know that within each subjects’ data there are different tasks.<br />
 Previously we have just been modelling one-level of grouping. This would be something like <code>(1 + ... | Subject)</code>.</p>
 <p>We can extend this to model variation by-tasks-within-subjects, by using <code>(1 + ... | Subject/Task)</code>. This can also be written as: <code>(1 + ... | Subject) + (1 + ... | Subject:Task)</code> (which allows us to include different predictors as random effects in each grouping).</p>
@@ -1070,9 +1072,9 @@ So we can allow our effects that encode time (<code>poly1</code>, <code>poly2</c
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-57" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-57&#39;, &#39;sol-start-57&#39;)"> Solution </span>
+<span id="sol-start-11" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-11&#39;, &#39;sol-start-11&#39;)"> Solution </span>
 </div>
-<div id="sol-body-57" class="solution-body" style="display: none;">
+<div id="sol-body-11" class="solution-body" style="display: none;">
 <pre class="r"><code># prep for analysis
 Az &lt;- code_poly(Az, predictor=&quot;Time&quot;, poly.order=2, orthogonal=F, draw.poly = F)
 
@@ -1133,9 +1135,9 @@ Question A5
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-58" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-58&#39;, &#39;sol-start-58&#39;)"> Solution </span>
+<span id="sol-start-12" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-12&#39;, &#39;sol-start-12&#39;)"> Solution </span>
 </div>
-<div id="sol-body-58" class="solution-body" style="display: none;">
+<div id="sol-body-12" class="solution-body" style="display: none;">
 <p>I would be inclined to remove the <code>poly2</code> term from either subjects, or tasks within subjects. I probably wouldn’t try removing it from both straight away, so we’ll need to split the random effect terms from <code>(1 + poly1 + poly2| Subject/Task)</code> to <code>(1 + poly1 | Subject) + (1 + poly1 + poly2 | Subject:Task)</code>.</p>
 <ul>
 <li>Removing <code>poly2 | Subject:Task</code> will mean that within each subject, the linear trend will still vary by task, but quadratic trend will not. For a given subject, the model will think that the performance might go up on some tasks and down on others, but the curvature will be the same.<br />
@@ -1214,9 +1216,9 @@ Question A6
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-59" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-59&#39;, &#39;sol-start-59&#39;)"> Solution </span>
+<span id="sol-start-13" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-13&#39;, &#39;sol-start-13&#39;)"> Solution </span>
 </div>
-<div id="sol-body-59" class="solution-body" style="display: none;">
+<div id="sol-body-13" class="solution-body" style="display: none;">
 <pre class="r"><code>m.0 &lt;- lmer(Performance ~ (poly1 + poly2) + Task +
               (1 + poly1 | Subject) + (1 + poly1 + poly2 | Subject:Task),
             data=Az, REML=F, control=lmerControl(optimizer=&quot;bobyqa&quot;))
@@ -1263,9 +1265,9 @@ tidy(m.full_satter) %&gt;% filter(effect==&quot;fixed&quot;)</code></pre>
 ## 4 fixed  &lt;NA&gt;  TasksADL       0.829    0.798      1.04   60.0 3.03e- 1
 ## 5 fixed  &lt;NA&gt;  TaskMemory     0.511    0.798      0.640  60.0 5.25e- 1</code></pre>
 <div class="optional-begin">
-<span id="opt-start-60" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-60&#39;, &#39;opt-start-60&#39;)"> Optional: Quick refresher of scientific notation</span>
+<span id="opt-start-14" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-14&#39;, &#39;opt-start-14&#39;)"> Optional: Quick refresher of scientific notation</span>
 </div>
-<div id="opt-body-60" class="optional-body" style="display: none;">
+<div id="opt-body-14" class="optional-body" style="display: none;">
 <p>5.4e-3 = 0.0054<br />
 5.4e-2 = 0.054<br />
 5.4e-1 = 0.54<br />
@@ -1355,9 +1357,9 @@ Question A7
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-61" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-61&#39;, &#39;sol-start-61&#39;)"> Solution </span>
+<span id="sol-start-15" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-15&#39;, &#39;sol-start-15&#39;)"> Solution </span>
 </div>
-<div id="sol-body-61" class="solution-body" style="display: none;">
+<div id="sol-body-15" class="solution-body" style="display: none;">
 <ol style="list-style-type: lower-alpha">
 <li>For the cADL Task, what is the estimated average performance where x = 0?
 <ul>
@@ -1401,9 +1403,9 @@ Question A8
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-62" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-62&#39;, &#39;sol-start-62&#39;)"> Solution </span>
+<span id="sol-start-16" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-16&#39;, &#39;sol-start-16&#39;)"> Solution </span>
 </div>
-<div id="sol-body-62" class="solution-body" style="display: none;">
+<div id="sol-body-16" class="solution-body" style="display: none;">
 <div class="int">
 <p>Performance in all tasks starts out the same [thanks, natural polynomials!]. Linear change over time is different depending on task type: compared to complex ADL tasks, decline in simple ADL tasks is slower and decline in Memory is faster. Decline in cADL and sADL tasks is approximately linear, whereas decline in Memory has more curvature (reaching floor?)</p>
 </div>
@@ -1419,9 +1421,9 @@ Question A9
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-63" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-63&#39;, &#39;sol-start-63&#39;)"> Solution </span>
+<span id="sol-start-17" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-17&#39;, &#39;sol-start-17&#39;)"> Solution </span>
 </div>
-<div id="sol-body-63" class="solution-body" style="display: none;">
+<div id="sol-body-17" class="solution-body" style="display: none;">
 <p>Model comparisons suggest:</p>
 <ul>
 <li>Linear slopes are different: <span class="math inline">\(\chi^2(2)=30.41, p &lt; .0001\)</span> (comparison <code>m.0</code> and <code>m.1</code> above).<br />
@@ -1441,9 +1443,9 @@ Question A10
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-64" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-64&#39;, &#39;sol-start-64&#39;)"> Solution </span>
+<span id="sol-start-18" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-18&#39;, &#39;sol-start-18&#39;)"> Solution </span>
 </div>
-<div id="sol-body-64" class="solution-body" style="display: none;">
+<div id="sol-body-18" class="solution-body" style="display: none;">
 <pre class="r"><code>ggplot(Az, aes(Time, Performance, color=Task)) + 
   stat_summary(fun.data=mean_se, geom=&quot;pointrange&quot;) + 
   stat_summary(fun=mean, geom=&quot;line&quot;, aes(y=fitted(m.Az.full)))</code></pre>
@@ -1457,9 +1459,9 @@ Question A10
 <p>“…it does not seem helpful just to say that all models are wrong. The very word model implies simplification and idealization. The idea that complex physical, biological or sociological systems can be exactly described by a few formulae is patently absurd. The construction of idealized representations that capture important stable aspects of such systems is, however, a vital part of general scientific analysis and statistical models, especially substantive ones, do not seem essentially different from other kinds of model.”<a href="https://twitter.com/richarddmorey/status/1111270300241588225">(Sir David Cox, 1995)</a>.</p>
 </div>
 <div class="optional-begin">
-<span id="opt-start-65" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-65&#39;, &#39;opt-start-65&#39;)"> Optional: TIMTOWTDI</span>
+<span id="opt-start-19" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-19&#39;, &#39;opt-start-19&#39;)"> Optional: TIMTOWTDI</span>
 </div>
-<div id="opt-body-65" class="optional-body" style="display: none;">
+<div id="opt-body-19" class="optional-body" style="display: none;">
 <p><strong>TIMTOWTDI</strong> <em>(There is more than one way to do it)</em></p>
 <p>The approach we are learning about in this course is only one of many approaches to studying non-linearity.
 Some alternatives, which you may come across in future work, are listed below.</p>
