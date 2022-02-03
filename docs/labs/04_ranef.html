@@ -419,43 +419,16 @@ div.tocify {
 <li><a href="https://doi.org/10.1016/j.jml.2017.01.001">Matuschek et al., 2017</a></li>
 </ul>
 </div>
-<div class="rtip">
-<p><strong>A Note on Convergence warnings</strong></p>
-<p>When we start to move to more complex random effect structures, issues of “singular fits” and “non-convergence” become ever more relevant. We’ve already talked about singular fits (see the <a href="02_lmm_log.html">Week 2 exercises</a>), but we haven’t said much about how to deal with non-convergence.<br />
-It may help to look back on <a href="01_intromlm.html#estimation">Week 1’s section on estimation</a>.</p>
-<p>Issues of non-convergence can be caused by many things. If you’re model doesn’t converge, it does <em>not necessarily</em> mean the fit is incorrect, however it is <strong>is cause for concern</strong>, and should be addressed, else you may end up reporting inferences which do not hold.</p>
-<p>There are lots of different things which you could do which <em>might</em> help your model to converge. A select few are detailed below:</p>
-<ul>
-<li><p>double-check the model specification and the data</p></li>
-<li><p>adjust stopping (convergence) tolerances for the nonlinear optimizer, using the optCtrl argument to [g]lmerControl. (see <code>?convergence</code> for convergence controls).</p>
-<ul>
-<li>What is “tolerance?” Remember that our optimizer is the the method by which the computer finds the best fitting model, by iteratively assessing and trying to maximise the likelihood (or minimise the loss).
-<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-1"></span>
-<img src="images/tolerance.png" alt="An optimizer will stop after a certain number of iterations, or when it meets a tolerance threshold" width="80%" />
-<p class="caption">
-Figure 1: An optimizer will stop after a certain number of iterations, or when it meets a tolerance threshold
-</p>
-</div></li>
-</ul></li>
-<li><p>center and scale continuous predictor variables (e.g. with <code>scale</code>)</p></li>
-<li><p>Change the optimization method (for example, here we change it to <code>bobyqa</code>):
-<code>lmer(..., control = lmerControl(optimizer="bobyqa"))</code><br />
-<code>glmer(..., control = glmerControl(optimizer="bobyqa"))</code></p></li>
-<li><p>Increase the number of optimization steps:
-<code>lmer(..., control = lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=50000))</code><br />
-<code>glmer(..., control = glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=50000))</code></p></li>
-<li><p>Use <code>allFit()</code> to try the fit with all available optimizers. This will of course be slow, but is considered ‘the gold standard’; <em>“if all optimizers converge to values that are practically equivalent, then we would consider the convergence warnings to be false positives.”</em></p></li>
-<li><p>Consider simplifying your model, for example by removing random effects with the smallest variance (but be careful to not simplify more than necessary, and ensure that your write up details these changes)</p></li>
-</ul>
+<div class="imp">
+<p>Now that we’ve had a few weeks to get used to the syntax of <strong>lme4</strong>, we’re going to hide the solutions again until the end of the week.</p>
 </div>
 <div id="random-effects" class="section level1">
 <h1>Random effects</h1>
-<p>A frequent cause of confusion when learning about multilevel models is the use of the term “random effect.” Does it refer to the the grouping variable, or to the effects that we allow to vary by-groups? The answer is really both. In the model below, the “random effects” refers to the <code>(1 + hrs_week | toy_type)</code>. We are specifying by-toy type random intercepts and by-toy type effects of hrs_week.</p>
-<pre class="r"><code>library(tidyverse)
-library(lme4)
-toys_read &lt;- read_csv(&quot;https://uoepsy.github.io/data/toyexample.csv&quot;)
-rs_model &lt;- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toys_read)</code></pre>
+<div id="what-are-random-effects" class="section level2">
+<h2>What are “Random Effects?”</h2>
+<p>A frequent cause of confusion when learning about multilevel models is the use of the term “random effect.” Does it refer to the the grouping variable, or to the effects that we allow to vary by-groups? The answer is really both. For example, in the model <code>lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toys_read)</code>, the “random effects” refers to the <code>(1 + hrs_week | toy_type)</code>. We are specifying by-toy type random intercepts and by-toy type effects of hrs_week.</p>
 <div class="statbox">
+<p><strong>Should I fit a fixed effect: <code>y ~ ... + group</code> or random effect: <code>y ~ ... + (1 | group)</code>?</strong></p>
 <p>When specifying a random effects model, think about the data you have and how they fit in the following table:</p>
 <table>
 <colgroup>
@@ -483,6 +456,10 @@ rs_model &lt;- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toy
 </tr>
 </tbody>
 </table>
+<div class="optional-begin">
+<span id="opt-start-1" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-1&#39;, &#39;opt-start-1&#39;)"> Examples</span>
+</div>
+<div id="opt-body-1" class="optional-body" style="display: none;">
 <p>For example, applying the criteria to the following questions:</p>
 <ul>
 <li><p>Do dogs learn faster with higher rewards?</p>
@@ -495,14 +472,84 @@ rs_model &lt;- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toy
 <p>FIXED: the language</p>
 <p>RANDOM: the people speaking that language</p></li>
 </ul>
+</div>
+<p class="optional-end">
+</p>
 <p><br></p>
 <p>Sometimes, after simplifying the model, you find that there isn’t much variability in a specific random effect and, if it still leads to singular fits or convergence warnings, it is common to just model that variable as a fixed effect.</p>
 <p>Other times, you don’t have sufficient data or levels to estimate the random effect variance, and you are forced to model it as a fixed effect.
 This is similar to trying to find the “best-fit” line passing through a single point… You can’t because you need two points!</p>
 </div>
-<div id="fitting-random-effects-in-lme4" class="section level2">
-<h2>Fitting Random effects in lme4</h2>
+</div>
+<div id="nested-crossed-structures" class="section level2">
+<h2>Nested &amp; Crossed Structures</h2>
+<p>Most of the examples we have seen up to now have had only one level of clustering in the data (e.g. participants). But what happens if we have multiple different clusters? The same principle we have seen for one level of clustering can be extended to clustering at different levels, but we have to be considerate of how those levels of clustering are related.</p>
+<div class="frame">
+<p><strong>Nested Structures</strong></p>
+<p>Take an example where we have observations for each student in every class within a number of schools:</p>
+<p><img src="images/structure_id.png" width="1200px" style="display: block; margin: auto;" /></p>
+<p><strong>Question:</strong> Is “Class 1” in “School 1” the same as “Class 1” in “School 2?”</p>
+<p>No.<br />
+The classes in one school are distinct from the classes in another <strong>even though they are named the same</strong>.</p>
+<p>The classes-within-schools example is a good case of <strong>nested random effects</strong> - one factor level (one group in a grouping varible) appears <em>only within</em> a particular level of another grouping variable.</p>
+<p>In R, we can specify this using:</p>
+<p><code>(1 | school) + (1 | class:school)</code></p>
+<p>or, more succinctly:</p>
+<p><code>(1 | school/class)</code></p>
+<div class="optional-begin">
+<span id="opt-start-2" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-2&#39;, &#39;opt-start-2&#39;)"> The labels matter!</span>
+</div>
+<div id="opt-body-2" class="optional-body" style="display: none;">
+<p>Had we changed data such that the classes had unique IDs (e.g., see below), then we could also use <code>(1 | school) + (1 | class)</code>.</p>
+<p><img src="images/structure_nested.png" width="1200px" style="display: block; margin: auto;" /></p>
+<table>
+<colgroup>
+<col width="70%" />
+<col width="30%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">Are the lower cluster labels unique?</th>
+<th align="right">equivalent structures</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">Yes</td>
+<td align="right"><code>(1 | school/class)</code><br><code>(1 | school) + (1 | class:school)</code><br><code>(1 | school) + (1 | class)</code></td>
+</tr>
+<tr class="even">
+<td align="right">No</td>
+<td align="right"><code>(1 | school/class)</code><br><code>(1 | school) + (1 | class:school)</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="optional-end">
+</p>
+</div>
+<div class="frame">
+<p><strong>Crossed Structures</strong></p>
+<p>Consider another example, where we administer the same set of tasks at multiple time-points for every participant.</p>
+<p><strong>Question:</strong> Are tasks nested within participants?</p>
+<p>No.<br />
+Tasks are seen by multiple participants (and participants see multiple tasks).</p>
+<p>We could visualise this as the below:<br />
+<img src="images/structure_crossed.png" width="400px" style="display: block; margin: auto;" /></p>
+<p>In the sense that these are not nested, they are <strong>crossed</strong> random effects.</p>
+<p>In R, we can specify this using:</p>
+<p><code>(1 | subject) + (1 | task)</code></p>
+</div>
+<div class="blue">
+<p><strong>Nested vs Crossed</strong></p>
+<p><em>Nested:</em> Each group belongs uniquely to a higher-level group.</p>
+<p><em>Crossed:</em> Not-nested.</p>
+</div>
+</div>
+<div id="random-effects-in-lme4" class="section level2">
+<h2>Random Effects in lme4</h2>
 <div class="rtip">
+<p><strong>Fitting Random effects in lme4</strong></p>
 <p>Below are a selection of different formulas for specifying different random effect structures, taken from the <a href="https://cran.r-project.org/web/packages/lme4/vignettes/lmer.pdf">lme4 vignette</a>. This might look like a lot, but over time and repeated use of multilevel models you will get used to reading these in a similar way to getting used to reading the formula structure of <code>y ~ x1 + x2</code> in all our linear models.
 <br></p>
 <table>
@@ -553,31 +600,32 @@ This is similar to trying to find the “best-fit” line passing through a sing
 </table>
 <p><strong>Table 1:</strong> Examples of the right-hand-sides of mixed effects model formulas. <span class="math inline">\(g\)</span>, <span class="math inline">\(g1\)</span>, <span class="math inline">\(g2\)</span> are grouping factors, covariates and <em>a priori</em> known offsets are <span class="math inline">\(x\)</span> and <span class="math inline">\(o\)</span>.</p>
 </div>
-</div>
-<div id="extracting-random-effects-with-lme4" class="section level2">
-<h2>Extracting random effects with lme4</h2>
 <div class="rtip">
+<p><strong>Extracting random effects with lme4</strong></p>
 <p>In models fitted with <strong>lme4</strong>, there are some key functions to keep in mind for extracting different parts of the model.</p>
 <ul>
-<li><code>fixef()</code> gives us the fixed effects (in Figure <a href="#fig:mlmfrc">2</a> this is the intercept and slope of the blue line).<br />
+<li><code>fixef()</code> gives us the fixed effects (in Figure <a href="#fig:mlmfrc">1</a> this is the intercept and slope of the blue line).<br />
 </li>
-<li><code>ranef()</code> gives us the group-level deviations from the fixed effects (in Figure <a href="#fig:mlmfrc">2</a>, this is the differences from each of the green lines to the blue line, and these are denoted by <span class="math inline">\(\zeta_{0i}\)</span> and <span class="math inline">\(\zeta_{1i}\)</span>).<br />
+<li><code>ranef()</code> gives us the group-level deviations from the fixed effects (in Figure <a href="#fig:mlmfrc">1</a>, this is the differences from each of the green lines to the blue line, and these are denoted by <span class="math inline">\(\zeta_{0i}\)</span> and <span class="math inline">\(\zeta_{1i}\)</span>).<br />
 </li>
-<li><code>coef()</code> gives us the intercepts and slopes of the group-level effects (in Figure <a href="#fig:mlmfrc">2</a>, these are the intercepts and slopes of the green lines). We can also get to these because <code>fixef() + ranef() = coef()</code>.<br />
+<li><code>coef()</code> gives us the intercepts and slopes of the group-level effects (in Figure <a href="#fig:mlmfrc">1</a>, these are the intercepts and slopes of the green lines). We can also get to these because <code>fixef() + ranef() = coef()</code>.<br />
 </li>
 <li><code>VarCorr()</code> will give us the estimated variance and standard deviation of the random effects (what we get from <code>ranef()</code>).</li>
 </ul>
 <div class="figure" style="text-align: center"><span id="fig:mlmfrc"></span>
 <img src="images/lmmwodot.png" alt="multilevel model with group i highlighted" width="80%" />
 <p class="caption">
-Figure 2: multilevel model with group i highlighted
+Figure 1: multilevel model with group i highlighted
 </p>
 </div>
 </div>
 <div class="optional-begin">
-<span id="opt-start-1" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-1&#39;, &#39;opt-start-1&#39;)"> Some quick examples</span>
+<span id="opt-start-3" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-3&#39;, &#39;opt-start-3&#39;)"> Some quick examples</span>
 </div>
-<div id="opt-body-1" class="optional-body" style="display: none;">
+<div class="optional-body" id = "opt-body-3" style="display: none;">
+
+
+
 <pre class="r"><code>toys_read &lt;- read_csv(&quot;https://uoepsy.github.io/data/toyexample.csv&quot;)
 rs_model &lt;- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toys_read)</code></pre>
 <p><strong>Q:</strong> Which toy type shows the least improvement in reading age as practice increases, and which shows the greatest improvement?</p>
@@ -607,6 +655,7 @@ rs_model &lt;- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toy
 ## 
 ## with conditional variances for &quot;toy_type&quot;</code></pre>
 <p><strong>A:</strong> It looks like the Farm Animals have the least improvement, and Scooby Doo shows the most improvement</p>
+<hr>
 <p><strong>Q:</strong> What is the estimated reading age for sock puppets with zero hours of practice per week, and what is their estimated change in reading age for every hour per week increase in practice?</p>
 <pre class="r"><code>coef(rs_model)</code></pre>
 <pre><code>## $toy_type
@@ -641,8 +690,233 @@ rs_model &lt;- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toy
 </p>
 </div>
 </div>
-<div id="three-level-nesting" class="section level1">
-<h1>Three-level nesting</h1>
+<div id="model-checks" class="section level1">
+<h1>Model Checks</h1>
+<div id="a-note-on-convergence-warnings" class="section level2">
+<h2>A Note on Convergence warnings</h2>
+<div class="rtip">
+<p>When we start to move to more complex random effect structures, issues of “singular fits” and “non-convergence” become ever more relevant. We’ve already talked about singular fits (see the <a href="02_lmm_log.html">Week 2 exercises</a>), but we haven’t said much about how to deal with non-convergence.<br />
+It may help to look back on <a href="01_intromlm.html#estimation">Week 1’s section on estimation</a>.</p>
+<p>Issues of non-convergence can be caused by many things. If you’re model doesn’t converge, it does <em>not necessarily</em> mean the fit is incorrect, however it is <strong>is cause for concern</strong>, and should be addressed, else you may end up reporting inferences which do not hold.</p>
+<p>There are lots of different things which you could do which <em>might</em> help your model to converge. A select few are detailed below:</p>
+<ul>
+<li><p>double-check the model specification and the data</p></li>
+<li><p>adjust stopping (convergence) tolerances for the nonlinear optimizer, using the optCtrl argument to [g]lmerControl. (see <code>?convergence</code> for convergence controls).</p>
+<ul>
+<li>What is “tolerance?” Remember that our optimizer is the the method by which the computer finds the best fitting model, by iteratively assessing and trying to maximise the likelihood (or minimise the loss).
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-8"></span>
+<img src="images/tolerance.png" alt="An optimizer will stop after a certain number of iterations, or when it meets a tolerance threshold" width="80%" />
+<p class="caption">
+Figure 2: An optimizer will stop after a certain number of iterations, or when it meets a tolerance threshold
+</p>
+</div></li>
+</ul></li>
+<li><p>center and scale continuous predictor variables (e.g. with <code>scale</code>)</p></li>
+<li><p>Change the optimization method (for example, here we change it to <code>bobyqa</code>):
+<code>lmer(..., control = lmerControl(optimizer="bobyqa"))</code><br />
+<code>glmer(..., control = glmerControl(optimizer="bobyqa"))</code></p></li>
+<li><p>Increase the number of optimization steps:
+<code>lmer(..., control = lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=50000))</code><br />
+<code>glmer(..., control = glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=50000))</code></p></li>
+<li><p>Use <code>allFit()</code> to try the fit with all available optimizers. This will of course be slow, but is considered ‘the gold standard’; <em>“if all optimizers converge to values that are practically equivalent, then we would consider the convergence warnings to be false positives.”</em></p></li>
+<li><p>Consider simplifying your model, for example by removing random effects with the smallest variance (but be careful to not simplify more than necessary, and ensure that your write up details these changes)</p></li>
+</ul>
+</div>
+</div>
+<div id="assumptions" class="section level2">
+<h2>Assumptions</h2>
+<div class="statbox">
+<p>Hopefully by now you are getting comfortable with the idea that all our models are simplifications, and so there is always going to be some difference between a model and real-life. This difference - the <em>residual</em> - will hopefully just be randomness, and we assess this by checking for systematic patterns in the residual term.</p>
+<p>Not much is different in the multilevel model - we simply now have “residuals” on multiple levels. We are assuming that our group-level differences represent one level of randomness, and that our observations represent another level. We can see these two levels in Figure <a href="#fig:lmmfigres">3</a>, with the group-level deviations from the fixed effects (<span class="math inline">\(\zeta_{0i}\)</span> and <span class="math inline">\(\zeta_{1i}\)</span>) along with the observation-level deviations from that groups line (<span class="math inline">\(\varepsilon_{ij}\)</span>).</p>
+<div class="figure" style="text-align: center"><span id="fig:lmmfigres"></span>
+<img src="images/lmmwdot.png" alt="Multilevel model with group i highlighted" width="80%" />
+<p class="caption">
+Figure 3: Multilevel model with group i highlighted
+</p>
+</div>
+</div>
+<div class="optional-begin">
+<span id="opt-start-4" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-4&#39;, &#39;opt-start-4&#39;)"> Examining Residuals (Level 1)</span>
+</div>
+<div id="opt-body-4" class="optional-body" style="display: none;">
+<pre class="r"><code>toys_read &lt;- read_csv(&quot;https://uoepsy.github.io/data/toyexample.csv&quot;)
+rs_model &lt;- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toys_read)</code></pre>
+<p>We can get the level 1 (observation-level) residuals the same way we used to do for <code>lm()</code> - by just using <code>resid()</code> or <code>residuals()</code>. Additionally, there are a few useful techniques for plotting these which we have listed below:</p>
+<ul>
+<li><p>We can plot the residuals vs fitted model, and assess the extend to which the assumption holds that the residuals are zero mean.<br />
+<em>(we want the blue smoothed line to be fairly close to zero across the plot)</em></p>
+<pre class="r"><code>plot(rs_model, type=c(&quot;p&quot;,&quot;smooth&quot;))</code></pre>
+<p><img src="04_ranef_files/figure-html/unnamed-chunk-10-1.png" width="80%" style="display: block; margin: auto;" /></p></li>
+<li><p>We can construct a scale-location plot. This is where the square-root of the absolute value of the standardised residuals is plotted against the fitted values, and allows you to more easily assess the assumption of constant variance.<br />
+<em>(we want the blue smoothed line to be close to horizontal across the plot)</em></p>
+<pre class="r"><code>plot(rs_model,
+     form = sqrt(abs(resid(.))) ~ fitted(.),
+     type = c(&quot;p&quot;,&quot;smooth&quot;))</code></pre>
+<p><img src="04_ranef_files/figure-html/unnamed-chunk-11-1.png" width="80%" style="display: block; margin: auto;" /></p></li>
+<li><p>We can also examine the normality the level 1 residuals:<br />
+<em>(we want the datapoints to follow close to the diagonal line)</em></p>
+<pre class="r"><code>qqnorm(resid(rs_model)); qqline(resid(rs_model))</code></pre>
+<p><img src="04_ranef_files/figure-html/unnamed-chunk-12-1.png" width="80%" style="display: block; margin: auto;" /></p></li>
+</ul>
+</div>
+<p class="optional-end">
+</p>
+<div class="optional-begin">
+<span id="opt-start-5" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-5&#39;, &#39;opt-start-5&#39;)"> Examining Residuals (Level 2+)</span>
+</div>
+<div id="opt-body-5" class="optional-body" style="display: none;">
+<pre class="r"><code>toys_read &lt;- read_csv(&quot;https://uoepsy.github.io/data/toyexample.csv&quot;)
+rs_model &lt;- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toys_read)</code></pre>
+<p>To get out the level 2 residuals (the random effects) we need to do a bit of indexing. <code>ranef(rs_model)</code> will give us a list with an item for each grouping. In each item we have a set of columns, one for each thing which is varying by that grouping.</p>
+<pre class="r"><code>qqnorm(ranef(rs_model)$toy_type[,1]); qqline(ranef(rs_model)$toy_type[,1])</code></pre>
+<p><img src="04_ranef_files/figure-html/unnamed-chunk-14-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>qqnorm(ranef(rs_model)$toy_type[,2]); qqline(ranef(rs_model)$toy_type[,2])</code></pre>
+<p><img src="04_ranef_files/figure-html/unnamed-chunk-14-2.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+<p class="optional-end">
+</p>
+<div class="frame">
+<p><strong>What can we do if we’re worried about assumptions</strong></p>
+<ul>
+<li>Model mis-specification
+<ul>
+<li>Is the model appropriate (e.g. is the assumed conditional distribution of y appropriate for your outcome (the <code>family = ??? (link = ???))</code> bit).<br />
+</li>
+<li>Might we be missing important theoretical predictors, or missing possible interactions?</li>
+</ul></li>
+<li>Could/Should you transform your outcome variable?
+<ul>
+<li>There are many different transformations we can apply to our outcome variable to enable us to fit a model in which the residuals are more close to being normally distributed (<code>log(y)</code>, <code>1/y</code>, <code>sqrt(y)</code>, <code>forecast::BoxCox(y, lambda="auto")</code>). However, this comes at the expense of interpretation, because we are now getting coefficients of “change in transformed y,” and it is not always possible to turn that into a meaningful quantity.</li>
+</ul></li>
+<li>What about Bootstrapping?
+<ul>
+<li><p>The basic idea of bootstrapping is to fit your model structure to lots and lots of samples, in order to obtain a distribution of the parameter estimate of interest (and then compute a confidence interval for that estimate).</p></li>
+<li><p>There are different approaches to how we create the “lots and lots of samples,” and these allow us to relax certain assumptions on our modelling.</p></li>
+<li><p>Re-sampling with replacement from our original data allows us to have minimal assumptions, but needs careful consideration about which levels to re-sample at.</p>
+<pre class="r"><code>library(lmeresampler)
+# the resample argument is whether we want to resample each level
+# (from highest to lowest)
+bootstrap(model, .f = fixef, type=&quot;case&quot;, resample=c(TRUE,FALSE))</code></pre></li>
+<li><p>Bootstrapping is not a panacea for all models that cause you worry.</p></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="influence" class="section level2">
+<h2>Influence</h2>
+<div class="statbox">
+<p>Just like having residuals are multiple levels, we can also consider the influence of data at different levels on our model. For instance, we might have a specific datapoint being highly influential, but we might be just as interested in thinking about specific clusters as exerting influence on our results.<br />
+A very useful package for assessing influence in multilevel models is <strong>HLMdiag</strong>.</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-16"></span>
+<img src="04_ranef_files/figure-html/unnamed-chunk-16-1.png" alt="Influence in MLM" width="80%" />
+<p class="caption">
+Figure 4: Influence in MLM
+</p>
+</div>
+</div>
+<div class="optional-begin">
+<span id="opt-start-6" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-6&#39;, &#39;opt-start-6&#39;)"> Examining Influence (Level 1)</span>
+</div>
+<div id="opt-body-6" class="optional-body" style="display: none;">
+<p>Which toy in the dataset has the greatest influence on our model?</p>
+<p><strong>Hint:</strong> as well as <code>hlm_influence()</code> in the <strong>HLMdiag</strong> package there is another nice function, <code>hlm_augment()</code></p>
+<div class="imp">
+<p>We can often end up in confusion because the <span class="math inline">\(i^{th}\)</span> observation inputted to our model (and therefore the <span class="math inline">\(i^{th}\)</span> observation of <code>hlm_influence()</code> output) <strong>might not be</strong> the <span class="math inline">\(i^{th}\)</span> observation in our original dataset - there may be missing data!</p>
+</div>
+<p>(Luckily, we have no missing data in the Toy dataset).</p>
+<pre class="r"><code>library(HLMdiag)
+l1_inf &lt;- hlm_influence(rs_model,level=1)
+dotplot_diag(l1_inf$cooksd, cutoff=&quot;internal&quot;)+
+  ylim(0,.15)</code></pre>
+<p><img src="04_ranef_files/figure-html/unnamed-chunk-17-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>hlm_augment(rs_model, level=1) %&gt;% arrange(desc(cooksd))</code></pre>
+<pre><code>## # A tibble: 132 × 15
+##       id  R_AGE hrs_week toy_type .resid .fitted .ls.resid .ls.fitted .mar.resid
+##    &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+##  1    81  2.91      6.28 SuperZi…  -3.24    6.15   -1.60        4.51      -6.03 
+##  2    65 14.0       2.44 G.I.Joe    4.98    8.99    2.69       11.3        9.43 
+##  3   115  0.735     1.70 Stretch…  -3.17    3.91   -0.182       0.917     -2.97 
+##  4    46 11.6       5.70 Star Wa…  -2.68   14.3    -2.50       14.1        3.34 
+##  5    55  1.47      2.77 SuperZi…  -2.11    3.58   -3.36        4.84      -3.45 
+##  6   104  2.68      2.74 Rugrats   -1.79    4.47    0.0279      2.65      -2.21 
+##  7    23  0.838     1.74 Playmob…  -1.55    2.39    0.585       0.253     -2.91 
+##  8    30  5.33      2.99 Furby     -3.10    8.43   -2.72        8.04       0.156
+##  9   130  3.79      2.73 Lego Mi…   2.54    1.25    1.94        1.85      -1.08 
+## 10    36  3.16      2.99 My Litt…   1.87    1.29   -0.508       3.66      -2.02 
+## # … with 122 more rows, and 6 more variables: .mar.fitted &lt;dbl&gt;, cooksd &lt;dbl&gt;,
+## #   mdffits &lt;dbl&gt;, covtrace &lt;dbl&gt;, covratio &lt;dbl&gt;, leverage.overall &lt;dbl&gt;</code></pre>
+<p>Greatest influence:
+<img src="images/ace.png" width="100px" style="display: block; margin: auto;" /></p>
+<p>For which toy is the model fit the worst (i.e., who has the highest residual?)</p>
+<pre class="r"><code>hlm_augment(rs_model, level=1) %&gt;% arrange(desc(abs(.resid)))</code></pre>
+<pre><code>## # A tibble: 132 × 15
+##       id  R_AGE hrs_week toy_type .resid .fitted .ls.resid .ls.fitted .mar.resid
+##    &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+##  1    93  7.78      4.28 G.I.Joe   -5.26  13.0       -4.62     12.4         1.13
+##  2    65 14.0       2.44 G.I.Joe    4.98   8.99       2.69     11.3         9.43
+##  3    56 -3.17      3.47 Lego Mi…  -4.59   1.42      -4.69      1.52       -8.89
+##  4   102 -2.91      5.12 My Litt…  -4.56   1.64      -3.96      1.04      -10.5 
+##  5    43 -2.99      3.96 Transfo…  -3.84   0.853     -3.79      0.800      -9.28
+##  6    16  8.41      3.89 G.I.Joe   -3.76  12.2       -3.75     12.2         2.21
+##  7    22  0.763     3.97 Sock Pu…  -3.70   4.46      -3.65      4.42       -5.54
+##  8    62  4.31      3.61 Minecra…  -3.54   7.85      -2.53      6.84       -1.58
+##  9   129  5.00      4.84 My Litt…   3.41   1.60       3.61      1.39       -2.29
+## 10    14 16.4       4.26 G.I.Joe    3.39  13.0        3.99     12.4         9.76
+## # … with 122 more rows, and 6 more variables: .mar.fitted &lt;dbl&gt;, cooksd &lt;dbl&gt;,
+## #   mdffits &lt;dbl&gt;, covtrace &lt;dbl&gt;, covratio &lt;dbl&gt;, leverage.overall &lt;dbl&gt;</code></pre>
+<pre class="r"><code>toys_read[93, ]</code></pre>
+<pre><code>## # A tibble: 1 × 5
+##   toy_type toy        hrs_week   age R_AGE
+##   &lt;chr&gt;    &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 G.I.Joe  Cold Front     4.28  7.35  7.78</code></pre>
+<p><img src="images/coldfront.png" width="100px" style="display: block; margin: auto;" /></p>
+</div>
+<p class="optional-end">
+</p>
+<div class="optional-begin">
+<span id="opt-start-7" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-7&#39;, &#39;opt-start-7&#39;)"> Examining Influence (Level 2+)</span>
+</div>
+<div id="opt-body-7" class="optional-body" style="display: none;">
+<p>Which <em>type</em> of toy has the greatest influence on our model?</p>
+<p>Either this way:</p>
+<pre class="r"><code>hlm_augment(rs_model, level=&quot;toy_type&quot;) %&gt;% arrange(desc(cooksd))</code></pre>
+<pre><code>## # A tibble: 20 × 10
+##    toy_type  .ranef.intercept .ranef.hrs_week .ls.intercept .ls.hrs_week  cooksd
+##    &lt;chr&gt;                &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;        &lt;dbl&gt;   &lt;dbl&gt;
+##  1 G.I.Joe             1.86            1.06           9.29        -0.889 1.60e-1
+##  2 Scooby D…           2.37            1.62           8.35         0.336 1.33e-1
+##  3 Farm Ani…          -2.13           -1.73           0.314       -2.40  1.22e-1
+##  4 My Littl…          -0.956          -0.979          6.82        -2.72  8.50e-2
+##  5 Stretch …          -0.140           0.203         -4.65         1.47  8.09e-2
+##  6 SuperZin…          -0.198          -0.412          4.57        -1.58  6.48e-2
+##  7 Playmobil          -0.778          -0.336         -3.72         0.487 6.24e-2
+##  8 Toy Story           0.970           0.890         -0.388        1.14  4.77e-2
+##  9 Transfor…          -1.33           -1.03           1.44        -1.79  4.13e-2
+## 10 Teenage …          -1.32           -0.912         -4.24        -0.510 3.96e-2
+## 11 Lego Min…          -1.10           -0.925          2.55        -1.94  3.81e-2
+## 12 Furby               0.894           0.791          0.235        0.948 3.29e-2
+## 13 Star Wars           1.20            0.846          3.70         0.245 3.27e-2
+## 14 Rugrats            -0.296          -0.0454        -3.46         0.545 2.68e-2
+## 15 Polly Po…           0.715           0.662         -1.30         1.23  2.66e-2
+## 16 Peppa Pig           0.174          -0.0388         4.04        -0.973 2.54e-2
+## 17 Minecraft           0.393           0.433        -20.2          5.84  1.97e-2
+## 18 Barbie              0.0856          0.165         -0.843        0.359 8.94e-3
+## 19 Sock Pup…          -0.523          -0.331         -3.98         0.490 8.13e-3
+## 20 Power Ra…           0.108           0.0754         1.44        -0.296 2.65e-4
+## # … with 4 more variables: mdffits &lt;dbl&gt;, covtrace &lt;dbl&gt;, covratio &lt;dbl&gt;,
+## #   leverage.overall &lt;dbl&gt;</code></pre>
+<p>Or the plot. Note, the <strong>only</strong> reason we using the <code>cutoff = .15</code> is to make the labels appear.</p>
+<pre class="r"><code>inftoytype &lt;- hlm_influence(rs_model,level=&quot;toy_type&quot;)
+dotplot_diag(inftoytype$cooksd, index=inftoytype$toy_type, cutoff=.15) +
+  ylim(0,.2)</code></pre>
+<p><img src="04_ranef_files/figure-html/unnamed-chunk-22-1.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+<p class="optional-end">
+</p>
+</div>
+</div>
+<div id="exercises-three-level-nesting" class="section level1">
+<h1>Exercises: Three-level nesting</h1>
 <div class="frame">
 <p><strong>Data: Treatment Effects</strong></p>
 <p>Synthetic data from a RCT treatment study: 5 therapists randomly assigned participants to control or treatment group and monitored the participants’ performance over time. There was a baseline test, then 6 weeks of treatment, with test sessions every week (7 total sessions).</p>
@@ -776,7 +1050,7 @@ A_control_21
 </table>
 </div>
 <div class="question-begin">
-Question D1
+Question A1
 </div>
 <div class="question-body">
 <p>Load and visualise the data. Does it look like the treatment had an effect on the performance score?</p>
@@ -784,14 +1058,14 @@ Question D1
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-2" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-2&#39;, &#39;sol-start-2&#39;)"> Solution </span>
+<span id="sol-start-8" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-8&#39;, &#39;sol-start-8&#39;)"> Solution </span>
 </div>
-<div id="sol-body-2" class="solution-body" style="display: none;">
+<div id="sol-body-8" class="solution-body" style="display: none;">
 <pre class="r"><code>ggplot(tx, aes(session, Score, color=group)) +
   stat_summary(fun.data = mean_se, geom=&quot;pointrange&quot;) +
   stat_smooth() +
   theme_classic()</code></pre>
-<p><img src="04_ranef_files/figure-html/unnamed-chunk-9-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="04_ranef_files/figure-html/unnamed-chunk-25-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <p>Just for fun, let’s add on the individual participant scores, and also make a plot for each therapist.</p>
 <pre class="r"><code>ggplot(tx, aes(session, Score, color=group)) +
   stat_summary(fun = mean_se, geom = &quot;pointrange&quot;) +
@@ -799,62 +1073,61 @@ Question D1
   theme_classic() +
   geom_line(aes(group = PID), alpha = .2) + 
   facet_wrap(~ therapist)</code></pre>
-<p><img src="04_ranef_files/figure-html/unnamed-chunk-10-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="04_ranef_files/figure-html/unnamed-chunk-26-1.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
 <p class="solution-end">
 </p>
 <div class="question-begin">
-Question D2
+Question A2
 </div>
 <div class="question-body">
-<p>Consider these questions when you’re designing your model(s) and use your answers to motivate your model design and interpretation of results:</p>
-<ol style="list-style-type: lower-alpha">
-<li>What are the levels of nesting? How should that be reflected in the random effect structure?</li>
-<li>What is the shape of change over time? Do you need polynomials to model this shape? If yes, what order polynomials?</li>
-</ol>
-</div>
-<p class="question-end">
-</p>
-<div class="solution-begin">
-<span id="sol-start-3" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-3&#39;, &#39;sol-start-3&#39;)"> Solution </span>
-</div>
-<div id="sol-body-3" class="solution-body" style="display: none;">
-<ol style="list-style-type: lower-alpha">
-<li>There are repeated measures of participants (session). There are also repeated measures of therapists (each one treated many participants).</li>
-<li>Looks like linear change, don’t need polynomials. Good to know that there is no difference at baseline, so no need for orthogonal time.</li>
-</ol>
-</div>
-<p class="solution-end">
-</p>
-<div class="question-begin">
-Question D3
-</div>
-<div class="question-body">
-<p>Test whether the treatment had an effect using mixed-effects modelling.</p>
-<p>Try to fit the <strong>maximal</strong> model.<br />
+<p>Test whether the treatment had an effect using multilevel modelling.<br />
+Try to fit the <strong>maximal</strong> model.<br />
 Does it converge? Is it singular?</p>
-<div class="optional-begin">
-<span id="opt-start-4" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-4&#39;, &#39;opt-start-4&#39;)"> Hint: What <em>is</em> the maximal model?</span>
-</div>
-<div id="opt-body-4" class="optional-body" style="display: none;">
-<p>There’s an interaction between session and group. Each participant has several sessions, so we want <code>(1 + session | PID)</code> and each therapist has several groups and sessions, so we want <code>(1 + ? * ? | ?)</code></p>
-</div>
-<p class="optional-end">
-</p>
+<p>Consider these questions when you’re designing your model(s) and use your answers to motivate your model design and interpretation of results:</p>
+<ul>
+<li>What have we randomly sampled here?
+<ul>
+<li>We have randomly sampled some therapists, and within them have random sampled some participants. Each participant then has a sample of observations.<br />
+</li>
+</ul></li>
+<li>What are the levels of nesting? How should that be reflected in the random effect structure?
+<ul>
+<li>Each participant is associated with just one therapist. Participants are nested within therapists.<br />
+</li>
+</ul></li>
+<li>What is the shape of change over time? Do you need polynomials to model this shape? If yes, what order polynomials?
+<ul>
+<li>Looks like linear change, don’t need polynomials. Good to know that there is no difference at baseline, so no need for orthogonal time.</li>
+</ul></li>
+<li>We are wanting to examine how time (<code>session</code>) varies between treatment groups (<code>group</code>), so we want an interaction <code>session * group</code> in the model. Participants have multiple sessions, but belong to only one group. Therapists have multiple sessions <em>and</em> participants in different groups.</li>
+<li>Do we want to allow the same effects to vary by participants and by therapists?
+<ul>
+<li>If so, we can specify <code>(1 + .... | therapist/PID)</code>.</li>
+<li>If not, and we want to have some effects vary by therapist but <em>not</em> by participant (or vice versa), then we will need to specify these separately.<br />
+</li>
+</ul></li>
+<li>Do the participants have labels that uniquely associate them with one higher up group (i.e., one therapist?).
+<ul>
+<li>If so, we can have <code>(1..... | PID) + (1.... | therapist)</code>.</li>
+<li>If not, then we need to tell the model that patients are nested in therapists, and have <code>(1..... | therapist:PID) + (1.... | therapist)</code>.</li>
+</ul></li>
+</ul>
 </div>
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-5" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-5&#39;, &#39;sol-start-5&#39;)"> Solution </span>
+<span id="sol-start-9" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-9&#39;, &#39;sol-start-9&#39;)"> Solution </span>
 </div>
-<div id="sol-body-5" class="solution-body" style="display: none;">
+<div id="sol-body-9" class="solution-body" style="display: none;">
 <pre class="r"><code>library(lme4)
 
 # start with maximal model
 m1 &lt;- lmer(Score ~ session * group + 
              (1 + session | PID) + 
              (1 + session * group | therapist),
-           data=tx)
+           data=tx,
+           control = lmerControl(optimizer=&quot;bobyqa&quot;))
 
 isSingular(m1)</code></pre>
 <pre><code>## [1] TRUE</code></pre>
@@ -862,7 +1135,7 @@ isSingular(m1)</code></pre>
 <p class="solution-end">
 </p>
 <div class="question-begin">
-Question D4
+Question A3
 </div>
 <div class="question-body">
 <p>Try adjusting your model by removing random effects or correlations, examine the model again, and so on..</p>
@@ -870,24 +1143,37 @@ Question D4
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-6" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-6&#39;, &#39;sol-start-6&#39;)"> Solution </span>
+<span id="sol-start-10" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-10&#39;, &#39;sol-start-10&#39;)"> Solution </span>
 </div>
-<div id="sol-body-6" class="solution-body" style="display: none;">
+<div id="sol-body-10" class="solution-body" style="display: none;">
 <pre class="r"><code>VarCorr(m1)</code></pre>
 <pre><code>##  Groups    Name                 Std.Dev.  Corr                
-##  PID       (Intercept)          0.1181433                     
-##            session              0.0315954 -0.603              
-##  therapist (Intercept)          0.0000000                     
-##            session              0.0023525    NaN              
-##            groupcontrol         0.0098621    NaN  1.000       
-##            session:groupcontrol 0.0019791    NaN -1.000 -1.000
-##  Residual                       0.0732691</code></pre>
+##  PID       (Intercept)          0.1180167                     
+##            session              0.0315636 -0.603              
+##  therapist (Intercept)          0.0063407                     
+##            session              0.0038116 -1.000              
+##            groupcontrol         0.0175919 -1.000  1.000       
+##            session:groupcontrol 0.0034114  1.000 -1.000 -1.000
+##  Residual                       0.0732696</code></pre>
 <p>There’s a correlation of exactly -1 between the random intercepts and slopes for therapists, and the standard deviation estimate for <code>session|therapist</code> is pretty small. Let’s remove it.</p>
 <pre class="r"><code>m2 &lt;- lmer(Score ~ session * group + 
              (1 + session | PID) + 
-             (1 | therapist),
-           data=tx)
+             (1 + group | therapist),
+           data=tx,
+           control = lmerControl(optimizer=&quot;bobyqa&quot;))
 VarCorr(m2)</code></pre>
+<pre><code>##  Groups    Name         Std.Dev. Corr  
+##  PID       (Intercept)  0.118271       
+##            session      0.031661 -0.602
+##  therapist (Intercept)  0.000000       
+##            groupcontrol 0.004469   NaN 
+##  Residual               0.073270</code></pre>
+<pre class="r"><code>m2a &lt;- lmer(Score ~ session * group + 
+             (1 + session | PID) + 
+             (1 | therapist),
+           data=tx,
+           control = lmerControl(optimizer=&quot;bobyqa&quot;))
+VarCorr(m2a)</code></pre>
 <pre><code>##  Groups    Name        Std.Dev. Corr  
 ##  PID       (Intercept) 0.118298       
 ##            session     0.031661 -0.602
@@ -896,30 +1182,33 @@ VarCorr(m2)</code></pre>
 <p>It now looks like estimates for random intercepts for therapists is now 0. If we remove this, our model finally is non-singular:</p>
 <pre class="r"><code>m3 &lt;- lmer(Score ~ session * group + 
              (1 + session | PID),
-           data=tx)
+           data=tx,
+           control = lmerControl(optimizer=&quot;bobyqa&quot;))
+
 summary(m3)</code></pre>
 <pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
 ## Formula: Score ~ session * group + (1 + session | PID)
 ##    Data: tx
+## Control: lmerControl(optimizer = &quot;bobyqa&quot;)
 ## 
 ## REML criterion at convergence: -1633.6
 ## 
 ## Scaled residuals: 
 ##      Min       1Q   Median       3Q      Max 
-## -2.63301 -0.58620  0.01599  0.55405  2.88093 
+## -2.63302 -0.58619  0.01599  0.55406  2.88095 
 ## 
 ## Random effects:
 ##  Groups   Name        Variance Std.Dev. Corr 
-##  PID      (Intercept) 0.013994 0.11829       
+##  PID      (Intercept) 0.013994 0.11830       
 ##           session     0.001002 0.03166  -0.60
 ##  Residual             0.005368 0.07327       
 ## Number of obs: 945, groups:  PID, 135
 ## 
 ## Fixed effects:
 ##                       Estimate Std. Error t value
-## (Intercept)           0.526849   0.015959  33.013
+## (Intercept)           0.526849   0.015959  33.012
 ## session               0.033688   0.004130   8.156
-## groupcontrol          0.018136   0.022999   0.789
+## groupcontrol          0.018136   0.023000   0.789
 ## session:groupcontrol -0.020138   0.005952  -3.383
 ## 
 ## Correlation of Fixed Effects:
@@ -928,29 +1217,35 @@ summary(m3)</code></pre>
 ## groupcontrl -0.694  0.454       
 ## sssn:grpcnt  0.454 -0.694 -0.655</code></pre>
 <p>Lastly, it’s then a good idea to check that the parameter estimates and SE are not radically different across these models (they are virtually identical)</p>
-<pre class="r"><code>summary(m1)$coefficients</code></pre>
-<pre><code>##                         Estimate  Std. Error    t value
-## (Intercept)           0.52684907 0.015942928 33.0459425
-## session               0.03368821 0.004255211  7.9169307
-## groupcontrol          0.01813605 0.023395688  0.7751876
-## session:groupcontrol -0.02013829 0.006007577 -3.3521487</code></pre>
-<pre class="r"><code>summary(m2)$coefficients</code></pre>
-<pre><code>##                         Estimate  Std. Error    t value
-## (Intercept)           0.52684907 0.015959286 33.0120700
-## session               0.03368821 0.004130318  8.1563229
-## groupcontrol          0.01813605 0.022999779  0.7885314
-## session:groupcontrol -0.02013829 0.005952422 -3.3832097</code></pre>
-<pre class="r"><code>summary(m3)$coefficients</code></pre>
-<pre><code>##                         Estimate  Std. Error    t value
-## (Intercept)           0.52684907 0.015958981 33.0127011
-## session               0.03368821 0.004130297  8.1563646
-## groupcontrol          0.01813605 0.022999339  0.7885464
-## session:groupcontrol -0.02013829 0.005952391 -3.3832270</code></pre>
+<pre class="r"><code># extract and column bind the fixed effect estimates
+cbind(
+  summary(m1)$coefficients[,1],
+  summary(m2)$coefficients[,1],
+  summary(m2a)$coefficients[,1],
+  summary(m3)$coefficients[,1]
+)</code></pre>
+<pre><code>##                             [,1]        [,2]        [,3]        [,4]
+## (Intercept)           0.52684907  0.52684907  0.52684907  0.52684907
+## session               0.03368821  0.03368821  0.03368821  0.03368821
+## groupcontrol          0.01813605  0.01813605  0.01813605  0.01813605
+## session:groupcontrol -0.02013829 -0.02013829 -0.02013829 -0.02013829</code></pre>
+<pre class="r"><code># extract and column bind the fixed effect SEs
+cbind(
+  summary(m1)$coefficients[,2],
+  summary(m2)$coefficients[,2],
+  summary(m2a)$coefficients[,2],
+  summary(m3)$coefficients[,2]
+)</code></pre>
+<pre><code>##                             [,1]        [,2]        [,3]        [,4]
+## (Intercept)          0.016179965 0.015956448 0.015959300 0.015959303
+## session              0.004458350 0.004130320 0.004130320 0.004130320
+## groupcontrol         0.024267573 0.023082376 0.022999799 0.022999803
+## session:groupcontrol 0.006129894 0.005952425 0.005952425 0.005952425</code></pre>
 </div>
 <p class="solution-end">
 </p>
 <div class="question-begin">
-Question D5: Optional
+Question A4: Optional
 </div>
 <div class="question-body">
 <p>Try the code below to use the <code>allFit()</code> function to fit your final model with all the available optimizers.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
@@ -963,8 +1258,8 @@ summary(sumfits)</code></pre>
 <p class="question-end">
 </p>
 </div>
-<div id="crossed-random-effects" class="section level1">
-<h1>Crossed random effects</h1>
+<div id="exercises-crossed-random-effects" class="section level1">
+<h1>Exercises: Crossed random effects</h1>
 <div class="frame">
 <p><strong>Data: Test-enhanced learning</strong></p>
 <p>An experiment was run to conceptually replicate “test-enhanced learning” (Roediger &amp; Karpicke, 2006): two groups of 25 participants were presented with material to learn. One group studied the material twice (<code>StudyStudy</code>), the other group studied the material once then did a test (<code>StudyTest</code>). Recall was tested immediately (one minute) after the learning session and one week later. The recall tests were composed of 175 items identified by a keyword (<code>Test_word</code>). One of the researchers’ questions concerned how test-enhanced learning influences time-to-recall.</p>
@@ -1120,7 +1415,7 @@ turkey
 </table>
 </div>
 <div class="question-begin">
-Question E1
+Question B1
 </div>
 <div class="question-body">
 <p>Load and plot the data. Does it look like the effect was replicated?</p>
@@ -1128,9 +1423,9 @@ Question E1
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-7" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-7&#39;, &#39;sol-start-7&#39;)"> Solution </span>
+<span id="sol-start-11" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-11&#39;, &#39;sol-start-11&#39;)"> Solution </span>
 </div>
-<div id="sol-body-7" class="solution-body" style="display: none;">
+<div id="sol-body-11" class="solution-body" style="display: none;">
 <p>You can make use of <code>stat_summary()</code> again!</p>
 <pre class="r"><code>ggplot(tel, aes(Delay, Rtime, col=Group)) + 
   stat_summary(fun.data=mean_se, geom=&quot;pointrange&quot;)+
@@ -1146,13 +1441,13 @@ Question E1
   geom_pointrange(aes(y=mean, ymin=mean-se, ymax=mean+se))+
   theme_light() +
   labs(y = &quot;Response Time (ms)&quot;)</code></pre>
-<p><img src="04_ranef_files/figure-html/unnamed-chunk-21-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="04_ranef_files/figure-html/unnamed-chunk-37-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <p>That looks like test-enhanced learning to me!</p>
 </div>
 <p class="solution-end">
 </p>
 <div class="question-begin">
-Question E2
+Question B2
 </div>
 <div class="question-body">
 <p>Test the critical hypothesis using a mixed-effects model. Fit the maximal random effect structure supported by the experimental design.</p>
@@ -1167,9 +1462,9 @@ Question E2
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-8" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-8&#39;, &#39;sol-start-8&#39;)"> Solution </span>
+<span id="sol-start-12" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-12&#39;, &#39;sol-start-12&#39;)"> Solution </span>
 </div>
-<div id="sol-body-8" class="solution-body" style="display: none;">
+<div id="sol-body-12" class="solution-body" style="display: none;">
 <p>This one will probably take a little bit of time:</p>
 <pre class="r"><code>m &lt;- lmer(Rtime ~ Delay*Group +
              (1 + Delay | Subject_ID) +
@@ -1179,7 +1474,7 @@ Question E2
 <p class="solution-end">
 </p>
 <div class="question-begin">
-Question E3
+Question B3
 </div>
 <div class="question-body">
 <p>The model with maximal random effects will probably not converge, or will obtain a singular fit. Simplify the model until you achieve convergence.<br />
@@ -1194,9 +1489,9 @@ What we’re aiming to do here is to follow <a href="https://doi.org/10.1016/j.j
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-9" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-9&#39;, &#39;sol-start-9&#39;)"> Solution </span>
+<span id="sol-start-13" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-13&#39;, &#39;sol-start-13&#39;)"> Solution </span>
 </div>
-<div id="sol-body-9" class="solution-body" style="display: none;">
+<div id="sol-body-13" class="solution-body" style="display: none;">
 <p>There’s a correlation of .999 for some of the random effects by-item!</p>
 <pre class="r"><code>VarCorr(m)</code></pre>
 <pre><code>##  Groups     Name                     Std.Dev. Corr                
@@ -1276,7 +1571,7 @@ isSingular(m2)</code></pre>
 <p class="solution-end">
 </p>
 <div class="question-begin">
-Question E4
+Question B4
 </div>
 <div class="question-body">
 <p>Load the <strong>effects</strong> package, and try running this code:</p>
@@ -1287,18 +1582,18 @@ ef &lt;- as.data.frame(effect(&quot;Delay:Group&quot;, m2))</code></pre>
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-10" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-10&#39;, &#39;sol-start-10&#39;)"> Solution </span>
+<span id="sol-start-14" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-14&#39;, &#39;sol-start-14&#39;)"> Solution </span>
 </div>
-<div id="sol-body-10" class="solution-body" style="display: none;">
+<div id="sol-body-14" class="solution-body" style="display: none;">
 <pre class="r"><code>ggplot(ef, aes(Delay, fit, color=Group)) + 
   geom_pointrange(aes(ymax=upper, ymin=lower), position=position_dodge(width = 0.2))+
   theme_classic() # just for a change :)</code></pre>
-<p><img src="04_ranef_files/figure-html/unnamed-chunk-28-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="04_ranef_files/figure-html/unnamed-chunk-44-1.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
 <p class="solution-end">
 </p>
 <div class="question-begin">
-Question E5
+Question B5
 </div>
 <div class="question-body">
 <p>Can we get a similar plot using <code>plot_model()</code> from the <strong>sjPlot</strong> package?</p>
@@ -1306,17 +1601,17 @@ Question E5
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-11" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-11&#39;, &#39;sol-start-11&#39;)"> Solution </span>
+<span id="sol-start-15" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-15&#39;, &#39;sol-start-15&#39;)"> Solution </span>
 </div>
-<div id="sol-body-11" class="solution-body" style="display: none;">
+<div id="sol-body-15" class="solution-body" style="display: none;">
 <pre class="r"><code>library(sjPlot)
 plot_model(m2, type=&quot;int&quot;)</code></pre>
-<p><img src="04_ranef_files/figure-html/unnamed-chunk-29-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="04_ranef_files/figure-html/unnamed-chunk-45-1.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
 <p class="solution-end">
 </p>
 <div class="question-begin">
-Question E6
+Question B6
 </div>
 <div class="question-body">
 <p>What should we do with this information? How can we apply test-enhanced learning to learning R and statistics?</p>
@@ -1324,189 +1619,16 @@ Question E6
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-12" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-12&#39;, &#39;sol-start-12&#39;)"> Solution </span>
+<span id="sol-start-16" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-16&#39;, &#39;sol-start-16&#39;)"> Solution </span>
 </div>
-<div id="sol-body-12" class="solution-body" style="display: none;">
+<div id="sol-body-16" class="solution-body" style="display: none;">
 <p>You’ll get the benefits of test-enhanced learning if you try yourself before looking at the solutions! If you don’t test yourself, you’re more likely to forget it in the long run.</p>
 </div>
 <p class="solution-end">
 </p>
 </div>
-<div id="assumptions-influence-in-mlm" class="section level1">
-<h1>Assumptions &amp; Influence in MLM</h1>
-<div class="statbox">
-<p><strong>Assumptions in Multilevel Models</strong></p>
-<p>Hopefully by now you are getting comfortable with the idea that all our models are simplifications, and so there is always going to be some difference between a model and real-life. This difference - the <em>residual</em> - will hopefully just be randomness, and we assess this by checking for systematic patterns in the residual term.</p>
-<p>Not much is different in the multilevel model - we simply now have “residuals” on multiple levels. We are assuming that our group-level differences represent one level of randomness, and that our observations represent another level. We can see these two levels in Figure <a href="#fig:lmmfigres">3</a>, with the group-level deviations from the fixed effects (<span class="math inline">\(\zeta_0i}\)</span> and <span class="math inline">\(\zeta_{1i}\)</span>) along with the observation-level deviations from that groups line (<span class="math inline">\(\varepsilon_{ij}\)</span>).</p>
-<div class="figure" style="text-align: center"><span id="fig:lmmfigres"></span>
-<img src="images/lmmwdot.png" alt="Multilevel model with group i highlighted" width="80%" />
-<p class="caption">
-Figure 3: Multilevel model with group i highlighted
-</p>
-</div>
-</div>
-<p>For these</p>
-<pre class="r"><code>toys_read &lt;- read_csv(&quot;https://uoepsy.github.io/data/toyexample.csv&quot;)
-rs_model &lt;- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toys_read)</code></pre>
-<div class="optional-begin">
-<span id="opt-start-13" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-13&#39;, &#39;opt-start-13&#39;)"> Looking at Level 1 Residuals</span>
-</div>
-<div id="opt-body-13" class="optional-body" style="display: none;">
-<p>We can get the level 1 (observation-level) residuals the same way we used to do for <code>lm()</code> - by just using <code>resid()</code> or <code>residuals()</code>. Additionally, there are a few useful techniques for plotting these which we have listed below:</p>
-<ul>
-<li><p>We can plot the residuals vs fitted model, and assess the extend to which the assumption holds that the residuals are zero mean.<br />
-<em>(we want the blue smoothed line to be fairly close to zero across the plot)</em></p>
-<pre class="r"><code>plot(rs_model, type=c(&quot;p&quot;,&quot;smooth&quot;))</code></pre>
-<p><img src="04_ranef_files/figure-html/unnamed-chunk-31-1.png" width="80%" style="display: block; margin: auto;" /></p></li>
-<li><p>We can construct a scale-location plot. This is where the square-root of the absolute value of the standardised residuals is plotted against the fitted values, and allows you to more easily assess the assumption of constant variance.<br />
-<em>(we want the blue smoothed line to be close to horizontal across the plot)</em></p>
-<pre class="r"><code>plot(rs_model,
-     form = sqrt(abs(resid(.))) ~ fitted(.),
-     type = c(&quot;p&quot;,&quot;smooth&quot;))</code></pre>
-<p><img src="04_ranef_files/figure-html/unnamed-chunk-32-1.png" width="80%" style="display: block; margin: auto;" /></p></li>
-<li><p>We can also examine the normality the level 1 residuals:<br />
-<em>(we want the datapoints to follow close to the diagonal line)</em></p>
-<pre class="r"><code>qqnorm(resid(rs_model)); qqline(resid(rs_model))</code></pre>
-<p><img src="04_ranef_files/figure-html/unnamed-chunk-33-1.png" width="80%" style="display: block; margin: auto;" /></p></li>
-</ul>
-</div>
-<p class="optional-end">
-</p>
-<div class="optional-begin">
-<span id="opt-start-14" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-14&#39;, &#39;opt-start-14&#39;)"> Looking at Level 2+ Residuals</span>
-</div>
-<div id="opt-body-14" class="optional-body" style="display: none;">
-<p>TODO
-we need to index appropriately</p>
-<pre class="r"><code>qqnorm(ranef(rs_model)$toy_type[,1]); qqline(ranef(rs_model)$toy_type[,1])</code></pre>
-<p><img src="04_ranef_files/figure-html/unnamed-chunk-34-1.png" width="80%" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>qqnorm(ranef(rs_model)$toy_type[,2]); qqline(ranef(rs_model)$toy_type[,2])</code></pre>
-<p><img src="04_ranef_files/figure-html/unnamed-chunk-34-2.png" width="80%" style="display: block; margin: auto;" /></p>
-</div>
-<p class="optional-end">
-</p>
-<div class="statbox">
-<p><strong>Influence in Multilevel Models</strong></p>
-<p>Just like having residuals are multiple levels, we can also consider the influence of data at different levels on our model. For instance, we might have a specific datapoint being highly influential, but we might be just as interested in thinking about specific clusters as exerting influence on our results.</p>
-<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-35"></span>
-<img src="04_ranef_files/figure-html/unnamed-chunk-35-1.png" alt="Influence in MLM" width="80%" />
-<p class="caption">
-Figure 4: Influence in MLM
-</p>
-</div>
-<div class="rtip">
-<p>The most useful package for assessing influence in multilevel models is <strong>HLMdiag</strong>.</p>
-</div>
-</div>
-<div class="optional-begin">
-<span id="opt-start-15" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-15&#39;, &#39;opt-start-15&#39;)"> Examining level 1 influence</span>
-</div>
-<div class="optional-body" id = "opt-body-15" style="display: none;">
-
-
-
-<p>Which toy in the dataset has the greatest influence on our model?</p>
-<p><strong>Hint:</strong> as well as <code>hlm_influence()</code> in the <strong>HLMdiag</strong> package there is another nice function, <code>hlm_augment()</code></p>
-<div class="imp">
-<p>We can often end up in confusion because the <span class="math inline">\(i^{th}\)</span> observation inputted to our model (and therefore the <span class="math inline">\(i^{th}\)</span> observation of <code>hlm_influence()</code> output) <strong>might not be</strong> the <span class="math inline">\(i^{th}\)</span> observation in our original dataset - there may be missing data!</p>
-</div>
-<p>(Luckily, we have no missing data in the Toy dataset).</p>
-<div class="solution-begin">
-<span id="sol-start-16" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-16&#39;, &#39;sol-start-16&#39;)"> Solution </span>
-</div>
-<div id="sol-body-16" class="solution-body" style="display: none;">
-<pre class="r"><code>library(HLMdiag)
-l1_inf &lt;- hlm_influence(rs_model,level=1)
-dotplot_diag(l1_inf$cooksd, cutoff=&quot;internal&quot;)+
-  ylim(0,.15)</code></pre>
-<p><img src="04_ranef_files/figure-html/unnamed-chunk-36-1.png" width="80%" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>hlm_augment(rs_model, level=1) %&gt;% arrange(desc(cooksd))</code></pre>
-<pre><code>## # A tibble: 132 × 15
-##       id  R_AGE hrs_week toy_type .resid .fitted .ls.resid .ls.fitted .mar.resid
-##    &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-##  1    81  2.91      6.28 SuperZi…  -3.24    6.15   -1.60        4.51      -6.03 
-##  2    65 14.0       2.44 G.I.Joe    4.98    8.99    2.69       11.3        9.43 
-##  3   115  0.735     1.70 Stretch…  -3.17    3.91   -0.182       0.917     -2.97 
-##  4    46 11.6       5.70 Star Wa…  -2.68   14.3    -2.50       14.1        3.34 
-##  5    55  1.47      2.77 SuperZi…  -2.11    3.58   -3.36        4.84      -3.45 
-##  6   104  2.68      2.74 Rugrats   -1.79    4.47    0.0279      2.65      -2.21 
-##  7    23  0.838     1.74 Playmob…  -1.55    2.39    0.585       0.253     -2.91 
-##  8    30  5.33      2.99 Furby     -3.10    8.43   -2.72        8.04       0.156
-##  9   130  3.79      2.73 Lego Mi…   2.54    1.25    1.94        1.85      -1.08 
-## 10    36  3.16      2.99 My Litt…   1.87    1.29   -0.508       3.66      -2.02 
-## # … with 122 more rows, and 6 more variables: .mar.fitted &lt;dbl&gt;, cooksd &lt;dbl&gt;,
-## #   mdffits &lt;dbl&gt;, covtrace &lt;dbl&gt;, covratio &lt;dbl&gt;, leverage.overall &lt;dbl&gt;</code></pre>
-<p>Greatest influence:
-<img src="images/ace.png" width="100px" style="display: block; margin: auto;" /></p>
-<p>For which toy is the model fit the worst (i.e., who has the highest residual?)</p>
-<pre class="r"><code>hlm_augment(rs_model, level=1) %&gt;% arrange(desc(abs(.resid)))</code></pre>
-<pre><code>## # A tibble: 132 × 15
-##       id  R_AGE hrs_week toy_type .resid .fitted .ls.resid .ls.fitted .mar.resid
-##    &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-##  1    93  7.78      4.28 G.I.Joe   -5.26  13.0       -4.62     12.4         1.13
-##  2    65 14.0       2.44 G.I.Joe    4.98   8.99       2.69     11.3         9.43
-##  3    56 -3.17      3.47 Lego Mi…  -4.59   1.42      -4.69      1.52       -8.89
-##  4   102 -2.91      5.12 My Litt…  -4.56   1.64      -3.96      1.04      -10.5 
-##  5    43 -2.99      3.96 Transfo…  -3.84   0.853     -3.79      0.800      -9.28
-##  6    16  8.41      3.89 G.I.Joe   -3.76  12.2       -3.75     12.2         2.21
-##  7    22  0.763     3.97 Sock Pu…  -3.70   4.46      -3.65      4.42       -5.54
-##  8    62  4.31      3.61 Minecra…  -3.54   7.85      -2.53      6.84       -1.58
-##  9   129  5.00      4.84 My Litt…   3.41   1.60       3.61      1.39       -2.29
-## 10    14 16.4       4.26 G.I.Joe    3.39  13.0        3.99     12.4         9.76
-## # … with 122 more rows, and 6 more variables: .mar.fitted &lt;dbl&gt;, cooksd &lt;dbl&gt;,
-## #   mdffits &lt;dbl&gt;, covtrace &lt;dbl&gt;, covratio &lt;dbl&gt;, leverage.overall &lt;dbl&gt;</code></pre>
-<pre class="r"><code>toys_read[93, ]</code></pre>
-<pre><code>## # A tibble: 1 × 5
-##   toy_type toy        hrs_week   age R_AGE
-##   &lt;chr&gt;    &lt;chr&gt;         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 G.I.Joe  Cold Front     4.28  7.35  7.78</code></pre>
-<p><img src="images/coldfront.png" width="100px" style="display: block; margin: auto;" /></p>
-</div>
-<p class="optional-end">
-</p>
-<div class="optional-begin">
-<span id="opt-start-17" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-17&#39;, &#39;opt-start-17&#39;)"> Examining level 2+ influence</span>
-</div>
-<div id="opt-body-17" class="optional-body" style="display: none;">
-<p>Which <em>type</em> of toy has the greatest influence on our model?</p>
-<p>Either this way:</p>
-<pre class="r"><code>hlm_augment(rs_model, level=&quot;toy_type&quot;) %&gt;% arrange(desc(cooksd))</code></pre>
-<pre><code>## # A tibble: 20 × 10
-##    toy_type  .ranef.intercept .ranef.hrs_week .ls.intercept .ls.hrs_week  cooksd
-##    &lt;chr&gt;                &lt;dbl&gt;           &lt;dbl&gt;         &lt;dbl&gt;        &lt;dbl&gt;   &lt;dbl&gt;
-##  1 G.I.Joe             1.86            1.06           9.29        -0.889 1.60e-1
-##  2 Scooby D…           2.37            1.62           8.35         0.336 1.33e-1
-##  3 Farm Ani…          -2.13           -1.73           0.314       -2.40  1.22e-1
-##  4 My Littl…          -0.956          -0.979          6.82        -2.72  8.50e-2
-##  5 Stretch …          -0.140           0.203         -4.65         1.47  8.09e-2
-##  6 SuperZin…          -0.198          -0.412          4.57        -1.58  6.48e-2
-##  7 Playmobil          -0.778          -0.336         -3.72         0.487 6.24e-2
-##  8 Toy Story           0.970           0.890         -0.388        1.14  4.77e-2
-##  9 Transfor…          -1.33           -1.03           1.44        -1.79  4.13e-2
-## 10 Teenage …          -1.32           -0.912         -4.24        -0.510 3.96e-2
-## 11 Lego Min…          -1.10           -0.925          2.55        -1.94  3.81e-2
-## 12 Furby               0.894           0.791          0.235        0.948 3.29e-2
-## 13 Star Wars           1.20            0.846          3.70         0.245 3.27e-2
-## 14 Rugrats            -0.296          -0.0454        -3.46         0.545 2.68e-2
-## 15 Polly Po…           0.715           0.662         -1.30         1.23  2.66e-2
-## 16 Peppa Pig           0.174          -0.0388         4.04        -0.973 2.54e-2
-## 17 Minecraft           0.393           0.433        -20.2          5.84  1.97e-2
-## 18 Barbie              0.0856          0.165         -0.843        0.359 8.94e-3
-## 19 Sock Pup…          -0.523          -0.331         -3.98         0.490 8.13e-3
-## 20 Power Ra…           0.108           0.0754         1.44        -0.296 2.65e-4
-## # … with 4 more variables: mdffits &lt;dbl&gt;, covtrace &lt;dbl&gt;, covratio &lt;dbl&gt;,
-## #   leverage.overall &lt;dbl&gt;</code></pre>
-<p>Or the plot. Note, the <strong>only</strong> reason we using the <code>cutoff = .15</code> is to make the labels appear.</p>
-<pre class="r"><code>inftoytype &lt;- hlm_influence(rs_model,level=&quot;toy_type&quot;)
-dotplot_diag(inftoytype$cooksd, index=inftoytype$toy_type, cutoff=.15) +
-  ylim(0,.2)</code></pre>
-<p><img src="04_ranef_files/figure-html/unnamed-chunk-41-1.png" width="80%" style="display: block; margin: auto;" /></p>
-</div>
-<p class="optional-end">
-</p>
-</div>
-<div id="less-guided-exercises" class="section level1">
-<h1>Less-Guided Exercises</h1>
+<div id="exercises-boston-naming-test" class="section level1">
+<h1>Exercises: Boston Naming Test</h1>
 <div class="frame">
 <p><strong>Data: Naming</strong></p>
 <p>72 children from 10 schools were administered the full Boston Naming Test (BNT-60) on a yearly basis for 5 years to examine development of word retrieval. Five of the schools taught lessons in a bilingual setting with English as one of the languages, and the remaining five schools taught in monolingual English.</p>
@@ -1550,7 +1672,7 @@ Bilingual, 1 = Monolingual</td>
 </table>
 </div>
 <div class="question-begin">
-Question E7
+Question C1
 </div>
 <div class="question-body">
 <p>Fit a model examining the interaction between the effects of school year and mono/bilingual teaching on word retrieval, with random intercepts only for children and schools.<br />
@@ -1561,14 +1683,14 @@ Examine the fit and consider your model assumptions, and assess what might be do
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-18" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-18&#39;, &#39;sol-start-18&#39;)"> Solution </span>
+<span id="sol-start-17" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-17&#39;, &#39;sol-start-17&#39;)"> Solution </span>
 </div>
-<div id="sol-body-18" class="solution-body" style="display: none;">
+<div id="sol-body-17" class="solution-body" style="display: none;">
 <pre class="r"><code>bnt &lt;- bnt %&gt;% mutate(across(c(mlhome, school_id, child_id), factor))
 bntm0 &lt;- lmer(BNT60 ~ schoolyear * mlhome + (1 | school_id/child_id), data = bnt)</code></pre>
 <p>Residuals don’t look zero mean:</p>
 <pre class="r"><code>plot(bntm0, type=c(&quot;p&quot;,&quot;smooth&quot;))</code></pre>
-<p><img src="04_ranef_files/figure-html/unnamed-chunk-44-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="04_ranef_files/figure-html/unnamed-chunk-48-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <p>It looks a little like, compared to our model (black lines below) the children’s scores (coloured lines) are more closely clustered together when they start school, and then they are more spread out by the end of the study.
 The fact that we’re fitting the same slope for each child is restricting us here, so we should try fitting random effects of schoolyear.</p>
 <pre class="r"><code>augment(bntm0) %&gt;%
@@ -1578,15 +1700,15 @@ The fact that we’re fitting the same slope for each child is restricting us he
   geom_path(aes(y = .fitted), col=&quot;black&quot;, alpha=.3)+
   guides(col=&quot;none&quot;)+
   facet_wrap(~school_id)</code></pre>
-<p><img src="04_ranef_files/figure-html/unnamed-chunk-45-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="04_ranef_files/figure-html/unnamed-chunk-49-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>bntm1 &lt;- lmer(BNT60 ~ schoolyear * mlhome + (1 + schoolyear | school_id/child_id), data = bnt)
 plot(bntm1, type=c(&quot;p&quot;,&quot;smooth&quot;))</code></pre>
-<p><img src="04_ranef_files/figure-html/unnamed-chunk-46-1.png" width="80%" style="display: block; margin: auto;" />
+<p><img src="04_ranef_files/figure-html/unnamed-chunk-50-1.png" width="80%" style="display: block; margin: auto;" />
 Much better!</p>
 <p>Let’s do some quick diagnostic checks for influence:</p>
 <pre class="r"><code>inf1 &lt;- hlm_influence(bntm1, level=1)
 dotplot_diag(inf1$cooksd, cutoff = &quot;internal&quot;)</code></pre>
-<p><img src="04_ranef_files/figure-html/unnamed-chunk-47-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="04_ranef_files/figure-html/unnamed-chunk-51-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <p>If you check in the help for <code>dotplot_diag()</code>, it tells you that</p>
 <ol style="list-style-type: lower-alpha">
 <li>we can add an index for the labels, and</li>
@@ -1595,7 +1717,7 @@ dotplot_diag(inf1$cooksd, cutoff = &quot;internal&quot;)</code></pre>
 <pre class="r"><code>infchild &lt;- hlm_influence(bntm1, level=&quot;child_id:school_id&quot;)
 dotplot_diag(infchild$cooksd, cutoff = &quot;internal&quot;, index = infchild$`child_id:school_id`) + 
   scale_y_continuous(limits=c(0,.05))</code></pre>
-<p><img src="04_ranef_files/figure-html/unnamed-chunk-48-1.png" width="80%" style="display: block; margin: auto;" />
+<p><img src="04_ranef_files/figure-html/unnamed-chunk-52-1.png" width="80%" style="display: block; margin: auto;" />
 And then we can examine the effects to the fixed effects and our standard errors when we remove this child:</p>
 <pre class="r"><code>del94 &lt;- case_delete(bntm1, level=&quot;child_id:school_id&quot;, delete = &quot;ID94:SC9&quot;)
 cbind(del94$fixef.original, del94$fixef.delete)</code></pre>
@@ -1605,9 +1727,9 @@ cbind(del94$fixef.original, del94$fixef.delete)</code></pre>
 ## mlhome1             0.138711 -0.3052998
 ## schoolyear:mlhome1 -2.603763 -2.3701181</code></pre>
 <div class="optional-begin">
-<span id="opt-start-19" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-19&#39;, &#39;opt-start-19&#39;)"> Optional: Case deletion influence on standard errors</span>
+<span id="opt-start-18" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-18&#39;, &#39;opt-start-18&#39;)"> Optional: Case deletion influence on standard errors</span>
 </div>
-<div id="opt-body-19" class="optional-body" style="display: none;">
+<div id="opt-body-18" class="optional-body" style="display: none;">
 <p>We can examine the influence that deleting a case has on the standard errors.
 The standard errors are the square-root of the diagonal of the model-implied variance-covariance matrix:</p>
 <pre class="r"><code>cbind( 
@@ -1624,12 +1746,12 @@ The standard errors are the square-root of the diagonal of the model-implied var
 </p>
 <pre class="r"><code>infschool &lt;- hlm_influence(bntm1, level=&quot;school_id&quot;)
 dotplot_diag(infschool$cooksd, cutoff = &quot;internal&quot;, index = infschool$school_id)</code></pre>
-<p><img src="04_ranef_files/figure-html/unnamed-chunk-51-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="04_ranef_files/figure-html/unnamed-chunk-55-1.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
 <p class="solution-end">
 </p>
 <div class="question-begin">
-Question E8
+Question C2
 </div>
 <div class="question-body">
 <p>Using a method of your choosing, conduct inferences from your model and write up the results.</p>
@@ -1637,9 +1759,9 @@ Question E8
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-20" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-20&#39;, &#39;sol-start-20&#39;)"> Solution </span>
+<span id="sol-start-19" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-19&#39;, &#39;sol-start-19&#39;)"> Solution </span>
 </div>
-<div class="solution-body" id = "sol-body-20" style="display: none;">
+<div class="solution-body" id = "sol-body-19" style="display: none;">
 
 
 
@@ -1653,7 +1775,8 @@ as.data.frame(VarCorr(bnt_null)) %&gt;%
 ## 1 child_id:school_id 36.52302  22.21657
 ## 2          school_id 28.76157  39.71194
 ## 3           Residual 99.11079 100.00000</code></pre>
-<p>This took quite a while to run:</p>
+<p>We’re going to construct some case-based bootstrapped confidence intervals around our fixed effects here.<br />
+This took quite a while to run:</p>
 <pre class="r"><code>library(lmeresampler)
 bntm1BS &lt;- bootstrap(bntm1, .f=fixef, type = &quot;case&quot;, B = 2000, resample = c(FALSE,TRUE,FALSE))
 confint(bntm1BS, type = &quot;perc&quot;)</code></pre>

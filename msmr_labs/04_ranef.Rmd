@@ -7,7 +7,7 @@ params:
     SHOW_SOLS: TRUE
     TOGGLE: TRUE
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 
 ```{r setup, include=FALSE}
@@ -19,6 +19,7 @@ library(knitr)
 library(kableExtra)
 library(broom.mixed)
 library(sjPlot)
+library(lme4)
 ```
 
 :::blue
@@ -34,10 +35,201 @@ Create a new R Script or RMarkdown document (whichever you prefer working with) 
 
 :::
 
+:::imp
+Now that we've had a few weeks to get used to the syntax of __lme4__, we're going to hide the solutions again until the end of the week. 
+:::
 
-:::rtip 
-__A Note on Convergence warnings__  
 
+# Random effects
+
+## What are "Random Effects"?  
+
+A frequent cause of confusion when learning about multilevel models is the use of the term "random effect". Does it refer to the the grouping variable, or to the effects that we allow to vary by-groups? The answer is really both. For example, in the model `lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toys_read)`, the "random effects" refers to the `(1 + hrs_week | toy_type)`. We are specifying by-toy type random intercepts and by-toy type effects of hrs_week.
+
+:::statbox
+__Should I fit a fixed effect: `y ~ ... + group` or random effect: `y ~ ... + (1 | group)`?__
+
+When specifying a random effects model, think about the data you have and how they fit in the following table:
+
+| Criterion: | Repetition: <br> _If the experiment were repeated:_ | Desired inference: <br> _The conclusions refer to:_                   |
+|----------------|--------------------------------------------------|--------------------------------------------------------------------|
+| Fixed effects  | Same levels would be used                        | The levels used                                                    |
+| Random effects | Different levels would be used                   | A population from which the levels used are just a (random) sample |
+
+`r optbegin("Examples", olabel=FALSE,toggle=params$TOGGLE)`
+
+For example, applying the criteria to the following questions:
+
+- Do dogs learn faster with higher rewards? 
+
+  FIXED: reward
+  
+  RANDOM: dog
+
+- Do students read faster at higher temperatures?
+
+  FIXED: temperature
+  
+  RANDOM: student
+
+- Do people speaking one language speak faster than another?
+
+  FIXED: the language
+  
+  RANDOM: the people speaking that language
+
+`r optend()`
+<br>
+
+Sometimes, after simplifying the model, you find that there isn't much variability in a specific random effect and, if it still leads to singular fits or convergence warnings, it is common to just model that variable as a fixed effect. 
+
+Other times, you don't have sufficient data or levels to estimate the random effect variance, and you are forced to model it as a fixed effect.
+This is similar to trying to find the "best-fit" line passing through a single point... You can't because you need two points!
+
+:::
+
+## Nested & Crossed Structures
+
+Most of the examples we have seen up to now have had only one level of clustering in the data (e.g. participants). But what happens if we have multiple different clusters? The same principle we have seen for one level of clustering can be extended to clustering at different levels, but we have to be considerate of how those levels of clustering are related.  
+
+:::frame
+__Nested Structures__  
+
+Take an example where we have observations for each student in every class within a number of schools:  
+
+```{r echo=FALSE, out.width="1200px"}
+knitr::include_graphics("images/structure_id.png")
+```
+
+**Question:** Is "Class 1" in "School 1" the same as "Class 1" in "School 2"?  
+  
+No.  
+The classes in one school are distinct from the classes in another **even though they are named the same**.  
+  
+The classes-within-schools example is a good case of **nested random effects** - one factor level (one group in a grouping varible) appears *only within* a particular level of another grouping variable.  
+  
+In R, we can specify this using:  
+  
+`(1 | school) + (1 | class:school)`  
+  
+or, more succinctly:  
+  
+`(1 | school/class)`  
+
+`r optbegin("The labels matter!",olabel=F,toggle=params$TOGGLE)`
+Had we changed data such that the classes had unique IDs (e.g., see below), then we could also use `(1 | school) + (1 | class)`.  
+
+```{r echo=FALSE, out.width="1200px"}
+knitr::include_graphics("images/structure_nested.png")
+```
+
+| Are the lower cluster labels unique? | equivalent structures |
+|-------------:|-----:|
+| Yes  | `(1 | school/class)`<br>`(1 | school) + (1 | class:school)`<br>`(1 | school) + (1 | class)`
+| No   | `(1 | school/class)`<br>`(1 | school) + (1 | class:school)` | 
+
+`r optend()`
+:::
+:::frame
+__Crossed Structures__  
+
+Consider another example, where we administer the same set of tasks at multiple time-points for every participant.  
+  
+**Question:** Are tasks nested within participants?  
+  
+No.  
+Tasks are seen by multiple participants (and participants see multiple tasks).  
+  
+We could visualise this as the below:  
+```{r echo=FALSE, out.width="400px"}
+knitr::include_graphics("images/structure_crossed.png")
+```
+
+In the sense that these are not nested, they are **crossed** random effects.  
+  
+In R, we can specify this using:  
+
+`(1 | subject) + (1 | task)`  
+
+:::
+
+:::blue
+**Nested vs Crossed**  
+
+*Nested:* Each group belongs uniquely to a higher-level group.   
+
+*Crossed:* Not-nested. 
+
+:::
+
+
+## Random Effects in lme4
+
+:::rtip
+__Fitting Random effects in lme4__  
+  
+Below are a selection of different formulas for specifying different random effect structures, taken from the [lme4 vignette](https://cran.r-project.org/web/packages/lme4/vignettes/lmer.pdf). This might look like a lot, but over time and repeated use of multilevel models you will get used to reading these in a similar way to getting used to reading the formula structure of `y ~ x1 + x2` in all our linear models. 
+<br>
+
+|  Formula|  Alternative|  Meaning|
+|--------:|------------:|--------:|
+|  $\text{(1 | g)}$|  $\text{1 + (1 | g)}$|  Random intercept with fixed mean|
+|  $\text{0 + offset(o) + (1 | g)}$|  $\text{-1 + offset(o) + (1 | g)}$|  Random intercept with *a priori* means|
+|  $\text{(1 | g1/g2)}$|  $\text{(1 | g1) + (1 | g1:g2)}$|  Intercept varying among $g1$ and $g2$ within $g1$|
+|  $\text{(1 | g1) + (1 | g2)}$|  $\text{1 + (1 | g1) + (1 | g2)}$|  Intercept varying among $g1$ and $g2$|
+|  $\text{x + (x | g)}$|  $\text{1 + x + (1 + x | g)}$|  Correlated random intercept and slope|
+|  $\text{x + (x || g)}$|  $\text{1 + x + (x | g) + (0 + x | g)}$|  Uncorrelated random intercept and slope|
+**Table 1:** Examples of the right-hand-sides of mixed effects model formulas. $g$, $g1$, $g2$ are grouping factors, covariates and *a priori* known offsets are $x$ and $o$.
+
+:::
+
+:::rtip
+__Extracting random effects with lme4__  
+
+In models fitted with __lme4__, there are some key functions to keep in mind for extracting different parts of the model.  
+
+- `fixef()` gives us the fixed effects (in Figure \@ref(fig:mlmfrc) this is the intercept and slope of the blue line).  
+- `ranef()` gives us the group-level deviations from the fixed effects (in Figure \@ref(fig:mlmfrc), this is the differences from each of the green lines to the blue line, and these are denoted by $\zeta_{0i}$ and $\zeta_{1i}$).  
+- `coef()` gives us the intercepts and slopes of the group-level effects (in Figure \@ref(fig:mlmfrc), these are the intercepts and slopes of the green lines). We can also get to these because `fixef() + ranef() = coef()`.  
+- `VarCorr()` will give us the estimated variance and standard deviation of the random effects (what we get from `ranef()`). 
+
+
+```{r mlmfrc, echo=FALSE,fig.cap="multilevel model with group i highlighted"}
+knitr::include_graphics("images/lmmwodot.png")
+```
+
+:::
+
+`r optbegin("Some quick examples", olabel=F,toggle=params$TOGGLE)`
+```{r}
+toys_read <- read_csv("https://uoepsy.github.io/data/toyexample.csv")
+rs_model <- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toys_read)
+```
+
+__Q:__ Which toy type shows the least improvement in reading age as practice increases, and which shows the greatest improvement?  
+```{r}
+ranef(rs_model)
+```
+__A:__ It looks like the Farm Animals have the least improvement, and Scooby Doo shows the most improvement
+
+<hr>
+
+__Q:__ What is the estimated reading age for sock puppets with zero hours of practice per week, and what is their estimated change in reading age for every hour per week increase in practice? 
+```{r}
+coef(rs_model)
+```
+__A:__ Sock puppets with zero practice are estimated to have a reading age of 1.2, which increases by 0.81 for every hour of practice per week. 
+```{r echo=FALSE, out.width="100px",fig.align="center"}
+knitr::include_graphics("images/sockpuppet.gif")
+```
+
+`r optend()`
+
+# Model Checks
+
+## A Note on Convergence warnings  
+
+:::rtip
 When we start to move to more complex random effect structures, issues of "singular fits" and "non-convergence" become ever more relevant. We've already talked about singular fits (see the [Week 2 exercises](02_lmm_log.html)), but we haven't said much about how to deal with non-convergence.  
 It may help to look back on [Week 1's section on estimation](01_intromlm.html#estimation).  
 
@@ -70,435 +262,13 @@ There are lots of different things which you could do which *might* help your mo
 :::
 
 
-# Random effects
-
-
-
-A frequent cause of confusion when learning about multilevel models is the use of the term "random effect". Does it refer to the the grouping variable, or to the effects that we allow to vary by-groups? The answer is really both. In the model below, the "random effects" refers to the `(1 + hrs_week | toy_type)`. We are specifying by-toy type random intercepts and by-toy type effects of hrs_week.
-```{r}
-library(tidyverse)
-library(lme4)
-toys_read <- read_csv("https://uoepsy.github.io/data/toyexample.csv")
-rs_model <- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toys_read)
-```
+## Assumptions
 
 :::statbox
-
-When specifying a random effects model, think about the data you have and how they fit in the following table:
-
-| Criterion: | Repetition: <br> _If the experiment were repeated:_ | Desired inference: <br> _The conclusions refer to:_                   |
-|----------------|--------------------------------------------------|--------------------------------------------------------------------|
-| Fixed effects  | Same levels would be used                        | The levels used                                                    |
-| Random effects | Different levels would be used                   | A population from which the levels used are just a (random) sample |
-
-For example, applying the criteria to the following questions:
-
-- Do dogs learn faster with higher rewards? 
-
-  FIXED: reward
-  
-  RANDOM: dog
-
-- Do students read faster at higher temperatures?
-
-  FIXED: temperature
-  
-  RANDOM: student
-
-- Do people speaking one language speak faster than another?
-
-  FIXED: the language
-  
-  RANDOM: the people speaking that language
-
-<br>
-
-Sometimes, after simplifying the model, you find that there isn't much variability in a specific random effect and, if it still leads to singular fits or convergence warnings, it is common to just model that variable as a fixed effect. 
-
-Other times, you don't have sufficient data or levels to estimate the random effect variance, and you are forced to model it as a fixed effect.
-This is similar to trying to find the "best-fit" line passing through a single point... You can't because you need two points!
-
-:::
-
-
-## Fitting Random effects in lme4  
-:::rtip
-
-Below are a selection of different formulas for specifying different random effect structures, taken from the [lme4 vignette](https://cran.r-project.org/web/packages/lme4/vignettes/lmer.pdf). This might look like a lot, but over time and repeated use of multilevel models you will get used to reading these in a similar way to getting used to reading the formula structure of `y ~ x1 + x2` in all our linear models. 
-<br>
-
-|  Formula|  Alternative|  Meaning|
-|--------:|------------:|--------:|
-|  $\text{(1 | g)}$|  $\text{1 + (1 | g)}$|  Random intercept with fixed mean|
-|  $\text{0 + offset(o) + (1 | g)}$|  $\text{-1 + offset(o) + (1 | g)}$|  Random intercept with *a priori* means|
-|  $\text{(1 | g1/g2)}$|  $\text{(1 | g1) + (1 | g1:g2)}$|  Intercept varying among $g1$ and $g2$ within $g1$|
-|  $\text{(1 | g1) + (1 | g2)}$|  $\text{1 + (1 | g1) + (1 | g2)}$|  Intercept varying among $g1$ and $g2$|
-|  $\text{x + (x | g)}$|  $\text{1 + x + (1 + x | g)}$|  Correlated random intercept and slope|
-|  $\text{x + (x || g)}$|  $\text{1 + x + (x | g) + (0 + x | g)}$|  Uncorrelated random intercept and slope|
-**Table 1:** Examples of the right-hand-sides of mixed effects model formulas. $g$, $g1$, $g2$ are grouping factors, covariates and *a priori* known offsets are $x$ and $o$.
-
-:::
-
-## Extracting random effects with lme4 
-
-:::rtip
-In models fitted with __lme4__, there are some key functions to keep in mind for extracting different parts of the model.  
-
-- `fixef()` gives us the fixed effects (in Figure \@ref(fig:mlmfrc) this is the intercept and slope of the blue line).  
-- `ranef()` gives us the group-level deviations from the fixed effects (in Figure \@ref(fig:mlmfrc), this is the differences from each of the green lines to the blue line, and these are denoted by $\zeta_{0i}$ and $\zeta_{1i}$).  
-- `coef()` gives us the intercepts and slopes of the group-level effects (in Figure \@ref(fig:mlmfrc), these are the intercepts and slopes of the green lines). We can also get to these because `fixef() + ranef() = coef()`.  
-- `VarCorr()` will give us the estimated variance and standard deviation of the random effects (what we get from `ranef()`). 
-
-
-```{r mlmfrc, echo=FALSE,fig.cap="multilevel model with group i highlighted"}
-knitr::include_graphics("images/lmmwodot.png")
-```
-
-:::
-
-`r optbegin("Some quick examples", olabel=F,toggle=params$TOGGLE)`
-```{r}
-toys_read <- read_csv("https://uoepsy.github.io/data/toyexample.csv")
-rs_model <- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toys_read)
-```
-
-__Q:__ Which toy type shows the least improvement in reading age as practice increases, and which shows the greatest improvement?  
-```{r}
-ranef(rs_model)
-```
-__A:__ It looks like the Farm Animals have the least improvement, and Scooby Doo shows the most improvement
-
-
-__Q:__ What is the estimated reading age for sock puppets with zero hours of practice per week, and what is their estimated change in reading age for every hour per week increase in practice? 
-```{r}
-coef(rs_model)
-```
-__A:__ Sock puppets with zero practice are estimated to have a reading age of 1.2, which increases by 0.81 for every hour of practice per week. 
-```{r echo=FALSE, out.width="100px",fig.align="center"}
-knitr::include_graphics("images/sockpuppet.gif")
-```
-
-`r optend()`
-
-# Three-level nesting
-
-:::frame
-__Data: Treatment Effects__
-  
-Synthetic data from a RCT treatment study: 5 therapists randomly assigned participants to control or treatment group and monitored the participants' performance over time. There was a baseline test, then 6 weeks of treatment, with test sessions every week (7 total sessions).
-
-The following code will load in your R session an object already called `tx` with the data:  
-
-```{r}
-load(url("https://uoepsy.github.io/msmr/data/tx.Rdata"))
-```
-
-You can see the head of the data below: 
-```{r, echo=FALSE}
-head(tx) %>%
-  kable(digits = 2, align = 'c') %>%
-  kable_styling(full_width = FALSE)
-```
-
-:::
-
-`r qbegin("D1")`
-Load and visualise the data. Does it look like the treatment had an effect on the performance score?
-`r qend()` 
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-```{r message=FALSE}
-ggplot(tx, aes(session, Score, color=group)) +
-  stat_summary(fun.data = mean_se, geom="pointrange") +
-  stat_smooth() +
-  theme_classic()
-```
-
-Just for fun, let's add on the individual participant scores, and also make a plot for each therapist. 
-```{r message=FALSE}
-ggplot(tx, aes(session, Score, color=group)) +
-  stat_summary(fun = mean_se, geom = "pointrange") +
-  stat_smooth() +
-  theme_classic() +
-  geom_line(aes(group = PID), alpha = .2) + 
-  facet_wrap(~ therapist)
-```
-`r solend()` 
-
-
-
-`r qbegin("D2")`
-Consider these questions when you're designing your model(s) and use your answers to motivate your model design and interpretation of results:  
-
-a. What are the levels of nesting? How should that be reflected in the random effect structure?
-a. What is the shape of change over time? Do you need polynomials to model this shape? If yes, what order polynomials?
-`r qend()` 
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-a. There are repeated measures of participants (session). There are also repeated measures of therapists (each one treated many participants).
-a. Looks like linear change, don't need polynomials. Good to know that there is no difference at baseline, so no need for orthogonal time.
-`r solend()` 
-
-
-
-`r qbegin("D3")`
-Test whether the treatment had an effect using mixed-effects modelling.  
-
-Try to fit the **maximal** model.  
-Does it converge? Is it singular?
-
-`r optbegin("Hint: What *is* the maximal model?", olabel=FALSE, toggle=params$TOGGLE)`
-
-There's an interaction between session and group. Each participant has several sessions, so we want `(1 + session | PID)` and each therapist has several groups and sessions, so we want `(1 + ? * ? | ?)`
-
-`r optend()`
-
-`r qend()` 
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-```{r}
-library(lme4)
-
-# start with maximal model
-m1 <- lmer(Score ~ session * group + 
-             (1 + session | PID) + 
-             (1 + session * group | therapist),
-           data=tx)
-
-isSingular(m1)
-```
-
-`r solend()` 
-
-
-
-`r qbegin("D4")`
-Try adjusting your model by removing random effects or correlations, examine the model again, and so on..  
-`r qend()` 
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-```{r}
-VarCorr(m1)
-```
-There's a correlation of exactly -1 between the random intercepts and slopes for therapists, and the standard deviation estimate for `session|therapist` is pretty small. Let's remove it. 
-```{r}
-m2 <- lmer(Score ~ session * group + 
-             (1 + session | PID) + 
-             (1 | therapist),
-           data=tx)
-VarCorr(m2)
-```
-It now looks like estimates for random intercepts for therapists is now 0. If we remove this, our model finally is non-singular:
-```{r}
-m3 <- lmer(Score ~ session * group + 
-             (1 + session | PID),
-           data=tx)
-summary(m3)
-```
-Lastly, it's then a good idea to check that the parameter estimates and SE are not radically different across these models (they are virtually identical)
-```{r}
-summary(m1)$coefficients
-summary(m2)$coefficients
-summary(m3)$coefficients
-```
-`r solend()` 
-
-
-
-`r qbegin('D5: Optional')`
-
-Try the code below to use the `allFit()` function to fit your final model with all the available optimizers.^[If you have an older version of `lme4`, then `allFit()` might not be directly available, and you will need to run the following: `source(system.file("utils", "allFit.R", package="lme4"))`.]  
-  
-+ You might need to install the `dfoptim` package to get one of the optimizers  
-
-
-```{r eval=FALSE}
-sumfits <- allFit(yourmodel)
-summary(sumfits)
-```
-`r qend()` 
-
-
-
-
-
-# Crossed random effects
-
-:::frame
-__Data: Test-enhanced learning__  
-
-An experiment was run to conceptually replicate "test-enhanced learning" (Roediger & Karpicke, 2006): two groups of 25 participants were presented with material to learn. One group studied the material twice (`StudyStudy`), the other group studied the material once then did a test (`StudyTest`). Recall was tested immediately (one minute) after the learning session and one week later. The recall tests were composed of 175 items identified by a keyword (`Test_word`). One of the researchers' questions concerned how test-enhanced learning influences time-to-recall. 
-
-The critical (replication) prediction is that the `StudyStudy` group should perform somewhat better on the immediate recall test, but the `StudyTest` group will retain the material better and thus perform better on the 1-week follow-up test.
-
-The following code loads the data into your R environment by creating a variable called `tel`:
-```{r eval=F}
-load(url("https://uoepsy.github.io/data/testenhancedlearning.RData"))
-```
-```{r include=F} 
-# load(url("https://uoepsy.github.io/msmr/data/TestEnhancedLearning.RData"))
-# tel$Rtime <- 750-((predict(m3) + rnorm(nrow(tel),0,10))*30)
-# hist(tel$Rtime)
-# tel %>% mutate(
-# Rtime = ifelse(Group=="StudyStudy", Rtime+25,Rtime)
-# ) -> tel
-# save(tel,file="../../data/testenhancedlearning.RData")
-load("../../data/testenhancedlearning.RData")
-```
-
-
-
-
-The head of the dataset can be seen below:
-```{r echo=FALSE}
-head(tel) %>%
-  kable(digits = 2, align = 'c') %>%
-  kable_styling(full_width = FALSE)
-```
-
-:::
-
-
-`r qbegin("E1")`
-Load and plot the data. Does it look like the effect was replicated?
-`r qend()` 
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-You can make use of `stat_summary()` again!
-```{r, eval=FALSE}
-ggplot(tel, aes(Delay, Rtime, col=Group)) + 
-  stat_summary(fun.data=mean_se, geom="pointrange")+
-  theme_light()
-```
-It's more work, but some people might rather calculate the numbers and then plot them directly. It does just the same thing: 
-```{r}
-tel %>% 
-  group_by(Delay, Group) %>%
-  summarise(
-    mean = mean(Rtime),
-    se = sd(Rtime)/sqrt(n())
-  ) %>%
-  ggplot(., aes(x=Delay, col = Group)) +
-  geom_pointrange(aes(y=mean, ymin=mean-se, ymax=mean+se))+
-  theme_light() +
-  labs(y = "Response Time (ms)")
-```
-  
-That looks like test-enhanced learning to me!  
-`r solend()` 
-
-
-
-`r qbegin("E2")`
-Test the critical hypothesis using a mixed-effects model. Fit the maximal random effect structure supported by the experimental design.  
-
-Some questions to consider:  
-  
-+ Item accuracy is a binary variable. What kind of model will you use?  
-+ We can expect variability across subjects (some people are better at learning than others) and across items (some of the recall items are harder than others). How should this be represented in the random effects?
-
-+ If a model takes ages to fit, you might want to cancel it by pressing the escape key. It is normal for complex models to take time, but for the purposes of this task, give up after a couple of minutes, and try simplifying your model.  
-
-`r qend()` 
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-This one will probably take a little bit of time:
-```{r}
-m <- lmer(Rtime ~ Delay*Group +
-             (1 + Delay | Subject_ID) +
-             (1 + Delay * Group | Test_word),
-           data=tel, control=lmerControl(optimizer = "bobyqa"))
-```
-`r solend()` 
-
-`r qbegin("E3")`
-The model with maximal random effects will probably not converge, or will obtain a singular fit. Simplify the model until you achieve convergence.  
-<br>
-What we're aiming to do here is to follow [Barr et al.'s](https://doi.org/10.1016/j.jml.2012.11.001) advice of defining our maximal model and then removing only the terms to allow a non-singular fit.  
-<br>
-**Note:** This strategy - starting with the maximal random effects structure and removing terms until obtaining model convergence, is just *one* approach, and there are drawbacks (see [Matuschek et al., 2017](https://doi.org/10.1016/j.jml.2017.01.001)). There is no consensus on what approach is best (see `?isSingular`).  
-<br>
-<br>
-*Tip:* you can look at the variance estimates and correlations easily by using the `VarCorr()` function. What jumps out?  
-`r qend()` 
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-There's a correlation of .999 for some of the random effects by-item!
-```{r}
-VarCorr(m)
-```
-
-lets remove the interaction in the by-word random effects:
-```{r}
-m1 <- lmer(Rtime ~ Delay*Group +
-             (1 + Delay | Subject_ID) +
-             (1 + Delay + Group | Test_word),
-           data=tel, control=lmerControl(optimizer = "bobyqa"))
-VarCorr(m1)
-isSingular(m1)
-```
-We still have a singular fit here, and the correlation is just slightly different (0.998). Thinking about the study, if we are going to remove __one__ of the by-testword random effects (`Delay` or `Group`), which one do we consider to be more theoretically justified? Is the effect of Delay likely to vary by test-words? More so than the effect of group is likely to vary by test-words? Quite possibly - there's no obvious reason for _certain_ words to be more memorable for people in one group vs another. But there is reason for words to vary in the effect that delay of one week has - how familiar a word is will likely influence the amount to which a week's delay has on recall.   
-
-Let's remove the by-testword random effect of group. 
-```{r}
-m2 <- lmer(Rtime ~ Delay*Group +
-             (1 + Delay | Subject_ID) +
-             (1 + Delay | Test_word),
-           data=tel, control=lmerControl(optimizer = "bobyqa"))
-isSingular(m2)
-VarCorr(m2)
-```
-Hooray, the model converged! 
-```{r}
-summary(m2)
-```
-`r solend()` 
-
-`r qbegin("E4")`
-Load the **effects** package, and try running this code:
-```{r}
-library(effects)
-ef <- as.data.frame(effect("Delay:Group", m2))
-```
-
-What is `ef`? and how can you use it to plot the model-estimated condition means and variability?
-
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-
-```{r}
-ggplot(ef, aes(Delay, fit, color=Group)) + 
-  geom_pointrange(aes(ymax=upper, ymin=lower), position=position_dodge(width = 0.2))+
-  theme_classic() # just for a change :)
-```
-
-`r solend()`
-
-`r qbegin("E5")`
-Can we get a similar plot using `plot_model()` from the __sjPlot__ package? 
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-```{r}
-library(sjPlot)
-plot_model(m2, type="int")
-```
-
-`r solend()`
- 
-
-`r qbegin("E6")`
-What should we do with this information? How can we apply test-enhanced learning to learning R and statistics?
-`r qend()` 
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-You'll get the benefits of test-enhanced learning if you try yourself before looking at the solutions! If you don't test yourself, you're more likely to forget it in the long run. 
-`r solend()` 
-
-
-
-
-
-
-# Assumptions & Influence in MLM
-
-:::statbox
-__Assumptions in Multilevel Models__   
 
 Hopefully by now you are getting comfortable with the idea that all our models are simplifications, and so there is always going to be some difference between a model and real-life. This difference - the _residual_ - will hopefully just be randomness, and we assess this by checking for systematic patterns in the residual term.  
 
-Not much is different in the multilevel model - we simply now have "residuals" on multiple levels. We are assuming that our group-level differences represent one level of randomness, and that our observations represent another level. We can see these two levels in Figure \@ref(fig:lmmfigres), with the group-level deviations from the fixed effects ($\zeta_0i}$ and $\zeta_{1i}$) along with the observation-level deviations from that groups line ($\varepsilon_{ij}$).  
+Not much is different in the multilevel model - we simply now have "residuals" on multiple levels. We are assuming that our group-level differences represent one level of randomness, and that our observations represent another level. We can see these two levels in Figure \@ref(fig:lmmfigres), with the group-level deviations from the fixed effects ($\zeta_{0i}$ and $\zeta_{1i}$) along with the observation-level deviations from that groups line ($\varepsilon_{ij}$).  
 
 ```{r lmmfigres, echo=FALSE, fig.cap="Multilevel model with group i highlighted"}
 knitr::include_graphics("images/lmmwdot.png")
@@ -506,13 +276,12 @@ knitr::include_graphics("images/lmmwdot.png")
 
 :::
 
-For these 
+`r optbegin("Examining Residuals (Level 1)", olabel=FALSE, toggle=params$TOGGLE)`
 ```{r}
 toys_read <- read_csv("https://uoepsy.github.io/data/toyexample.csv")
 rs_model <- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toys_read)
 ```
 
-`r optbegin("Looking at Level 1 Residuals", olabel=FALSE, toggle=params$TOGGLE)`
 We can get the level 1 (observation-level) residuals the same way we used to do for `lm()` - by just using `resid()` or `residuals()`.   Additionally, there are a few useful techniques for plotting these which we have listed below:  
 
 - We can plot the residuals vs fitted model, and assess the extend to which the assumption holds that the residuals are zero mean.  
@@ -534,10 +303,13 @@ _(we want the datapoints to follow close to the diagonal line)_
     ```
 
 `r optend()`
-`r optbegin("Looking at Level 2+ Residuals", olabel=FALSE, toggle=params$TOGGLE)`
+`r optbegin("Examining Residuals (Level 2+)", olabel=FALSE, toggle=params$TOGGLE)`
+```{r}
+toys_read <- read_csv("https://uoepsy.github.io/data/toyexample.csv")
+rs_model <- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toys_read)
+```
 
-TODO 
-we need to index appropriately
+To get out the level 2 residuals (the random effects) we need to do a bit of indexing. `ranef(rs_model)` will give us a list with an item for each grouping. In each item we have a set of columns, one for each thing which is varying by that grouping. 
 
 ```{r}
 qqnorm(ranef(rs_model)$toy_type[,1]); qqline(ranef(rs_model)$toy_type[,1])
@@ -546,12 +318,37 @@ qqnorm(ranef(rs_model)$toy_type[,2]); qqline(ranef(rs_model)$toy_type[,2])
 
 `r optend()`
 
+:::frame
+__What can we do if we're worried about assumptions__  
 
+
+- Model mis-specification
+  - Is the model appropriate (e.g. is the assumed conditional distribution of y appropriate for your outcome (the `family = ??? (link = ???))` bit).  
+  - Might we be missing important theoretical predictors, or missing possible interactions? 
+- Could/Should you transform your outcome variable?  
+  - There are many different transformations we can apply to our outcome variable to enable us to fit a model in which the residuals are more close to being normally distributed (`log(y)`, `1/y`, `sqrt(y)`, `forecast::BoxCox(y, lambda="auto")`). However, this comes at the expense of interpretation, because we are now getting coefficients of "change in transformed y", and it is not always possible to turn that into a meaningful quantity. 
+- What about Bootstrapping?  
+  - The basic idea of bootstrapping is to fit your model structure to lots and lots of samples, in order to obtain a distribution of the parameter estimate of interest (and then compute a confidence interval for that estimate). 
+  - There are different approaches to how we create the "lots and lots of samples", and these allow us to relax certain assumptions on our modelling. 
+  - Re-sampling with replacement from our original data allows us to have minimal assumptions, but needs careful consideration about which levels to re-sample at. 
+    ```{r eval=FALSE}
+    library(lmeresampler)
+    # the resample argument is whether we want to resample each level
+    # (from highest to lowest)
+    bootstrap(model, .f = fixef, type="case", resample=c(TRUE,FALSE))
+    ```
+  
+  - Bootstrapping is not a panacea for all models that cause you worry.  
+  
+
+:::
+
+## Influence
 
 :::statbox
-__Influence in Multilevel Models__  
 
 Just like having residuals are multiple levels, we can also consider the influence of data at different levels on our model. For instance, we might have a specific datapoint being highly influential, but we might be just as interested in thinking about specific clusters as exerting influence on our results.  
+A very useful package for assessing influence in multilevel models is __HLMdiag__.  
 
 ```{r echo=FALSE,fig.cap="Influence in MLM"}
 infdat <- read_csv("https://uoepsy.github.io/data/toyexample.csv") %>%
@@ -595,14 +392,11 @@ inf1plot + inf2plot
 
 ```
 
-
-:::rtip
-The most useful package for assessing influence in multilevel models is __HLMdiag__.  
 :::
 
-:::
 
-`r optbegin("Examining level 1 influence",olabel=FALSE,toggle=params$TOGGLE)`
+
+`r optbegin("Examining Influence (Level 1)",olabel=FALSE,toggle=params$TOGGLE)`
 
 Which toy in the dataset has the greatest influence on our model?  
 
@@ -613,7 +407,7 @@ We can often end up in confusion because the $i^{th}$ observation inputted to ou
 :::
 
 (Luckily, we have no missing data in the Toy dataset). 
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
 ```{r}
 library(HLMdiag)
 l1_inf <- hlm_influence(rs_model,level=1)
@@ -637,7 +431,7 @@ knitr::include_graphics("images/coldfront.png")
 ```
 
 `r optend()`
-`r optbegin("Examining level 2+ influence", olabel=FALSE, toggle=params$TOGGLE)`
+`r optbegin("Examining Influence (Level 2+)", olabel=FALSE, toggle=params$TOGGLE)`
 Which _type_ of toy has the greatest influence on our model?
 
 Either this way:
@@ -653,7 +447,331 @@ dotplot_diag(inftoytype$cooksd, index=inftoytype$toy_type, cutoff=.15) +
 `r optend()`
 
 
-# Less-Guided Exercises
+# Exercises: Three-level nesting
+
+:::frame
+__Data: Treatment Effects__
+  
+Synthetic data from a RCT treatment study: 5 therapists randomly assigned participants to control or treatment group and monitored the participants' performance over time. There was a baseline test, then 6 weeks of treatment, with test sessions every week (7 total sessions).
+
+The following code will load in your R session an object already called `tx` with the data:  
+
+```{r}
+load(url("https://uoepsy.github.io/msmr/data/tx.Rdata"))
+```
+
+You can see the head of the data below: 
+```{r, echo=FALSE}
+head(tx) %>%
+  kable(digits = 2, align = 'c') %>%
+  kable_styling(full_width = FALSE)
+```
+
+:::
+
+`r qbegin("A1")`
+Load and visualise the data. Does it look like the treatment had an effect on the performance score?
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r message=FALSE}
+ggplot(tx, aes(session, Score, color=group)) +
+  stat_summary(fun.data = mean_se, geom="pointrange") +
+  stat_smooth() +
+  theme_classic()
+```
+
+Just for fun, let's add on the individual participant scores, and also make a plot for each therapist. 
+```{r message=FALSE}
+ggplot(tx, aes(session, Score, color=group)) +
+  stat_summary(fun = mean_se, geom = "pointrange") +
+  stat_smooth() +
+  theme_classic() +
+  geom_line(aes(group = PID), alpha = .2) + 
+  facet_wrap(~ therapist)
+```
+`r solend()` 
+
+`r qbegin("A2")`
+Test whether the treatment had an effect using multilevel modelling.  
+Try to fit the **maximal** model.  
+Does it converge? Is it singular?  
+
+Consider these questions when you're designing your model(s) and use your answers to motivate your model design and interpretation of results:  
+
+- What have we randomly sampled here? 
+  - We have randomly sampled some therapists, and within them have random sampled some participants. Each participant then has a sample of observations.   
+- What are the levels of nesting? How should that be reflected in the random effect structure?  
+  - Each participant is associated with just one therapist. Participants are nested within therapists.  
+- What is the shape of change over time? Do you need polynomials to model this shape? If yes, what order polynomials? 
+  - Looks like linear change, don't need polynomials. Good to know that there is no difference at baseline, so no need for orthogonal time.  
+  
+- We are wanting to examine how time (`session`) varies between treatment groups (`group`), so we want an interaction `session * group` in the model. Participants have multiple sessions, but belong to only one group. Therapists have multiple sessions _and_ participants in different groups. 
+- Do we want to allow the same effects to vary by participants and by therapists?  
+  - If so, we can specify `(1 + .... | therapist/PID)`. 
+  - If not, and we want to have some effects vary by therapist but _not_ by participant (or vice versa), then we will need to specify these separately.  
+- Do the participants have labels that uniquely associate them with one higher up group (i.e., one therapist?).     
+  - If so, we can have `(1..... | PID) + (1.... | therapist)`. 
+  - If not, then we need to tell the model that patients are nested in therapists, and have `(1..... | therapist:PID) + (1.... | therapist)`.  
+
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+library(lme4)
+
+# start with maximal model
+m1 <- lmer(Score ~ session * group + 
+             (1 + session | PID) + 
+             (1 + session * group | therapist),
+           data=tx,
+           control = lmerControl(optimizer="bobyqa"))
+
+isSingular(m1)
+```
+
+`r solend()` 
+
+
+
+`r qbegin("A3")`
+Try adjusting your model by removing random effects or correlations, examine the model again, and so on..  
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+VarCorr(m1)
+```
+There's a correlation of exactly -1 between the random intercepts and slopes for therapists, and the standard deviation estimate for `session|therapist` is pretty small. Let's remove it. 
+```{r}
+m2 <- lmer(Score ~ session * group + 
+             (1 + session | PID) + 
+             (1 + group | therapist),
+           data=tx,
+           control = lmerControl(optimizer="bobyqa"))
+VarCorr(m2)
+m2a <- lmer(Score ~ session * group + 
+             (1 + session | PID) + 
+             (1 | therapist),
+           data=tx,
+           control = lmerControl(optimizer="bobyqa"))
+VarCorr(m2a)
+```
+It now looks like estimates for random intercepts for therapists is now 0. If we remove this, our model finally is non-singular:
+```{r}
+m3 <- lmer(Score ~ session * group + 
+             (1 + session | PID),
+           data=tx,
+           control = lmerControl(optimizer="bobyqa"))
+
+summary(m3)
+```
+Lastly, it's then a good idea to check that the parameter estimates and SE are not radically different across these models (they are virtually identical)
+```{r}
+# extract and column bind the fixed effect estimates
+cbind(
+  summary(m1)$coefficients[,1],
+  summary(m2)$coefficients[,1],
+  summary(m2a)$coefficients[,1],
+  summary(m3)$coefficients[,1]
+)
+# extract and column bind the fixed effect SEs
+cbind(
+  summary(m1)$coefficients[,2],
+  summary(m2)$coefficients[,2],
+  summary(m2a)$coefficients[,2],
+  summary(m3)$coefficients[,2]
+)
+```
+`r solend()` 
+
+
+
+`r qbegin('A4: Optional')`
+
+Try the code below to use the `allFit()` function to fit your final model with all the available optimizers.^[If you have an older version of `lme4`, then `allFit()` might not be directly available, and you will need to run the following: `source(system.file("utils", "allFit.R", package="lme4"))`.]  
+  
++ You might need to install the `dfoptim` package to get one of the optimizers  
+
+
+```{r eval=FALSE}
+sumfits <- allFit(yourmodel)
+summary(sumfits)
+```
+`r qend()` 
+
+
+
+
+
+# Exercises: Crossed random effects
+
+:::frame
+__Data: Test-enhanced learning__  
+
+An experiment was run to conceptually replicate "test-enhanced learning" (Roediger & Karpicke, 2006): two groups of 25 participants were presented with material to learn. One group studied the material twice (`StudyStudy`), the other group studied the material once then did a test (`StudyTest`). Recall was tested immediately (one minute) after the learning session and one week later. The recall tests were composed of 175 items identified by a keyword (`Test_word`). One of the researchers' questions concerned how test-enhanced learning influences time-to-recall. 
+
+The critical (replication) prediction is that the `StudyStudy` group should perform somewhat better on the immediate recall test, but the `StudyTest` group will retain the material better and thus perform better on the 1-week follow-up test.
+
+The following code loads the data into your R environment by creating a variable called `tel`:
+```{r eval=F}
+load(url("https://uoepsy.github.io/data/testenhancedlearning.RData"))
+```
+```{r include=F} 
+# load(url("https://uoepsy.github.io/msmr/data/TestEnhancedLearning.RData"))
+# tel$Rtime <- 750-((predict(m3) + rnorm(nrow(tel),0,10))*30)
+# hist(tel$Rtime)
+# tel %>% mutate(
+# Rtime = ifelse(Group=="StudyStudy", Rtime+25,Rtime)
+# ) -> tel
+# save(tel,file="../../data/testenhancedlearning.RData")
+load("../../data/testenhancedlearning.RData")
+```
+
+
+
+
+The head of the dataset can be seen below:
+```{r echo=FALSE}
+head(tel) %>%
+  kable(digits = 2, align = 'c') %>%
+  kable_styling(full_width = FALSE)
+```
+
+:::
+
+
+`r qbegin("B1")`
+Load and plot the data. Does it look like the effect was replicated?
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+You can make use of `stat_summary()` again!
+```{r, eval=FALSE}
+ggplot(tel, aes(Delay, Rtime, col=Group)) + 
+  stat_summary(fun.data=mean_se, geom="pointrange")+
+  theme_light()
+```
+It's more work, but some people might rather calculate the numbers and then plot them directly. It does just the same thing: 
+```{r}
+tel %>% 
+  group_by(Delay, Group) %>%
+  summarise(
+    mean = mean(Rtime),
+    se = sd(Rtime)/sqrt(n())
+  ) %>%
+  ggplot(., aes(x=Delay, col = Group)) +
+  geom_pointrange(aes(y=mean, ymin=mean-se, ymax=mean+se))+
+  theme_light() +
+  labs(y = "Response Time (ms)")
+```
+  
+That looks like test-enhanced learning to me!  
+`r solend()` 
+
+
+
+`r qbegin("B2")`
+Test the critical hypothesis using a mixed-effects model. Fit the maximal random effect structure supported by the experimental design.  
+
+Some questions to consider:  
+  
++ Item accuracy is a binary variable. What kind of model will you use?  
++ We can expect variability across subjects (some people are better at learning than others) and across items (some of the recall items are harder than others). How should this be represented in the random effects?
+
++ If a model takes ages to fit, you might want to cancel it by pressing the escape key. It is normal for complex models to take time, but for the purposes of this task, give up after a couple of minutes, and try simplifying your model.  
+
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+This one will probably take a little bit of time:
+```{r}
+m <- lmer(Rtime ~ Delay*Group +
+             (1 + Delay | Subject_ID) +
+             (1 + Delay * Group | Test_word),
+           data=tel, control=lmerControl(optimizer = "bobyqa"))
+```
+`r solend()` 
+
+`r qbegin("B3")`
+The model with maximal random effects will probably not converge, or will obtain a singular fit. Simplify the model until you achieve convergence.  
+<br>
+What we're aiming to do here is to follow [Barr et al.'s](https://doi.org/10.1016/j.jml.2012.11.001) advice of defining our maximal model and then removing only the terms to allow a non-singular fit.  
+<br>
+**Note:** This strategy - starting with the maximal random effects structure and removing terms until obtaining model convergence, is just *one* approach, and there are drawbacks (see [Matuschek et al., 2017](https://doi.org/10.1016/j.jml.2017.01.001)). There is no consensus on what approach is best (see `?isSingular`).  
+<br>
+<br>
+*Tip:* you can look at the variance estimates and correlations easily by using the `VarCorr()` function. What jumps out?  
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+There's a correlation of .999 for some of the random effects by-item!
+```{r}
+VarCorr(m)
+```
+
+lets remove the interaction in the by-word random effects:
+```{r}
+m1 <- lmer(Rtime ~ Delay*Group +
+             (1 + Delay | Subject_ID) +
+             (1 + Delay + Group | Test_word),
+           data=tel, control=lmerControl(optimizer = "bobyqa"))
+VarCorr(m1)
+isSingular(m1)
+```
+We still have a singular fit here, and the correlation is just slightly different (0.998). Thinking about the study, if we are going to remove __one__ of the by-testword random effects (`Delay` or `Group`), which one do we consider to be more theoretically justified? Is the effect of Delay likely to vary by test-words? More so than the effect of group is likely to vary by test-words? Quite possibly - there's no obvious reason for _certain_ words to be more memorable for people in one group vs another. But there is reason for words to vary in the effect that delay of one week has - how familiar a word is will likely influence the amount to which a week's delay has on recall.   
+
+Let's remove the by-testword random effect of group. 
+```{r}
+m2 <- lmer(Rtime ~ Delay*Group +
+             (1 + Delay | Subject_ID) +
+             (1 + Delay | Test_word),
+           data=tel, control=lmerControl(optimizer = "bobyqa"))
+isSingular(m2)
+VarCorr(m2)
+```
+Hooray, the model converged! 
+```{r}
+summary(m2)
+```
+`r solend()` 
+
+`r qbegin("B4")`
+Load the **effects** package, and try running this code:
+```{r}
+library(effects)
+ef <- as.data.frame(effect("Delay:Group", m2))
+```
+
+What is `ef`? and how can you use it to plot the model-estimated condition means and variability?
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+ggplot(ef, aes(Delay, fit, color=Group)) + 
+  geom_pointrange(aes(ymax=upper, ymin=lower), position=position_dodge(width = 0.2))+
+  theme_classic() # just for a change :)
+```
+
+`r solend()`
+
+`r qbegin("B5")`
+Can we get a similar plot using `plot_model()` from the __sjPlot__ package? 
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+library(sjPlot)
+plot_model(m2, type="int")
+```
+
+`r solend()`
+ 
+
+`r qbegin("B6")`
+What should we do with this information? How can we apply test-enhanced learning to learning R and statistics?
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+You'll get the benefits of test-enhanced learning if you try yourself before looking at the solutions! If you don't test yourself, you're more likely to forget it in the long run. 
+`r solend()` 
+
+
+
+# Exercises: Boston Naming Test
 
 :::frame
 __Data: Naming__ 
@@ -671,7 +789,7 @@ tibble(variable = names(bnt),
 
 :::
 
-`r qbegin("E7")`
+`r qbegin("C1")`
 Fit a model examining the interaction between the effects of school year and mono/bilingual teaching on word retrieval, with random intercepts only for children and schools.  
 **tip:** make sure your variables are of the right type first - e.g. numeric, factor etc  
 <br>
@@ -749,7 +867,7 @@ dotplot_diag(infschool$cooksd, cutoff = "internal", index = infschool$school_id)
 ```
 `r solend()`
 
-`r qbegin("E8")`
+`r qbegin("C2")`
 Using a method of your choosing, conduct inferences from your model and write up the results. 
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
@@ -762,6 +880,7 @@ as.data.frame(VarCorr(bnt_null)) %>%
     )
 ```
 
+We're going to construct some case-based bootstrapped confidence intervals around our fixed effects here.  
 This took quite a while to run: 
 ```{r eval=F}
 library(lmeresampler)
