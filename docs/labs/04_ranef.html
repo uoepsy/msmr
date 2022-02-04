@@ -358,7 +358,9 @@ div.tocify {
     <li>
       <a href="03_nonlin.html">3: Longitudinal (non-linear)</a>
     </li>
-    <li class="dropdown-header">4: Other Random Effect Structures</li>
+    <li>
+      <a href="04_ranef.html">4: Random Effect Structures</a>
+    </li>
     <li class="dropdown-header">5: Recap | Individual Differences</li>
     <li class="dropdown-header">Break Week</li>
   </ul>
@@ -457,9 +459,9 @@ div.tocify {
 </tbody>
 </table>
 <div class="optional-begin">
-<span id="opt-start-1" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-1&#39;, &#39;opt-start-1&#39;)"> Examples</span>
+<span id="opt-start-80" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-80&#39;, &#39;opt-start-80&#39;)"> Examples</span>
 </div>
-<div id="opt-body-1" class="optional-body" style="display: none;">
+<div id="opt-body-80" class="optional-body" style="display: none;">
 <p>For example, applying the criteria to the following questions:</p>
 <ul>
 <li><p>Do dogs learn faster with higher rewards?</p>
@@ -497,9 +499,9 @@ The classes in one school are distinct from the classes in another <strong>even 
 <p>or, more succinctly:</p>
 <p><code>(1 | school/class)</code></p>
 <div class="optional-begin">
-<span id="opt-start-2" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-2&#39;, &#39;opt-start-2&#39;)"> The labels matter!</span>
+<span id="opt-start-81" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-81&#39;, &#39;opt-start-81&#39;)"> The labels matter!</span>
 </div>
-<div id="opt-body-2" class="optional-body" style="display: none;">
+<div id="opt-body-81" class="optional-body" style="display: none;">
 <p>Had we changed data such that the classes had unique IDs (e.g., see below), then we could also use <code>(1 | school) + (1 | class)</code>.</p>
 <p><img src="images/structure_nested.png" width="1200px" style="display: block; margin: auto;" /></p>
 <table>
@@ -620,9 +622,9 @@ Figure 1: multilevel model with group i highlighted
 </div>
 </div>
 <div class="optional-begin">
-<span id="opt-start-3" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-3&#39;, &#39;opt-start-3&#39;)"> Some quick examples</span>
+<span id="opt-start-82" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-82&#39;, &#39;opt-start-82&#39;)"> Some quick examples</span>
 </div>
-<div class="optional-body" id = "opt-body-3" style="display: none;">
+<div class="optional-body" id = "opt-body-82" style="display: none;">
 
 
 
@@ -736,9 +738,9 @@ Figure 3: Multilevel model with group i highlighted
 </div>
 </div>
 <div class="optional-begin">
-<span id="opt-start-4" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-4&#39;, &#39;opt-start-4&#39;)"> Examining Residuals (Level 1)</span>
+<span id="opt-start-83" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-83&#39;, &#39;opt-start-83&#39;)"> Examining Residuals (Level 1)</span>
 </div>
-<div id="opt-body-4" class="optional-body" style="display: none;">
+<div id="opt-body-83" class="optional-body" style="display: none;">
 <pre class="r"><code>toys_read &lt;- read_csv(&quot;https://uoepsy.github.io/data/toyexample.csv&quot;)
 rs_model &lt;- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toys_read)</code></pre>
 <p>We can get the level 1 (observation-level) residuals the same way we used to do for <code>lm()</code> - by just using <code>resid()</code> or <code>residuals()</code>. Additionally, there are a few useful techniques for plotting these which we have listed below:</p>
@@ -762,9 +764,9 @@ rs_model &lt;- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toy
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-5" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-5&#39;, &#39;opt-start-5&#39;)"> Examining Residuals (Level 2+)</span>
+<span id="opt-start-84" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-84&#39;, &#39;opt-start-84&#39;)"> Examining Residuals (Level 2+)</span>
 </div>
-<div id="opt-body-5" class="optional-body" style="display: none;">
+<div id="opt-body-84" class="optional-body" style="display: none;">
 <pre class="r"><code>toys_read &lt;- read_csv(&quot;https://uoepsy.github.io/data/toyexample.csv&quot;)
 rs_model &lt;- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toys_read)</code></pre>
 <p>To get out the level 2 residuals (the random effects) we need to do a bit of indexing. <code>ranef(rs_model)</code> will give us a list with an item for each grouping. In each item we have a set of columns, one for each thing which is varying by that grouping.</p>
@@ -815,9 +817,9 @@ Figure 4: Influence in MLM
 </div>
 </div>
 <div class="optional-begin">
-<span id="opt-start-6" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-6&#39;, &#39;opt-start-6&#39;)"> Examining Influence (Level 1)</span>
+<span id="opt-start-85" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-85&#39;, &#39;opt-start-85&#39;)"> Examining Influence (Level 1)</span>
 </div>
-<div id="opt-body-6" class="optional-body" style="display: none;">
+<div id="opt-body-85" class="optional-body" style="display: none;">
 <p>Which toy in the dataset has the greatest influence on our model?</p>
 <p><strong>Hint:</strong> as well as <code>hlm_influence()</code> in the <strong>HLMdiag</strong> package there is another nice function, <code>hlm_augment()</code></p>
 <div class="imp">
@@ -874,9 +876,9 @@ dotplot_diag(l1_inf$cooksd, cutoff=&quot;internal&quot;)+
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-7" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-7&#39;, &#39;opt-start-7&#39;)"> Examining Influence (Level 2+)</span>
+<span id="opt-start-86" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-86&#39;, &#39;opt-start-86&#39;)"> Examining Influence (Level 2+)</span>
 </div>
-<div id="opt-body-7" class="optional-body" style="display: none;">
+<div id="opt-body-86" class="optional-body" style="display: none;">
 <p>Which <em>type</em> of toy has the greatest influence on our model?</p>
 <p>Either this way:</p>
 <pre class="r"><code>hlm_augment(rs_model, level=&quot;toy_type&quot;) %&gt;% arrange(desc(cooksd))</code></pre>
@@ -1057,10 +1059,7 @@ Question A1
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<span id="sol-start-8" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-8&#39;, &#39;sol-start-8&#39;)"> Solution </span>
-</div>
-<div id="sol-body-8" class="solution-body" style="display: none;">
+<div style="display:none;">
 <pre class="r"><code>ggplot(tx, aes(session, Score, color=group)) +
   stat_summary(fun.data = mean_se, geom=&quot;pointrange&quot;) +
   stat_smooth() +
@@ -1116,10 +1115,7 @@ Does it converge? Is it singular?</p>
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<span id="sol-start-9" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-9&#39;, &#39;sol-start-9&#39;)"> Solution </span>
-</div>
-<div id="sol-body-9" class="solution-body" style="display: none;">
+<div style="display:none;">
 <pre class="r"><code>library(lme4)
 
 # start with maximal model
@@ -1142,17 +1138,14 @@ Question A3
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<span id="sol-start-10" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-10&#39;, &#39;sol-start-10&#39;)"> Solution </span>
-</div>
-<div id="sol-body-10" class="solution-body" style="display: none;">
+<div style="display:none;">
 <pre class="r"><code>VarCorr(m1)</code></pre>
 <pre><code>##  Groups    Name                 Std.Dev.  Corr                
 ##  PID       (Intercept)          0.1180167                     
 ##            session              0.0315636 -0.603              
-##  therapist (Intercept)          0.0063407                     
-##            session              0.0038116 -1.000              
-##            groupcontrol         0.0175919 -1.000  1.000       
+##  therapist (Intercept)          0.0063406                     
+##            session              0.0038115 -1.000              
+##            groupcontrol         0.0175915 -1.000  1.000       
 ##            session:groupcontrol 0.0034114  1.000 -1.000 -1.000
 ##  Residual                       0.0732696</code></pre>
 <p>There’s a correlation of exactly -1 between the random intercepts and slopes for therapists, and the standard deviation estimate for <code>session|therapist</code> is pretty small. Let’s remove it.</p>
@@ -1237,10 +1230,10 @@ cbind(
   summary(m3)$coefficients[,2]
 )</code></pre>
 <pre><code>##                             [,1]        [,2]        [,3]        [,4]
-## (Intercept)          0.016179965 0.015956448 0.015959300 0.015959303
-## session              0.004458350 0.004130320 0.004130320 0.004130320
-## groupcontrol         0.024267573 0.023082376 0.022999799 0.022999803
-## session:groupcontrol 0.006129894 0.005952425 0.005952425 0.005952425</code></pre>
+## (Intercept)          0.016179962 0.015956448 0.015959300 0.015959303
+## session              0.004458345 0.004130320 0.004130320 0.004130320
+## groupcontrol         0.024267514 0.023082376 0.022999799 0.022999803
+## session:groupcontrol 0.006129886 0.005952425 0.005952425 0.005952425</code></pre>
 </div>
 <p class="solution-end">
 </p>
@@ -1422,10 +1415,7 @@ Question B1
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<span id="sol-start-11" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-11&#39;, &#39;sol-start-11&#39;)"> Solution </span>
-</div>
-<div id="sol-body-11" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p>You can make use of <code>stat_summary()</code> again!</p>
 <pre class="r"><code>ggplot(tel, aes(Delay, Rtime, col=Group)) + 
   stat_summary(fun.data=mean_se, geom=&quot;pointrange&quot;)+
@@ -1461,10 +1451,7 @@ Question B2
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<span id="sol-start-12" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-12&#39;, &#39;sol-start-12&#39;)"> Solution </span>
-</div>
-<div id="sol-body-12" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p>This one will probably take a little bit of time:</p>
 <pre class="r"><code>m &lt;- lmer(Rtime ~ Delay*Group +
              (1 + Delay | Subject_ID) +
@@ -1488,10 +1475,7 @@ What we’re aiming to do here is to follow <a href="https://doi.org/10.1016/j.j
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<span id="sol-start-13" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-13&#39;, &#39;sol-start-13&#39;)"> Solution </span>
-</div>
-<div id="sol-body-13" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p>There’s a correlation of .999 for some of the random effects by-item!</p>
 <pre class="r"><code>VarCorr(m)</code></pre>
 <pre><code>##  Groups     Name                     Std.Dev. Corr                
@@ -1581,10 +1565,7 @@ ef &lt;- as.data.frame(effect(&quot;Delay:Group&quot;, m2))</code></pre>
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<span id="sol-start-14" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-14&#39;, &#39;sol-start-14&#39;)"> Solution </span>
-</div>
-<div id="sol-body-14" class="solution-body" style="display: none;">
+<div style="display:none;">
 <pre class="r"><code>ggplot(ef, aes(Delay, fit, color=Group)) + 
   geom_pointrange(aes(ymax=upper, ymin=lower), position=position_dodge(width = 0.2))+
   theme_classic() # just for a change :)</code></pre>
@@ -1600,10 +1581,7 @@ Question B5
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<span id="sol-start-15" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-15&#39;, &#39;sol-start-15&#39;)"> Solution </span>
-</div>
-<div id="sol-body-15" class="solution-body" style="display: none;">
+<div style="display:none;">
 <pre class="r"><code>library(sjPlot)
 plot_model(m2, type=&quot;int&quot;)</code></pre>
 <p><img src="04_ranef_files/figure-html/unnamed-chunk-45-1.png" width="80%" style="display: block; margin: auto;" /></p>
@@ -1618,10 +1596,7 @@ Question B6
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<span id="sol-start-16" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-16&#39;, &#39;sol-start-16&#39;)"> Solution </span>
-</div>
-<div id="sol-body-16" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p>You’ll get the benefits of test-enhanced learning if you try yourself before looking at the solutions! If you don’t test yourself, you’re more likely to forget it in the long run.</p>
 </div>
 <p class="solution-end">
@@ -1682,10 +1657,7 @@ Examine the fit and consider your model assumptions, and assess what might be do
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<span id="sol-start-17" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-17&#39;, &#39;sol-start-17&#39;)"> Solution </span>
-</div>
-<div id="sol-body-17" class="solution-body" style="display: none;">
+<div style="display:none;">
 <pre class="r"><code>bnt &lt;- bnt %&gt;% mutate(across(c(mlhome, school_id, child_id), factor))
 bntm0 &lt;- lmer(BNT60 ~ schoolyear * mlhome + (1 | school_id/child_id), data = bnt)</code></pre>
 <p>Residuals don’t look zero mean:</p>
@@ -1727,9 +1699,9 @@ cbind(del94$fixef.original, del94$fixef.delete)</code></pre>
 ## mlhome1             0.138711 -0.3052998
 ## schoolyear:mlhome1 -2.603763 -2.3701181</code></pre>
 <div class="optional-begin">
-<span id="opt-start-18" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-18&#39;, &#39;opt-start-18&#39;)"> Optional: Case deletion influence on standard errors</span>
+<span id="opt-start-87" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-87&#39;, &#39;opt-start-87&#39;)"> Optional: Case deletion influence on standard errors</span>
 </div>
-<div id="opt-body-18" class="optional-body" style="display: none;">
+<div id="opt-body-87" class="optional-body" style="display: none;">
 <p>We can examine the influence that deleting a case has on the standard errors.
 The standard errors are the square-root of the diagonal of the model-implied variance-covariance matrix:</p>
 <pre class="r"><code>cbind( 
@@ -1758,10 +1730,7 @@ Question C2
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<span id="sol-start-19" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-19&#39;, &#39;sol-start-19&#39;)"> Solution </span>
-</div>
-<div class="solution-body" id = "sol-body-19" style="display: none;">
+<div style="display:none;">
 
 
 

@@ -356,7 +356,9 @@ div.tocify {
     <li>
       <a href="03_nonlin.html">3: Longitudinal (non-linear)</a>
     </li>
-    <li class="dropdown-header">4: Other Random Effect Structures</li>
+    <li>
+      <a href="04_ranef.html">4: Random Effect Structures</a>
+    </li>
     <li class="dropdown-header">5: Recap | Individual Differences</li>
     <li class="dropdown-header">Break Week</li>
   </ul>
@@ -405,10 +407,10 @@ div.tocify {
 </div>
 
 
+<pre class="r"><code>knitr::opts_chunk$set(echo = TRUE,eval=FALSE)</code></pre>
 <div id="setup" class="section level1">
 <h1>Setup</h1>
 <p>Suppose we conduct an experiment in which there are two conditions (1 and 2) and there are two groups of people (A and B).</p>
-<p><img src="simplemain_files/figure-html/unnamed-chunk-2-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <p>We want to examine whether there are differences between conditions in our outcome variable, Y, whether there are group differences in our outcome, and whether the difference in conditions is different between our two groups A and B.<br />
 This leads us to fit the following model:<br />
 <span class="math display">\[
@@ -418,40 +420,26 @@ What we are going to discuss here is how we can change what our estimated coeffi
 <div class="statbox">
 <p><strong>No matter how we encode these categorical predictors, the model stays the same. We are simply extracting different estimates from it</strong></p>
 </div>
-<p>Our model fitted values are plotted below:<br />
-<img src="simplemain_files/figure-html/unnamed-chunk-3-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p>Our model fitted values are plotted below:</p>
 <div class="statbox">
 <p><strong>“contrasts”</strong></p>
 <p>One last thing that we need to be aware of is that categorical variables, in R, have a feature called “contrasts,” which designates how they get encoded into a model.</p>
 <p>We can see the contrasts quickly like so:</p>
 <pre class="r"><code>contrasts(df$condition)</code></pre>
-<pre><code>##            condition2
-## condition1          0
-## condition2          1</code></pre>
 <p>The columns will correspond to the predictors that will be inputted into our model, and the rows show what each level will correspond to (in this case, a 0 or a 1).</p>
 <p><strong>Important:</strong> Your variable <em>must</em> be a factor in order for <code>contrasts()</code> to show you anything.</p>
 <pre class="r"><code>catvar &lt;- c(&quot;cat&quot;,&quot;cat&quot;,&quot;dog&quot;,&quot;cat&quot;,&quot;dog&quot;,&quot;cat&quot;)
+contrasts(catvar)
+catvar &lt;- factor(catvar)
 contrasts(catvar)</code></pre>
-<pre><code>## Error in contrasts(catvar): contrasts apply only to factors</code></pre>
-<pre class="r"><code>catvar &lt;- factor(catvar)
-contrasts(catvar)</code></pre>
-<pre><code>##     dog
-## cat   0
-## dog   1</code></pre>
 </div>
 </div>
 <div id="treatment-contrasts-the-default" class="section level1">
 <h1>“Treatment” Contrasts (the default)</h1>
 <p>R’s default way of treating factors is to have contrasts where one level is the reference level, and we model each other level compared to this reference level.</p>
 <p>We can see this by looking at the contrasts:</p>
-<pre class="r"><code>contrasts(df$group)</code></pre>
-<pre><code>##        GroupB
-## GroupA      0
-## GroupB      1</code></pre>
-<pre class="r"><code>contrasts(df$condition)</code></pre>
-<pre><code>##            condition2
-## condition1          0
-## condition2          1</code></pre>
+<pre class="r"><code>contrasts(df$group)
+contrasts(df$condition)</code></pre>
 <p>In our case, think about what moving from 0 to 1 represents. We are essentially fitting the model:
 When we have our model, to work out what each coefficient represents, we need to think about:</p>
 <ol style="list-style-type: lower-alpha">
@@ -465,11 +453,6 @@ When we have our model, to work out what each coefficient represents, we need to
 <pre class="r"><code>as.data.frame(effects::effect(&quot;condition*group&quot;,model)) %&gt;%
   ggplot(.,aes(x=condition, y=fit, ymin=lower,ymax=upper, col=group))+
   geom_pointrange(size=1.3, alpha=.5) +
-  labs(title=&quot;The model&quot;, subtitle=&quot;lm(y ~ condition * group)&quot;)+ylim(-5,25)</code></pre>
-<p><img src="simplemain_files/figure-html/unnamed-chunk-8-1.png" width="80%" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>as.data.frame(effects::effect(&quot;condition*group&quot;,model)) %&gt;%
-  ggplot(.,aes(x=condition, y=fit, ymin=lower,ymax=upper, col=group))+
-  geom_pointrange(size=1.3, alpha=.5) +
   labs(title=&quot;The model&quot;, subtitle=&quot;lm(y ~ condition * group)&quot;)+ylim(-5,25)+
   geom_point(inherit.aes=FALSE, aes(x=1,y=coef(model)[1]),size=3)+
   geom_segment(inherit.aes=FALSE, aes(x=1,xend=2,y=coef(model)[1],yend=sum(coef(model)[1:2])))+
@@ -478,7 +461,31 @@ When we have our model, to work out what each coefficient represents, we need to
   geom_segment(inherit.aes=FALSE, aes(x=1.02,xend=1.02,y=coef(model)[1],yend=sum(coef(model)[c(1,3)])),lty=&quot;dotted&quot;)+
   geom_segment(inherit.aes=FALSE, aes(x=1,xend=2,y=sum(coef(model)[c(1,3)]),yend=sum(coef(model)[c(1:3)])),lty=&quot;dotted&quot;)+
   geom_segment(inherit.aes=FALSE, aes(x=2,xend=2,y=sum(coef(model)[1:3]),yend=sum(coef(model)[c(1:4)])))</code></pre>
-<p><img src="simplemain_files/figure-html/unnamed-chunk-9-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#balanced
+model1 &lt;- lm(formula = y ~ condition * group, data = df)
+model2 &lt;- lm(formula = y ~ condition * group, data = df,
+             contrasts=list(group=&quot;contr.sum&quot;,condition=&quot;contr.sum&quot;))
+
+car::Anova(model2, type=&quot;III&quot;)
+anova(model2)
+coef(summary(model2))[,3]^2
+
+car::Anova(model1, type=&quot;III&quot;)
+anova(model1)
+coef(summary(model1))[,3]^2
+
+# unbalanced
+model1 &lt;- lm(formula = y ~ condition * group, data = df2)
+model2 &lt;- lm(formula = y ~ condition * group, data = df2,
+             contrasts=list(group=&quot;contr.sum&quot;,condition=&quot;contr.sum&quot;))
+
+car::Anova(model2, type=&quot;III&quot;)
+anova(model2)
+coef(summary(model2))[,3]^2
+
+car::Anova(model1, type=&quot;III&quot;)[,&quot;F value&quot;]
+anova(model1)[,&quot;F value&quot;]
+coef(summary(model1))[,3]^2</code></pre>
 </div>
 
 <link rel="stylesheet" href="https://uoepsy.github.io/assets/css/ccfooter.css" />
