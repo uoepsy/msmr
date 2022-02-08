@@ -460,11 +460,12 @@ The following code will load in your R session an object already called `tx` wit
 load(url("https://uoepsy.github.io/msmr/data/tx.Rdata"))
 ```
 
-You can see the head of the data below: 
+You can find a data dictionary below:
 ```{r, echo=FALSE}
-head(tx) %>%
-  kable(digits = 2, align = 'c') %>%
-  kable_styling(full_width = FALSE)
+tibble(
+  variable = names(tx),
+  description = c("Whether the participant is in the Treatment or Control group","Session number (1-7)","Therapist Identifier (A, B, C, D or E", "Score on test (Mean = 0.63, SD = 0.15)","Participant Identifier. Labels take the form <Therapist>_<Group>_<Participant number>. For instance, if Therapist A's 6th Participant is in the Treatment group, then their label is A_treatment_6")
+) %>% knitr::kable()
 ```
 
 :::
@@ -614,25 +615,12 @@ The following code loads the data into your R environment by creating a variable
 ```{r eval=F}
 load(url("https://uoepsy.github.io/data/testenhancedlearning.RData"))
 ```
-```{r include=F} 
-# load(url("https://uoepsy.github.io/msmr/data/TestEnhancedLearning.RData"))
-# tel$Rtime <- 750-((predict(m3) + rnorm(nrow(tel),0,10))*30)
-# hist(tel$Rtime)
-# tel %>% mutate(
-# Rtime = ifelse(Group=="StudyStudy", Rtime+25,Rtime)
-# ) -> tel
-# save(tel,file="../../data/testenhancedlearning.RData")
-load("../../data/testenhancedlearning.RData")
-```
-
-
-
-
-The head of the dataset can be seen below:
-```{r echo=FALSE}
-head(tel) %>%
-  kable(digits = 2, align = 'c') %>%
-  kable_styling(full_width = FALSE)
+```{r echo=FALSE} 
+load(url("https://uoepsy.github.io/data/testenhancedlearning.RData"))
+tibble(
+  variable=names(tel),
+  description=c("Unique Participant Identifier", "Group denoting whether the participant studied the material twice (StudyStudy), or studied it once then did a test (StudyTest)","Time of recall test ('min' = Immediate, 'week' = One week later)","Word being recalled (175 different test words)","Whether or not the word was correctly recalled","Time to recall word (milliseconds)")
+) %>% knitr::kable()
 ```
 
 :::

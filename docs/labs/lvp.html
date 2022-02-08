@@ -417,10 +417,10 @@ div.tocify {
 <p>Let’s consider a coin toss. For a fair coin, the chance of getting a heads/tails for any given toss is 0.5.<br />
 We can simulate the number of “heads” in a single fair coin toss with the following code (because it is a single toss, it’s just going to return 0 or 1):</p>
 <pre class="r"><code>rbinom(n = 1, size = 1, prob = 0.5)</code></pre>
-<pre><code>## [1] 1</code></pre>
+<pre><code>## [1] 0</code></pre>
 <p>We can simulate the number of “heads” in 8 fair coin tosses with the following code:</p>
 <pre class="r"><code>rbinom(n = 1, size = 8, prob = 0.5)</code></pre>
-<pre><code>## [1] 4</code></pre>
+<pre><code>## [1] 5</code></pre>
 <p>As the coin is fair, what number of heads would we expect to see out of 8 coin tosses? Answer: 4!
 Doing another 8 tosses:</p>
 <pre class="r"><code>rbinom(n = 1, size = 8, prob = 0.5)</code></pre>
@@ -432,7 +432,7 @@ Doing another 8 tosses:</p>
 <pre class="r"><code>table(rbinom(n = 1000, size = 8, prob = 0.5))</code></pre>
 <pre><code>## 
 ##   0   1   2   3   4   5   6   7   8 
-##   5  24 119 197 280 238 107  28   2</code></pre>
+##   7  32 105 225 258 221 115  35   2</code></pre>
 </div>
 <div id="probability" class="section level2">
 <h2>Probability</h2>
@@ -456,36 +456,33 @@ tosses</th>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">TTTHTHTT</td>
-</tr>
-<tr class="even">
-<td align="center">TTTHTTTH</td>
-</tr>
-<tr class="odd">
-<td align="center">TTTHTTHT</td>
-</tr>
-<tr class="even">
-<td align="center">HTTTTTTH</td>
-</tr>
-<tr class="odd">
-<td align="center">HTTTTHTT</td>
-</tr>
-<tr class="even">
-<td align="center">THTTTTHT</td>
-</tr>
-<tr class="odd">
-<td align="center">TTTTHTHT</td>
+<td align="center">TTTHHTTT</td>
 </tr>
 <tr class="even">
 <td align="center">THTTTTTH</td>
 </tr>
 <tr class="odd">
-<td align="center">TTHTHTTT</td>
+<td align="center">TTTHTTHT</td>
 </tr>
 <tr class="even">
-<td align="center">TTHTTTHT</td>
+<td align="center">THTHTTTT</td>
 </tr>
 <tr class="odd">
+<td align="center">HTHTTTTT</td>
+</tr>
+<tr class="even">
+<td align="center">HTTTTTHT</td>
+</tr>
+<tr class="odd">
+<td align="center">HTTTTTTH</td>
+</tr>
+<tr class="even">
+<td align="center">TTTTHTHT</td>
+</tr>
+<tr class="odd">
+<td align="center">THHTTTTT</td>
+</tr>
+<tr class="even">
 <td align="center">…</td>
 </tr>
 </tbody>
