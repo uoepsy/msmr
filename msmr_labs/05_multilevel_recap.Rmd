@@ -4,7 +4,7 @@ bibliography: references.bib
 biblio-style: apalike
 link-citations: yes
 params: 
-    SHOW_SOLS: TRUE
+    SHOW_SOLS: FALSE
     TOGGLE: TRUE
 ---
 
@@ -18,7 +18,6 @@ library(kableExtra)
 library(broom.mixed)
 library(sjPlot)
 library(lme4)
-library(lmerTest)
 ```
 
 # Flashcards: `lm` to `lmer`
@@ -161,6 +160,110 @@ plot_ri_fac + plot_rs_fac
 `r optend()`
 
 
+
+`r optbegin("Fixed effects", olabel=FALSE, toggle=params$TOGGLE)`
+We can extract the *fixed effects* using the `fixef()` function:
+
+These are the overall intercept and slope. 
+```{r}
+fixef(random_slopes_model)
+```
+`r optend()` 
+
+`r optbegin("Random effects", olabel=FALSE, toggle=params$TOGGLE)`  
+The plots below show the fitted values for each subject from each model that we have gone through in these expandable boxes (simple linear regression, random intercept, and random intercept & slope): 
+
+```{r echo=FALSE, fig.width=12}
+plotdata2<-
+  ggplot(dat, aes(x=x1,y=outcome, col=subject))+
+  geom_point(alpha=0.5)+geom_path(alpha=0.5)+
+  theme_classic()+
+  theme(plot.title = element_text(hjust = 0.5), legend.position = "none")+
+  scale_y_continuous(breaks=NULL)+scale_x_continuous(breaks=NULL)+
+  labs(title="- The data (by subject) - ", y="y", x="x")+
+  NULL
+
+#(plot_data + plotdata2 ) / (plot_lm2 + plot_ri + plot_rs)
+plot_lm2 + plot_ri + plot_rs
+```
+
+In the random-intercept model (center panel), the differences from each of the subjects' intercepts to the fixed intercept (thick green line) have mean 0 and standard deviation $\sigma_0$.  The standard deviation (and variance, which is $\sigma_0^2$) is what we see in the random effects part of our model summary (or using the `VarCorr()` function).  
+
+```{r echo=FALSE, out.width="400px"}
+knitr::include_graphics("images/varcors.PNG")
+```
+
+In the random-slope model (right panel), the same is true for the differences from each subjects' slope to the fixed slope. 
+We can extract the deviations for each group from the fixed effect estimates using the `ranef()` function.  
+  
+These are the deviations from the overall intercept ($\widehat \gamma_{00} = `r b1[1]`$) and slope ($\widehat \gamma_{10} = `r b1[2]`$) for each subject $i$.  
+```{r}
+ranef(random_slopes_model)
+```
+`r optend()` 
+
+`r optbegin("Group-level coefficients", olabel=FALSE, toggle=params$TOGGLE)`
+We can also see the actual intercept and slope for each subject $i$ directly, using the `coef()` function.  
+
+```{r}
+coef(random_slopes_model)
+```
+
+Notice that the above are the fixed effects + random effects estimates, i.e. the overall intercept and slope + deviations for each subject.
+
+```{r}
+coef(random_intercept_model)
+```
+`r optend()` 
+
+`r optbegin("Visualising Model Fitted values",olabel=FALSE,toggle=params$TOGGLE)`
+TODO
+`r optend()`
+
+`r optbegin("Visualising Fixed Effects",olabel=FALSE,toggle=params$TOGGLE)`
+TODO
+`r optend()`
+
+
+`r optbegin("Plotting random effects", olabel=FALSE, toggle=params$TOGGLE)`
+The quick and easy way to plot your random effects is to use the `dotplot.ranef.mer()` function in `lme4`. 
+
+```{r}
+randoms <- ranef(random_slopes_model, condVar=TRUE)
+dotplot.ranef.mer(randoms)
+```
+
+`r optbegin("Completely optional - extracting them for plotting in ggplot", olabel=FALSE, toggle=params$TOGGLE)`
+Sometimes, however, we might want to have a bit more control over our plotting, we can extract the estimates and correlations for each subject:  
+```{r}
+#we can get the random effects:
+#(note that we use $subject because there might be other groupings, and the ranef() function will give us a list, with one element for each grouping variable)
+randoms <-
+  ranef(random_slopes_model)$subject %>%
+  mutate(subject = row.names(.)) %>%  # the subject IDs are stored in the rownames, so lets add them as a variable
+  pivot_longer(cols=1:2, names_to="term",values_to="estimate") # finally, let's reshape it for plotting
+
+#and the same for the standard errors (from the arm package):
+randoms_se <-
+  arm::se.ranef(random_slopes_model)$subject %>%
+  as.data.frame() %>%
+  mutate(subject = row.names(.)) %>%
+  pivot_longer(cols=1:2, names_to="term",values_to="se")
+
+# join them together:
+ranefs_plotting <- left_join(randoms, randoms_se)
+
+# it's easier for plotting if we
+ggplot(ranefs_plotting, aes(y=subject, x=estimate))+
+  geom_errorbarh(aes(xmin=estimate-2*se, xmax=estimate+2*se))+
+  facet_wrap(~term, scales="free_x")
+
+```
+
+`r optend()`
+
+`r optend()` 
+
 `r optbegin("Polynomials!", olabel=FALSE, toggle=params$TOGGLE)`
 
 Sometimes, data have a clear non-linear pattern, such as a curvilinear trend. In such case, it is reasonable to try modelling the outcome _not_ as a linear function of the variable, but as a curvilinear function of it.
@@ -220,108 +323,13 @@ source("https://uoepsy.github.io/msmr/functions/code_poly.R")
 code_poly(df, predictor = 'time', poly.order = 3, draw.poly = FALSE)
 ```
 
-and use those terms when specifying your linear model, for example:
+and use those terms when specifying your linear model. We can, depending on how time is measured (e.g. if we have subjects over time) also include some (or all) of these terms as random effects, for example:
 
 ```
-lmer(reaction ~ poly1 + poly2 + poly3 + (1 | subject))
-```
-
-
-`r optend()`
-
-`r optbegin("Fixed effects", olabel=FALSE, toggle=params$TOGGLE)`
-We can extract the *fixed effects* using the `fixef()` function:
-
-These are the overall intercept and slope. 
-```{r}
-fixef(random_slopes_model)
-```
-`r optend()` 
-
-`r optbegin("Random effects", olabel=FALSE, toggle=params$TOGGLE)`  
-The plots below show the fitted values for each subject from each model that we have gone through in these expandable boxes (simple linear regression, random intercept, and random intercept & slope): 
-
-```{r echo=FALSE, fig.width=12}
-plotdata2<-
-  ggplot(dat, aes(x=x1,y=outcome, col=subject))+
-  geom_point(alpha=0.5)+geom_path(alpha=0.5)+
-  theme_classic()+
-  theme(plot.title = element_text(hjust = 0.5), legend.position = "none")+
-  scale_y_continuous(breaks=NULL)+scale_x_continuous(breaks=NULL)+
-  labs(title="- The data (by subject) - ", y="y", x="x")+
-  NULL
-
-#(plot_data + plotdata2 ) / (plot_lm2 + plot_ri + plot_rs)
-plot_lm2 + plot_ri + plot_rs
-```
-
-In the random-intercept model (center panel), the differences from each of the subjects' intercepts to the fixed intercept (thick green line) have mean 0 and standard deviation $\sigma_0$.  The standard deviation (and variance, which is $\sigma_0^2$) is what we see in the random effects part of our model summary (or using the `VarCorr()` function).  
-
-```{r echo=FALSE, out.width="400px"}
-knitr::include_graphics("images/varcors.PNG")
-```
-
-In the random-slope model (right panel), the same is true for the differences from each subjects' slope to the fixed slope. 
-We can extract the deviations for each group from the fixed effect estimates using the `ranef()` function.  
-  
-These are the deviations from the overall intercept ($\widehat \gamma_{00} = `r b1[1]`$) and slope ($\widehat \gamma_{10} = `r b1[2]`$) for each subject $i$.  
-```{r}
-ranef(random_slopes_model)
-```
-`r optend()` 
-
-`r optbegin("Group-level coefficients", olabel=FALSE, toggle=params$TOGGLE)`
-We can also see the actual intercept and slope for each subject $i$ directly, using the `coef()` function.  
-
-```{r}
-coef(random_slopes_model)
-```
-
-Notice that the above are the fixed effects + random effects estimates, i.e. the overall intercept and slope + deviations for each subject.
-
-```{r}
-coef(random_intercept_model)
-```
-`r optend()` 
-
-`r optbegin("Plotting random effects", olabel=FALSE, toggle=params$TOGGLE)`
-The quick and easy way to plot your random effects is to use the `dotplot.ranef.mer()` function in `lme4`. 
-
-```{r}
-randoms <- ranef(random_slopes_model, condVar=TRUE)
-dotplot.ranef.mer(randoms)
-```
-
-`r optbegin("Completely optional - extracting them for plotting in ggplot", olabel=FALSE, toggle=params$TOGGLE)`
-Sometimes, however, we might want to have a bit more control over our plotting, we can extract the estimates and correlations for each subject:  
-```{r}
-#we can get the random effects:
-#(note that we use $subject because there might be other groupings, and the ranef() function will give us a list, with one element for each grouping variable)
-randoms <-
-  ranef(random_slopes_model)$subject %>%
-  mutate(subject = row.names(.)) %>%  # the subject IDs are stored in the rownames, so lets add them as a variable
-  pivot_longer(cols=1:2, names_to="term",values_to="estimate") # finally, let's reshape it for plotting
-
-#and the same for the standard errors (from the arm package):
-randoms_se <-
-  arm::se.ranef(random_slopes_model)$subject %>%
-  as.data.frame() %>%
-  mutate(subject = row.names(.)) %>%
-  pivot_longer(cols=1:2, names_to="term",values_to="se")
-
-# join them together:
-ranefs_plotting <- left_join(randoms, randoms_se)
-
-# it's easier for plotting if we
-ggplot(ranefs_plotting, aes(y=subject, x=estimate))+
-  geom_errorbarh(aes(xmin=estimate-2*se, xmax=estimate+2*se))+
-  facet_wrap(~term, scales="free_x")
-
+lmer(reaction ~ poly1 + poly2 + poly3 + (1 + poly1 | subject))
 ```
 
 `r optend()`
-
-`r optend()` 
 
 `r optbegin("Nested and Crossed structures",olabel=FALSE,toggle=params$TOGGLE)`
 
@@ -382,6 +390,9 @@ knitr::include_graphics("images/structure_nested.png")
 
 `r optend()`
 
+`r optbegin("Inference for multilevel models",olabel=FALSE,toggle=params$TOGGLE)`
+TODO
+`r optend()`
 
 
 
@@ -567,8 +578,7 @@ ggplot(ef, aes(Wave, fit, color=Group, fill=Group)) +
 `r solend()` 
 
 `r qbegin("B8")`
-What important things are different between the plot from question B7 and that from question B5?  
-You can see the plots we created for these questions below:  
+What important things are different between the plot from question B7 and that from question B5? (You can see the plots we created for these questions below). 
 
 ```{r echo=FALSE}
 library(patchwork)
@@ -582,6 +592,20 @@ ggplot(ef, aes(Wave, fit, color=Group, fill=Group)) +
   geom_line() +
   labs(title="model prediction")
 ```
+
+Why do you think these two plots differ? 
+`r optbegin("Hint",olabel=F,toggle=params$TOGGLE)`
+The reason is visible here:
+```{r echo=FALSE}
+broom.mixed::augment(mod_wv_x_grp) %>%
+  ggplot(., aes(Wave, Score, color=Group)) +
+  facet_wrap(~ Anonymous_Subject_ID) +
+  stat_summary(fun.data=mean_se, geom="pointrange") +
+  stat_summary(aes(y=.fitted), fun.y=mean, geom="line")+
+         theme(strip.text.x = element_text(size=8, margin = margin(0,0,0,0, "cm")))
+```
+ 
+`r optend()`
 
 
 `r qend()` 
@@ -622,7 +646,7 @@ Try removing the correlation (hint: use the `||`) to see what happens. Does it m
 <!-- Formatting -->
 
 
-# Urban effects on Aggression in Adolescence  
+# Less Guided Exercise
 
 :::frame  
 
@@ -630,22 +654,19 @@ Instead of step-by-step questions, this exercise is designed to get you thinking
 
 :::
 `r qbegin()`
-> How does aggressive behaviour change over adolescence? How is this change dependent upon the number of home_loc a child has?  
+> How does aggressive behaviour change over adolescence? How is this change dependent upon whether or not a child has siblings?  
 
 :::frame
 __Data: Aggressive Behaviour in Adolescence__
 
-Data was collected from 30 secondary schools across Scotland. A cohort of students were followed up every year from the age of 12 to 19. Each year, they completed the Aggressive Behaviour Scale (ABS). Data was also captured on the number of home_loc each child had.  
+Data was collected from 30 secondary schools across Scotland. A cohort of students were followed up every year from the age of 12 to 19. Each year, they completed the Aggressive Behaviour Scale (ABS). Data was also captured on the number of siblings each child had.  
 The data can be accessed from [https://uoepsy.github.io/data/schoolsabs.csv](https://uoepsy.github.io/data/schoolsabs.csv) . A description of the variables can be found in the table below.  
 
-```{r}
-absdat <- read_csv("../../data/schoolsabs.csv")
-```
-
 ```{r echo=FALSE}
+absdat <- read_csv("../../data/schoolsabs.csv")
 tibble(
   variable = names(absdat),
-  description = c("School Identifier","Score on the Aggressive Behaviour Scale (Z-scored)","Age (in years) of child at observation","Within-School Child Identifier","Number of home_loc (0, 1, 2, >2)")
+  description = c("School Identifier","Score on the Aggressive Behaviour Scale (Z-scored)","Age (in years) of child at observation","Within-School Child Identifier","Sibling status (No/Yes)")
 ) %>% knitr::kable()
 ```
 :::
@@ -677,33 +698,70 @@ absdat %>% count(schoolid,childid) %>% select(n) %>% table
 We can see that for some children we have fewer than the 7 observations: some have 6, 5, 4, or 3.
 
 There are lots of different ways we can cut up the data
-```{r eval=F}
-ggplot(absdat, aes(x = year, y = ABS,col=home_loc)) +
-  stat_summary(geom="pointrange",aes(group=home_loc),alpha=.5)+
-  stat_summary(geom="line",aes(group=home_loc),alpha=.5)+
-  labs(title="Average ABS scores over age by number of home_loc", x = "Age", y = "Aggressive Behaviour Score")
+```{r}
+ggplot(absdat, aes(x = year, y = ABS,col=siblings)) +
+  stat_summary(geom="pointrange",aes(group=siblings),alpha=.5)+
+  stat_summary(geom="line",aes(group=siblings),alpha=.5)+
+  labs(title="Average ABS scores over age by number of siblings", x = "Age", y = "Aggressive Behaviour Score")
 
-ggplot(absdat, aes(x = year, y = ABS,col=home_loc)) +
+ggplot(absdat, aes(x = year, y = ABS,col=siblings)) +
   stat_summary(geom="pointrange",aes(group=schoolid),alpha=.2)+
   stat_summary(geom="line",aes(group=schoolid),alpha=.2)+
   labs(title="School level mean ABS scores", x = "Age", y = "Aggressive Behaviour Score")
 
-ggplot(absdat, aes(x = year, y = ABS,col=home_loc)) +
+ggplot(absdat, aes(x = year, y = ABS,col=siblings)) +
   stat_summary(geom="line",aes(group=interaction(schoolid,childid)),alpha=.2)+
-  facet_wrap(~home_loc, labeller = label_both) +
+  facet_wrap(~siblings, labeller = label_both) +
   labs(title="Children's trajectories of ABS scores",x = "Age", y = "Aggressive Behaviour Score")
 ```
 
 Now let's think a bit about the various considerations that go into fitting a multi-level model.  
 
-- We can group our data by number of home_loc (0,1,2,3+), by school, and by child.  
-- We're specifically interested in differences between the levels of the `home_loc` variable, so that is going to be in our fixed effects. 
+- We can group our data by whether or not they have siblings, by school, and by child.  
+- We're specifically interested in differences between the levels of the `siblings` variable, so that is going to be in our fixed effects. 
 - We're not interested in drawing inferences about specific schools or specific children. The schools and children in our dataset in this case are just a random sample of the wider population of schools and children. They will account for some variability in the outcome (e.g. some children are more aggressive than others, maybe some schools tend to have more aggressive children in them than others). So our model wants to account for this, but we don't want to specifically estimate differences. These will be our random effects. 
 - Schools and children is one of the most obvious cases of _nested_ random effects. Each child belongs to one, and only one school. This means we are going to want to model the structure `(1 | School / Child)`. 
 - The `childid` variable does __not__ uniquely identify a single child. It just says "1","2", etc. But child 1 from school 1 is a different child from child 1 in school 2. We need to remember this, and if we want to separate out our random effects of school and child, then we'll need `(1 | School) + (1 | Child:School)`.  
   Alternatively, we could make a new child identifier variable that _does_ uniquely identify each child. 
-- Along with being interested in number of home_loc, we're also interested in change over time. From our initial plotting, we see there is some curvature present, and this is most apparent in the 3+ home_loc group. Are we interested in differences between sibling groups at the first timepoint (age 12?). Possibly? This depends a lot on the research field.   
-- We know that effects of time can vary by child, and so also by school. Children don't change in how many home_loc they have (well, they might, not often), so we can't really think of "the effect on aggressive behaviours for child $i$, of having a different number of home_loc" because child $i$ always has the same number of home_loc.  However, within a school, different children have different numbers of home_loc, so it might be that this effect can vary by-school. 
+- Along with being interested in differences between having/not-having siblings, we're also interested in change over time. From our initial plotting, we see there is some curvature present, and this is most apparent in the group of children with siblings. Are we interested in differences between sibling groups at the first timepoint (age 12?). Possibly? This depends a lot on the research field.   
+- We know that effects of time can vary by child, and so also by school. Children don't change in whether or not they have siblings (well, they might, not often), so we can't really think of "the effect of having siblings on aggressive behaviours for child $i$" because child $i$ always has the same number of siblings.  However, within a school, some children have siblings, some don't, so it might be that this effect can vary by-school. 
+
+
+
+```{r}
+source("https://uoepsy.github.io/msmr/functions/code_poly.R")
+absdat <- code_poly(absdat, "year", poly.order = 2, orthogonal = T, draw.poly = F)
+
+basemod <- 
+  lmer(ABS ~ poly1 + poly2 + (1 + poly1 + poly2 | schoolid/childid), 
+     data = absdat,
+     control = lmerControl(optimizer = "bobyqa"))
+isSingular(basemod)
+basemod <- 
+  lmer(ABS ~ poly1 + poly2 + (1 + poly1 | schoolid) +
+         (1 + poly1 + poly2 | childid:schoolid), 
+     data = absdat,
+     control = lmerControl(optimizer = "bobyqa"))
+
+summary(basemod)
+broom.mixed::augment(basemod) %>%
+  ggplot(.,aes(x=poly1,y=.fitted))+
+  geom_line(aes(group=interaction(schoolid,childid)), alpha=.1)+
+  stat_summary(geom="pointrange")+stat_summary(geom="line")
+
+linmod <- 
+  lmer(ABS ~ siblings*poly1 + poly2 + (1 + poly1 | schoolid) +
+         (1 + poly1 + poly2 | childid:schoolid), 
+     data = absdat,
+     control = lmerControl(optimizer = "bobyqa"))
+quadmod <- 
+  lmer(ABS ~ siblings*(poly1 + poly2) + (1 + poly1 | schoolid) +
+         (1 + poly1 + poly2 | childid:schoolid), 
+     data = absdat,
+     control = lmerControl(optimizer = "bobyqa"))
+anova(basemod,linmod,quadmod)
+```
+
 
 
 

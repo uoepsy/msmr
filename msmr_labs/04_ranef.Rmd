@@ -504,7 +504,7 @@ Consider these questions when you're designing your model(s) and use your answer
 - What are the levels of nesting? How should that be reflected in the random effect structure?  
   - Each participant is associated with just one therapist. Participants are nested within therapists.  
 - What is the shape of change over time? Do you need polynomials to model this shape? If yes, what order polynomials? 
-  - Looks like linear change, don't need polynomials. Good to know that there is no difference at baseline, so no need for orthogonal time.  
+  - Looks like linear change, don't need polynomials. And it doesn't look like there are any baseline differences.    
   
 - We are wanting to examine how time (`session`) varies between treatment groups (`group`), so we want an interaction `session * group` in the model. Participants have multiple sessions, but belong to only one group. Therapists have multiple sessions _and_ participants in different groups. 
 - Do we want to allow the same effects to vary by participants and by therapists?  
@@ -630,7 +630,9 @@ tibble(
 Load and plot the data. Does it look like the effect was replicated?
 `r qend()` 
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-You can make use of `stat_summary()` again!
+We have a choice to make - whether we focus on recall time or on the correct responses. The choice is yours to make! 
+
+You can make use of `stat_summary()` again! 
 ```{r, eval=FALSE}
 ggplot(tel, aes(Delay, Rtime, col=Group)) + 
   stat_summary(fun.data=mean_se, geom="pointrange")+
@@ -649,8 +651,16 @@ tel %>%
   theme_light() +
   labs(y = "Response Time (ms)")
 ```
-  
 That looks like test-enhanced learning to me!  
+
+
+Let's also do it quickly for the proportion of correct responses:
+```{r, eval=FALSE}
+ggplot(tel, aes(Delay, Correct, col=Group)) + 
+  stat_summary(fun.data=mean_se, geom="pointrange")+
+  theme_light()
+```
+
 `r solend()` 
 
 
@@ -660,13 +670,20 @@ Test the critical hypothesis using a mixed-effects model. Fit the maximal random
 
 Some questions to consider:  
   
-+ Item accuracy is a binary variable. What kind of model will you use?  
++ There are two outcomes to consider here: recall time, and accuracy. Which will you use? (Feel free to fit models to both!)
++ Item accuracy is a binary variable. If you choose this as your outcome variable here, what kind of model will you use?  
 + We can expect variability across subjects (some people are better at learning than others) and across items (some of the recall items are harder than others). How should this be represented in the random effects?
 
 + If a model takes ages to fit, you might want to cancel it by pressing the escape key. It is normal for complex models to take time, but for the purposes of this task, give up after a couple of minutes, and try simplifying your model.  
 
 `r qend()` 
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+:::imp
+We're going to use recall time as our outcome here. For our purposes here, there is no specific reason to choose one over the other. If this were your own research project you would likely model both, because they will represent different aspects of the recall process.  
+
+__Remember__ - as research designs get more complex, there are an ever-increasing number of different viable and defensible approaches that we might take in analysing the data. The solutions provided here are not "_the_ answer", they are simple "_an_ answer". 
+:::
+
 This one will probably take a little bit of time:
 ```{r}
 m <- lmer(Rtime ~ Delay*Group +
@@ -720,9 +737,13 @@ summary(m2)
 
 `r qbegin("B4")`
 Load the **effects** package, and try running this code:
-```{r}
+```{r echo=F}
 library(effects)
 ef <- as.data.frame(effect("Delay:Group", m2))
+```
+```{r eval=F}
+library(effects)
+ef <- as.data.frame(effect("Delay:Group", model))
 ```
 
 What is `ef`? and how can you use it to plot the model-estimated condition means and variability?

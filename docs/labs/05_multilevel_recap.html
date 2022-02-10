@@ -514,50 +514,9 @@ Level 1:</p>
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-93" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-93&#39;, &#39;opt-start-93&#39;)"> Polynomials!</span>
+<span id="opt-start-93" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-93&#39;, &#39;opt-start-93&#39;)"> Fixed effects</span>
 </div>
 <div id="opt-body-93" class="optional-body" style="display: none;">
-<p>Sometimes, data have a clear non-linear pattern, such as a curvilinear trend. In such case, it is reasonable to try modelling the outcome <em>not</em> as a linear function of the variable, but as a curvilinear function of it.</p>
-<p>The following plots show data (as black dots) where the outcome <span class="math inline">\(y\)</span> has a nonlinear and decreasing dependence on <span class="math inline">\(x\)</span>. That is, as <span class="math inline">\(x\)</span> varies from 1 to 10, the outcome <span class="math inline">\(y\)</span> decreases in a non-linear fashion.
-Superimposed to the same data, you can see a linear fit (red line) and a cubic fit (blue).</p>
-<p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-7-1.png" width="80%" style="display: block; margin: auto;" /></p>
-<p>The residuals corresponding to each fit are:
-<img src="05_multilevel_recap_files/figure-html/unnamed-chunk-8-1.png" width="80%" style="display: block; margin: auto;" /></p>
-<p>Clearly, a linear fit doesn’t capture the real trend in the data, and any leftover systematic pattern that the model doesn’t explicity account for always ends up in the residuals as the red points show.</p>
-<p>On the other hand, once we account for the nonlinear trend, that systematic pattern in the residuals disappears.</p>
-<p>The secret is to use instead of <span class="math inline">\(x\)</span> as a predictor, the corresponding polynomial up to a specific order:</p>
-<p><span class="math display">\[
-y = \beta_0 + \beta_1 x + \beta_2 x^2 + \beta_3 x^3 + \epsilon
-\]</span></p>
-<p>Consider the following example data. You can add polynomials up to order 3, for example, of a predictor “time” by saying:</p>
-<pre><code>## # A tibble: 5 × 3
-##   subject reaction  time
-##     &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;
-## 1       1    0.428     1
-## 2       1    0.427     2
-## 3       1    0.211     3
-## 4       1    0.585     4
-## 5       1    0.127     5</code></pre>
-<pre class="r"><code>source(&quot;https://uoepsy.github.io/msmr/functions/code_poly.R&quot;)
-
-code_poly(df, predictor = &#39;time&#39;, poly.order = 3, draw.poly = FALSE)</code></pre>
-<pre><code>## # A tibble: 5 × 7
-##   subject reaction  time time.Index  poly1  poly2     poly3
-##     &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;      &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;
-## 1       1    0.428     1          1 -0.632  0.535 -3.16e- 1
-## 2       1    0.427     2          2 -0.316 -0.267  6.32e- 1
-## 3       1    0.211     3          3  0     -0.535 -4.10e-16
-## 4       1    0.585     4          4  0.316 -0.267 -6.32e- 1
-## 5       1    0.127     5          5  0.632  0.535  3.16e- 1</code></pre>
-<p>and use those terms when specifying your linear model, for example:</p>
-<pre><code>lmer(reaction ~ poly1 + poly2 + poly3 + (1 | subject))</code></pre>
-</div>
-<p class="optional-end">
-</p>
-<div class="optional-begin">
-<span id="opt-start-94" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-94&#39;, &#39;opt-start-94&#39;)"> Fixed effects</span>
-</div>
-<div id="opt-body-94" class="optional-body" style="display: none;">
 <p>We can extract the <em>fixed effects</em> using the <code>fixef()</code> function:</p>
 <p>These are the overall intercept and slope.</p>
 <pre class="r"><code>fixef(random_slopes_model)</code></pre>
@@ -567,11 +526,11 @@ code_poly(df, predictor = &#39;time&#39;, poly.order = 3, draw.poly = FALSE)</co
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-95" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-95&#39;, &#39;opt-start-95&#39;)"> Random effects</span>
+<span id="opt-start-94" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-94&#39;, &#39;opt-start-94&#39;)"> Random effects</span>
 </div>
-<div id="opt-body-95" class="optional-body" style="display: none;">
+<div id="opt-body-94" class="optional-body" style="display: none;">
 <p>The plots below show the fitted values for each subject from each model that we have gone through in these expandable boxes (simple linear regression, random intercept, and random intercept &amp; slope):</p>
-<p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-12-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-8-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <p>In the random-intercept model (center panel), the differences from each of the subjects’ intercepts to the fixed intercept (thick green line) have mean 0 and standard deviation <span class="math inline">\(\sigma_0\)</span>. The standard deviation (and variance, which is <span class="math inline">\(\sigma_0^2\)</span>) is what we see in the random effects part of our model summary (or using the <code>VarCorr()</code> function).</p>
 <p><img src="images/varcors.PNG" width="400px" style="display: block; margin: auto;" /></p>
 <p>In the random-slope model (right panel), the same is true for the differences from each subjects’ slope to the fixed slope.
@@ -606,9 +565,9 @@ We can extract the deviations for each group from the fixed effect estimates usi
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-96" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-96&#39;, &#39;opt-start-96&#39;)"> Group-level coefficients</span>
+<span id="opt-start-95" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-95&#39;, &#39;opt-start-95&#39;)"> Group-level coefficients</span>
 </div>
-<div id="opt-body-96" class="optional-body" style="display: none;">
+<div id="opt-body-95" class="optional-body" style="display: none;">
 <p>We can also see the actual intercept and slope for each subject <span class="math inline">\(i\)</span> directly, using the <code>coef()</code> function.</p>
 <pre class="r"><code>coef(random_slopes_model)</code></pre>
 <pre><code>## $subject
@@ -667,18 +626,34 @@ We can extract the deviations for each group from the fixed effect estimates usi
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-97" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-97&#39;, &#39;opt-start-97&#39;)"> Plotting random effects</span>
+<span id="opt-start-96" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-96&#39;, &#39;opt-start-96&#39;)"> Visualising Model Fitted values</span>
+</div>
+<div id="opt-body-96" class="optional-body" style="display: none;">
+<p>TODO</p>
+</div>
+<p class="optional-end">
+</p>
+<div class="optional-begin">
+<span id="opt-start-97" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-97&#39;, &#39;opt-start-97&#39;)"> Visualising Fixed Effects</span>
 </div>
 <div id="opt-body-97" class="optional-body" style="display: none;">
+<p>TODO</p>
+</div>
+<p class="optional-end">
+</p>
+<div class="optional-begin">
+<span id="opt-start-98" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-98&#39;, &#39;opt-start-98&#39;)"> Plotting random effects</span>
+</div>
+<div id="opt-body-98" class="optional-body" style="display: none;">
 <p>The quick and easy way to plot your random effects is to use the <code>dotplot.ranef.mer()</code> function in <code>lme4</code>.</p>
 <pre class="r"><code>randoms &lt;- ranef(random_slopes_model, condVar=TRUE)
 dotplot.ranef.mer(randoms)</code></pre>
 <pre><code>## $subject</code></pre>
-<p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-17-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-13-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <div class="optional-begin">
-<span id="opt-start-98" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-98&#39;, &#39;opt-start-98&#39;)"> Completely optional - extracting them for plotting in ggplot</span>
+<span id="opt-start-99" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-99&#39;, &#39;opt-start-99&#39;)"> Completely optional - extracting them for plotting in ggplot</span>
 </div>
-<div id="opt-body-98" class="optional-body" style="display: none;">
+<div id="opt-body-99" class="optional-body" style="display: none;">
 <p>Sometimes, however, we might want to have a bit more control over our plotting, we can extract the estimates and correlations for each subject:</p>
 <pre class="r"><code>#we can get the random effects:
 #(note that we use $subject because there might be other groupings, and the ranef() function will give us a list, with one element for each grouping variable)
@@ -701,7 +676,7 @@ ranefs_plotting &lt;- left_join(randoms, randoms_se)
 ggplot(ranefs_plotting, aes(y=subject, x=estimate))+
   geom_errorbarh(aes(xmin=estimate-2*se, xmax=estimate+2*se))+
   facet_wrap(~term, scales=&quot;free_x&quot;)</code></pre>
-<p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-18-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-14-1.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
 <p class="optional-end">
 </p>
@@ -709,9 +684,50 @@ ggplot(ranefs_plotting, aes(y=subject, x=estimate))+
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-99" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-99&#39;, &#39;opt-start-99&#39;)"> Nested and Crossed structures</span>
+<span id="opt-start-100" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-100&#39;, &#39;opt-start-100&#39;)"> Polynomials!</span>
 </div>
-<div id="opt-body-99" class="optional-body" style="display: none;">
+<div id="opt-body-100" class="optional-body" style="display: none;">
+<p>Sometimes, data have a clear non-linear pattern, such as a curvilinear trend. In such case, it is reasonable to try modelling the outcome <em>not</em> as a linear function of the variable, but as a curvilinear function of it.</p>
+<p>The following plots show data (as black dots) where the outcome <span class="math inline">\(y\)</span> has a nonlinear and decreasing dependence on <span class="math inline">\(x\)</span>. That is, as <span class="math inline">\(x\)</span> varies from 1 to 10, the outcome <span class="math inline">\(y\)</span> decreases in a non-linear fashion.
+Superimposed to the same data, you can see a linear fit (red line) and a cubic fit (blue).</p>
+<p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-15-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p>The residuals corresponding to each fit are:
+<img src="05_multilevel_recap_files/figure-html/unnamed-chunk-16-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p>Clearly, a linear fit doesn’t capture the real trend in the data, and any leftover systematic pattern that the model doesn’t explicity account for always ends up in the residuals as the red points show.</p>
+<p>On the other hand, once we account for the nonlinear trend, that systematic pattern in the residuals disappears.</p>
+<p>The secret is to use instead of <span class="math inline">\(x\)</span> as a predictor, the corresponding polynomial up to a specific order:</p>
+<p><span class="math display">\[
+y = \beta_0 + \beta_1 x + \beta_2 x^2 + \beta_3 x^3 + \epsilon
+\]</span></p>
+<p>Consider the following example data. You can add polynomials up to order 3, for example, of a predictor “time” by saying:</p>
+<pre><code>## # A tibble: 5 × 3
+##   subject reaction  time
+##     &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;
+## 1       1    0.428     1
+## 2       1    0.427     2
+## 3       1    0.211     3
+## 4       1    0.585     4
+## 5       1    0.127     5</code></pre>
+<pre class="r"><code>source(&quot;https://uoepsy.github.io/msmr/functions/code_poly.R&quot;)
+
+code_poly(df, predictor = &#39;time&#39;, poly.order = 3, draw.poly = FALSE)</code></pre>
+<pre><code>## # A tibble: 5 × 7
+##   subject reaction  time time.Index  poly1  poly2     poly3
+##     &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;      &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;
+## 1       1    0.428     1          1 -0.632  0.535 -3.16e- 1
+## 2       1    0.427     2          2 -0.316 -0.267  6.32e- 1
+## 3       1    0.211     3          3  0     -0.535 -4.10e-16
+## 4       1    0.585     4          4  0.316 -0.267 -6.32e- 1
+## 5       1    0.127     5          5  0.632  0.535  3.16e- 1</code></pre>
+<p>and use those terms when specifying your linear model. We can, depending on how time is measured (e.g. if we have subjects over time) also include some (or all) of these terms as random effects, for example:</p>
+<pre><code>lmer(reaction ~ poly1 + poly2 + poly3 + (1 + poly1 | subject))</code></pre>
+</div>
+<p class="optional-end">
+</p>
+<div class="optional-begin">
+<span id="opt-start-101" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-101&#39;, &#39;opt-start-101&#39;)"> Nested and Crossed structures</span>
+</div>
+<div id="opt-body-101" class="optional-body" style="display: none;">
 <p>The same principle we have seen for one level of clustering can be extended to clustering at different levels (for instance, observations are clustered within subjects, which are in turn clustered within groups).</p>
 <p>Consider the example where we have observations for each student in every class within a number of schools:</p>
 <p><img src="images/structure_id.png" width="1200px" style="display: block; margin: auto;" /></p>
@@ -739,6 +755,14 @@ Tasks are seen by multiple participants (and participants see multiple tasks).</
 </div>
 <p>Note that in the schools and classes example, had we changed data such that the classes had unique IDs (e.g., see below), then the structures <code>(1 | school) + (1 | class)</code> and <code>(1 | school/class)</code> would give the same results.<br />
 <img src="images/structure_nested.png" width="1200px" style="display: block; margin: auto;" /></p>
+</div>
+<p class="optional-end">
+</p>
+<div class="optional-begin">
+<span id="opt-start-102" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-102&#39;, &#39;opt-start-102&#39;)"> Inference for multilevel models</span>
+</div>
+<div id="opt-body-102" class="optional-body" style="display: none;">
+<p>TODO</p>
 </div>
 <p class="optional-end">
 </p>
@@ -842,10 +866,7 @@ Question B1
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<span id="sol-start-100" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-100&#39;, &#39;sol-start-100&#39;)"> Solution </span>
-</div>
-<div id="sol-body-100" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p>Lots of options for this one, here is one that shows Group and Domain differences:</p>
 <pre class="r"><code>ggplot(dat5, aes(Domain, Score, color=Group)) +
   stat_summary(fun.data=mean_se, geom=&quot;pointrange&quot;) +
@@ -879,10 +900,7 @@ Question B2
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<span id="sol-start-101" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-101&#39;, &#39;sol-start-101&#39;)"> Solution </span>
-</div>
-<div id="sol-body-101" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p>We’re interested in the amount to which Groups vary in their overall performance, so we want a fixed effect of Group. Subjects and Domains are not nested - each subject sees different domains, and each domain is seen by multiple subjects.</p>
 <pre class="r"><code># maximal model doesn&#39;t converge, removed random Group slopes for Domain
 mod_grp &lt;- lmer(Score ~ Group + 
@@ -890,8 +908,7 @@ mod_grp &lt;- lmer(Score ~ Group +
                    (1 | Domain), 
                  data=dat5, REML=FALSE)
 summary(mod_grp)</code></pre>
-<pre><code>## Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite&#39;s
-##   method [lmerModLmerTest]
+<pre><code>## Linear mixed model fit by maximum likelihood  [&#39;lmerMod&#39;]
 ## Formula: Score ~ Group + (1 | Anonymous_Subject_ID) + (1 | Domain)
 ##    Data: dat5
 ## 
@@ -910,13 +927,11 @@ summary(mod_grp)</code></pre>
 ## Number of obs: 2011, groups:  Anonymous_Subject_ID, 44; Domain, 11
 ## 
 ## Fixed effects:
-##             Estimate Std. Error     df t value Pr(&gt;|t|)    
-## (Intercept)   15.832      1.121 50.067  14.122  &lt; 2e-16 ***
-## GroupB        -4.159      2.262 44.369  -1.839   0.0727 .  
-## GroupC        -3.621      1.768 43.968  -2.048   0.0465 *  
-## GroupW        -7.270      1.673 44.042  -4.345 8.09e-05 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+##             Estimate Std. Error t value
+## (Intercept)   15.832      1.121  14.122
+## GroupB        -4.159      2.262  -1.839
+## GroupC        -3.621      1.768  -2.048
+## GroupW        -7.270      1.673  -4.345
 ## 
 ## Correlation of Fixed Effects:
 ##        (Intr) GroupB GroupC
@@ -938,10 +953,7 @@ Question B3
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<span id="sol-start-102" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-102&#39;, &#39;sol-start-102&#39;)"> Solution </span>
-</div>
-<div id="sol-body-102" class="solution-body" style="display: none;">
+<div style="display:none;">
 <pre class="r"><code>ggplot(dat5, aes(Wave, Score, color=Group, fill=Group)) +
   stat_summary(fun.data=mean_se, geom=&quot;ribbon&quot;, alpha=0.3, color=NA) +
   stat_summary(fun.y=mean, geom=&quot;line&quot;)</code></pre>
@@ -963,10 +975,7 @@ Question B4
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<span id="sol-start-103" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-103&#39;, &#39;sol-start-103&#39;)"> Solution </span>
-</div>
-<div id="sol-body-103" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p><em>Remember:</em> If we’re using a likelihood ratio test to compare models (like we are here), then the models should be fitted with ML, not REML. <code>anova(model1,model2)</code> will re-fit them automatically for us, but we specify it specifically for each model here anyway:</p>
 <pre class="r"><code>mod_wv &lt;- lmer(Score ~ Wave + 
                    (1 + Wave | Anonymous_Subject_ID) + 
@@ -999,8 +1008,7 @@ anova(mod_wv, mod_wv_grp, mod_wv_x_grp)</code></pre>
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <pre class="r"><code>summary(mod_wv_x_grp)</code></pre>
-<pre><code>## Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite&#39;s
-##   method [lmerModLmerTest]
+<pre><code>## Linear mixed model fit by maximum likelihood  [&#39;lmerMod&#39;]
 ## Formula: Score ~ Wave * Group + (1 + Wave | Anonymous_Subject_ID) + (1 +  
 ##     Wave | Domain)
 ##    Data: dat5
@@ -1023,17 +1031,15 @@ anova(mod_wv, mod_wv_grp, mod_wv_x_grp)</code></pre>
 ## Number of obs: 2011, groups:  Anonymous_Subject_ID, 44; Domain, 11
 ## 
 ## Fixed effects:
-##             Estimate Std. Error       df t value Pr(&gt;|t|)    
-## (Intercept) 12.77276    1.24928 52.57272  10.224 4.23e-14 ***
-## Wave         1.25475    0.23886 44.74466   5.253 4.00e-06 ***
-## GroupB      -1.36480    2.47445 45.83831  -0.552  0.58393    
-## GroupC      -4.14669    1.91661 43.86607  -2.164  0.03599 *  
-## GroupW      -6.31853    1.81664 44.18659  -3.478  0.00115 ** 
-## Wave:GroupB -1.14231    0.52920 50.14238  -2.159  0.03570 *  
-## Wave:GroupC -0.03687    0.36863 36.73449  -0.100  0.92087    
-## Wave:GroupW -0.50887    0.35468 38.78372  -1.435  0.15938    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+##             Estimate Std. Error t value
+## (Intercept) 12.77276    1.24928  10.224
+## Wave         1.25475    0.23886   5.253
+## GroupB      -1.36480    2.47445  -0.552
+## GroupC      -4.14669    1.91661  -2.164
+## GroupW      -6.31853    1.81664  -3.478
+## Wave:GroupB -1.14231    0.52920  -2.159
+## Wave:GroupC -0.03687    0.36863  -0.100
+## Wave:GroupW -0.50887    0.35468  -1.435
 ## 
 ## Correlation of Fixed Effects:
 ##             (Intr) Wave   GroupB GroupC GroupW Wv:GrB Wv:GrC
@@ -1056,9 +1062,9 @@ Question B5
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-104" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-104&#39;, &#39;sol-start-104&#39;)"> Solution </span>
+<span id="sol-start-103" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-103&#39;, &#39;sol-start-103&#39;)"> Solution </span>
 </div>
-<div id="sol-body-104" class="solution-body" style="display: none;">
+<div id="sol-body-103" class="solution-body" style="display: none;">
 <pre class="r"><code>broom.mixed::augment(mod_wv_x_grp) %&gt;%
   ggplot(., aes(Wave, Score, color=Group)) +
   stat_summary(fun.data=mean_se, geom=&quot;pointrange&quot;) +
@@ -1078,10 +1084,7 @@ Question B6
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<span id="sol-start-105" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-105&#39;, &#39;sol-start-105&#39;)"> Solution </span>
-</div>
-<div id="sol-body-105" class="solution-body" style="display: none;">
+<div style="display:none;">
 <pre class="r"><code>broom.mixed::augment(mod_wv_x_grp) %&gt;%
   ggplot(., aes(Wave, Score, color=Group)) +
   facet_wrap(~ Anonymous_Subject_ID) +
@@ -1102,10 +1105,7 @@ Question B7
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<span id="sol-start-106" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-106&#39;, &#39;sol-start-106&#39;)"> Solution </span>
-</div>
-<div id="sol-body-106" class="solution-body" style="display: none;">
+<div style="display:none;">
 <pre class="r"><code>library(effects)
 ef &lt;- as.data.frame(effect(&quot;Wave:Group&quot;, mod_wv_x_grp))
 ggplot(ef, aes(Wave, fit, color=Group, fill=Group)) +
@@ -1119,27 +1119,33 @@ ggplot(ef, aes(Wave, fit, color=Group, fill=Group)) +
 Question B8
 </div>
 <div class="question-body">
-<p>What important things are different between the plot from question B7 and that from question B5?<br />
-You can see the plots we created for these questions below:</p>
+<p>What important things are different between the plot from question B7 and that from question B5? (You can see the plots we created for these questions below).</p>
 <p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-32-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p>Why do you think these two plots differ?</p>
+<div class="optional-begin">
+<span id="opt-start-104" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-104&#39;, &#39;opt-start-104&#39;)"> Hint</span>
+</div>
+<div id="opt-body-104" class="optional-body" style="display: none;">
+<p>The reason is visible here:
+<img src="05_multilevel_recap_files/figure-html/unnamed-chunk-33-1.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+<p class="optional-end">
+</p>
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<span id="sol-start-107" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-107&#39;, &#39;sol-start-107&#39;)"> Solution </span>
-</div>
-<div id="sol-body-107" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p><em>Group B was not actually getting worse. The appearance that it was getting worse is an artifact of selective drop-out: there’s only a few people in this group and the better-performing ones only did the first few waves so they are not represented in the later waves, but the worse-performing ones are contributing to the later waves. The model estimates how the better-performing ones would have done in later waves based on their early-wave performance and the pattern of performance of other participants in the study.</em></p>
 <pre class="r"><code>summary(mod_wv_x_grp)$coefficients</code></pre>
-<pre><code>##                Estimate Std. Error       df    t value     Pr(&gt;|t|)
-## (Intercept) 12.77275602  1.2492755 52.57272 10.2241311 4.233425e-14
-## Wave         1.25474592  0.2388619 44.74466  5.2530174 3.998419e-06
-## GroupB      -1.36479845  2.4744534 45.83831 -0.5515555 5.839319e-01
-## GroupC      -4.14668958  1.9166071 43.86607 -2.1635575 3.598729e-02
-## GroupW      -6.31853273  1.8166430 44.18659 -3.4781366 1.146384e-03
-## Wave:GroupB -1.14230855  0.5292031 50.14238 -2.1585447 3.569733e-02
-## Wave:GroupC -0.03687005  0.3686317 36.73449 -0.1000187 9.208734e-01
-## Wave:GroupW -0.50887197  0.3546784 38.78372 -1.4347420 1.593758e-01</code></pre>
+<pre><code>##                Estimate Std. Error    t value
+## (Intercept) 12.77275602  1.2492755 10.2241311
+## Wave         1.25474592  0.2388619  5.2530174
+## GroupB      -1.36479845  2.4744534 -0.5515555
+## GroupC      -4.14668958  1.9166071 -2.1635575
+## GroupW      -6.31853273  1.8166430 -3.4781366
+## Wave:GroupB -1.14230855  0.5292031 -2.1585447
+## Wave:GroupC -0.03687005  0.3686317 -0.1000187
+## Wave:GroupW -0.50887197  0.3546784 -1.4347420</code></pre>
 <p>Note that the Group A slope (coefficient for <code>Wave</code>) is 1.255 and, relative to that slope, the Group B slope is -1.142 (coefficient for <code>Wave:GroupB</code>). This means that the model-estimated slope for Group B is 0.112, which is very slightly positive, not strongly negative as appeared in the initial plots.</p>
 <p>One of the valuable things about mixed-effects (aka multilevel) modeling is that individual-level and group-level trajectories are estimated. This helps the model overcome missing data in a sensible way. In fact, MLM/MLR models are sometimes used for imputing missing data. However, one has to think carefully about <em>why</em> data are missing. Group B is small and it might just be a coincidence that the better-performing participants dropped out after the first few waves, which would make it easier to generalize the patterns to them. On the other hand, it might be the case that there is something about the study that makes better-performing members of Group B drop out, which should make us suspicious of generalizing to them.</p>
 </div>
@@ -1154,17 +1160,14 @@ Notice the pattern between the random intercept and random slope estimates for t
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<span id="sol-start-108" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-108&#39;, &#39;sol-start-108&#39;)"> Solution </span>
-</div>
-<div id="sol-body-108" class="solution-body" style="display: none;">
+<div style="display:none;">
 <pre class="r"><code>randoms &lt;- ranef(mod_wv_x_grp, condVar=TRUE)
 dotplot.ranef.mer(randoms)</code></pre>
 <pre><code>## $Anonymous_Subject_ID</code></pre>
-<p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-35-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-36-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <pre><code>## 
 ## $Domain</code></pre>
-<p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-35-2.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-36-2.png" width="80%" style="display: block; margin: auto;" /></p>
 <p>Notice that the domains with the lower relative intercept tend to have a higher relative slope (and vice versa). This is the negative correlation between random intercepts and slopes for domain in our model:</p>
 <pre class="r"><code>VarCorr(mod_wv_x_grp)</code></pre>
 <pre><code>##  Groups               Name        Std.Dev. Corr  
@@ -1179,8 +1182,8 @@ dotplot.ranef.mer(randoms)</code></pre>
 </p>
 <!-- Formatting -->
 </div>
-<div id="urban-effects-on-aggression-in-adolescence" class="section level1">
-<h1>Urban effects on Aggression in Adolescence</h1>
+<div id="less-guided-exercise" class="section level1">
+<h1>Less Guided Exercise</h1>
 <div class="frame">
 <p>Instead of step-by-step questions, this exercise is designed to get you thinking more, giving you practice for the report and for your future research. If it helps, you can find a (sort of) checklist for multilevel models <a href="LINKTODO">here</a> (but please be aware that there is no ‘one-size-fits-all’ approach - this checklist may not always be appropriate for every research question with multi-level data)</p>
 </div>
@@ -1189,13 +1192,12 @@ Question
 </div>
 <div class="question-body">
 <blockquote>
-<p>How does aggressive behaviour change over adolescence? How is this change dependent upon the number of home_loc a child has?</p>
+<p>How does aggressive behaviour change over adolescence? How is this change dependent upon whether or not a child has siblings?</p>
 </blockquote>
 <div class="frame">
 <p><strong>Data: Aggressive Behaviour in Adolescence</strong></p>
-<p>Data was collected from 30 secondary schools across Scotland. A cohort of students were followed up every year from the age of 12 to 19. Each year, they completed the Aggressive Behaviour Scale (ABS). Data was also captured on the number of home_loc each child had.<br />
+<p>Data was collected from 30 secondary schools across Scotland. A cohort of students were followed up every year from the age of 12 to 19. Each year, they completed the Aggressive Behaviour Scale (ABS). Data was also captured on the number of siblings each child had.<br />
 The data can be accessed from <a href="https://uoepsy.github.io/data/schoolsabs.csv">https://uoepsy.github.io/data/schoolsabs.csv</a> . A description of the variables can be found in the table below.</p>
-<pre class="r"><code>absdat &lt;- read_csv(&quot;../../data/schoolsabs.csv&quot;)</code></pre>
 <table>
 <thead>
 <tr>
@@ -1242,10 +1244,10 @@ Within-School Child Identifier
 </tr>
 <tr>
 <td style="text-align:left;">
-home_loc
+siblings
 </td>
 <td style="text-align:left;">
-Number of home_loc (0, 1, 2, &gt;2)
+Sibling status (No/Yes)
 </td>
 </tr>
 </tbody>
@@ -1254,10 +1256,7 @@ Number of home_loc (0, 1, 2, &gt;2)
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<span id="sol-start-109" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-109&#39;, &#39;sol-start-109&#39;)"> Solution </span>
-</div>
-<div id="sol-body-109" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p>Let’s start by just exploring the data a bit more.</p>
 <pre><code>## [1] 30</code></pre>
 <pre><code>## [1] 500</code></pre>
@@ -1271,33 +1270,109 @@ Number of home_loc (0, 1, 2, &gt;2)
 <pre class="r"><code>absdat %&gt;% count(schoolid,childid) %&gt;% select(n) %&gt;% table</code></pre>
 <p>We can see that for some children we have fewer than the 7 observations: some have 6, 5, 4, or 3.</p>
 <p>There are lots of different ways we can cut up the data</p>
-<pre class="r"><code>ggplot(absdat, aes(x = year, y = ABS,col=home_loc)) +
-  stat_summary(geom=&quot;pointrange&quot;,aes(group=home_loc),alpha=.5)+
-  stat_summary(geom=&quot;line&quot;,aes(group=home_loc),alpha=.5)+
-  labs(title=&quot;Average ABS scores over age by number of home_loc&quot;, x = &quot;Age&quot;, y = &quot;Aggressive Behaviour Score&quot;)
-
-ggplot(absdat, aes(x = year, y = ABS,col=home_loc)) +
+<pre class="r"><code>ggplot(absdat, aes(x = year, y = ABS,col=siblings)) +
+  stat_summary(geom=&quot;pointrange&quot;,aes(group=siblings),alpha=.5)+
+  stat_summary(geom=&quot;line&quot;,aes(group=siblings),alpha=.5)+
+  labs(title=&quot;Average ABS scores over age by number of siblings&quot;, x = &quot;Age&quot;, y = &quot;Aggressive Behaviour Score&quot;)</code></pre>
+<p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-42-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(absdat, aes(x = year, y = ABS,col=siblings)) +
   stat_summary(geom=&quot;pointrange&quot;,aes(group=schoolid),alpha=.2)+
   stat_summary(geom=&quot;line&quot;,aes(group=schoolid),alpha=.2)+
-  labs(title=&quot;School level mean ABS scores&quot;, x = &quot;Age&quot;, y = &quot;Aggressive Behaviour Score&quot;)
-
-ggplot(absdat, aes(x = year, y = ABS,col=home_loc)) +
+  labs(title=&quot;School level mean ABS scores&quot;, x = &quot;Age&quot;, y = &quot;Aggressive Behaviour Score&quot;)</code></pre>
+<p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-42-2.png" width="80%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(absdat, aes(x = year, y = ABS,col=siblings)) +
   stat_summary(geom=&quot;line&quot;,aes(group=interaction(schoolid,childid)),alpha=.2)+
-  facet_wrap(~home_loc, labeller = label_both) +
+  facet_wrap(~siblings, labeller = label_both) +
   labs(title=&quot;Children&#39;s trajectories of ABS scores&quot;,x = &quot;Age&quot;, y = &quot;Aggressive Behaviour Score&quot;)</code></pre>
+<p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-42-3.png" width="80%" style="display: block; margin: auto;" /></p>
 <p>Now let’s think a bit about the various considerations that go into fitting a multi-level model.</p>
 <ul>
-<li>We can group our data by number of home_loc (0,1,2,3+), by school, and by child.<br />
+<li>We can group our data by whether or not they have siblings, by school, and by child.<br />
 </li>
-<li>We’re specifically interested in differences between the levels of the <code>home_loc</code> variable, so that is going to be in our fixed effects.</li>
+<li>We’re specifically interested in differences between the levels of the <code>siblings</code> variable, so that is going to be in our fixed effects.</li>
 <li>We’re not interested in drawing inferences about specific schools or specific children. The schools and children in our dataset in this case are just a random sample of the wider population of schools and children. They will account for some variability in the outcome (e.g. some children are more aggressive than others, maybe some schools tend to have more aggressive children in them than others). So our model wants to account for this, but we don’t want to specifically estimate differences. These will be our random effects.</li>
 <li>Schools and children is one of the most obvious cases of <em>nested</em> random effects. Each child belongs to one, and only one school. This means we are going to want to model the structure <code>(1 | School / Child)</code>.</li>
 <li>The <code>childid</code> variable does <strong>not</strong> uniquely identify a single child. It just says “1,”“2,” etc. But child 1 from school 1 is a different child from child 1 in school 2. We need to remember this, and if we want to separate out our random effects of school and child, then we’ll need <code>(1 | School) + (1 | Child:School)</code>.<br />
 Alternatively, we could make a new child identifier variable that <em>does</em> uniquely identify each child.</li>
-<li>Along with being interested in number of home_loc, we’re also interested in change over time. From our initial plotting, we see there is some curvature present, and this is most apparent in the 3+ home_loc group. Are we interested in differences between sibling groups at the first timepoint (age 12?). Possibly? This depends a lot on the research field.<br />
+<li>Along with being interested in differences between having/not-having siblings, we’re also interested in change over time. From our initial plotting, we see there is some curvature present, and this is most apparent in the group of children with siblings. Are we interested in differences between sibling groups at the first timepoint (age 12?). Possibly? This depends a lot on the research field.<br />
 </li>
-<li>We know that effects of time can vary by child, and so also by school. Children don’t change in how many home_loc they have (well, they might, not often), so we can’t really think of “the effect on aggressive behaviours for child <span class="math inline">\(i\)</span>, of having a different number of home_loc” because child <span class="math inline">\(i\)</span> always has the same number of home_loc. However, within a school, different children have different numbers of home_loc, so it might be that this effect can vary by-school.</li>
+<li>We know that effects of time can vary by child, and so also by school. Children don’t change in whether or not they have siblings (well, they might, not often), so we can’t really think of “the effect of having siblings on aggressive behaviours for child <span class="math inline">\(i\)</span>” because child <span class="math inline">\(i\)</span> always has the same number of siblings. However, within a school, some children have siblings, some don’t, so it might be that this effect can vary by-school.</li>
 </ul>
+<pre class="r"><code>source(&quot;https://uoepsy.github.io/msmr/functions/code_poly.R&quot;)
+absdat &lt;- code_poly(absdat, &quot;year&quot;, poly.order = 2, orthogonal = T, draw.poly = F)
+
+basemod &lt;- 
+  lmer(ABS ~ poly1 + poly2 + (1 + poly1 + poly2 | schoolid/childid), 
+     data = absdat,
+     control = lmerControl(optimizer = &quot;bobyqa&quot;))
+isSingular(basemod)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>basemod &lt;- 
+  lmer(ABS ~ poly1 + poly2 + (1 + poly1 | schoolid) +
+         (1 + poly1 + poly2 | childid:schoolid), 
+     data = absdat,
+     control = lmerControl(optimizer = &quot;bobyqa&quot;))
+
+summary(basemod)</code></pre>
+<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+## Formula: ABS ~ poly1 + poly2 + (1 + poly1 | schoolid) + (1 + poly1 + poly2 |  
+##     childid:schoolid)
+##    Data: absdat
+## Control: lmerControl(optimizer = &quot;bobyqa&quot;)
+## 
+## REML criterion at convergence: 8018.3
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -3.6733 -0.5951 -0.0051  0.5981  3.1313 
+## 
+## Random effects:
+##  Groups           Name        Variance Std.Dev. Corr       
+##  childid:schoolid (Intercept) 0.128738 0.35880             
+##                   poly1       0.869151 0.93228   0.03      
+##                   poly2       0.003277 0.05724  -0.07 -0.03
+##  schoolid         (Intercept) 0.162980 0.40371             
+##                   poly1       0.565236 0.75182  -0.49      
+##  Residual                     0.456973 0.67600             
+## Number of obs: 3325, groups:  childid:schoolid, 500; schoolid, 30
+## 
+## Fixed effects:
+##              Estimate Std. Error t value
+## (Intercept)  0.009977   0.076362   0.131
+## poly1        0.524503   0.146875   3.571
+## poly2       -0.196913   0.031298  -6.292
+## 
+## Correlation of Fixed Effects:
+##       (Intr) poly1 
+## poly1 -0.438       
+## poly2  0.000 -0.002</code></pre>
+<pre class="r"><code>broom.mixed::augment(basemod) %&gt;%
+  ggplot(.,aes(x=poly1,y=.fitted))+
+  geom_line(aes(group=interaction(schoolid,childid)), alpha=.1)+
+  stat_summary(geom=&quot;pointrange&quot;)+stat_summary(geom=&quot;line&quot;)</code></pre>
+<p><img src="05_multilevel_recap_files/figure-html/unnamed-chunk-43-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>linmod &lt;- 
+  lmer(ABS ~ siblings*poly1 + poly2 + (1 + poly1 | schoolid) +
+         (1 + poly1 + poly2 | childid:schoolid), 
+     data = absdat,
+     control = lmerControl(optimizer = &quot;bobyqa&quot;))
+quadmod &lt;- 
+  lmer(ABS ~ siblings*(poly1 + poly2) + (1 + poly1 | schoolid) +
+         (1 + poly1 + poly2 | childid:schoolid), 
+     data = absdat,
+     control = lmerControl(optimizer = &quot;bobyqa&quot;))
+anova(basemod,linmod,quadmod)</code></pre>
+<pre><code>## Data: absdat
+## Models:
+## basemod: ABS ~ poly1 + poly2 + (1 + poly1 | schoolid) + (1 + poly1 + poly2 | childid:schoolid)
+## linmod: ABS ~ siblings * poly1 + poly2 + (1 + poly1 | schoolid) + (1 + poly1 + poly2 | childid:schoolid)
+## quadmod: ABS ~ siblings * (poly1 + poly2) + (1 + poly1 | schoolid) + (1 + poly1 + poly2 | childid:schoolid)
+##         npar    AIC    BIC  logLik deviance   Chisq Df Pr(&gt;Chisq)    
+## basemod   13 8033.6 8113.0 -4003.8   8007.6                          
+## linmod    15 8014.7 8106.3 -3992.3   7984.7 22.9740  2  1.026e-05 ***
+## quadmod   16 8016.0 8113.8 -3992.0   7984.0  0.6459  1     0.4216    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
 <p class="solution-end">
 </p>
