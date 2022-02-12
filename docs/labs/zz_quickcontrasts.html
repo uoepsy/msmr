@@ -359,7 +359,9 @@ div.tocify {
     <li>
       <a href="04_ranef.html">4: Random Effect Structures</a>
     </li>
-    <li class="dropdown-header">5: Recap | Individual Differences</li>
+    <li>
+      <a href="05_multilevel_recap.html">5: Recap | Individual Differences</a>
+    </li>
     <li class="dropdown-header">Break Week</li>
   </ul>
 </li>
@@ -457,9 +459,9 @@ We’re going to switch back to the normal <code>lm()</code> world here for a bi
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-105" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-105&#39;, &#39;sol-start-105&#39;)"> Solution </span>
+<span id="sol-start-111" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-111&#39;, &#39;sol-start-111&#39;)"> Solution </span>
 </div>
-<div id="sol-body-105" class="solution-body" style="display: none;">
+<div id="sol-body-111" class="solution-body" style="display: none;">
 <p>You don’t have to do it this way. This was just the first way to calculate the difference in means that came to my head. <code>group_by()</code> will definitely come in handy though.</p>
 <pre class="r"><code>toy_utils %&gt;% group_by(type) %&gt;%
   summarise(
@@ -485,9 +487,9 @@ We’re going to switch back to the normal <code>lm()</code> world here for a bi
 <p>In our regression model we are fitting an intercept plus a coefficient for each explanatory variable, and any categorical predictors are coded as 0s and 1s.</p>
 <p>We can add constraints to our the way our contrasts are coded. In fact, with the default <strong>treatment</strong> coding, we already have applied one - we constrained them such that the intercept (<span class="math inline">\(\beta_0\)</span>) = the mean of one of the groups.</p>
 <div class="optional-begin">
-<span id="opt-start-106" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-106&#39;, &#39;opt-start-106&#39;)"> Optional: Why constraints?</span>
+<span id="opt-start-112" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-112&#39;, &#39;opt-start-112&#39;)"> Optional: Why constraints?</span>
 </div>
-<div id="opt-body-106" class="optional-body" style="display: none;">
+<div id="opt-body-112" class="optional-body" style="display: none;">
 <p>Why do we not have:</p>
 <ul>
 <li><code>Intercept</code></li>
@@ -530,14 +532,14 @@ Question 2
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-107" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-107&#39;, &#39;sol-start-107&#39;)"> Solution </span>
+<span id="sol-start-113" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-113&#39;, &#39;sol-start-113&#39;)"> Solution </span>
 </div>
-<div id="sol-body-107" class="solution-body" style="display: none;">
+<div id="sol-body-113" class="solution-body" style="display: none;">
 <pre class="r"><code>model_sum &lt;- lm(UTILITY ~ type, contrasts = list(type = &quot;contr.sum&quot;), data = toy_utils)
 
 globmean &lt;- mean(toy_utils$UTILITY)
 globmean</code></pre>
-<pre><code>## [1] 3.993333</code></pre>
+<pre><code>## [1] 3.99</code></pre>
 <pre class="r"><code>toy_utils %&gt;% group_by(type) %&gt;%
   summarise(
     mutil = mean(UTILITY)
@@ -553,7 +555,7 @@ globmean</code></pre>
 ## 3 zing    2.54 -1.45</code></pre>
 <pre class="r"><code>coef(model_sum)</code></pre>
 <pre><code>## (Intercept)       type1       type2 
-##    3.993333   -1.173333    2.626667</code></pre>
+##        3.99       -1.17        2.63</code></pre>
 </div>
 <p class="solution-end">
 </p>
