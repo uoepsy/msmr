@@ -372,7 +372,9 @@ div.tocify {
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li class="dropdown-header">PCA | EFA</li>
+    <li>
+      <a href="07_efapca.html">PCA | EFA</a>
+    </li>
     <li class="dropdown-header">CFA</li>
     <li class="dropdown-header">Path Analysis</li>
     <li class="dropdown-header">SEM 1</li>
@@ -459,9 +461,9 @@ We’re going to switch back to the normal <code>lm()</code> world here for a bi
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-122" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-122&#39;, &#39;sol-start-122&#39;)"> Solution </span>
+<span id="sol-start-137" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-137&#39;, &#39;sol-start-137&#39;)"> Solution </span>
 </div>
-<div id="sol-body-122" class="solution-body" style="display: none;">
+<div id="sol-body-137" class="solution-body" style="display: none;">
 <p>You don’t have to do it this way. This was just the first way to calculate the difference in means that came to my head. <code>group_by()</code> will definitely come in handy though.</p>
 <pre class="r"><code>toy_utils %&gt;% group_by(type) %&gt;%
   summarise(
@@ -487,9 +489,9 @@ We’re going to switch back to the normal <code>lm()</code> world here for a bi
 <p>In our regression model we are fitting an intercept plus a coefficient for each explanatory variable, and any categorical predictors are coded as 0s and 1s.</p>
 <p>We can add constraints to our the way our contrasts are coded. In fact, with the default <strong>treatment</strong> coding, we already have applied one - we constrained them such that the intercept (<span class="math inline">\(\beta_0\)</span>) = the mean of one of the groups.</p>
 <div class="optional-begin">
-<span id="opt-start-123" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-123&#39;, &#39;opt-start-123&#39;)"> Optional: Why constraints?</span>
+<span id="opt-start-138" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-138&#39;, &#39;opt-start-138&#39;)"> Optional: Why constraints?</span>
 </div>
-<div id="opt-body-123" class="optional-body" style="display: none;">
+<div id="opt-body-138" class="optional-body" style="display: none;">
 <p>Why do we not have:</p>
 <ul>
 <li><code>Intercept</code></li>
@@ -532,9 +534,9 @@ Question 2
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-124" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-124&#39;, &#39;sol-start-124&#39;)"> Solution </span>
+<span id="sol-start-139" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-139&#39;, &#39;sol-start-139&#39;)"> Solution </span>
 </div>
-<div id="sol-body-124" class="solution-body" style="display: none;">
+<div id="sol-body-139" class="solution-body" style="display: none;">
 <pre class="r"><code>model_sum &lt;- lm(UTILITY ~ type, contrasts = list(type = &quot;contr.sum&quot;), data = toy_utils)
 
 globmean &lt;- mean(toy_utils$UTILITY)

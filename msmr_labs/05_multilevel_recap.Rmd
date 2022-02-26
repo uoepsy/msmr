@@ -4,7 +4,7 @@ bibliography: references.bib
 biblio-style: apalike
 link-citations: yes
 params: 
-    SHOW_SOLS: FALSE
+    SHOW_SOLS: TRUE
     TOGGLE: TRUE
 ---
 
@@ -640,7 +640,16 @@ There are different ways to test this: use the 20-point score or the accuracy? K
 Make a plot that corresponds to the research question. Does it look like there's a difference?
 `r qend()` 
 `r solbegin(show=params$SHOW, toggle=params$TOGGLE)`
-Lots of options for this one, here is one that shows Group and Domain differences:
+Lots of options for this one, here is one that shows Group differences:
+
+```{r}
+ggplot(dat5, aes(Group, Score, color=Group)) +
+  stat_summary(fun.data=mean_se, geom="pointrange") +
+  guides(color="none")+
+  coord_flip()
+```
+
+And here is one that shows Group _and_ Domain differences:
 
 ```{r}
 ggplot(dat5, aes(Domain, Score, color=Group)) +
