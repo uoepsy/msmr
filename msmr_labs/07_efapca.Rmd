@@ -291,22 +291,23 @@ $$
 \end{equation*} 
 $$
 
-PCA is about trying to determine a vector **f** which generates the correlation matrix **R**. a bit like unscrambling eggs!  
+PCA is about trying to determine possible vectors **f** which generate the correlation matrix **R**. a bit like unscrambling eggs!  
 
-in PCA, we express $\mathbf{R = CC'}$, where $\mathbf{C}$ are our principal components.  
-If $n$ is number of variables in $R$, then $i^{th}$ component $C_i$ is the linear sum of each variable multiplied by some weighting:  
+in PCA, we are expressing the correlation matrix $\mathbf{R}$ in terms of a set of vectors $\mathbf{C}$ which collectively reproduce $\mathbf{R}$ perfectly (such that $\mathbf{R = CC'}$). These vectors contain _weightings_ for each of our observed variables, providing us with our __principal components__, which are the weighted composites. A given component $\mathbf{PC}_i$ is the  linear sum of each variable ($x_1$ to $x_n$) multiplied by some weighting:  
 $$
-C_i = \sum_{j=1}^{n}w_{ij}x_{j}
+\mathbf{PC}_i = \sum_{j=1}^{n}w_{ij}x_{j}
 $$
+And the set of these weightings $w_i$ for that principal component $PC_i$ is one of the vectors $\mathbf{c}_i$ in $\mathbf{C}$.  
 
 **How do we find $C$?**
 
-This is where "eigen decomposition" comes in.  
-For the $n \times n$ correlation matrix $\mathbf{R}$, there is an **eigenvector** $x_i$ that solves the equation 
+To find the set of vectors that make up $\mathbf{C}$ is where "eigen decomposition" comes in.   
+
+For the $n \times n$ correlation matrix $\mathbf{R}$, there are $n$ **eigenvectors** $v_i$ that solve the equation:  
 $$
-\mathbf{x_i R} = \lambda_i \mathbf{x_i}
+\mathbf{v_i R} = \lambda_i \mathbf{v_i}
 $$
-Where the vector multiplied by the correlation matrix is equal to some **eigenvalue** $\lambda_i$ multiplied by that vector.  
+Where the vector multiplied by the correlation matrix is equal to some value (an **eigenvalue**) $\lambda_i$ multiplied by that vector.  
 We can write this without subscript $i$ as: 
 $$
 \begin{align}
@@ -319,10 +320,10 @@ $$
 $$
 the vectors which make up $\mathbf{X}$ must be orthogonal [($\mathbf{XX' = I}$)](https://miro.medium.com/max/700/1*kyg5XbrY1AOB946IE5nWWg.png), which means that $\mathbf{R = X \lambda X'}$
  
-We can actually do this in R manually. 
-Creating a correlation matrix
+We can actually do this in R manually.  
+Let's create a correlation matrix
 ```{r}
-# lets create a correlation matrix, as the produce of ff'
+# lets create a correlation matrix, as the product of ff'
 f <- seq(.9,.4,-.1)
 R <- f %*% t(f)
 #give rownames and colnames
@@ -332,14 +333,14 @@ diag(R)<-1
 R
 ```
 
-Eigen Decomposition
+And let's do some eigen decomposition:  
 ```{r}
 # do eigen decomposition
 e <- eigen(R)
 print(e, digits=2)
 ```
 
-The eigenvectors are orthogonal ($\mathbf{XX' = I}$):
+The eigenvectors are orthogonal ($\mathbf{CC' = I}$):
 ```{r}
 round(e$vectors %*% t(e$vectors),2)
 ```
@@ -359,8 +360,11 @@ And we can reproduce our correlation matrix, because $\mathbf{R = CC'}$.
 ```{r}
 C %*% t(C)
 ```
+
+So far so good, but we're really just re-expressing our dataset with $n$ variables as $n$ _new_ variables. The benefit comes when we use this technique to __reduce the dimensionality of our data__.  
+  
 Now lets imagine we only consider 1 principal component.  
-We can do this with the `principal()` function: 
+We'll do it with the `principal()` function just to show that it matches:  
 ```{r}
 library(psych)
 pc1<-principal(R, nfactors = 1, covar = FALSE, rotate = 'none')
@@ -371,7 +375,9 @@ Look familiar? It looks like the first component we computed manually. The first
 ```{r}
 cbind(pc1$loadings, C=C[,1])
 ```
-We can now ask "how well does this component (on its own) recreate our correlation matrix?" 
+
+We can ask "how well does the first component _on its own_ recreate our correlation matrix?"  
+Remember that we are expressing our correlation matrix $\mathbf{R}$ in terms of our set of component vectors $\mathbf{C}$. Well what if we just take the first of these, $\mathbf{c_1}$, and look at how well $\mathbf{c_1}\mathbf{c_1}'$ recreates $\mathbf{R}$.  
 ```{r}
 C[,1] %*% t(C[,1])
 ```
@@ -380,11 +386,17 @@ It looks close, but not quite. How much not quite? Measurably so!
 R - (C[,1] %*% t(C[,1]))
 ```
 
-Notice the values on the diagonals?
+Notice the values on the diagonals of $\mathbf{c_1}\mathbf{c_1}'$.
 ```{r}
 diag(C[,1] %*% t(C[,1]))
-diag(R) - diag(C[,1] %*% t(C[,1]))
+```
+These aren't 1, like they are in $R$. But they are proportional: this is the amount of variance in each observed variable that is explained by this first component. Sound familiar? 
+```{r}
 pc1$communality
+```
+And likewise the 1 minus these is the unexplained variance:  
+```{r}
+1 - diag(C[,1] %*% t(C[,1]))
 pc1$uniquenesses
 ```
 
