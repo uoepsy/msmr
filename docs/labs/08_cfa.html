@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>CFA</title>
+
+<script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<script>
+function toggle_visibility(id1, id2) {
+var e = document.getElementById(id1);
+var f = document.getElementById(id2);
+e.style.display = ((e.style.display!='none') ? 'none' : 'block');
+if(f.classList.contains('fa-chevron-circle-right')) {
+    f.classList.add('fa-chevron-circle-down')
+    f.classList.remove('fa-chevron-circle-right')
+} else {
+    f.classList.add('fa-chevron-circle-right')
+    f.classList.remove('fa-chevron-circle-down')
+}
+}
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+<link rel="stylesheet" href="assets/style-labs.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><strong>MSMR</strong></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fas fa-home"></span>
+     
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Mixed Effects Models
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01_intromlm.html">1: Intro to Multi-Level Modelling</a>
+    </li>
+    <li>
+      <a href="02_lmm_log.html">2: Logistic | Longitudinal (linear)</a>
+    </li>
+    <li>
+      <a href="03_nonlin.html">3: Longitudinal (non-linear)</a>
+    </li>
+    <li>
+      <a href="04_ranef.html">4: Random Effect Structures</a>
+    </li>
+    <li>
+      <a href="05_multilevel_recap.html">5: Multilevel Modelling Recap</a>
+    </li>
+    <li class="dropdown-header">Break Week</li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Data Reduction &amp; SEM
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="07_efapca.html">PCA | EFA</a>
+    </li>
+    <li class="dropdown-header">CFA</li>
+    <li class="dropdown-header">Path Analysis</li>
+    <li class="dropdown-header">SEM 1</li>
+    <li class="dropdown-header">SEM 2</li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa-info-circle"></span>
+     
+    Extras
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="00_tidyverse_markdown.html">Recap - Tidyverse &amp; Markdown</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">CFA</h1>
+
+</div>
+
+
+<div class="optional-begin">
+
+</div>
+<div class="optional-body">
+<p>Make sure you have these packages installed:</p>
+<ul>
+<li>lavaan<br />
+</li>
+<li>semPlot or tidySEM</li>
+</ul>
+</div>
+<p class="optional-end">
+</p>
+<div id="introducing-cfa" class="section level1">
+<h1>Introducing CFA</h1>
+<div class="frame">
+<p>Last week we learned about two methods of data reduction: Principal Components Analysis (PCA) and Factor Analysis.</p>
+<p>In brief, PCA aims to summarise a set of measured variables into a set of uncorrelated (orthogonal) components, which are linear combinations (a weighted average) of the measured variables. Factor analysis, on the other hand, assumes that the relationships between a set of measured variables can be explained by a number of underlying latent factors.</p>
+<div class="statbox">
+<p><strong>PCA vs FA</strong></p>
+<ul>
+<li>Principal Component Analysis extracts <em>composites</em> of our observed variables.</li>
+<li>Factor Analysis is a model that predicts our observed variables from some <em>theoretical latent variables</em> (factors).</li>
+<li>If you just want to reduce a set of correlated observed variables down to a smaller number, conduct PCA. If you assume some underlying construct(s) is ann underlying cause of your observed variables, and it is these constructs you are interested in, then conduct FA.</li>
+</ul>
+<div class="figure" style="text-align: center"><span id="fig:pcafa2"></span>
+<img src="images/pcaefa/pca_efa.png" alt="Path diagrams for PCA and FA.&lt;br&gt;Note how the directions of the arrows in are different between PCA and FA - in PCA, each component $C_i$ is the weighted combination of the observed variables $y_1, ...,y_n$, whereas in FA, each measured variable $y_i$ is seen as generated by some latent factor $F$ plus some unexplained variance $u_i$" width="1000px" />
+<p class="caption">
+Figure 1: Path diagrams for PCA and FA.<br>Note how the directions of the arrows in are different between PCA and FA - in PCA, each component <span class="math inline">\(C_i\)</span> is the weighted combination of the observed variables <span class="math inline">\(y_1, ...,y_n\)</span>, whereas in FA, each measured variable <span class="math inline">\(y_i\)</span> is seen as generated by some latent factor <span class="math inline">\(F\)</span> plus some unexplained variance <span class="math inline">\(u_i\)</span>
+</p>
+</div>
+</div>
+</div>
+<div id="exploratory-and-confirmatory" class="section level2">
+<h2>Exploratory and Confirmatory</h2>
+<p>When we conduct <em>Exploratory</em> Factor Analysis (EFA), we tend to start with no hypothesis about either the number of latent factors or about the specific relationships between latent factors and measured variables (the <em>factor structure</em>). All variables load onto all factors, and often a transformation method (e.g., rotation) is applied to make the results more easily interpretable. Often in psychology we use scales that we already consider to be valid measures of some underlying construct, and we have a theoretical model that we wish to test. <strong>Confirmatory Factor Analysis (CFA)</strong> is a more <em>hypothesis-driven</em> form of factor analysis, which requires us to prespecfiy all aspects of our model: we need to have some a priori sense of how many factors that exist, which items a related to which factors, etc.</p>
+<p>CFA is almost always used when developing scales, because it allows us to examine the underlying structure of our measure (e.g., questionnaires). It is also useful when investigating the convergent and disciminant validity of a theoretical construct (for instance, we might expect a measure of anxiety to positively relate to (‘converge’ with) a measure of depression, and to differ (‘discriminate’) from a measure of general happiness.</p>
+<p>As shown in Figure <a href="#fig:figcfa">2</a>, when we have clear a priori hypotheses about relationships between measured variables and latent factors, CFA imposes a specific factor structure on the data, where we pick and choose the paths (arrows) that we want to estimate, and leave out ones which our theory suggests are not present. It is important to note, however, that by excluding a specific path, our model is asserting that that specific relationship is 0 (a bit like if we leave out a predictor from our multiple regression model: <code>y~w+x</code> assumes that <code>y~z</code> is 0).</p>
+<div class="figure" style="text-align: center"><span id="fig:figcfa"></span>
+<img src="images/pcaefa/cfa.png" alt="Path diagram for CFA" width="80%" height="500px" />
+<p class="caption">
+Figure 2: Path diagram for CFA
+</p>
+</div>
+<div class="yellow">
+<p>The purpose of CFA can be seen of as twofold:</p>
+<ul>
+<li>Firstly to obtain parameter estimates (i.e., factor loadings, variances and covariances of factors, residual variances of measured variables)<br />
+</li>
+<li>and secondly to assess whether the model provides a good fit to the data.</li>
+</ul>
+</div>
+<div class="frame">
+<p><strong>CFA as SEM</strong></p>
+<p>CFA is a specific form of a Structural Equation Model (SEM) in which we are defining a (number of) factor structures. SEM is going to be the focus of weeks 10 and 11 of this course. In essence, SEM is a framework in which we can test our theoretical models and hypotheses.</p>
+<p>You might be tempted to think “isn’t that what we’ve been doing already!?” and you would be right. However, SEM offers a huge amount more flexibility in the questions we can ask, and the types of theoretical model we can think about. In the multiple regression world, were restricted to focusing on one outcome variable, and examining the variance explained in that variable by some predictor variables. In SEM, our theoretical model may have multiple outcome variables, mediating paths (“z affects x which in turn affects y”), latent factors etc.</p>
+<p>Sometimes the easiest way into thinking about things in the SEM framework is to draw all your variables on a whiteboard, draw any latent constructs you believe they measure, and then connect them all up with arrows according to your theoretical model. Sound familiar? Figure <a href="#fig:figcfa">2</a> shows a CFA model represented as a SEM diagram!</p>
+</div>
+</div>
+</div>
+<div id="introducing-lavaan" class="section level1">
+<h1>Introducing <strong>lavaan</strong></h1>
+<p>For the remaining weeks of the course, we’re going to rely heavily on the <strong>lavaan</strong> (<strong>La</strong>tent <strong>Va</strong>riable <strong>An</strong>alysis) package.
+This is the main package in R for fitting structural equation mdoels, and there is a huge scope of what we can do with it.<br />
+The first thing to get to grips with is the various new operators which it allows us to use.</p>
+<p>Our old multiple regression formula in R was specified as <code>y ~ x1 + x2 + x3 + ...</code>.<br />
+In lavaan, we continue to fit regressions using the <code>~</code> symbol, but we can also specify the construction of latent variables using <code>=~</code> and residual variances &amp; covariances using <code>~~</code>.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="right">formula type</th>
+<th align="right">operator</th>
+<th align="right">memonic</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">latent variable definition</td>
+<td align="right"><code>=~</code></td>
+<td align="right">“is measured by”</td>
+</tr>
+<tr class="even">
+<td align="right">regression</td>
+<td align="right"><code>~</code></td>
+<td align="right">“is regressed on”</td>
+</tr>
+<tr class="odd">
+<td align="right">(residual) (co)variance</td>
+<td align="right"><code>~~</code></td>
+<td align="right">“is correlated with”</td>
+</tr>
+<tr class="even">
+<td align="right">intercept</td>
+<td align="right"><code>~1</code></td>
+<td align="right">“intercept”</td>
+</tr>
+</tbody>
+</table>
+<p>(from <a href="https://lavaan.ugent.be/tutorial/syntax1.html" class="uri">https://lavaan.ugent.be/tutorial/syntax1.html</a>)</p>
+<p>In practice, fitting models in lavaan tends to be a little different from things like <code>lm()</code> and <code>(g)lmer()</code>:</p>
+<div class="frame">
+<p><strong>Fitting models with lavaan</strong></p>
+<p>Instead of including the model formula <em>inside</em> the fit function (e.g., <code>lm(y ~ x1 + x2, data = df)</code>), we tend to do it in a step-by-step process.
+This is because as our models become more complex, our formulas can pretty long!</p>
+<p>We write the model as a character string (e.g. <code>model &lt;- "y ~ x1 + x2"</code>) and then we pass that formula along with the data to the relevant <strong>lavaan</strong> function such as <code>cfa()</code> or <code>sem()</code>, giving it the formula and the data: <code>cfa(model, data = mydata)</code>.</p>
+<ol style="list-style-type: decimal">
+<li><p>Specify the model:</p>
+<pre class="r"><code>mymodel &lt;- &quot;
+  factor1 =~ item1 + item2 + .....
+  factor2 =~ item6 + ...... 
+  ...
+  ..
+&quot;</code></pre></li>
+<li><p>Estimate the model:</p>
+<pre class="r"><code>mymodelfit &lt;- cfa(mymodel, data = mydata)</code></pre></li>
+<li><p>Examine the fitted model:</p>
+<pre class="r"><code>summary(mymodelfit)</code></pre></li>
+</ol>
+</div>
+<div class="optional-begin">
+<span id="opt-start-138" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-138&#39;, &#39;opt-start-138&#39;)"> Fitting a multiple regression model with lavaan</span>
+</div>
+<div id="opt-body-138" class="optional-body" style="display: none;">
+<p>You can see a multiple regression fitted with lavaan here, we define the model as a character string, and then we pass that to the relevant lavaan function, such as <code>cfa()</code> or in this case <code>sem()</code> (we’ll use <code>sem()</code> more in the weeks to come).</p>
+<pre class="r"><code>library(tidyverse)
+library(lavaan)
+toys_read &lt;- read_csv(&quot;https://uoepsy.github.io/data/toyexample.csv&quot;) 
+
+# the lm() way
+mreg_lm &lt;- lm(R_AGE~hrs_week + age, toys_read)
+
+# setting up the model for SEM
+mreg_model &lt;- &quot;
+    #regression
+    R_AGE ~ 1 + hrs_week + age
+&quot;
+mreg_sem &lt;- sem(mreg_model, data=toys_read)</code></pre>
+<p>These are the coefficients from our <code>lm()</code> model:</p>
+<pre class="r"><code>coefficients(mreg_lm)</code></pre>
+<pre><code>## (Intercept)    hrs_week         age 
+##       2.122       0.686       0.188</code></pre>
+<p>And you can see the estimated parameters are the same for our <code>sem()</code> model!</p>
+<pre class="r"><code>summary(mreg_sem)</code></pre>
+<pre><code>## lavaan 0.6-8 ended normally after 22 iterations
+## 
+##   Estimator                                         ML
+##   Optimization method                           NLMINB
+##   Number of model parameters                         4
+##                                                       
+##   Number of observations                           132
+##                                                       
+## Model Test User Model:
+##                                                       
+##   Test statistic                                 0.000
+##   Degrees of freedom                                 0
+## 
+## Parameter Estimates:
+## 
+##   Standard errors                             Standard
+##   Information                                 Expected
+##   Information saturated (h1) model          Structured
+## 
+## Regressions:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|)
+##   R_AGE ~                                             
+##     hrs_week          0.686    0.484    1.419    0.156
+##     age               0.188    0.226    0.832    0.405
+## 
+## Intercepts:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|)
+##    .R_AGE             2.122    2.575    0.824    0.410
+## 
+## Variances:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|)
+##    .R_AGE            27.268    3.356    8.124    0.000</code></pre>
+</div>
+<p class="optional-end">
+</p>
+</div>
+<div id="sem-diagrams" class="section level1">
+<h1>SEM diagrams</h1>
+<p>In SEM diagrams (or ‘path diagrams’), we have different ways to show the covariances, regressions, observed variables and latent variables.</p>
+<ul>
+<li><strong>Observed variables</strong> are represented by squares or rectangles. These are the named variables of interest which exist in our dataset - i.e. the ones which we have measured directly.</li>
+<li><strong>Latent variables</strong> are represented as ovals/ellipses or circles.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><br />
+</li>
+<li><strong>Covariances</strong> are represented by double-headed arrows. In many diagrams these are curved.</li>
+<li><strong>Regressions</strong> are shown by single headed arrows (e.g., an arrow from <span class="math inline">\(x\)</span> to <span class="math inline">\(y\)</span> for the path <span class="math inline">\(y~x\)</span>).<br />
+</li>
+<li><strong>Factor loadings</strong> are regressions. Recall that specifying a factor structure is simply to say that some measured variables <span class="math inline">\(y_i\)</span> are each regressed onto some unmeasured factor(s) <span class="math inline">\(F_i\)</span>.<br />
+<span class="math inline">\(y = \lambda \cdot F + u\)</span> looks an awful lot like <span class="math inline">\(y = \beta \cdot x + \epsilon\)</span> !!</li>
+</ul>
+<div class="yellow">
+<p><strong>New terminology!</strong></p>
+<ul>
+<li><strong>Exogenous variables</strong> are a bit like what we have been describing with words like “independent variable” or “predictor.” In a SEM diagram, they have no paths coming from other variables in the system, but have paths <em>going to</em> other variables.<br />
+</li>
+<li><strong>Endogenous variables</strong> are more like the “outcome”/“dependent”/“response” variables we are used to. They have some path coming from another variable in the system (and may also - but not necessarily - have paths going out from them).</li>
+</ul>
+</div>
+<p>There are a couple of packages which can create visual diagrams of structural equation models. <strong>semPlot</strong> and <strong>tidySEM</strong>.</p>
+<p>The <strong>semPlot</strong> package contains the function <code>semPaths()</code>, which is well established and works “out of the box” but is harder to edit. Alternatively, you can try your hand at a newer package which promises more customisable features for SEM diagrams called <a href="https://cjvanlissa.github.io/tidySEM/articles/Plotting_graphs.html"><strong>tidySEM</strong></a>.<br />
+(often, if we want to include a SEM diagram in a report the raw output from <code>semPaths()</code> would not usually meet publication standards, and instead we tend to draw them in programs like powerpoint!)</p>
+<div class="optional-begin">
+<span id="opt-start-139" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-139&#39;, &#39;opt-start-139&#39;)"> optional: visualising multiple regression model as SEM</span>
+</div>
+<div id="opt-body-139" class="optional-body" style="display: none;">
+<pre class="r"><code>library(semPlot)
+semPaths(mreg_sem, whatLabels = &quot;est&quot;, intercepts = F)</code></pre>
+<p><img src="08_cfa_files/figure-html/unnamed-chunk-7-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(tidySEM)
+graph_sem(mreg_sem, 
+          nodes = get_nodes(mreg_sem))</code></pre>
+<p><img src="08_cfa_files/figure-html/unnamed-chunk-7-2.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+<p class="optional-end">
+</p>
+</div>
+<div id="a-one-factor-model" class="section level1">
+<h1>A One factor model</h1>
+<div class="optional-begin">
+<span id="opt-start-140" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-140&#39;, &#39;opt-start-140&#39;)"> Conduct Problems Dataset2: Data Codebook</span>
+</div>
+<div id="opt-body-140" class="optional-body" style="display: none;">
+<p>Last week we conducted an exploratory factor analysis of a dataset to try and identify an optimal factor structure for a new measure of conduct (i.e., antisocial behavioural) problems. This week, we’ll conduct some confirmatory factor analyses (CFA) of the same inventory, using some new data collected by the researchers from n=600 adolescents.</p>
+<p>The questionnaire items referred to the following 10 behaviours:</p>
+<ul>
+<li>item 1- Stealing</li>
+<li>item 2- Lying</li>
+<li>item 3- Skipping school</li>
+<li>item 4- Vandalism</li>
+<li>item 5- Breaking curfew</li>
+<li>item 6- Threatening others</li>
+<li>item 7- Bullying</li>
+<li>item 8- Spreading malicious rumours</li>
+<li>item 9- Using a weapon</li>
+<li>item 10 - Fighting</li>
+</ul>
+<p>The data is available as a <strong>.csv</strong> at <a href="https://uoepsy.github.io/data/conduct_problems_2.csv">https://uoepsy.github.io/data/conduct_problems_2.csv</a></p>
+</div>
+<p class="optional-end">
+</p>
+<div class="question-begin">
+Question A1
+</div>
+<div class="question-body">
+<p>Read in the new data, and construct a correlation matrix. Maybe create a visualisation of the correlation matrix?</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<pre class="r"><code>df &lt;- read.csv(&quot;https://uoepsy.github.io/data/conduct_problems_2.csv&quot;)
+cor(df)</code></pre>
+<pre><code>##        item1 item2  item3 item4 item5  item6 item7 item8 item9 item10
+## item1  1.000 0.525 0.4350 0.483 0.564 0.1345 0.281 0.258 0.244  0.178
+## item2  0.525 1.000 0.5010 0.512 0.674 0.1524 0.303 0.275 0.276  0.162
+## item3  0.435 0.501 1.0000 0.490 0.599 0.0946 0.256 0.194 0.208  0.129
+## item4  0.483 0.512 0.4897 1.000 0.620 0.1485 0.249 0.255 0.226  0.143
+## item5  0.564 0.674 0.5991 0.620 1.000 0.1135 0.311 0.246 0.233  0.139
+## item6  0.135 0.152 0.0946 0.148 0.114 1.0000 0.546 0.594 0.369  0.463
+## item7  0.281 0.303 0.2557 0.249 0.311 0.5462 1.000 0.801 0.599  0.532
+## item8  0.258 0.275 0.1936 0.255 0.246 0.5944 0.801 1.000 0.617  0.556
+## item9  0.244 0.276 0.2080 0.226 0.233 0.3692 0.599 0.617 1.000  0.361
+## item10 0.178 0.162 0.1292 0.143 0.139 0.4632 0.532 0.556 0.361  1.000</code></pre>
+<pre class="r"><code>pheatmap::pheatmap(cor(df))</code></pre>
+<p><img src="08_cfa_files/figure-html/unnamed-chunk-8-1.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question A2
+</div>
+<div class="question-body">
+<p>Using lavaan syntax, specify a model in which all 10 items load on one latent variable.<br />
+Do not estimate the model yet, simply specify it in a character string, in preparation to fit it with the <code>cfa()</code> function.</p>
+<p><em>Hint:</em> Remember that to specify items loading on a latent variable we use the <code>=~</code> operator. The latent variables goes on the left hand side and the list of indicators (i.e., items used to measure the latent variable) go on the right hand side separated by ‘+.’ You can name the latent variable whatever you like.</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<pre class="r"><code>model1&lt;-&#39;CP=~item1+item2+item3+item4+item5+item6+item7+item8+item9+item10&#39;</code></pre>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question A3
+</div>
+<div class="question-body">
+<p>We’re going to use the <code>cfa()</code> function to fit our model.
+Why is it not necessary to refer to <strong>ALL</strong> of your CFA parameters in your model specification function to estimate your model? Which parameters do you not need to include in the model specification?</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<p>Some parameters are estimated or fixed by default when you estimate the model with the <code>cfa()</code> function. In this case, the residual factor variances and loadings are missing because the former are estimated by default and the latter are fixed to 1 by default. Latent factor variances are also estimated by default.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question A4
+</div>
+<div class="question-body">
+<p>Estimate your model using the <code>cfa</code>()` function from the lavaan package. Scale your latent variable by fixing the latent variable variance to 1.</p>
+<p>The default scaling constraint/identification constraints imposed when using the <code>cfa()</code> function are to fix the loading of the first item of each latent variable to 1.<br />
+We can override this by setting <code>std.lv=TRUE</code>.<br />
+This will instead scale the latent variables by fixing them to 1.<br />
+It is helpful to save the results of <code>cfa()</code> to a new object so that we can later inspect that object (to look at the model fit and parameter estimates).</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<pre class="r"><code>model1.est&lt;-cfa(model1, data=df, std.lv=TRUE)</code></pre>
+</div>
+<p class="solution-end">
+</p>
+</div>
+<div id="model-fit" class="section level1">
+<h1>Model Fit</h1>
+<div id="same-name-different-idea" class="section level2">
+<h2>Same name, different idea</h2>
+<p>You’ll have heard the term “model fit” many times since september. However, there is a crucial difference in what it means when it is used in the SEM framework.</p>
+<p>In things like multiple regression, we have been using “model fit” to be the measure of “how much variance can we explain in y with our set of predictors?”<br />
+In SEM, examining “model fit” is more like asking “how well does our model reproduce the characteristics of the data that we observed?” If you think of the characteristics of our data being represented by a covariance matrix, then we might think of “model fit” as being “how well can our model reproduce our observed covariance matrix?”</p>
+</div>
+<div id="degrees-of-freedom" class="section level2">
+<h2>Degrees of freedom</h2>
+<p>Degrees of freedom in the SEM framework correspond to the number of <em>knowns</em> (observed covariances/variances) minus the number of <em>unknowns</em> (parameters to be estimated by the model). A model is only able to be estimated if it has at least 0 degrees of freedom (if there are as many knowns as unknowns). A model with 0 degrees of freedom is termed <strong>just-identified</strong>.<br />
+<strong>under-</strong> and <strong>over-</strong> identified models correspond to those with <span class="math inline">\(&lt;0\)</span> and <span class="math inline">\(&gt;0\)</span> degrees of freedom respectively.</p>
+<p>An example of a <em>just-identified</em> model is the multiple regression model! In multiple regression, everything is allowed to vary with everything else, which means that there is a unique solution for all of the model’s parameters because there are <em>as many paths as there are observed covariances</em>. This means that in the SEM world, a multiple regression model is “just-identified.”</p>
+<div class="optional-begin">
+<span id="opt-start-141" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-141&#39;, &#39;opt-start-141&#39;)"> huh?</span>
+</div>
+<div id="opt-body-141" class="optional-body" style="display: none;">
+<p>If I have two predictors and one outcome variable, then there are 6 variances and covariances available. For instance:</p>
+<pre class="r"><code>cov(toys_read %&gt;% select(R_AGE, hrs_week, age))</code></pre>
+<pre><code>##           R_AGE hrs_week   age
+## R_AGE    28.089    0.649 0.892
+## hrs_week  0.649    0.897 0.175
+## age       0.892    0.175 4.095</code></pre>
+<p>The multiple regression model will estimate the two variances of the exogenous variables (the predictors), their covariance, the two paths from each exogenous to the endogenous (each predictor to the outcome), and the error variance. This makes up 6 estimated parameters - which is exactly how many known covariances there are.
+<img src="08_cfa_files/figure-html/unnamed-chunk-10-1.png" width="350px" style="display: block; margin: auto;" /></p>
+</div>
+<p class="optional-end">
+</p>
+<div class="yellow">
+<p><strong>How many knowns are there?</strong></p>
+<p>The number of known covariances in a set of <span class="math inline">\(k\)</span> observed variables is equal to <span class="math inline">\(\frac{k \cdot (k+1)}{2}\)</span>.</p>
+</div>
+<p>When learning about SEM, the visualisations can play a key part. It often helps to draw all our variables (both observed and latent) on the whiteboard, and connect them up according to your theoretical model. You can then count the number of paths (arrows) and determine whether the <span class="math inline">\(\text{number of knowns} &gt; \text{number of unknowns}\)</span>. We can reduce the number of unknowns by fixing parameters to be specific values.</p>
+<div class="yellow">
+<p>By constraining some estimated parameter to be some specific value, we free-up a degree of freedom! For instance “the correlation between x1 and x2 is equal to 0.7 (<span class="math inline">\(r_{x_1x_2} = .07\)</span>).” This would turn a previously estimated parameter into a fixed parameter, and this gains us the prize of a lovely degree of freedom!</p>
+<p><strong>By removing a path altogether, we are constraining it to be zero.</strong></p>
+</div>
+<p>For instance, in Figure <a href="#fig:df1">3</a> we can see a the model of a latent factor loading on to 4 items. The number of paths to be estimated here is greater than the number of known covariances. However, we can get around this by <em>fixing certain parameters to be specific values</em>. In Figure <a href="#fig:df2">4</a>, the latent factor variance is set at 1, and the residual factor loadings are also set to 1.<br />
+This has the additional benefit of making our latent factor have some defining features. Because we don’t actually measure the latent variable (it is a hypothetical construct), it doesn’t really have any intrinsic ‘scale.’ When we fix the variance to be 1, we are providing some property (its variance) we create a reference from which the other paths to/from the variable are in relation to. A common alternative is to fix the factor loading of the first item to be 1 (see Figure <a href="#fig:df3">5</a>).</p>
+<div class="figure" style="text-align: center"><span id="fig:df1"></span>
+<img src="images/pcaefa/df1.png" alt="A four item factor structure. There are 10 knowns, but 13 parameters" width="80%" />
+<p class="caption">
+Figure 3: A four item factor structure. There are 10 knowns, but 13 parameters
+</p>
+</div>
+<div class="figure" style="text-align: center"><span id="fig:df2"></span>
+<img src="images/pcaefa/df2.png" alt="A four item factor structure. By fixing 5 of these parameters to be equal to 1, we gain back degrees of freedom and make our model identifiable" width="80%" />
+<p class="caption">
+Figure 4: A four item factor structure. By fixing 5 of these parameters to be equal to 1, we gain back degrees of freedom and make our model identifiable
+</p>
+</div>
+<div class="figure" style="text-align: center"><span id="fig:df3"></span>
+<img src="images/pcaefa/df3marker.png" alt="A four item factor structure. The 'marker method' fixes the first factor loading to be 1, leaving the factor variance free to be estimated." width="80%" />
+<p class="caption">
+Figure 5: A four item factor structure. The ‘marker method’ fixes the first factor loading to be 1, leaving the factor variance free to be estimated.
+</p>
+</div>
+<p>We will return to this more in coming weeks, but it is an important notion to remember - “model fit” and “degrees of freedom” have quite different meanings to those you are likely used to.</p>
+<p>There are too many different indices of model fit in SEM, and there’s lots of controversy over the various merits and disadvantages and proposed cutoffs of each method. We strongly encourage you to take a look at the accompanying reading on CFA which is posted on Learn, as this explains some of the more common measures. Additionally, there are many resources online, for instance <a href="http://www.davidakenny.net/cm/fit.htm">David Kenny’s page on measuring model fit</a>.</p>
+</div>
+</div>
+<div id="a-two-factor-model" class="section level1">
+<h1>A Two factor model</h1>
+<div class="question-begin">
+Question B1
+</div>
+<div class="question-body">
+<p>Examine the global fit of your one factor model. Does it fit well? (To obtain the global fit measures, we can use the <code>summary()</code> function to inspect our estimated model, setting <code>fit.measures=TRUE</code>).</p>
+<p>Rules of thumb: If <span class="math inline">\(\textrm{RMSEA} &lt; .05\)</span>, <span class="math inline">\(\textrm{SRMR} &lt; .05\)</span>, <span class="math inline">\(\textrm{TLI} &gt; .95\)</span> and <span class="math inline">\(\textrm{CFI} &gt; .95\)</span> then the model fits well.<br />
+Smaller values of RMSEA and SRMR mean better fit while larger values of CFI and TLI mean better fit.</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<pre class="r"><code>summary(model1.est, fit.measures=TRUE)</code></pre>
+<pre><code>## lavaan 0.6-8 ended normally after 45 iterations
+## 
+##   Estimator                                         ML
+##   Optimization method                           NLMINB
+##   Number of model parameters                        20
+##                                                       
+##   Number of observations                           600
+##                                                       
+## Model Test User Model:
+##                                                       
+##   Test statistic                              1089.192
+##   Degrees of freedom                                35
+##   P-value (Chi-square)                           0.000
+## 
+## Model Test Baseline Model:
+## 
+##   Test statistic                              2836.905
+##   Degrees of freedom                                45
+##   P-value                                        0.000
+## 
+## User Model versus Baseline Model:
+## 
+##   Comparative Fit Index (CFI)                    0.622
+##   Tucker-Lewis Index (TLI)                       0.515
+## 
+## Loglikelihood and Information Criteria:
+## 
+##   Loglikelihood user model (H0)              -7722.655
+##   Loglikelihood unrestricted model (H1)      -7178.058
+##                                                       
+##   Akaike (AIC)                               15485.309
+##   Bayesian (BIC)                             15573.248
+##   Sample-size adjusted Bayesian (BIC)        15509.753
+## 
+## Root Mean Square Error of Approximation:
+## 
+##   RMSEA                                          0.224
+##   90 Percent confidence interval - lower         0.213
+##   90 Percent confidence interval - upper         0.236
+##   P-value RMSEA &lt;= 0.05                          0.000
+## 
+## Standardized Root Mean Square Residual:
+## 
+##   SRMR                                           0.181
+## 
+## Parameter Estimates:
+## 
+##   Standard errors                             Standard
+##   Information                                 Expected
+##   Information saturated (h1) model          Structured
+## 
+## Latent Variables:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|)
+##   CP =~                                               
+##     item1             0.378    0.042    9.036    0.000
+##     item2             0.429    0.044    9.782    0.000
+##     item3             0.327    0.042    7.794    0.000
+##     item4             0.392    0.045    8.689    0.000
+##     item5             0.410    0.043    9.522    0.000
+##     item6             0.602    0.037   16.202    0.000
+##     item7             0.879    0.033   26.448    0.000
+##     item8             0.859    0.032   26.712    0.000
+##     item9             0.680    0.038   18.001    0.000
+##     item10            0.579    0.037   15.557    0.000
+## 
+## Variances:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|)
+##    .item1             0.885    0.052   17.038    0.000
+##    .item2             0.963    0.057   16.984    0.000
+##    .item3             0.909    0.053   17.114    0.000
+##    .item4             1.037    0.061   17.061    0.000
+##    .item5             0.933    0.055   17.004    0.000
+##    .item6             0.581    0.036   16.213    0.000
+##    .item7             0.224    0.021   10.721    0.000
+##    .item8             0.202    0.019   10.379    0.000
+##    .item9             0.559    0.035   15.843    0.000
+##    .item10            0.596    0.037   16.324    0.000
+##     CP                1.000</code></pre>
+<div class="int">
+<p>According to conventionally accepted criteria for RMSEA, SRMR, TLI and CFI, the model fits poorly.</p>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question B2
+</div>
+<div class="question-body">
+<p>Now let’s try a different model.
+Specify a CFA model with two correlated latent factors.<br />
+Consider items 1 to 5 as indicators of the first latent factor and items 6 to 10 as indicators of the second latent factor.</p>
+<p>Specifying models this way requires separating the different (sets of) paths onto new lines.<br />
+So for this model you will want something with 3 lines.<br />
+You can add comments in as well, which will help!<br />
+The first one below is filled in for you:</p>
+<pre class="r"><code>model2 &lt;- &#39;
+  # latent factor one &quot;is measured by&quot; items 1 to 5
+  LV1 =~ item1 + item2 + item3 + item4 + item5
+  # latent factor two &quot;is measured by&quot; items 6 to 10
+  ...
+  # latent factor one is correlated with latent factor two
+  ...
+&#39;</code></pre>
+<div class="red">
+<p><strong>Strings split over lines making R get stuck?</strong></p>
+<p>If you have your cursor on the first of a multi-line character string, and you press ctrl+enter in order to run it (i.e., send it down to the console), then R will not automatically run the next line. It will give you a little blue <code>+</code> in the console, and force you to run it line by line.</p>
+<p>If you are seeing the little blue <code>+</code> then you can press the escape key to cancel the command.</p>
+<p>It might be easier to highlight the entire model and run it all at once.</p>
+<p><img src="images/pcaefa/chrstrrun.gif" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<p>We can specify the model as below.</p>
+<pre class="r"><code>model2&lt;-&#39;
+    LV1=~item1+item2+item3+item4+item5
+    LV2=~item6+item7+item8+item9+item10
+    LV1~~LV2
+&#39;</code></pre>
+<p>We now define two latent variables ‘Lv1’ and ‘Lv2’ using the ‘=~’ operator. We also introduce a new operator: ‘~~’ in order to specify the covariance between the two latent variables.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question B3
+</div>
+<div class="question-body">
+<p>Estimate this model using <code>cfa()</code>.<br />
+Scale the latent variables using a reference indicator (rather than fixing the variance).<br />
+Does the model fit well?</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<p><code>cfa()</code> uses a reference indicator to scale the latent variables by default we only need to specify the name of the object with the model syntax and the name of the dataset.</p>
+<pre class="r"><code>model2.est&lt;-cfa(model2, data=df)
+summary(model2.est, fit.measures=T)</code></pre>
+<pre><code>## lavaan 0.6-8 ended normally after 27 iterations
+## 
+##   Estimator                                         ML
+##   Optimization method                           NLMINB
+##   Number of model parameters                        21
+##                                                       
+##   Number of observations                           600
+##                                                       
+## Model Test User Model:
+##                                                       
+##   Test statistic                                65.765
+##   Degrees of freedom                                34
+##   P-value (Chi-square)                           0.001
+## 
+## Model Test Baseline Model:
+## 
+##   Test statistic                              2836.905
+##   Degrees of freedom                                45
+##   P-value                                        0.000
+## 
+## User Model versus Baseline Model:
+## 
+##   Comparative Fit Index (CFI)                    0.989
+##   Tucker-Lewis Index (TLI)                       0.985
+## 
+## Loglikelihood and Information Criteria:
+## 
+##   Loglikelihood user model (H0)              -7210.941
+##   Loglikelihood unrestricted model (H1)      -7178.058
+##                                                       
+##   Akaike (AIC)                               14463.881
+##   Bayesian (BIC)                             14556.217
+##   Sample-size adjusted Bayesian (BIC)        14489.548
+## 
+## Root Mean Square Error of Approximation:
+## 
+##   RMSEA                                          0.039
+##   90 Percent confidence interval - lower         0.025
+##   90 Percent confidence interval - upper         0.054
+##   P-value RMSEA &lt;= 0.05                          0.884
+## 
+## Standardized Root Mean Square Residual:
+## 
+##   SRMR                                           0.035
+## 
+## Parameter Estimates:
+## 
+##   Standard errors                             Standard
+##   Information                                 Expected
+##   Information saturated (h1) model          Structured
+## 
+## Latent Variables:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|)
+##   LV1 =~                                              
+##     item1             1.000                           
+##     item2             1.217    0.076   15.965    0.000
+##     item3             1.012    0.070   14.424    0.000
+##     item4             1.146    0.077   14.967    0.000
+##     item5             1.360    0.078   17.412    0.000
+##   LV2 =~                                              
+##     item6             1.000                           
+##     item7             1.419    0.082   17.331    0.000
+##     item8             1.437    0.081   17.662    0.000
+##     item9             1.093    0.077   14.125    0.000
+##     item10            0.950    0.073   13.073    0.000
+## 
+## Covariances:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|)
+##   LV1 ~~                                              
+##     LV2               0.156    0.023    6.856    0.000
+## 
+## Variances:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|)
+##    .item1             0.574    0.037   15.398    0.000
+##    .item2             0.477    0.035   13.778    0.000
+##    .item3             0.551    0.036   15.262    0.000
+##    .item4             0.597    0.040   14.867    0.000
+##    .item5             0.264    0.028    9.537    0.000
+##    .item6             0.561    0.035   16.193    0.000
+##    .item7             0.228    0.021   10.767    0.000
+##    .item8             0.153    0.019    8.122    0.000
+##    .item9             0.566    0.035   15.978    0.000
+##    .item10            0.587    0.036   16.351    0.000
+##     LV1               0.453    0.052    8.701    0.000
+##     LV2               0.381    0.045    8.396    0.000</code></pre>
+<p>This model fits well according to RMSEA, SRMR, CFI and TLI. The <span class="math inline">\(\chi^2\)</span> value is significant but we don’t need to worry about this because the <span class="math inline">\(\chi^2\)</span> test has a strong tendency to reject even trivially mis-specified models.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question B4
+</div>
+<div class="question-body">
+<p>Are there any areas of local mis-fit?</p>
+<p>We can look for these using the <code>modindices()</code> function. This will give us the expected improvement in <span class="math inline">\(\chi^2\)</span> if a parameter was added, and the expected parameter change associated with the addition of the parameter (an estimate of what the parameter estimate would be if the parameter was included in the model).</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<pre class="r"><code>modindices(model2.est, sort=T)</code></pre>
+<pre><code>##      lhs op    rhs     mi    epc sepc.lv sepc.all sepc.nox
+## 72 item6 ~~ item10 10.747  0.082   0.082    0.144    0.144
+## 25   LV1 =~  item7  8.106  0.119   0.080    0.080    0.080
+## 65 item5 ~~  item7  6.720  0.039   0.039    0.160    0.160
+## 71 item6 ~~  item9  6.675 -0.065  -0.065   -0.115   -0.115
+## 24   LV1 =~  item6  6.100 -0.136  -0.092   -0.094   -0.094
+## 33   LV2 =~  item5  5.273 -0.122  -0.075   -0.072   -0.072
+## 60 item4 ~~  item7  4.156 -0.039  -0.039   -0.105   -0.105
+## 27   LV1 =~  item9  4.086  0.113   0.076    0.075    0.075
+## 78 item9 ~~ item10  4.029 -0.051  -0.051   -0.089   -0.089
+## 44 item2 ~~  item4  4.021 -0.058  -0.058   -0.109   -0.109
+## 26   LV1 =~  item8  3.912 -0.078  -0.053   -0.054   -0.054
+## 66 item5 ~~  item8  3.702 -0.027  -0.027   -0.134   -0.134
+## 61 item4 ~~  item8  3.126  0.031   0.031    0.103    0.103
+## 29   LV2 =~  item1  2.920  0.105   0.065    0.064    0.064
+## 55 item3 ~~  item8  2.869 -0.028  -0.028   -0.098   -0.098
+## 64 item5 ~~  item6  2.812 -0.034  -0.034   -0.090   -0.090
+## 37 item1 ~~  item5  2.750 -0.044  -0.044   -0.114   -0.114
+## 70 item6 ~~  item8  2.726  0.034   0.034    0.115    0.115
+## 49 item2 ~~  item9  2.563  0.039   0.039    0.074    0.074
+## 54 item3 ~~  item7  2.295  0.027   0.027    0.077    0.077
+## 73 item7 ~~  item8  1.964 -0.041  -0.041   -0.222   -0.222
+## 30   LV2 =~  item2  1.869  0.081   0.050    0.046    0.046
+## 74 item7 ~~  item9  1.602  0.028   0.028    0.077    0.077
+## 69 item6 ~~  item7  1.395 -0.025  -0.025   -0.069   -0.069
+## 28   LV1 =~ item10  1.357 -0.065  -0.044   -0.046   -0.046
+## 68 item5 ~~ item10  1.356 -0.024  -0.024   -0.062   -0.062
+## 45 item2 ~~  item5  1.352  0.035   0.035    0.099    0.099
+## 34 item1 ~~  item2  1.322  0.031   0.031    0.060    0.060
+## 52 item3 ~~  item5  1.175  0.029   0.029    0.076    0.076
+## 43 item2 ~~  item3  1.120 -0.028  -0.028   -0.056   -0.056
+## 42 item1 ~~ item10  0.944  0.025   0.025    0.043    0.043
+## 76 item8 ~~  item9  0.731  0.018   0.018    0.062    0.062
+## 59 item4 ~~  item6  0.688  0.022   0.022    0.037    0.037
+## 67 item5 ~~  item9  0.672 -0.017  -0.017   -0.044   -0.044
+## 41 item1 ~~  item9  0.613  0.020   0.020    0.035    0.035
+## 36 item1 ~~  item4  0.604  0.022   0.022    0.038    0.038
+## 53 item3 ~~  item6  0.541 -0.018  -0.018   -0.033   -0.033
+## 35 item1 ~~  item3  0.528 -0.020  -0.020   -0.035   -0.035
+## 51 item3 ~~  item4  0.467  0.019   0.019    0.034    0.034
+## 56 item3 ~~  item9  0.373  0.015   0.015    0.027    0.027
+## 32   LV2 =~  item4  0.341  0.037   0.023    0.021    0.021
+## 58 item4 ~~  item5  0.241  0.014   0.014    0.036    0.036
+## 31   LV2 =~  item3  0.224 -0.029  -0.018   -0.017   -0.017
+## 40 item1 ~~  item8  0.185  0.007   0.007    0.025    0.025
+## 38 item1 ~~  item6  0.145 -0.010  -0.010   -0.017   -0.017
+## 50 item2 ~~ item10  0.082 -0.007  -0.007   -0.013   -0.013
+## 48 item2 ~~  item8  0.077  0.004   0.004    0.017    0.017
+## 62 item4 ~~  item9  0.057  0.006   0.006    0.011    0.011
+## 47 item2 ~~  item7  0.054 -0.004  -0.004   -0.012   -0.012
+## 75 item7 ~~ item10  0.048 -0.005  -0.005   -0.012   -0.012
+## 63 item4 ~~ item10  0.031 -0.005  -0.005   -0.008   -0.008
+## 57 item3 ~~ item10  0.024  0.004   0.004    0.007    0.007
+## 77 item8 ~~ item10  0.011 -0.002  -0.002   -0.007   -0.007
+## 46 item2 ~~  item6  0.007  0.002   0.002    0.004    0.004
+## 39 item1 ~~  item7  0.006 -0.001  -0.001   -0.004   -0.004</code></pre>
+<div class="int">
+<p>While the modification indices suggest that the model could be improved with the addition of parameters, none of the expected parameter changes are very large. If we included any additonal parameters here it is likely we would be capitalising on chance. We would also have to consider whether we could justify their inclusion on substantive grounds, i.e., we would ask ourselves ‘does the addition of the parameter makes sense given our background knowledge of the construct?’</p>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question B5
+</div>
+<div class="question-body">
+<p>Take a look at the parameter estimates, are all of your loadings satisfactory? Which items are the best measures of the underlying latent variables?</p>
+<p><strong>Hint:</strong> It may help to look at the standardised parameter estimates, which we can do by using <code>summary(model, standardized = TRUE)</code>.<br />
+Typically we would want standardised loadings to be <span class="math inline">\(&gt;|.3|\)</span> (there is no consensus on this, sometimes you will see <span class="math inline">\(&gt;|.4|\)</span> suggested, other times <span class="math inline">\(&gt;|.6|\)</span>!)</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<pre class="r"><code>summary(model2.est, standardized=T)</code></pre>
+<pre><code>## lavaan 0.6-8 ended normally after 27 iterations
+## 
+##   Estimator                                         ML
+##   Optimization method                           NLMINB
+##   Number of model parameters                        21
+##                                                       
+##   Number of observations                           600
+##                                                       
+## Model Test User Model:
+##                                                       
+##   Test statistic                                65.765
+##   Degrees of freedom                                34
+##   P-value (Chi-square)                           0.001
+## 
+## Parameter Estimates:
+## 
+##   Standard errors                             Standard
+##   Information                                 Expected
+##   Information saturated (h1) model          Structured
+## 
+## Latent Variables:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+##   LV1 =~                                                                
+##     item1             1.000                               0.673    0.664
+##     item2             1.217    0.076   15.965    0.000    0.819    0.765
+##     item3             1.012    0.070   14.424    0.000    0.681    0.676
+##     item4             1.146    0.077   14.967    0.000    0.771    0.706
+##     item5             1.360    0.078   17.412    0.000    0.915    0.872
+##   LV2 =~                                                                
+##     item6             1.000                               0.618    0.636
+##     item7             1.419    0.082   17.331    0.000    0.877    0.878
+##     item8             1.437    0.081   17.662    0.000    0.887    0.915
+##     item9             1.093    0.077   14.125    0.000    0.675    0.668
+##     item10            0.950    0.073   13.073    0.000    0.587    0.608
+## 
+## Covariances:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+##   LV1 ~~                                                                
+##     LV2               0.156    0.023    6.856    0.000    0.375    0.375
+## 
+## Variances:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+##    .item1             0.574    0.037   15.398    0.000    0.574    0.559
+##    .item2             0.477    0.035   13.778    0.000    0.477    0.416
+##    .item3             0.551    0.036   15.262    0.000    0.551    0.543
+##    .item4             0.597    0.040   14.867    0.000    0.597    0.501
+##    .item5             0.264    0.028    9.537    0.000    0.264    0.239
+##    .item6             0.561    0.035   16.193    0.000    0.561    0.595
+##    .item7             0.228    0.021   10.767    0.000    0.228    0.229
+##    .item8             0.153    0.019    8.122    0.000    0.153    0.162
+##    .item9             0.566    0.035   15.978    0.000    0.566    0.554
+##    .item10            0.587    0.036   16.351    0.000    0.587    0.630
+##     LV1               0.453    0.052    8.701    0.000    1.000    1.000
+##     LV2               0.381    0.045    8.396    0.000    1.000    1.000</code></pre>
+<p>We can see that all loadings are statistically significant and all standardised loadings are &gt;|.3|. This is good as it suggests all our items measure the relevant latent variable reasonably well. We can identify the ‘best’ indicators of our latent constructs according to those with the highest standardised loadings. We must, however, be aware that item loadings are model-specific: if we changed the model (e.g., the number of factors or which items we included) the loadings could change and so would our interpretation of the latent variables.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question B6
+</div>
+<div class="question-body">
+<p>Now it’s time to get R to draw some diagrams of our model for us!<br />
+Using R, represent the model, including the standardised parameters as a SEM diagram.</p>
+<p>You can either use the <code>semPaths()</code> functions from the <strong>semPlot</strong> package, or you can try your hand at a newer package which promises more customisable features for SEM diagrams called <a href="https://cjvanlissa.github.io/tidySEM/articles/Plotting_graphs.html"><strong>tidySEM</strong></a>.</p>
+<p>(often, if we want to include a SEM diagram in a report the raw output from <code>semPaths()</code> would not usually meet publication standards, and instead we tend to draw them in programs like powerpoint!)</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<p>In the <code>semPaths()</code> function, we can include the unstandardised estimates by setting <code>what='est'</code> and the standardised estimates by setting <code>what='stand'</code>.</p>
+<pre class="r"><code>library(semPlot)
+semPaths(model2.est, what=&#39;stand&#39;)</code></pre>
+<p><img src="08_cfa_files/figure-html/SEM%20diagram-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(tidySEM)
+lay = get_layout(rep(NA, 3), &quot;LV1&quot;, rep(NA,2),&quot;LV2&quot;, rep(NA,3),
+           paste0(&quot;item&quot;,1:10), rows = 2)
+graph_sem(model2.est, layout = lay)</code></pre>
+<p><img src="08_cfa_files/figure-html/unnamed-chunk-13-1.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question B7
+</div>
+<div class="question-body">
+<p>Write a short paragraph summarising the method and results of the two factor model.</p>
+<p><strong>Remember:</strong> The main principle behind reporting any analysis is that you should be as transparent as possible (e.g., reporting any model modifications made) and a reader should be able to reproduce your analysis based on your description.</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<div class="int">
+<p>A two-factor model was tested. Items 1-5 loaded on a ‘non-aggressive conduct problems’ factor and items 6-10 loaded on an ‘aggression’ factor and these factors were allowed to correlate. Scaling and identification were achieved by fixing the loading of item 1 on the non-aggressive conduct problems factor and item 6 on the aggression factor to 1. The model was estimated using maximum likelihood estimation. The model fit well with CFI=.99, TLI=0.99, RMSEA=.04, and SRMR=.04 (Hu &amp; Bentler, 1999). All loadings were statistically significant and &gt;|.3| on the standardised scale. Modification indices and expected parameter changes were inspected but no modifications were made because no expected parameter changes were judged large enough to merit the inclusion of additional parameters given that there was little theoretical rationale for their inclusion. Overall, therefore, a two-factor oblique model was supported for the conduct problems items. The correlation between the factors was r=.38 (p&lt;.001).</p>
+<pre><code>## lavaan 0.6-8 ended normally after 27 iterations
+## 
+##   Estimator                                         ML
+##   Optimization method                           NLMINB
+##   Number of model parameters                        21
+##                                                       
+##   Number of observations                           600
+##                                                       
+## Model Test User Model:
+##                                                       
+##   Test statistic                                65.765
+##   Degrees of freedom                                34
+##   P-value (Chi-square)                           0.001
+## 
+## Parameter Estimates:
+## 
+##   Standard errors                             Standard
+##   Information                                 Expected
+##   Information saturated (h1) model          Structured
+## 
+## Latent Variables:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|)
+##   LV1 =~                                              
+##     item1             1.000                           
+##     item2             1.217    0.076   15.965    0.000
+##     item3             1.012    0.070   14.424    0.000
+##     item4             1.146    0.077   14.967    0.000
+##     item5             1.360    0.078   17.412    0.000
+##   LV2 =~                                              
+##     item6             1.000                           
+##     item7             1.419    0.082   17.331    0.000
+##     item8             1.437    0.081   17.662    0.000
+##     item9             1.093    0.077   14.125    0.000
+##     item10            0.950    0.073   13.073    0.000
+## 
+## Covariances:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|)
+##   LV1 ~~                                              
+##     LV2               0.156    0.023    6.856    0.000
+## 
+## Variances:
+##                    Estimate  Std.Err  z-value  P(&gt;|z|)
+##    .item1             0.574    0.037   15.398    0.000
+##    .item2             0.477    0.035   13.778    0.000
+##    .item3             0.551    0.036   15.262    0.000
+##    .item4             0.597    0.040   14.867    0.000
+##    .item5             0.264    0.028    9.537    0.000
+##    .item6             0.561    0.035   16.193    0.000
+##    .item7             0.228    0.021   10.767    0.000
+##    .item8             0.153    0.019    8.122    0.000
+##    .item9             0.566    0.035   15.978    0.000
+##    .item10            0.587    0.036   16.351    0.000
+##     LV1               0.453    0.052    8.701    0.000
+##     LV2               0.381    0.045    8.396    0.000</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+parameter
+</th>
+<th style="text-align:right;">
+est
+</th>
+<th style="text-align:right;">
+se
+</th>
+<th style="text-align:right;">
+z
+</th>
+<th style="text-align:left;">
+pvalue
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+LV1=~item1
+</td>
+<td style="text-align:right;">
+1.000
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LV1=~item2
+</td>
+<td style="text-align:right;">
+1.217
+</td>
+<td style="text-align:right;">
+0.076
+</td>
+<td style="text-align:right;">
+15.96
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LV1=~item3
+</td>
+<td style="text-align:right;">
+1.012
+</td>
+<td style="text-align:right;">
+0.070
+</td>
+<td style="text-align:right;">
+14.42
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LV1=~item4
+</td>
+<td style="text-align:right;">
+1.146
+</td>
+<td style="text-align:right;">
+0.077
+</td>
+<td style="text-align:right;">
+14.97
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LV1=~item5
+</td>
+<td style="text-align:right;">
+1.360
+</td>
+<td style="text-align:right;">
+0.078
+</td>
+<td style="text-align:right;">
+17.41
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LV2=~item6
+</td>
+<td style="text-align:right;">
+1.000
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LV2=~item7
+</td>
+<td style="text-align:right;">
+1.419
+</td>
+<td style="text-align:right;">
+0.082
+</td>
+<td style="text-align:right;">
+17.33
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LV2=~item8
+</td>
+<td style="text-align:right;">
+1.437
+</td>
+<td style="text-align:right;">
+0.081
+</td>
+<td style="text-align:right;">
+17.66
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LV2=~item9
+</td>
+<td style="text-align:right;">
+1.093
+</td>
+<td style="text-align:right;">
+0.077
+</td>
+<td style="text-align:right;">
+14.12
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LV2=~item10
+</td>
+<td style="text-align:right;">
+0.950
+</td>
+<td style="text-align:right;">
+0.073
+</td>
+<td style="text-align:right;">
+13.07
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LV1~~LV2
+</td>
+<td style="text-align:right;">
+0.156
+</td>
+<td style="text-align:right;">
+0.023
+</td>
+<td style="text-align:right;">
+6.86
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+item1~~item1
+</td>
+<td style="text-align:right;">
+0.574
+</td>
+<td style="text-align:right;">
+0.037
+</td>
+<td style="text-align:right;">
+15.40
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+item2~~item2
+</td>
+<td style="text-align:right;">
+0.477
+</td>
+<td style="text-align:right;">
+0.035
+</td>
+<td style="text-align:right;">
+13.78
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+item3~~item3
+</td>
+<td style="text-align:right;">
+0.551
+</td>
+<td style="text-align:right;">
+0.036
+</td>
+<td style="text-align:right;">
+15.26
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+item4~~item4
+</td>
+<td style="text-align:right;">
+0.597
+</td>
+<td style="text-align:right;">
+0.040
+</td>
+<td style="text-align:right;">
+14.87
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+item5~~item5
+</td>
+<td style="text-align:right;">
+0.264
+</td>
+<td style="text-align:right;">
+0.028
+</td>
+<td style="text-align:right;">
+9.54
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+item6~~item6
+</td>
+<td style="text-align:right;">
+0.561
+</td>
+<td style="text-align:right;">
+0.035
+</td>
+<td style="text-align:right;">
+16.19
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+item7~~item7
+</td>
+<td style="text-align:right;">
+0.228
+</td>
+<td style="text-align:right;">
+0.021
+</td>
+<td style="text-align:right;">
+10.77
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+item8~~item8
+</td>
+<td style="text-align:right;">
+0.153
+</td>
+<td style="text-align:right;">
+0.019
+</td>
+<td style="text-align:right;">
+8.12
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+item9~~item9
+</td>
+<td style="text-align:right;">
+0.566
+</td>
+<td style="text-align:right;">
+0.035
+</td>
+<td style="text-align:right;">
+15.98
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+item10~~item10
+</td>
+<td style="text-align:right;">
+0.587
+</td>
+<td style="text-align:right;">
+0.036
+</td>
+<td style="text-align:right;">
+16.35
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LV1~~LV1
+</td>
+<td style="text-align:right;">
+0.453
+</td>
+<td style="text-align:right;">
+0.052
+</td>
+<td style="text-align:right;">
+8.70
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LV2~~LV2
+</td>
+<td style="text-align:right;">
+0.381
+</td>
+<td style="text-align:right;">
+0.045
+</td>
+<td style="text-align:right;">
+8.40
+</td>
+<td style="text-align:left;">
+&lt;.001
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="frame">
+<p>When you write up a CFA for a report, you should make sure to include the parameter estimates. This can be in the form of a table with the unstandardised loadings and factor covariances, their standard errors, p-values, and corresponding standardised values.</p>
+<p>Note: according to APA style, you should include a leading zero when a parameter can take values out of the 0-1 range (e.g., SD=0.99) but you should not include a leading zero when a parameter can only take values in the 0-1 range (e.g., r=.5). This is why we have TLI=0.99 but CFI=.99. The former can technically (though rarely does) take values &gt;1 while the latter only takes values between 0 and 1.</p>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<!-- Formatting -->
+<div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;">
+
+</div>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Note two things:<br />
+Firstly, in a diagram of Principal Components Analysis, the components are considered to be a reduced expression of the observed variables, and are represented by squares. The arrows go from the measured variables to the components. In Factor Analysis, the latent factors are represented by circles, and the arrows go from the factor to the measured variables, reflecting the idea that the observations on our measured variables are taken to be the result of some underlying construct.<br />
+Secondly, in some diagrams you will see the uniqueness of measured variables as a circle. Similarly, the error term in a multiple regression model might be represented this way, as it reflects the variance left unexplained by the predictors, and as such is not directly measured.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+<link rel="stylesheet" href="https://uoepsy.github.io/assets/css/ccfooter.css" />
+<div class="ccfooter"></div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

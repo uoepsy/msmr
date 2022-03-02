@@ -755,7 +755,7 @@ The data can be found at https://uoepsy.github.io/data/conduct_probs.csv
 
 ## Preliminaries  
 
-`r qbegin("A1")`
+`r qbegin("B1")`
 Read in the dataset from [https://uoepsy.github.io/data/conduct_probs.csv](https://uoepsy.github.io/data/conduct_probs.csv).  
 The first column is clearly an ID column, and it is easiest just to discard this when we are doing factor analysis.  
   
@@ -807,7 +807,7 @@ ggpairs(data=df, diag=list(continuous="density"), axisLabels="show")
 
 ## How many factors? 
 
-`r qbegin("A2")`
+`r qbegin("B2")`
 How many dimensions should be retained? This question can be answered in the same way as we did above for PCA. 
   
 Use a scree plot, parallel analysis, and MAP test to guide you.   
@@ -873,7 +873,7 @@ As you can see, this is a complicated issue, but when you have a large sample si
 :::
 
 
-`r qbegin("A3")`
+`r qbegin("B3")`
 Use the function `fa()` from the **psych** package to conduct and EFA to extract 2 factors (this is what *we* suggest based on the various tests above, but *you* might feel differently - the ideal number of factors is subjective!). Use a suitable rotation and extraction method (`fm`).  
 ```{r eval=FALSE}
 conduct_efa <- fa(data, nfactors = ?, rotate = ?, fm = ?)
@@ -889,7 +889,7 @@ conduct_efa <- fa(df, nfactors=2, rotate='oblimin', fm="minres")
 
 ## Inspect
 
-`r qbegin("A4")`
+`r qbegin("B4")`
 Inspect the loadings (`conduct_efa$loadings`) and give the factors you extracted labels based on the patterns of loadings.  
   
 Look back to the description of the items, and suggest a name for your factors  
@@ -904,7 +904,7 @@ We can see that the first five items have high loadings for one factor and the s
 The first five items all have in common that they are non-aggressive forms of conduct problems, while the last five items are all aggressive behaviours. We could, therefore, label our factors: ‘non-aggressive’ and ‘aggressive’ conduct problems.
 `r solend()`
 
-`r qbegin("A5")`
+`r qbegin("B5")`
 How correlated are your factors?  
 
 We can inspect the factor correlations (if we used an oblique rotation) using:
@@ -921,7 +921,7 @@ We can see here that there is a moderate correlation between the two factors. An
 
 ## Write-up 
 
-`r qbegin("A6")`
+`r qbegin("B6")`
 Drawing on your previous answers and conducting any additional analyses you believe would be necessary to identify an optimal factor structure for the 10 conduct problems, write a brief text that summarises your method and the results from your chosen optimal model.
 `r qend()`
 `r solbegin(show=params$SHOW, toggle=params$TOGGLE)`
@@ -949,9 +949,7 @@ knitr::kable(loadings, digits = 2, caption = "Factor loadings.")
 
 `r solend()`
 
-# PCA & EFA Comparison Exercise
-
-`r qbegin("A7")`
+`r qbegin("B7")`
 Using the same data, conduct a PCA using the `principal()` function.  
   
 What differences do you notice compared to your EFA?  
@@ -967,6 +965,249 @@ We can see that while the loadings differ somewhat between the EFA and the PCA, 
   
 In terms of which method is more appropriate, arguably EFA would be more appropriate in this case because our researcher wishes to measure a theoretical construct (conduct problems), rather than simply reduce the dimensions of her data.
 `r solend()`
+
+
+# Practicalities of EFA
+
+:::frame
+__Data: pgpets.csv__  
+
+A pet food company has conducted a questionnaire on the internet ($n = 620$) to examine whether owning a pet influences low mood. They asked 16 questions on a Likert scale (1-7, detailed below) followed by a simple Yes/No question concerning whether the repsondent owned a pet.   
+There are lots of questions, and the researchers don't really know much about the theory of mood disorders, but they think that they are likely picking up on multiple different types of "low mood". They want to conduct a factor analysis to examine this, and then plan on investigating the group differences (pet owners vs not pet owners) on the factor scores.  
+
+The data is available at https://uoepsy.github.io/data/pgpets.csv  
+
+```{r echo=FALSE}
+tibble(QuestionNumber = paste0("item",1:16),`Over the last 2 weeks, how much have you had/have you been...` = 
+         c("Little interest or pleasure in doing things?",
+"Feeling down, depressed, or hopeless?",
+"Trouble falling or staying asleep, or sleeping too much?",
+"Feeling tired or having little energy?",
+"Poor appetite or overeating?",
+"Feeling bad about yourself - or that you are a failure or have let yourself or your family down?",
+"Reading the newspaper or watching television?",
+"Moving or speaking so slowly that other people could have noticed? Or the opposite - being so fidgety or restless that you have been moving around a lot more than usual?",
+"A lack of motivation to do anything at all?",
+"Feeling nervous, anxious or on edge?",
+"Not being able to stop or control worrying?",
+"Worrying too much about different things?",
+"Trouble relaxing?",
+"Being so restless that it is hard to sit still?",
+"Becoming easily annoyed or irritable?",
+"Feeling afraid as if something awful might happen?")) %>% knitr::kable() %>% kableExtra::kable_styling(full_width = T)
+
+```
+
+:::
+
+`r qbegin("C1")`
+Read the data into R.  
+Create a new object in R that contains a subset the data. It should include all variables except for the participant ID and the variable corresponding to whether or not they have a pet (we're going to come back to these later on).  
+In this new object, change the names of the columns to match the question number, rather than the question itself (see the data description above). This will be easier to work with.  
+
+__Hint:__  
+Check the output of the code `paste0("item", 1:10)`. Consider this code in combination with another function: `names(data)`. How could you combine the two codes to assign the new names to the current variable names?  
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+library(tidyverse)
+library(psych)
+```
+
+```{r}
+pgpets <- read_csv("https://uoepsy.github.io/data/pgpets.csv")
+```
+
+```{r}
+names(pgpets)
+```
+
+```{r}
+df <- pgpets %>% 
+    select(-ppt_id, -do_you_own_a_pet)
+```
+
+```{r}
+names(df) <- paste0("item", 1:ncol(df))
+head(df)
+```
+
+`r solend()`
+
+`r qbegin("C2")`
+Visualise the items (this might be the histograms of all marginal distributions, or a scatterplot matrix, or both). 
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+library(psych)
+multi.hist(df)
+```
+
+The data have 6 variables, so we will create two plots each focusing on 8 at a time:
+```{r}
+pairs.panels(df[, 1:8])
+pairs.panels(df[, 9:16])
+```
+
+`r solend()`
+
+`r qbegin("C3")`
+Compute the correlation matrix for the items, and assess the suitability for factor analysis, using the Bartlett test and the Kaiser-Meyer-Olkin factor adequacy. 
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+cordf = cor(df)
+```
+
+
+```{r}
+cortest.bartlett(cordf, n = nrow(df))
+```
+:::int
+Bartlett's test indicates that the correlation matrix is proportionally different from the identity matrix ($\chi^2 (120) = 3008, p<.001$), suggesting our correlations are significantly different from zero. 
+:::
+
+```{r}
+KMO(cordf)
+```
+
+:::int
+The KMO for individual items are mainly "meritorious" or "marvelous". The only item that may need further investigation is item 7, having an "unacceptable" KMO. 
+The overall measure of sampling adequacy is 0.90, which suggests we have suitable data to perform a factor analysis
+:::
+
+`r solend()`
+
+`r qbegin("C4")`
+Determine how many factors you will extract. 
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+Using parallel analysis:
+
+```{r}
+fa.parallel(df, fa = 'fa')
+```
+
+Using Velicer's Minimum Average Partial:
+
+```{r}
+VSS(df)
+```
+:::int
+Both parallel analysis and Velicer’s Minimum Average Partial suggested retaining 2 factors.
+:::
+`r solend()`
+
+`r qbegin("C5")`
+Choosing an appropriate estimation method and rotation, perform a factor analysis to extract the desired number of factors (based on your answer to the previous question).  
+
+If you get an error, you may need to install the "GPArotation" package: `install.packages("GPArotation")`.
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+We probably shouldn't use MLE as an estimation method here, because we're going to be treating what looks like some sort of Likert data (ordinal, responses of 1-7) as if it is continuous.  
+Let's use `minres` here.  
+
+Finally, do we have any reason to think that the factors we are going to extract are orthogonal? Given what the questions look to be evaluating, it's hard to see distinctly unrelated constructs within the 16 items. 
+
+```{r}
+pgmod <- fa(df, nfactors = 2, rotate = "oblimin", fm = "minres")
+pgmod
+```
+
+`r solend()`
+
+
+:::statbox
+**DETAILS**
+
+\newcommand{\item}[1]{ \text{Item}_{#1} }
+\newcommand{\fact}[1]{ \text{Factor}_{#1} }
+\newcommand{\e}[1]{ \epsilon_{#1} }
+\newcommand{\LL}[2]{ {\lambda_{#1,#2}} }
+
+If we think about a factor analysis being a set of regressions (convention in factor analysis is to use $\LL{}{}$ instead of $\beta$), then we can think of a given item being the manifestation of some latent factors, plus a bit of randomness:
+
+\begin{aligned}
+\item{1}  &= \LL{1}{1} \cdot \fact{1} + \LL{2}{1} \cdot \fact{2} + \e{1} \\
+\item{2}  &= \LL{1}{2} \cdot \fact{1} + \LL{2}{2} \cdot \fact{2} + \e{2} \\
+&\vdots \\
+\item{16} &= \LL{1}{16} \cdot \fact{1} + \LL{2}{16} \cdot \fact{2} + \e{16}
+\end{aligned}
+
+As you can see from the above, the 16 different items all stem from the same two factors ($\fact{1}, \fact{2}$), plus some item-specific errors ($\e{1}, \dots, \e{16}$). The $\LL{}{}$ terms are called factor loadings, or loadings in short
+
+__Communality__ is sum of the squared factor loadings for each item.  
+
+Intuitively, for each row, the two $\LL{}{}$s tell us how much each item depends on the two factors shared by the 16 items. The sum of the squared loadings tells us how much of one item's information is due to the shared factors.
+
+The communality is a bit like the $R^2$ (the proportion of variance of an item that is explained by the factor structure).  
+
+The __uniqueness__ of each item is simply $1 - \text{communality}$.  
+This is the leftover bit; the variance in each item that is left unexplained by the latent factors.  
+
+_Side note: this is what sets Factor Analysis apart from PCA, which is the linear combination of total variance (including error) in all our items. FA allows some of the variance to be shared by the underlying factors, and considers the remainder to be unique to the individual items (or, in another, error in how each item measures the construct)._
+
+The __complexity__ of an item corresponds to how well an item reflects a _single_ underlying construct. Specifically, it is ${(\sum \lambda_i^2)^2}/{\sum \lambda_i^4}$, where $\lambda_i$ is the loading on to the $i^{th}$ factor. It will be equal to 1 for an item which loads _only_ on one factor, and 2 if it loads evenly on to two factors, and so on. 
+
+:::rtip
+In R, we will often see these estimates under specific columns:  
+
++ __h2__ = item communality  
++ __u__  = item uniqueness  
++ __com__ = item complexity
+
+:::
+
+:::
+
+`r qbegin("C6")`
+Using `fa.sort()`, examine the loadings of each item onto the factors, along with communalities, uniqueness and complexity scores.  
+
+
+- Do all factors load on 3+ items at a salient level?
+- Do all items have at least one loading above a salient cut off?
+- Are there any Heywood cases (communalities $\geq1$)? 
+- Should we perhaps remove some complex items? 
+- Does the solution account for an acceptable level of variance?  
+- Is the factor structure (items that load on to each factor) coherent, and does it make theoretical sense?  
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+fa.sort(pgmod)
+```
+
+- Both factors load on 3+ items at a salient level. 
+- All except item7 has loadings $>0.3$. 
+- There are no Heywood cases.
+- Item 3 loads quite highly on both factors (high complexity) 
+- The solution explains 38% of the variance.  
+- The coherence of the factor structure will require us to look back at the questions themselves. We'll not do this right now.  
+
+`r solend()`
+
+
+`r qbegin("C7")`
+If you think any items should be removed, do so now, and perform the factor analysis once more. 
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+We're going to remove that problematic item 7 (which seems to be about "reading the newspaper and watching tv"), as well as item 3 (which seems to be about sleepiness, and relates to both factors quite highly).  
+```{r}
+df2 <- df %>% 
+    select(-item7,-item3)
+cortest.bartlett(cor(df2), n = nrow(df2))
+KMO(cor(df2))
+fa.parallel(df2, fa = 'fa')
+VSS(df2)
+pgmod2 <- fa(df2, nfactors = 2, rotate = "oblimin", fm = "minres")
+pgmod2$loadings
+fa.sort(pgmod2)
+```
+
+`r solend()`
+
 
 <!-- Formatting -->
 
