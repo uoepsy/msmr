@@ -375,7 +375,9 @@ div.tocify {
     <li>
       <a href="07_efapca.html">PCA | EFA</a>
     </li>
-    <li class="dropdown-header">CFA</li>
+    <li>
+      <a href="08_cfa.html">CFA</a>
+    </li>
     <li class="dropdown-header">Path Analysis</li>
     <li class="dropdown-header">SEM 1</li>
     <li class="dropdown-header">SEM 2</li>
@@ -411,22 +413,8 @@ div.tocify {
 </div>
 
 
-<div class="optional-begin">
-
-</div>
-<div class="optional-body">
-<p>Make sure you have these packages installed:</p>
-<ul>
-<li>lavaan<br />
-</li>
-<li>semPlot or tidySEM</li>
-</ul>
-</div>
-<p class="optional-end">
-</p>
-<div id="introducing-cfa" class="section level1">
-<h1>Introducing CFA</h1>
-<div class="frame">
+<div class="lo">
+<p><strong>Recap</strong></p>
 <p>Last week we learned about two methods of data reduction: Principal Components Analysis (PCA) and Factor Analysis.</p>
 <p>In brief, PCA aims to summarise a set of measured variables into a set of uncorrelated (orthogonal) components, which are linear combinations (a weighted average) of the measured variables. Factor analysis, on the other hand, assumes that the relationships between a set of measured variables can be explained by a number of underlying latent factors.</p>
 <div class="statbox">
@@ -444,11 +432,11 @@ Figure 1: Path diagrams for PCA and FA.<br>Note how the directions of the arrows
 </div>
 </div>
 </div>
-<div id="exploratory-and-confirmatory" class="section level2">
-<h2>Exploratory and Confirmatory</h2>
+<div id="introducing-cfa" class="section level1">
+<h1>Introducing CFA</h1>
 <p>When we conduct <em>Exploratory</em> Factor Analysis (EFA), we tend to start with no hypothesis about either the number of latent factors or about the specific relationships between latent factors and measured variables (the <em>factor structure</em>). All variables load onto all factors, and often a transformation method (e.g., rotation) is applied to make the results more easily interpretable. Often in psychology we use scales that we already consider to be valid measures of some underlying construct, and we have a theoretical model that we wish to test. <strong>Confirmatory Factor Analysis (CFA)</strong> is a more <em>hypothesis-driven</em> form of factor analysis, which requires us to prespecfiy all aspects of our model: we need to have some a priori sense of how many factors that exist, which items a related to which factors, etc.</p>
 <p>CFA is almost always used when developing scales, because it allows us to examine the underlying structure of our measure (e.g., questionnaires). It is also useful when investigating the convergent and disciminant validity of a theoretical construct (for instance, we might expect a measure of anxiety to positively relate to (‘converge’ with) a measure of depression, and to differ (‘discriminate’) from a measure of general happiness.</p>
-<p>As shown in Figure <a href="#fig:figcfa">2</a>, when we have clear a priori hypotheses about relationships between measured variables and latent factors, CFA imposes a specific factor structure on the data, where we pick and choose the paths (arrows) that we want to estimate, and leave out ones which our theory suggests are not present. It is important to note, however, that by excluding a specific path, our model is asserting that that specific relationship is 0 (a bit like if we leave out a predictor from our multiple regression model: <code>y~w+x</code> assumes that <code>y~z</code> is 0).</p>
+<p>When we have clear <em>a priori</em> hypotheses about relationships between measured variables and latent factors, CFA imposes a specific factor structure on the data, where we pick and choose the paths (arrows) that we want to estimate, and leave out ones which our theory suggests are not present (as in Figure <a href="#fig:figcfa">2</a>). It is important to note, that by excluding a specific path, our model is asserting that that specific relationship is 0 (a bit like if we leave out a predictor from our multiple regression model: <code>y~w+x</code> assumes that <code>y~z</code> is 0).</p>
 <div class="figure" style="text-align: center"><span id="fig:figcfa"></span>
 <img src="images/pcaefa/cfa.png" alt="Path diagram for CFA" width="80%" height="500px" />
 <p class="caption">
@@ -457,25 +445,26 @@ Figure 2: Path diagram for CFA
 </div>
 <div class="yellow">
 <p>The purpose of CFA can be seen of as twofold:</p>
-<ul>
-<li>Firstly to obtain parameter estimates (i.e., factor loadings, variances and covariances of factors, residual variances of measured variables)<br />
+<ol style="list-style-type: decimal">
+<li>To obtain parameter estimates (i.e., factor loadings, variances and covariances of factors, residual variances of measured variables)<br />
 </li>
-<li>and secondly to assess whether the model provides a good fit to the data.</li>
-</ul>
+<li>To assess whether the model provides a good fit to the data.</li>
+</ol>
 </div>
 <div class="frame">
-<p><strong>CFA as SEM</strong></p>
+<p><strong>CFA as Structural Equation Modelling</strong></p>
 <p>CFA is a specific form of a Structural Equation Model (SEM) in which we are defining a (number of) factor structures. SEM is going to be the focus of weeks 10 and 11 of this course. In essence, SEM is a framework in which we can test our theoretical models and hypotheses.</p>
 <p>You might be tempted to think “isn’t that what we’ve been doing already!?” and you would be right. However, SEM offers a huge amount more flexibility in the questions we can ask, and the types of theoretical model we can think about. In the multiple regression world, were restricted to focusing on one outcome variable, and examining the variance explained in that variable by some predictor variables. In SEM, our theoretical model may have multiple outcome variables, mediating paths (“z affects x which in turn affects y”), latent factors etc.</p>
 <p>Sometimes the easiest way into thinking about things in the SEM framework is to draw all your variables on a whiteboard, draw any latent constructs you believe they measure, and then connect them all up with arrows according to your theoretical model. Sound familiar? Figure <a href="#fig:figcfa">2</a> shows a CFA model represented as a SEM diagram!</p>
 </div>
 </div>
-</div>
 <div id="introducing-lavaan" class="section level1">
 <h1>Introducing <strong>lavaan</strong></h1>
 <p>For the remaining weeks of the course, we’re going to rely heavily on the <strong>lavaan</strong> (<strong>La</strong>tent <strong>Va</strong>riable <strong>An</strong>alysis) package.
-This is the main package in R for fitting structural equation mdoels, and there is a huge scope of what we can do with it.<br />
-The first thing to get to grips with is the various new operators which it allows us to use.</p>
+This is the main package in R for fitting structural equation mdoels, and there is a huge scope of what we can do with it.</p>
+<div class="frame">
+<p><strong>operators in lavaan</strong></p>
+<p>The first thing to get to grips with is the various new operators which <strong>lavaan</strong> allows us to use.</p>
 <p>Our old multiple regression formula in R was specified as <code>y ~ x1 + x2 + x3 + ...</code>.<br />
 In lavaan, we continue to fit regressions using the <code>~</code> symbol, but we can also specify the construction of latent variables using <code>=~</code> and residual variances &amp; covariances using <code>~~</code>.</p>
 <table>
@@ -510,12 +499,11 @@ In lavaan, we continue to fit regressions using the <code>~</code> symbol, but w
 </tbody>
 </table>
 <p>(from <a href="https://lavaan.ugent.be/tutorial/syntax1.html" class="uri">https://lavaan.ugent.be/tutorial/syntax1.html</a>)</p>
-<p>In practice, fitting models in lavaan tends to be a little different from things like <code>lm()</code> and <code>(g)lmer()</code>:</p>
+</div>
 <div class="frame">
 <p><strong>Fitting models with lavaan</strong></p>
-<p>Instead of including the model formula <em>inside</em> the fit function (e.g., <code>lm(y ~ x1 + x2, data = df)</code>), we tend to do it in a step-by-step process.
-This is because as our models become more complex, our formulas can pretty long!</p>
-<p>We write the model as a character string (e.g. <code>model &lt;- "y ~ x1 + x2"</code>) and then we pass that formula along with the data to the relevant <strong>lavaan</strong> function such as <code>cfa()</code> or <code>sem()</code>, giving it the formula and the data: <code>cfa(model, data = mydata)</code>.</p>
+<p>In practice, fitting models in lavaan tends to be a little different from things like <code>lm()</code> and <code>(g)lmer()</code>. Instead of including the model formula <em>inside</em> the fit function (e.g., <code>lm(y ~ x1 + x2, data = df)</code>), we tend to do it in a step-by-step process. This is because as our models become more complex, our formulas can pretty long!</p>
+<p>In lavaan, it is typical to write the model as a character string (e.g. <code>model &lt;- "y ~ x1 + x2"</code>) and then we pass that formula along with the data to the relevant <strong>lavaan</strong> function such as <code>cfa()</code> or <code>sem()</code>, giving it the formula and the data: <code>cfa(model, data = mydata)</code>.</p>
 <ol style="list-style-type: decimal">
 <li><p>Specify the model:</p>
 <pre class="r"><code>mymodel &lt;- &quot;
@@ -531,9 +519,9 @@ This is because as our models become more complex, our formulas can pretty long!
 </ol>
 </div>
 <div class="optional-begin">
-<span id="opt-start-138" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-138&#39;, &#39;opt-start-138&#39;)"> Fitting a multiple regression model with lavaan</span>
+<span id="opt-start-152" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-152&#39;, &#39;opt-start-152&#39;)"> Optional: Fitting a multiple regression model with lavaan</span>
 </div>
-<div id="opt-body-138" class="optional-body" style="display: none;">
+<div id="opt-body-152" class="optional-body" style="display: none;">
 <p>You can see a multiple regression fitted with lavaan here, we define the model as a character string, and then we pass that to the relevant lavaan function, such as <code>cfa()</code> or in this case <code>sem()</code> (we’ll use <code>sem()</code> more in the weeks to come).</p>
 <pre class="r"><code>library(tidyverse)
 library(lavaan)
@@ -590,51 +578,46 @@ mreg_sem &lt;- sem(mreg_model, data=toys_read)</code></pre>
 <p class="optional-end">
 </p>
 </div>
-<div id="sem-diagrams" class="section level1">
-<h1>SEM diagrams</h1>
-<p>In SEM diagrams (or ‘path diagrams’), we have different ways to show the covariances, regressions, observed variables and latent variables.</p>
+<div id="thinking-in-diagrams" class="section level1">
+<h1>Thinking in diagrams</h1>
+<p>In structural equation modeling, it is common to think about our theories in terms of the connections between variables drawn on a whiteboard. By representing a theory as paths to and from different variables, we open up a whole new way of ‘modelling’ the world around us. These path diagrams have different shapes to denote the covariances, regressions, observed variables and latent variables.</p>
 <ul>
 <li><strong>Observed variables</strong> are represented by squares or rectangles. These are the named variables of interest which exist in our dataset - i.e. the ones which we have measured directly.</li>
 <li><strong>Latent variables</strong> are represented as ovals/ellipses or circles.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a><br />
 </li>
 <li><strong>Covariances</strong> are represented by double-headed arrows. In many diagrams these are curved.</li>
-<li><strong>Regressions</strong> are shown by single headed arrows (e.g., an arrow from <span class="math inline">\(x\)</span> to <span class="math inline">\(y\)</span> for the path <span class="math inline">\(y~x\)</span>).<br />
-</li>
-<li><strong>Factor loadings</strong> are regressions. Recall that specifying a factor structure is simply to say that some measured variables <span class="math inline">\(y_i\)</span> are each regressed onto some unmeasured factor(s) <span class="math inline">\(F_i\)</span>.<br />
-<span class="math inline">\(y = \lambda \cdot F + u\)</span> looks an awful lot like <span class="math inline">\(y = \beta \cdot x + \epsilon\)</span> !!</li>
+<li><strong>Regressions</strong> are shown by single headed arrows (e.g., an arrow from <span class="math inline">\(x\)</span> to <span class="math inline">\(y\)</span> for the path <span class="math inline">\(y~x\)</span>). <strong>Factor loadings</strong> are also regression paths.<br />
+Recall that specifying a factor structure is simply to say that some measured variables <span class="math inline">\(y_i\)</span> are each regressed onto some unmeasured factor(s) - <span class="math inline">\(y = \lambda \cdot F + u\)</span> looks an awful lot like <span class="math inline">\(y = \beta \cdot x + \epsilon\)</span>!!).</li>
 </ul>
-<div class="yellow">
-<p><strong>New terminology!</strong></p>
-<ul>
-<li><strong>Exogenous variables</strong> are a bit like what we have been describing with words like “independent variable” or “predictor.” In a SEM diagram, they have no paths coming from other variables in the system, but have paths <em>going to</em> other variables.<br />
-</li>
-<li><strong>Endogenous variables</strong> are more like the “outcome”/“dependent”/“response” variables we are used to. They have some path coming from another variable in the system (and may also - but not necessarily - have paths going out from them).</li>
-</ul>
-</div>
+<p><img src="images/semplotsmsmr.png" width="80%" style="display: block; margin: auto;" /></p>
+<!-- :::yellow -->
+<!-- **New terminology!**   -->
+<!-- - **Exogenous variables** are a bit like what we have been describing with words like "independent variable" or "predictor". In a SEM diagram, they have no paths coming from other variables in the system, but have paths *going to* other variables.   -->
+<!-- - **Endogenous variables** are more like the "outcome"/"dependent"/"response" variables we are used to. They have some path coming from another variable in the system (and may also - but not necessarily - have paths going out from them).   -->
+<!-- ::: -->
+<div class="rtip">
+<p><strong>Making path diagrams in R</strong></p>
 <p>There are a couple of packages which can create visual diagrams of structural equation models. <strong>semPlot</strong> and <strong>tidySEM</strong>.</p>
-<p>The <strong>semPlot</strong> package contains the function <code>semPaths()</code>, which is well established and works “out of the box” but is harder to edit. Alternatively, you can try your hand at a newer package which promises more customisable features for SEM diagrams called <a href="https://cjvanlissa.github.io/tidySEM/articles/Plotting_graphs.html"><strong>tidySEM</strong></a>.<br />
-(often, if we want to include a SEM diagram in a report the raw output from <code>semPaths()</code> would not usually meet publication standards, and instead we tend to draw them in programs like powerpoint!)</p>
-<div class="optional-begin">
-<span id="opt-start-139" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-139&#39;, &#39;opt-start-139&#39;)"> optional: visualising multiple regression model as SEM</span>
+<p>The <strong>semPlot</strong> package contains the function <code>semPaths()</code>, which is well established and works “out of the box” but is harder to edit. Alternatively, you can try your hand at a newer package which promises more customisable features for SEM diagrams called <a href="https://cjvanlissa.github.io/tidySEM/articles/Plotting_graphs.html"><strong>tidySEM</strong></a>. Often, if we want to include a SEM diagram in a report the raw output from <code>semPaths()</code> would not usually meet publication standards, and instead we tend to draw them in programs like powerpoint!</p>
 </div>
-<div id="opt-body-139" class="optional-body" style="display: none;">
+<div class="optional-begin">
+<span id="opt-start-153" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-153&#39;, &#39;opt-start-153&#39;)"> Optional: visualising a multiple regression model as a path diagram</span>
+</div>
+<div id="opt-body-153" class="optional-body" style="display: none;">
 <pre class="r"><code>library(semPlot)
 semPaths(mreg_sem, whatLabels = &quot;est&quot;, intercepts = F)</code></pre>
-<p><img src="08_cfa_files/figure-html/unnamed-chunk-7-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="08_cfa_files/figure-html/unnamed-chunk-8-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>library(tidySEM)
-graph_sem(mreg_sem, 
-          nodes = get_nodes(mreg_sem))</code></pre>
-<p><img src="08_cfa_files/figure-html/unnamed-chunk-7-2.png" width="80%" style="display: block; margin: auto;" /></p>
+graph_sem(mreg_sem, nodes = get_nodes(mreg_sem))</code></pre>
+<p><img src="08_cfa_files/figure-html/unnamed-chunk-8-2.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
 <p class="optional-end">
 </p>
 </div>
-<div id="a-one-factor-model" class="section level1">
-<h1>A One factor model</h1>
-<div class="optional-begin">
-<span id="opt-start-140" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-140&#39;, &#39;opt-start-140&#39;)"> Conduct Problems Dataset2: Data Codebook</span>
-</div>
-<div id="opt-body-140" class="optional-body" style="display: none;">
+<div id="exercises-one-factor-model" class="section level1">
+<h1>Exercises: One factor model</h1>
+<div class="frame">
+<p><strong>Data: Conduct Problems Dataset2</strong></p>
 <p>Last week we conducted an exploratory factor analysis of a dataset to try and identify an optimal factor structure for a new measure of conduct (i.e., antisocial behavioural) problems. This week, we’ll conduct some confirmatory factor analyses (CFA) of the same inventory, using some new data collected by the researchers from n=600 adolescents.</p>
 <p>The questionnaire items referred to the following 10 behaviours:</p>
 <ul>
@@ -651,8 +634,6 @@ graph_sem(mreg_sem,
 </ul>
 <p>The data is available as a <strong>.csv</strong> at <a href="https://uoepsy.github.io/data/conduct_problems_2.csv">https://uoepsy.github.io/data/conduct_problems_2.csv</a></p>
 </div>
-<p class="optional-end">
-</p>
 <div class="question-begin">
 Question A1
 </div>
@@ -676,7 +657,7 @@ cor(df)</code></pre>
 ## item9  0.244 0.276 0.2080 0.226 0.233 0.3692 0.599 0.617 1.000  0.361
 ## item10 0.178 0.162 0.1292 0.143 0.139 0.4632 0.532 0.556 0.361  1.000</code></pre>
 <pre class="r"><code>pheatmap::pheatmap(cor(df))</code></pre>
-<p><img src="08_cfa_files/figure-html/unnamed-chunk-8-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="08_cfa_files/figure-html/unnamed-chunk-9-1.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
 <p class="solution-end">
 </p>
@@ -699,68 +680,57 @@ Do not estimate the model yet, simply specify it in a character string, in prepa
 Question A3
 </div>
 <div class="question-body">
-<p>We’re going to use the <code>cfa()</code> function to fit our model.
-Why is it not necessary to refer to <strong>ALL</strong> of your CFA parameters in your model specification function to estimate your model? Which parameters do you not need to include in the model specification?</p>
-</div>
-<p class="question-end">
-</p>
-<div style="display:none;">
-<p>Some parameters are estimated or fixed by default when you estimate the model with the <code>cfa()</code> function. In this case, the residual factor variances and loadings are missing because the former are estimated by default and the latter are fixed to 1 by default. Latent factor variances are also estimated by default.</p>
-</div>
-<p class="solution-end">
-</p>
-<div class="question-begin">
-Question A4
-</div>
-<div class="question-body">
+<p>We’re going to use the <code>cfa()</code> function to fit our model.</p>
+<p>It is not necessary to refer to <strong>ALL</strong> of our CFA parameters in your model specification function to estimate our model, as some parameters are estimated or fixed by default when you estimate the model with the <code>cfa()</code> function. In this case, the residual variances and latent factor variances are missing because they are estimated by default.</p>
+<p>The default scaling constraint/identification constraints imposed when using the <code>cfa()</code> function are to fix the loading of the first item of each latent variable to 1. We can override this by setting <code>std.lv=TRUE</code>, which will instead scale the latent variables by fixing them to 1.</p>
 <p>Estimate your model using the <code>cfa</code>()` function from the lavaan package. Scale your latent variable by fixing the latent variable variance to 1.</p>
-<p>The default scaling constraint/identification constraints imposed when using the <code>cfa()</code> function are to fix the loading of the first item of each latent variable to 1.<br />
-We can override this by setting <code>std.lv=TRUE</code>.<br />
-This will instead scale the latent variables by fixing them to 1.<br />
-It is helpful to save the results of <code>cfa()</code> to a new object so that we can later inspect that object (to look at the model fit and parameter estimates).</p>
+<p>It is helpful to save the results of <code>cfa()</code> to a new object so that we can later inspect that object (to look at the model fit and parameter estimates).</p>
 </div>
 <p class="question-end">
 </p>
 <div style="display:none;">
-<pre class="r"><code>model1.est&lt;-cfa(model1, data=df, std.lv=TRUE)</code></pre>
+<pre class="r"><code>model1.est&lt;-cfa(model1, data=df, std.lv = TRUE)</code></pre>
 </div>
 <p class="solution-end">
 </p>
 </div>
-<div id="model-fit" class="section level1">
-<h1>Model Fit</h1>
-<div id="same-name-different-idea" class="section level2">
-<h2>Same name, different idea</h2>
+<div id="model-fit-degrees-of-freedom" class="section level1">
+<h1>Model Fit &amp; Degrees of Freedom</h1>
+<p>One of the crucial things to realise when you’re learning about these methods is that there are certain terms (things like “model fit” and “degrees of freedom”) which have quite different meanings to those you are likely used to.</p>
+<div class="frame">
+<p><strong>“Model Fit”: Same name, different idea</strong></p>
 <p>You’ll have heard the term “model fit” many times since september. However, there is a crucial difference in what it means when it is used in the SEM framework.</p>
-<p>In things like multiple regression, we have been using “model fit” to be the measure of “how much variance can we explain in y with our set of predictors?”<br />
-In SEM, examining “model fit” is more like asking “how well does our model reproduce the characteristics of the data that we observed?” If you think of the characteristics of our data being represented by a covariance matrix, then we might think of “model fit” as being “how well can our model reproduce our observed covariance matrix?”</p>
+<p>In things like multiple regression, we have been using “model fit” to be the measure of “how much variance can we explain in y with our set of predictors?”</p>
+<p>In SEM, examining “model fit” is more like asking “how well does our model reproduce the characteristics of the data that we observed?” If you think of the characteristics of our data being represented by a covariance matrix, then we might think of “model fit” as being “how well can our model reproduce our observed covariance matrix?”</p>
+<p>In regression, we could only talk about model fit if we had more than 2 datapoints. This is because there is only one possible line that we can fit between 2 datapoints, and this line explains <em>all</em> of the variance in the outcome variable (it uses up all our 2 degrees of freedom to estimate 1. the intercept and 2. the slope).</p>
+<p>The logic is the same for model fit in SEM (we need more degrees of freedom than we have parameters that are estimated), but we need to remember that we are now concerned with the covariance matrix, rather than with our raw observations. So we need to be estimating fewer paths (e.g. parameters) than there are variances/covariances in our covariance matrix. This is because if we just fit paths between all our variables, then our model would be able to reproduce the data perfectly (just like a regression with 2 datapoints has an <span class="math inline">\(R^2\)</span> of 1).</p>
 </div>
-<div id="degrees-of-freedom" class="section level2">
-<h2>Degrees of freedom</h2>
-<p>Degrees of freedom in the SEM framework correspond to the number of <em>knowns</em> (observed covariances/variances) minus the number of <em>unknowns</em> (parameters to be estimated by the model). A model is only able to be estimated if it has at least 0 degrees of freedom (if there are as many knowns as unknowns). A model with 0 degrees of freedom is termed <strong>just-identified</strong>.<br />
+<div class="frame">
+<p><strong>Degrees of Freedom in SEM</strong></p>
+<p>The degrees of freedom for a Structural Equation Model correspond to the number of <em>knowns</em> (observed covariances/variances from our sample) minus the number of <em>unknowns</em> (parameters to be estimated by the model). A model is only able to be estimated if it has at least 0 degrees of freedom (if there are as many knowns as unknowns). A model with 0 degrees of freedom is termed <strong>just-identified</strong> (sometimes called “saturated”).<br />
 <strong>under-</strong> and <strong>over-</strong> identified models correspond to those with <span class="math inline">\(&lt;0\)</span> and <span class="math inline">\(&gt;0\)</span> degrees of freedom respectively.</p>
-<p>An example of a <em>just-identified</em> model is the multiple regression model! In multiple regression, everything is allowed to vary with everything else, which means that there is a unique solution for all of the model’s parameters because there are <em>as many paths as there are observed covariances</em>. This means that in the SEM world, a multiple regression model is “just-identified.”</p>
+<p>An example of a <em>just-identified</em> model is the multiple regression model! In multiple regression, everything is allowed to vary with everything else, which means that there is a unique solution for all of the model’s parameters because there are <em>as many paths as there are observed covariances</em>. This means that <em>in the SEM world</em>, a multiple regression model is “just-identified.”</p>
 <div class="optional-begin">
-<span id="opt-start-141" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-141&#39;, &#39;opt-start-141&#39;)"> huh?</span>
+<span id="opt-start-154" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-154&#39;, &#39;opt-start-154&#39;)"> demonstration</span>
 </div>
-<div id="opt-body-141" class="optional-body" style="display: none;">
+<div id="opt-body-154" class="optional-body" style="display: none;">
 <p>If I have two predictors and one outcome variable, then there are 6 variances and covariances available. For instance:</p>
 <pre class="r"><code>cov(toys_read %&gt;% select(R_AGE, hrs_week, age))</code></pre>
 <pre><code>##           R_AGE hrs_week   age
 ## R_AGE    28.089    0.649 0.892
 ## hrs_week  0.649    0.897 0.175
 ## age       0.892    0.175 4.095</code></pre>
-<p>The multiple regression model will estimate the two variances of the exogenous variables (the predictors), their covariance, the two paths from each exogenous to the endogenous (each predictor to the outcome), and the error variance. This makes up 6 estimated parameters - which is exactly how many known covariances there are.
-<img src="08_cfa_files/figure-html/unnamed-chunk-10-1.png" width="350px" style="display: block; margin: auto;" /></p>
+<p>The multiple regression model will estimate the two variances of the predictors, their covariance, the two paths from each predictor to the outcome, and the error variance. This makes up 6 estimated parameters - which is exactly how many known covariances there are.
+<img src="08_cfa_files/figure-html/unnamed-chunk-11-1.png" width="350px" style="display: block; margin: auto;" /></p>
 </div>
 <p class="optional-end">
 </p>
-<div class="yellow">
+<div class="statbox">
 <p><strong>How many knowns are there?</strong></p>
 <p>The number of known covariances in a set of <span class="math inline">\(k\)</span> observed variables is equal to <span class="math inline">\(\frac{k \cdot (k+1)}{2}\)</span>.</p>
 </div>
-<p>When learning about SEM, the visualisations can play a key part. It often helps to draw all our variables (both observed and latent) on the whiteboard, and connect them up according to your theoretical model. You can then count the number of paths (arrows) and determine whether the <span class="math inline">\(\text{number of knowns} &gt; \text{number of unknowns}\)</span>. We can reduce the number of unknowns by fixing parameters to be specific values.</p>
-<div class="yellow">
+<p>Remember, in SEM the visualisations can play a key part - draw all our variables (both observed and latent) on the whiteboard; connect them up according to our theoretical model; we can then count the number of paths (arrows) and determine whether the <span class="math inline">\(\text{number of knowns} &gt; \text{number of unknowns}\)</span>. We can reduce the number of unknowns by fixing parameters to be specific values.</p>
+<div class="statbox">
 <p>By constraining some estimated parameter to be some specific value, we free-up a degree of freedom! For instance “the correlation between x1 and x2 is equal to 0.7 (<span class="math inline">\(r_{x_1x_2} = .07\)</span>).” This would turn a previously estimated parameter into a fixed parameter, and this gains us the prize of a lovely degree of freedom!</p>
 <p><strong>By removing a path altogether, we are constraining it to be zero.</strong></p>
 </div>
@@ -784,19 +754,25 @@ Figure 4: A four item factor structure. By fixing 5 of these parameters to be eq
 Figure 5: A four item factor structure. The ‘marker method’ fixes the first factor loading to be 1, leaving the factor variance free to be estimated.
 </p>
 </div>
-<p>We will return to this more in coming weeks, but it is an important notion to remember - “model fit” and “degrees of freedom” have quite different meanings to those you are likely used to.</p>
-<p>There are too many different indices of model fit in SEM, and there’s lots of controversy over the various merits and disadvantages and proposed cutoffs of each method. We strongly encourage you to take a look at the accompanying reading on CFA which is posted on Learn, as this explains some of the more common measures. Additionally, there are many resources online, for instance <a href="http://www.davidakenny.net/cm/fit.htm">David Kenny’s page on measuring model fit</a>.</p>
+</div>
+<div class="frame">
+<p><strong>Fit indices <del>Rules of Thumb</del> Cut-offs that people often use</strong></p>
+<p>There are too many different metrics that people use to examine model fit in SEM, and there’s lots of controversy over the various merits and disadvantages and proposed cutoffs of each method.</p>
+<p>The main four fit indices are RMSEA, SRMR, CFI and TLI. We’ll look more into these in a couple of weeks, and we strongly encourage you to take a look at the accompanying reading on CFA which is posted on Learn, as this explains some of the more common measures. Additionally, there are many resources online, for instance <a href="http://www.davidakenny.net/cm/fit.htm">David Kenny’s page on measuring model fit</a>.</p>
+<p>Rules of thumb:</p>
+<ul>
+<li>Smaller values of RMSEA and SRMR mean better fit while larger values of CFI and TLI mean better fit.</li>
+<li>If <span class="math inline">\(\textrm{RMSEA} &lt; .05\)</span>, <span class="math inline">\(\textrm{SRMR} &lt; .05\)</span>, <span class="math inline">\(\textrm{TLI} &gt; .95\)</span> and <span class="math inline">\(\textrm{CFI} &gt; .95\)</span> then the model fits well.</li>
+</ul>
 </div>
 </div>
-<div id="a-two-factor-model" class="section level1">
-<h1>A Two factor model</h1>
+<div id="exercises-two-factor-model" class="section level1">
+<h1>Exercises: Two factor model</h1>
 <div class="question-begin">
 Question B1
 </div>
 <div class="question-body">
 <p>Examine the global fit of your one factor model. Does it fit well? (To obtain the global fit measures, we can use the <code>summary()</code> function to inspect our estimated model, setting <code>fit.measures=TRUE</code>).</p>
-<p>Rules of thumb: If <span class="math inline">\(\textrm{RMSEA} &lt; .05\)</span>, <span class="math inline">\(\textrm{SRMR} &lt; .05\)</span>, <span class="math inline">\(\textrm{TLI} &gt; .95\)</span> and <span class="math inline">\(\textrm{CFI} &gt; .95\)</span> then the model fits well.<br />
-Smaller values of RMSEA and SRMR mean better fit while larger values of CFI and TLI mean better fit.</p>
 </div>
 <p class="question-end">
 </p>
@@ -905,7 +881,7 @@ The first one below is filled in for you:</p>
   # latent factor one is correlated with latent factor two
   ...
 &#39;</code></pre>
-<div class="red">
+<div class="rtip">
 <p><strong>Strings split over lines making R get stuck?</strong></p>
 <p>If you have your cursor on the first of a multi-line character string, and you press ctrl+enter in order to run it (i.e., send it down to the console), then R will not automatically run the next line. It will give you a little blue <code>+</code> in the console, and force you to run it line by line.</p>
 <p>If you are seeing the little blue <code>+</code> then you can press the escape key to cancel the command.</p>
@@ -937,7 +913,7 @@ Does the model fit well?</p>
 <p class="question-end">
 </p>
 <div style="display:none;">
-<p><code>cfa()</code> uses a reference indicator to scale the latent variables by default we only need to specify the name of the object with the model syntax and the name of the dataset.</p>
+<p><code>cfa()</code> uses a reference indicator to scale the latent variables by default, so we only need to specify the name of the object with the model syntax and the name of the dataset.</p>
 <pre class="r"><code>model2.est&lt;-cfa(model2, data=df)
 summary(model2.est, fit.measures=T)</code></pre>
 <pre><code>## lavaan 0.6-8 ended normally after 27 iterations
@@ -1025,7 +1001,7 @@ summary(model2.est, fit.measures=T)</code></pre>
 ##    .item10            0.587    0.036   16.351    0.000
 ##     LV1               0.453    0.052    8.701    0.000
 ##     LV2               0.381    0.045    8.396    0.000</code></pre>
-<p>This model fits well according to RMSEA, SRMR, CFI and TLI. The <span class="math inline">\(\chi^2\)</span> value is significant but we don’t need to worry about this because the <span class="math inline">\(\chi^2\)</span> test has a strong tendency to reject even trivially mis-specified models.</p>
+<p>This model fits well according to RMSEA, SRMR, CFI and TLI. The <span class="math inline">\(\chi^2\)</span> value is significant but we don’t need to worry about this because the <span class="math inline">\(\chi^2\)</span> test has a strong tendency to reject even trivially mis-specified models (more on this next week).</p>
 </div>
 <p class="solution-end">
 </p>
@@ -1033,8 +1009,8 @@ summary(model2.est, fit.measures=T)</code></pre>
 Question B4
 </div>
 <div class="question-body">
-<p>Are there any areas of local mis-fit?</p>
-<p>We can look for these using the <code>modindices()</code> function. This will give us the expected improvement in <span class="math inline">\(\chi^2\)</span> if a parameter was added, and the expected parameter change associated with the addition of the parameter (an estimate of what the parameter estimate would be if the parameter was included in the model).</p>
+<p>Are there any areas of <strong>local</strong> mis-fit?</p>
+<p>By “local” misfit, we mean specific paths in the model that we maybe should have included, but didn’t. We can look for these using the <code>modindices()</code> function. This will give us the expected improvement in the model fit if a parameter was added, and the expected parameter change associated with the addition of the parameter (an estimate of what the parameter estimate would be if the parameter was included in the model).</p>
 </div>
 <p class="question-end">
 </p>
@@ -1192,7 +1168,7 @@ semPaths(model2.est, what=&#39;stand&#39;)</code></pre>
 lay = get_layout(rep(NA, 3), &quot;LV1&quot;, rep(NA,2),&quot;LV2&quot;, rep(NA,3),
            paste0(&quot;item&quot;,1:10), rows = 2)
 graph_sem(model2.est, layout = lay)</code></pre>
-<p><img src="08_cfa_files/figure-html/unnamed-chunk-13-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="08_cfa_files/figure-html/unnamed-chunk-14-1.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
 <p class="solution-end">
 </p>

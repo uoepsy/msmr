@@ -375,7 +375,9 @@ div.tocify {
     <li>
       <a href="07_efapca.html">PCA | EFA</a>
     </li>
-    <li class="dropdown-header">CFA</li>
+    <li>
+      <a href="08_cfa.html">CFA</a>
+    </li>
     <li class="dropdown-header">Path Analysis</li>
     <li class="dropdown-header">SEM 1</li>
     <li class="dropdown-header">SEM 2</li>
@@ -419,12 +421,10 @@ How we measure such constructs is a very important consideration for research. T
 <p>The most common way to start thinking about latent variables is to consider how we might assess levels of anxiety or depression. More often than not, we measure these using questionnaire based methods. Can we ever directly measure anxiety?.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> This inherently leads to the notion of measurement error - two people both scoring 11 on the Generalised Anxiety Disorder 7 (GAD-7) scale will not have identical levels of anxiety.</p>
 <p>Before we start to explore how we might use a latent variable modelling approach to accommodate this idea, we’re going to start with the basic concept of <em>reducing the dimensionality of our data</em>.</p>
 </div>
-<div class="optional-begin">
-
-</div>
-<div class="optional-body">
-<p>We’re going to be needing some different packages this week, no more <strong>lme4</strong>!<br />
-Make sure you have these packages installed.</p>
+<div class="frame">
+<p><strong>New packages</strong></p>
+<p>We’re going to be needing some different packages this week (no more lme4!).<br />
+Make sure you have these packages installed:</p>
 <ul>
 <li>psych<br />
 </li>
@@ -433,8 +433,6 @@ Make sure you have these packages installed.</p>
 <li>car</li>
 </ul>
 </div>
-<p class="optional-end">
-</p>
 <div id="principal-component-analysis-pca" class="section level1">
 <h1>Principal component analysis (PCA)</h1>
 <div class="yellow">
@@ -461,7 +459,10 @@ Check whether or not the data were read correctly into R - do the dimensions cor
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-132" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-132&#39;, &#39;sol-start-132&#39;)"> Solution </span>
+</div>
+<div id="sol-body-132" class="solution-body" style="display: none;">
 <p>Let’s load the data:</p>
 <pre class="r"><code>library(tidyverse)
 
@@ -491,7 +492,10 @@ Question A2
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-133" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-133&#39;, &#39;sol-start-133&#39;)"> Solution </span>
+</div>
+<div id="sol-body-133" class="solution-body" style="display: none;">
 <p>We now inspect some descriptive statistics for each variable in the dataset:</p>
 <pre class="r"><code># Quick summary
 summary(job)</code></pre>
@@ -526,12 +530,12 @@ job %&gt;%
   separate(name, into = c(&#39;variable&#39;, &#39;summary&#39;), sep = &#39;\\.&#39;) %&gt;%
   pivot_wider(names_from = summary, values_from = value) %&gt;% 
   gt()</code></pre>
-<div id="aadvbmfmnp" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="plubkzxogv" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#aadvbmfmnp .gt_table {
+#plubkzxogv .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -556,7 +560,7 @@ job %&gt;%
   border-left-color: #D3D3D3;
 }
 
-#aadvbmfmnp .gt_heading {
+#plubkzxogv .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -568,7 +572,7 @@ job %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#aadvbmfmnp .gt_title {
+#plubkzxogv .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -578,7 +582,7 @@ job %&gt;%
   border-bottom-width: 0;
 }
 
-#aadvbmfmnp .gt_subtitle {
+#plubkzxogv .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -588,13 +592,13 @@ job %&gt;%
   border-top-width: 0;
 }
 
-#aadvbmfmnp .gt_bottom_border {
+#plubkzxogv .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#aadvbmfmnp .gt_col_headings {
+#plubkzxogv .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -609,7 +613,7 @@ job %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#aadvbmfmnp .gt_col_heading {
+#plubkzxogv .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -629,7 +633,7 @@ job %&gt;%
   overflow-x: hidden;
 }
 
-#aadvbmfmnp .gt_column_spanner_outer {
+#plubkzxogv .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -641,15 +645,15 @@ job %&gt;%
   padding-right: 4px;
 }
 
-#aadvbmfmnp .gt_column_spanner_outer:first-child {
+#plubkzxogv .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#aadvbmfmnp .gt_column_spanner_outer:last-child {
+#plubkzxogv .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#aadvbmfmnp .gt_column_spanner {
+#plubkzxogv .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -661,7 +665,7 @@ job %&gt;%
   width: 100%;
 }
 
-#aadvbmfmnp .gt_group_heading {
+#plubkzxogv .gt_group_heading {
   padding: 8px;
   color: #333333;
   background-color: #FFFFFF;
@@ -683,7 +687,7 @@ job %&gt;%
   vertical-align: middle;
 }
 
-#aadvbmfmnp .gt_empty_group_heading {
+#plubkzxogv .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -698,15 +702,15 @@ job %&gt;%
   vertical-align: middle;
 }
 
-#aadvbmfmnp .gt_from_md > :first-child {
+#plubkzxogv .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#aadvbmfmnp .gt_from_md > :last-child {
+#plubkzxogv .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#aadvbmfmnp .gt_row {
+#plubkzxogv .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -725,7 +729,7 @@ job %&gt;%
   overflow-x: hidden;
 }
 
-#aadvbmfmnp .gt_stub {
+#plubkzxogv .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -737,7 +741,7 @@ job %&gt;%
   padding-left: 12px;
 }
 
-#aadvbmfmnp .gt_summary_row {
+#plubkzxogv .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -747,7 +751,7 @@ job %&gt;%
   padding-right: 5px;
 }
 
-#aadvbmfmnp .gt_first_summary_row {
+#plubkzxogv .gt_first_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -757,7 +761,7 @@ job %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#aadvbmfmnp .gt_grand_summary_row {
+#plubkzxogv .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -767,7 +771,7 @@ job %&gt;%
   padding-right: 5px;
 }
 
-#aadvbmfmnp .gt_first_grand_summary_row {
+#plubkzxogv .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -777,11 +781,11 @@ job %&gt;%
   border-top-color: #D3D3D3;
 }
 
-#aadvbmfmnp .gt_striped {
+#plubkzxogv .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#aadvbmfmnp .gt_table_body {
+#plubkzxogv .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -790,7 +794,7 @@ job %&gt;%
   border-bottom-color: #D3D3D3;
 }
 
-#aadvbmfmnp .gt_footnotes {
+#plubkzxogv .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -804,13 +808,13 @@ job %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#aadvbmfmnp .gt_footnote {
+#plubkzxogv .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding: 4px;
 }
 
-#aadvbmfmnp .gt_sourcenotes {
+#plubkzxogv .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -824,41 +828,41 @@ job %&gt;%
   border-right-color: #D3D3D3;
 }
 
-#aadvbmfmnp .gt_sourcenote {
+#plubkzxogv .gt_sourcenote {
   font-size: 90%;
   padding: 4px;
 }
 
-#aadvbmfmnp .gt_left {
+#plubkzxogv .gt_left {
   text-align: left;
 }
 
-#aadvbmfmnp .gt_center {
+#plubkzxogv .gt_center {
   text-align: center;
 }
 
-#aadvbmfmnp .gt_right {
+#plubkzxogv .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#aadvbmfmnp .gt_font_normal {
+#plubkzxogv .gt_font_normal {
   font-weight: normal;
 }
 
-#aadvbmfmnp .gt_font_bold {
+#plubkzxogv .gt_font_bold {
   font-weight: bold;
 }
 
-#aadvbmfmnp .gt_font_italic {
+#plubkzxogv .gt_font_italic {
   font-style: italic;
 }
 
-#aadvbmfmnp .gt_super {
+#plubkzxogv .gt_super {
   font-size: 65%;
 }
 
-#aadvbmfmnp .gt_footnote_marks {
+#plubkzxogv .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 65%;
@@ -918,7 +922,10 @@ Question A3
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-134" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-134&#39;, &#39;sol-start-134&#39;)"> Solution </span>
+</div>
+<div id="sol-body-134" class="solution-body" style="display: none;">
 <p>Let’s start by looking at the correlation matrix of the data:</p>
 <pre class="r"><code>library(pheatmap)
 
@@ -958,7 +965,10 @@ Question A4
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-135" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-135&#39;, &#39;sol-start-135&#39;)"> Solution </span>
+</div>
+<div id="sol-body-135" class="solution-body" style="display: none;">
 <p>Let’s have a look at the standard deviation of each variable:</p>
 <pre class="r"><code>job %&gt;% 
   summarise(across(everything(), sd))</code></pre>
@@ -986,9 +996,9 @@ job_pca$loadings</code></pre>
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-2" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-2&#39;, &#39;sol-start-2&#39;)"> Solution </span>
+<span id="sol-start-136" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-136&#39;, &#39;sol-start-136&#39;)"> Solution </span>
 </div>
-<div id="sol-body-2" class="solution-body" style="display: none;">
+<div id="sol-body-136" class="solution-body" style="display: none;">
 <pre class="r"><code>library(psych)
 
 job_pca &lt;- principal(job, nfactors = ncol(job), covar = TRUE, rotate = &#39;none&#39;)</code></pre>
@@ -1028,9 +1038,9 @@ In other words, the total variance of the principal components (the sum of their
 From the third component onwards, we do not see such a sharp increase in the proportion of explained variance, and the cumulative proportion slowly reaches the total ratio of 1 (or 100%).</p>
 </div>
 <div class="optional-begin">
-<span id="opt-start-3" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-3&#39;, &#39;opt-start-3&#39;)"> Optional: (some of) the math behind it</span>
+<span id="opt-start-137" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-137&#39;, &#39;opt-start-137&#39;)"> Optional: (some of) the math behind it</span>
 </div>
-<div id="opt-body-3" class="optional-body" style="display: none;">
+<div id="opt-body-137" class="optional-body" style="display: none;">
 <p>Doing data reduction can feel a bit like magic, and in part that’s just because it’s quite complicated.</p>
 <p><strong>The intuition</strong></p>
 <p>Consider one way we might construct a correlation matrix - as the product of vector <span class="math inline">\(\mathbf{f}\)</span> with <span class="math inline">\(\mathbf{f&#39;}\)</span> (f transposed):
@@ -1284,7 +1294,10 @@ Question A6
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-138" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-138&#39;, &#39;sol-start-138&#39;)"> Solution </span>
+</div>
+<div id="sol-body-138" class="solution-body" style="display: none;">
 <p>Let’s look again at the PCA summary:</p>
 <pre class="r"><code>job_pca$loadings</code></pre>
 <pre><code>## 
@@ -1327,7 +1340,10 @@ Question A7
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-139" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-139&#39;, &#39;sol-start-139&#39;)"> Solution </span>
+</div>
+<div id="sol-body-139" class="solution-body" style="display: none;">
 <pre class="r"><code>job_pca$loadings</code></pre>
 <pre><code>## 
 ## Loadings:
@@ -1374,7 +1390,10 @@ Question A8
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-140" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-140&#39;, &#39;sol-start-140&#39;)"> Solution </span>
+</div>
+<div id="sol-body-140" class="solution-body" style="display: none;">
 <p>This criterion then suggests to keep three principal components.</p>
 </div>
 <p class="solution-end">
@@ -1396,7 +1415,10 @@ Question A9
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-141" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-141&#39;, &#39;sol-start-141&#39;)"> Solution </span>
+</div>
+<div id="sol-body-141" class="solution-body" style="display: none;">
 <pre class="r"><code>job_map &lt;- VSS(job, plot=FALSE, method=&quot;pc&quot;, n = ncol(job))$map
 paste(&quot;MAP is lowest for&quot;, which.min(job_map), &quot;components&quot;)</code></pre>
 <pre><code>## [1] &quot;MAP is lowest for 2 components&quot;</code></pre>
@@ -1420,7 +1442,10 @@ Question A10
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-142" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-142&#39;, &#39;sol-start-142&#39;)"> Solution </span>
+</div>
+<div id="sol-body-142" class="solution-body" style="display: none;">
 <pre class="r"><code>fa.parallel(job, fa=&quot;pc&quot;, quant=.95)</code></pre>
 <p><img src="07_efapca_files/figure-html/unnamed-chunk-30-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <pre><code>## Parallel analysis suggests that the number of factors =  NA  and the number of components =  1</code></pre>
@@ -1470,9 +1495,9 @@ It distinguishes police officers with strong logical and problem solving skills 
 </div>
 <p><br></p>
 <div class="optional-begin">
-<span id="opt-start-4" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-4&#39;, &#39;opt-start-4&#39;)"> Optional: How well are the units represented in the reduced space?</span>
+<span id="opt-start-143" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-143&#39;, &#39;opt-start-143&#39;)"> Optional: How well are the units represented in the reduced space?</span>
 </div>
-<div id="opt-body-4" class="optional-body" style="display: none;">
+<div id="opt-body-143" class="optional-body" style="display: none;">
 <p>We now focus our attention on the following question: Are all the statistical units (police officers) well represented in the 2D plot?</p>
 <p>The 2D representation of the original data, which comprise 6 measured variables, is an approximation and henceforth it may happen that not all units are well represented in this new space.</p>
 <p>Typically, it is good to assess the approximation for each statistical unit by inspecting the scores on the discarded principal components.
@@ -1612,9 +1637,9 @@ Inspect the items to check their suitability for exploratory factor analysis.</p
 </ul></li>
 </ul>
 <div class="optional-begin">
-<span id="opt-start-5" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-5&#39;, &#39;opt-start-5&#39;)"> Optional Kaiser’s suggested cuts</span>
+<span id="opt-start-144" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-144&#39;, &#39;opt-start-144&#39;)"> Optional Kaiser’s suggested cuts</span>
 </div>
-<div id="opt-body-5" class="optional-body" style="display: none;">
+<div id="opt-body-144" class="optional-body" style="display: none;">
 <ul>
 <li>0.00 to 0.49 unacceptable<br />
 </li>
@@ -1634,7 +1659,10 @@ Inspect the items to check their suitability for exploratory factor analysis.</p
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-145" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-145&#39;, &#39;sol-start-145&#39;)"> Solution </span>
+</div>
+<div id="sol-body-145" class="solution-body" style="display: none;">
 <pre class="r"><code>library(psych)
 df &lt;- read.csv(&quot;https://uoepsy.github.io/data/conduct_probs.csv&quot;)
 # discard the first column
@@ -1708,7 +1736,10 @@ You can use <code>fa.parallel(data, fm = "fa")</code> to conduct both parallel a
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-146" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-146&#39;, &#39;sol-start-146&#39;)"> Solution </span>
+</div>
+<div id="sol-body-146" class="solution-body" style="display: none;">
 <pre class="r"><code>fa.parallel(df, fa = &quot;fa&quot;)</code></pre>
 <p><img src="07_efapca_files/figure-html/unnamed-chunk-45-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <pre><code>## Parallel analysis suggests that the number of factors =  2  and the number of components =  NA</code></pre>
@@ -1777,7 +1808,10 @@ Question B3
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-147" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-147&#39;, &#39;sol-start-147&#39;)"> Solution </span>
+</div>
+<div id="sol-body-147" class="solution-body" style="display: none;">
 <p>For example, you could choose an oblimin rotation to allow factors to correlate and use minres as the extraction method.</p>
 <pre class="r"><code>conduct_efa &lt;- fa(df, nfactors=2, rotate=&#39;oblimin&#39;, fm=&quot;minres&quot;)</code></pre>
 </div>
@@ -1824,7 +1858,10 @@ Question B4
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-148" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-148&#39;, &#39;sol-start-148&#39;)"> Solution </span>
+</div>
+<div id="sol-body-148" class="solution-body" style="display: none;">
 <p>You can inspect the loadings using:</p>
 <pre class="r"><code>print(conduct_efa$loadings, sort=T)</code></pre>
 <pre><code>## 
@@ -1860,7 +1897,10 @@ Question B5
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-149" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-149&#39;, &#39;sol-start-149&#39;)"> Solution </span>
+</div>
+<div id="sol-body-149" class="solution-body" style="display: none;">
 <pre class="r"><code>conduct_efa$Phi</code></pre>
 <pre><code>##      MR1  MR2
 ## MR1 1.00 0.43
@@ -1880,7 +1920,10 @@ Question B6
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-150" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-150&#39;, &#39;sol-start-150&#39;)"> Solution </span>
+</div>
+<div id="sol-body-150" class="solution-body" style="display: none;">
 <p>The main principles governing the reporting of statistical results are transparency and reproducibility (i.e., someone should be able to reproduce your analysis based on your description).</p>
 <p>An example summary would be:</p>
 <div class="int">
@@ -1888,64 +1931,121 @@ Question B6
 An exploratory factor analysis was conducted to inform the structure of a new conduct problems test. Inspection of a scree plot alongside parallel analysis (using principal components analysis; PA-PCA) and the MAP test were used to guide the number of factors to retain. All three methods suggested retaining two factors; however, a one-factor and three-factor solution were inspected to confirm that the two-factor solution was optimal from a substantive and practical perspective, e.g., that it neither blurred important factor distinctions nor included a minor factor that would be better combined with the other in a one-factor solution. These factor analyses were conducted using minres extraction and (for the two- and three-factor solutions) an oblimin rotation, because it was expected that the factors would correlate. Inspection of the factor loadings and correlations reinforced that the two-factor solution was optimal: both factors were well-determined, including 5 loadings <span class="math inline">\(&gt;|0.3|\)</span> and the one-factor model blurred the distinction between different forms of conduct problems.
 The factor loadings are provided in Table <a href="#tab:loading-table">1</a><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. Based on the pattern of factor loadings, the two factors were labelled ‘aggressive conduct problems’ and ‘non-aggressive conduct problems.’ These factors had a correlation of <span class="math inline">\(r=.43\)</span>. Overall, they accounted for 57% of the variance in the items, suggesting that a two-factor solution effectively summarised the variation in the items.</p>
 <table>
-<caption><span id="tab:loading-table">Table 1: </span>Factor loadings.</caption>
+<caption>
+<span id="tab:loading-table">Table 1: </span>Factor loadings.
+</caption>
 <thead>
-<tr class="header">
-<th align="left"></th>
-<th align="right">MR1</th>
-<th align="right">MR2</th>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+MR1
+</th>
+<th style="text-align:right;">
+MR2
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">item1</td>
-<td align="right"></td>
-<td align="right">0.71</td>
+<tr>
+<td style="text-align:left;">
+item1
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+0.71
+</td>
 </tr>
-<tr class="even">
-<td align="left">item2</td>
-<td align="right"></td>
-<td align="right">0.77</td>
+<tr>
+<td style="text-align:left;">
+item2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+0.77
+</td>
 </tr>
-<tr class="odd">
-<td align="left">item3</td>
-<td align="right"></td>
-<td align="right">0.68</td>
+<tr>
+<td style="text-align:left;">
+item3
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+0.68
+</td>
 </tr>
-<tr class="even">
-<td align="left">item4</td>
-<td align="right"></td>
-<td align="right">0.68</td>
+<tr>
+<td style="text-align:left;">
+item4
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+0.68
+</td>
 </tr>
-<tr class="odd">
-<td align="left">item5</td>
-<td align="right"></td>
-<td align="right">0.87</td>
+<tr>
+<td style="text-align:left;">
+item5
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+0.87
+</td>
 </tr>
-<tr class="even">
-<td align="left">item6</td>
-<td align="right">0.63</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+item6
+</td>
+<td style="text-align:right;">
+0.63
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="odd">
-<td align="left">item7</td>
-<td align="right">0.89</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+item7
+</td>
+<td style="text-align:right;">
+0.89
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="even">
-<td align="left">item8</td>
-<td align="right">0.92</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+item8
+</td>
+<td style="text-align:right;">
+0.92
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="odd">
-<td align="left">item9</td>
-<td align="right">0.63</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+item9
+</td>
+<td style="text-align:right;">
+0.63
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
-<tr class="even">
-<td align="left">item10</td>
-<td align="right">0.67</td>
-<td align="right"></td>
+<tr>
+<td style="text-align:left;">
+item10
+</td>
+<td style="text-align:right;">
+0.67
+</td>
+<td style="text-align:right;">
+</td>
 </tr>
 </tbody>
 </table>
@@ -1966,7 +2066,10 @@ Question B7
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-151" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-151&#39;, &#39;sol-start-151&#39;)"> Solution </span>
+</div>
+<div id="sol-body-151" class="solution-body" style="display: none;">
 <p>We can use:</p>
 <pre class="r"><code>principal(df, nfactors=2)</code></pre>
 <pre><code>## Principal Components Analysis
