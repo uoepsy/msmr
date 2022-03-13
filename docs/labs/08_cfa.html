@@ -521,9 +521,9 @@ In lavaan, we continue to fit regressions using the <code>~</code> symbol, but w
 </ol>
 </div>
 <div class="optional-begin">
-<span id="opt-start-152" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-152&#39;, &#39;opt-start-152&#39;)"> Optional: Fitting a multiple regression model with lavaan</span>
+<span id="opt-start-1" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-1&#39;, &#39;opt-start-1&#39;)"> Optional: Fitting a multiple regression model with lavaan</span>
 </div>
-<div id="opt-body-152" class="optional-body" style="display: none;">
+<div id="opt-body-1" class="optional-body" style="display: none;">
 <p>You can see a multiple regression fitted with lavaan here, we define the model as a character string, and then we pass that to the relevant lavaan function, such as <code>cfa()</code> or in this case <code>sem()</code> (we’ll use <code>sem()</code> more in the weeks to come).</p>
 <pre class="r"><code>library(tidyverse)
 library(lavaan)
@@ -603,9 +603,9 @@ Recall that specifying a factor structure is simply to say that some measured va
 <p>The <strong>semPlot</strong> package contains the function <code>semPaths()</code>, which is well established and works “out of the box” but is harder to edit. Alternatively, you can try your hand at a newer package which promises more customisable features for SEM diagrams called <a href="https://cjvanlissa.github.io/tidySEM/articles/Plotting_graphs.html"><strong>tidySEM</strong></a>. Often, if we want to include a SEM diagram in a report the raw output from <code>semPaths()</code> would not usually meet publication standards, and instead we tend to draw them in programs like powerpoint!</p>
 </div>
 <div class="optional-begin">
-<span id="opt-start-153" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-153&#39;, &#39;opt-start-153&#39;)"> Optional: visualising a multiple regression model as a path diagram</span>
+<span id="opt-start-2" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-2&#39;, &#39;opt-start-2&#39;)"> Optional: visualising a multiple regression model as a path diagram</span>
 </div>
-<div id="opt-body-153" class="optional-body" style="display: none;">
+<div id="opt-body-2" class="optional-body" style="display: none;">
 <pre class="r"><code>library(semPlot)
 semPaths(mreg_sem, whatLabels = &quot;est&quot;, intercepts = F)</code></pre>
 <p><img src="08_cfa_files/figure-html/unnamed-chunk-8-1.png" width="80%" style="display: block; margin: auto;" /></p>
@@ -644,7 +644,10 @@ Question A1
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-3" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-3&#39;, &#39;sol-start-3&#39;)"> Solution </span>
+</div>
+<div id="sol-body-3" class="solution-body" style="display: none;">
 <pre class="r"><code>df &lt;- read.csv(&quot;https://uoepsy.github.io/data/conduct_problems_2.csv&quot;)
 cor(df)</code></pre>
 <pre><code>##        item1 item2  item3 item4 item5  item6 item7 item8 item9 item10
@@ -673,7 +676,10 @@ Do not estimate the model yet, simply specify it in a character string, in prepa
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-4" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-4&#39;, &#39;sol-start-4&#39;)"> Solution </span>
+</div>
+<div id="sol-body-4" class="solution-body" style="display: none;">
 <pre class="r"><code>model1&lt;-&#39;CP=~item1+item2+item3+item4+item5+item6+item7+item8+item9+item10&#39;</code></pre>
 </div>
 <p class="solution-end">
@@ -690,7 +696,10 @@ Question A3
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-5" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-5&#39;, &#39;sol-start-5&#39;)"> Solution </span>
+</div>
+<div id="sol-body-5" class="solution-body" style="display: none;">
 <pre class="r"><code>model1.est&lt;-cfa(model1, data=df, std.lv = TRUE)</code></pre>
 </div>
 <p class="solution-end">
@@ -713,9 +722,9 @@ Question A3
 <strong>under-</strong> and <strong>over-</strong> identified models correspond to those with <span class="math inline">\(&lt;0\)</span> and <span class="math inline">\(&gt;0\)</span> degrees of freedom respectively.</p>
 <p>An example of a <em>just-identified</em> model is the multiple regression model! In multiple regression, everything is allowed to vary with everything else, which means that there is a unique solution for all of the model’s parameters because there are <em>as many paths as there are observed covariances</em>. This means that <em>in the SEM world</em>, a multiple regression model is “just-identified.”</p>
 <div class="optional-begin">
-<span id="opt-start-154" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-154&#39;, &#39;opt-start-154&#39;)"> demonstration</span>
+<span id="opt-start-6" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-6&#39;, &#39;opt-start-6&#39;)"> demonstration</span>
 </div>
-<div id="opt-body-154" class="optional-body" style="display: none;">
+<div id="opt-body-6" class="optional-body" style="display: none;">
 <p>If I have two predictors and one outcome variable, then there are 6 variances and covariances available. For instance:</p>
 <pre class="r"><code>cov(toys_read %&gt;% select(R_AGE, hrs_week, age))</code></pre>
 <pre><code>##           R_AGE hrs_week   age
@@ -778,7 +787,10 @@ Question B1
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-7" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-7&#39;, &#39;sol-start-7&#39;)"> Solution </span>
+</div>
+<div id="sol-body-7" class="solution-body" style="display: none;">
 <pre class="r"><code>summary(model1.est, fit.measures=TRUE)</code></pre>
 <pre><code>## lavaan 0.6-8 ended normally after 45 iterations
 ## 
@@ -893,7 +905,10 @@ The first one below is filled in for you:</p>
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-8" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-8&#39;, &#39;sol-start-8&#39;)"> Solution </span>
+</div>
+<div id="sol-body-8" class="solution-body" style="display: none;">
 <p>We can specify the model as below.</p>
 <pre class="r"><code>model2&lt;-&#39;
     LV1=~item1+item2+item3+item4+item5
@@ -914,7 +929,10 @@ Does the model fit well?</p>
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-9" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-9&#39;, &#39;sol-start-9&#39;)"> Solution </span>
+</div>
+<div id="sol-body-9" class="solution-body" style="display: none;">
 <p><code>cfa()</code> uses a reference indicator to scale the latent variables by default, so we only need to specify the name of the object with the model syntax and the name of the dataset.</p>
 <pre class="r"><code>model2.est&lt;-cfa(model2, data=df)
 summary(model2.est, fit.measures=T)</code></pre>
@@ -1016,7 +1034,10 @@ Question B4
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-10" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-10&#39;, &#39;sol-start-10&#39;)"> Solution </span>
+</div>
+<div id="sol-body-10" class="solution-body" style="display: none;">
 <pre class="r"><code>modindices(model2.est, sort=T)</code></pre>
 <pre><code>##      lhs op    rhs     mi    epc sepc.lv sepc.all sepc.nox
 ## 72 item6 ~~ item10 10.747  0.082   0.082    0.144    0.144
@@ -1090,7 +1111,10 @@ Typically we would want standardised loadings to be <span class="math inline">\(
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-11" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-11&#39;, &#39;sol-start-11&#39;)"> Solution </span>
+</div>
+<div id="sol-body-11" class="solution-body" style="display: none;">
 <pre class="r"><code>summary(model2.est, standardized=T)</code></pre>
 <pre><code>## lavaan 0.6-8 ended normally after 27 iterations
 ## 
@@ -1161,7 +1185,10 @@ Using R, represent the model, including the standardised parameters as a SEM dia
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-12" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-12&#39;, &#39;sol-start-12&#39;)"> Solution </span>
+</div>
+<div id="sol-body-12" class="solution-body" style="display: none;">
 <p>In the <code>semPaths()</code> function, we can include the unstandardised estimates by setting <code>what='est'</code> and the standardised estimates by setting <code>what='stand'</code>.</p>
 <pre class="r"><code>library(semPlot)
 semPaths(model2.est, what=&#39;stand&#39;)</code></pre>
@@ -1183,7 +1210,10 @@ Question B7
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-13" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-13&#39;, &#39;sol-start-13&#39;)"> Solution </span>
+</div>
+<div id="sol-body-13" class="solution-body" style="display: none;">
 <div class="int">
 <p>A two-factor model was tested. Items 1-5 loaded on a ‘non-aggressive conduct problems’ factor and items 6-10 loaded on an ‘aggression’ factor and these factors were allowed to correlate. Scaling and identification were achieved by fixing the loading of item 1 on the non-aggressive conduct problems factor and item 6 on the aggression factor to 1. The model was estimated using maximum likelihood estimation. The model fit well with CFI=.99, TLI=0.99, RMSEA=.04, and SRMR=.04 (Hu &amp; Bentler, 1999). All loadings were statistically significant and &gt;|.3| on the standardised scale. Modification indices and expected parameter changes were inspected but no modifications were made because no expected parameter changes were judged large enough to merit the inclusion of additional parameters given that there was little theoretical rationale for their inclusion. Overall, therefore, a two-factor oblique model was supported for the conduct problems items. The correlation between the factors was r=.38 (p&lt;.001).</p>
 <pre><code>## lavaan 0.6-8 ended normally after 27 iterations
@@ -1242,411 +1272,175 @@ Question B7
 ##     LV2               0.381    0.045    8.396    0.000</code></pre>
 <table>
 <thead>
-<tr>
-<th style="text-align:left;">
-parameter
-</th>
-<th style="text-align:right;">
-est
-</th>
-<th style="text-align:right;">
-se
-</th>
-<th style="text-align:right;">
-z
-</th>
-<th style="text-align:left;">
-pvalue
-</th>
+<tr class="header">
+<th align="left">parameter</th>
+<th align="right">est</th>
+<th align="right">se</th>
+<th align="right">z</th>
+<th align="left">pvalue</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:left;">
-LV1=~item1
-</td>
-<td style="text-align:right;">
-1.000
-</td>
-<td style="text-align:right;">
-0.000
-</td>
-<td style="text-align:right;">
-</td>
-<td style="text-align:left;">
-</td>
+<tr class="odd">
+<td align="left">LV1=~item1</td>
+<td align="right">1.000</td>
+<td align="right">0.000</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-LV1=~item2
-</td>
-<td style="text-align:right;">
-1.217
-</td>
-<td style="text-align:right;">
-0.076
-</td>
-<td style="text-align:right;">
-15.96
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="even">
+<td align="left">LV1=~item2</td>
+<td align="right">1.217</td>
+<td align="right">0.076</td>
+<td align="right">15.96</td>
+<td align="left">&lt;.001</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-LV1=~item3
-</td>
-<td style="text-align:right;">
-1.012
-</td>
-<td style="text-align:right;">
-0.070
-</td>
-<td style="text-align:right;">
-14.42
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="odd">
+<td align="left">LV1=~item3</td>
+<td align="right">1.012</td>
+<td align="right">0.070</td>
+<td align="right">14.42</td>
+<td align="left">&lt;.001</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-LV1=~item4
-</td>
-<td style="text-align:right;">
-1.146
-</td>
-<td style="text-align:right;">
-0.077
-</td>
-<td style="text-align:right;">
-14.97
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="even">
+<td align="left">LV1=~item4</td>
+<td align="right">1.146</td>
+<td align="right">0.077</td>
+<td align="right">14.97</td>
+<td align="left">&lt;.001</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-LV1=~item5
-</td>
-<td style="text-align:right;">
-1.360
-</td>
-<td style="text-align:right;">
-0.078
-</td>
-<td style="text-align:right;">
-17.41
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="odd">
+<td align="left">LV1=~item5</td>
+<td align="right">1.360</td>
+<td align="right">0.078</td>
+<td align="right">17.41</td>
+<td align="left">&lt;.001</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-LV2=~item6
-</td>
-<td style="text-align:right;">
-1.000
-</td>
-<td style="text-align:right;">
-0.000
-</td>
-<td style="text-align:right;">
-</td>
-<td style="text-align:left;">
-</td>
+<tr class="even">
+<td align="left">LV2=~item6</td>
+<td align="right">1.000</td>
+<td align="right">0.000</td>
+<td align="right">NA</td>
+<td align="left">NA</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-LV2=~item7
-</td>
-<td style="text-align:right;">
-1.419
-</td>
-<td style="text-align:right;">
-0.082
-</td>
-<td style="text-align:right;">
-17.33
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="odd">
+<td align="left">LV2=~item7</td>
+<td align="right">1.419</td>
+<td align="right">0.082</td>
+<td align="right">17.33</td>
+<td align="left">&lt;.001</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-LV2=~item8
-</td>
-<td style="text-align:right;">
-1.437
-</td>
-<td style="text-align:right;">
-0.081
-</td>
-<td style="text-align:right;">
-17.66
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="even">
+<td align="left">LV2=~item8</td>
+<td align="right">1.437</td>
+<td align="right">0.081</td>
+<td align="right">17.66</td>
+<td align="left">&lt;.001</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-LV2=~item9
-</td>
-<td style="text-align:right;">
-1.093
-</td>
-<td style="text-align:right;">
-0.077
-</td>
-<td style="text-align:right;">
-14.12
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="odd">
+<td align="left">LV2=~item9</td>
+<td align="right">1.093</td>
+<td align="right">0.077</td>
+<td align="right">14.12</td>
+<td align="left">&lt;.001</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-LV2=~item10
-</td>
-<td style="text-align:right;">
-0.950
-</td>
-<td style="text-align:right;">
-0.073
-</td>
-<td style="text-align:right;">
-13.07
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="even">
+<td align="left">LV2=~item10</td>
+<td align="right">0.950</td>
+<td align="right">0.073</td>
+<td align="right">13.07</td>
+<td align="left">&lt;.001</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-LV1~~LV2
-</td>
-<td style="text-align:right;">
-0.156
-</td>
-<td style="text-align:right;">
-0.023
-</td>
-<td style="text-align:right;">
-6.86
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="odd">
+<td align="left">LV1~~LV2</td>
+<td align="right">0.156</td>
+<td align="right">0.023</td>
+<td align="right">6.86</td>
+<td align="left">&lt;.001</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-item1~~item1
-</td>
-<td style="text-align:right;">
-0.574
-</td>
-<td style="text-align:right;">
-0.037
-</td>
-<td style="text-align:right;">
-15.40
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="even">
+<td align="left">item1~~item1</td>
+<td align="right">0.574</td>
+<td align="right">0.037</td>
+<td align="right">15.40</td>
+<td align="left">&lt;.001</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-item2~~item2
-</td>
-<td style="text-align:right;">
-0.477
-</td>
-<td style="text-align:right;">
-0.035
-</td>
-<td style="text-align:right;">
-13.78
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="odd">
+<td align="left">item2~~item2</td>
+<td align="right">0.477</td>
+<td align="right">0.035</td>
+<td align="right">13.78</td>
+<td align="left">&lt;.001</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-item3~~item3
-</td>
-<td style="text-align:right;">
-0.551
-</td>
-<td style="text-align:right;">
-0.036
-</td>
-<td style="text-align:right;">
-15.26
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="even">
+<td align="left">item3~~item3</td>
+<td align="right">0.551</td>
+<td align="right">0.036</td>
+<td align="right">15.26</td>
+<td align="left">&lt;.001</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-item4~~item4
-</td>
-<td style="text-align:right;">
-0.597
-</td>
-<td style="text-align:right;">
-0.040
-</td>
-<td style="text-align:right;">
-14.87
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="odd">
+<td align="left">item4~~item4</td>
+<td align="right">0.597</td>
+<td align="right">0.040</td>
+<td align="right">14.87</td>
+<td align="left">&lt;.001</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-item5~~item5
-</td>
-<td style="text-align:right;">
-0.264
-</td>
-<td style="text-align:right;">
-0.028
-</td>
-<td style="text-align:right;">
-9.54
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="even">
+<td align="left">item5~~item5</td>
+<td align="right">0.264</td>
+<td align="right">0.028</td>
+<td align="right">9.54</td>
+<td align="left">&lt;.001</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-item6~~item6
-</td>
-<td style="text-align:right;">
-0.561
-</td>
-<td style="text-align:right;">
-0.035
-</td>
-<td style="text-align:right;">
-16.19
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="odd">
+<td align="left">item6~~item6</td>
+<td align="right">0.561</td>
+<td align="right">0.035</td>
+<td align="right">16.19</td>
+<td align="left">&lt;.001</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-item7~~item7
-</td>
-<td style="text-align:right;">
-0.228
-</td>
-<td style="text-align:right;">
-0.021
-</td>
-<td style="text-align:right;">
-10.77
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="even">
+<td align="left">item7~~item7</td>
+<td align="right">0.228</td>
+<td align="right">0.021</td>
+<td align="right">10.77</td>
+<td align="left">&lt;.001</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-item8~~item8
-</td>
-<td style="text-align:right;">
-0.153
-</td>
-<td style="text-align:right;">
-0.019
-</td>
-<td style="text-align:right;">
-8.12
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="odd">
+<td align="left">item8~~item8</td>
+<td align="right">0.153</td>
+<td align="right">0.019</td>
+<td align="right">8.12</td>
+<td align="left">&lt;.001</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-item9~~item9
-</td>
-<td style="text-align:right;">
-0.566
-</td>
-<td style="text-align:right;">
-0.035
-</td>
-<td style="text-align:right;">
-15.98
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="even">
+<td align="left">item9~~item9</td>
+<td align="right">0.566</td>
+<td align="right">0.035</td>
+<td align="right">15.98</td>
+<td align="left">&lt;.001</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-item10~~item10
-</td>
-<td style="text-align:right;">
-0.587
-</td>
-<td style="text-align:right;">
-0.036
-</td>
-<td style="text-align:right;">
-16.35
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="odd">
+<td align="left">item10~~item10</td>
+<td align="right">0.587</td>
+<td align="right">0.036</td>
+<td align="right">16.35</td>
+<td align="left">&lt;.001</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-LV1~~LV1
-</td>
-<td style="text-align:right;">
-0.453
-</td>
-<td style="text-align:right;">
-0.052
-</td>
-<td style="text-align:right;">
-8.70
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="even">
+<td align="left">LV1~~LV1</td>
+<td align="right">0.453</td>
+<td align="right">0.052</td>
+<td align="right">8.70</td>
+<td align="left">&lt;.001</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-LV2~~LV2
-</td>
-<td style="text-align:right;">
-0.381
-</td>
-<td style="text-align:right;">
-0.045
-</td>
-<td style="text-align:right;">
-8.40
-</td>
-<td style="text-align:left;">
-&lt;.001
-</td>
+<tr class="odd">
+<td align="left">LV2~~LV2</td>
+<td align="right">0.381</td>
+<td align="right">0.045</td>
+<td align="right">8.40</td>
+<td align="left">&lt;.001</td>
 </tr>
 </tbody>
 </table>
