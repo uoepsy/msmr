@@ -736,19 +736,19 @@ It is common to estimate the indirect effect using bootstrapping (a method of re
 ## Regressions:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
 ##   intention ~                                                           
-##     religiosty        0.270    1.034    0.261    0.794   -1.702    2.386
-##     hlc        (a)    5.971    0.931    6.414    0.000    4.167    7.866
+##     religiosty        0.270    1.020    0.265    0.791   -1.705    2.243
+##     hlc        (a)    5.971    0.946    6.309    0.000    4.174    7.890
 ##   hlc ~                                                                 
-##     religiosty (b)    0.508    0.088    5.745    0.000    0.349    0.697
+##     religiosty (b)    0.508    0.086    5.904    0.000    0.350    0.691
 ## 
 ## Variances:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
-##    .intention        62.090    7.890    7.870    0.000   44.597   76.682
-##    .hlc               0.753    0.103    7.300    0.000    0.550    0.970
+##    .intention        62.090    8.078    7.686    0.000   44.948   76.502
+##    .hlc               0.753    0.108    6.967    0.000    0.536    0.968
 ## 
 ## Defined Parameters:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
-##     indirect          3.033    0.652    4.655    0.000    1.914    4.443</code></pre>
+##     indirect          3.033    0.679    4.464    0.000    1.873    4.591</code></pre>
 </div>
 <div id="mediation-exercises" class="section level1">
 <h1>Mediation Exercises</h1>
@@ -764,7 +764,10 @@ Question A1
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-3" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-3&#39;, &#39;sol-start-3&#39;)"> Solution </span>
+</div>
+<div id="sol-body-3" class="solution-body" style="display: none;">
 <pre class="r"><code>cp_teach&lt;-read_csv(&quot;https://uoepsy.github.io/data/cp_teachacad.csv&quot;)
 summary(cp_teach)</code></pre>
 <pre><code>##        ID           Acad           Teach_r         Non_agg           Agg       
@@ -786,7 +789,10 @@ Question A2
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-4" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-4&#39;, &#39;sol-start-4&#39;)"> Solution </span>
+</div>
+<div id="sol-body-4" class="solution-body" style="display: none;">
 <pre class="r"><code># we can fit the model in lavaan as follows:
 # first we specify the model using lavaan syntax
 sr_lavaan&lt;-&#39;Acad~Non_agg+Agg&#39;
@@ -857,7 +863,10 @@ Question A3
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-5" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-5&#39;, &#39;sol-start-5&#39;)"> Solution </span>
+</div>
+<div id="sol-body-5" class="solution-body" style="display: none;">
 <pre class="r"><code>model1&lt;-&#39;
     #we regress academic performance on non-aggressive conduct problems (the direct effect)
     Acad~Non_agg
@@ -880,7 +889,10 @@ Question A4
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-6" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-6&#39;, &#39;sol-start-6&#39;)"> Solution </span>
+</div>
+<div id="sol-body-6" class="solution-body" style="display: none;">
 <pre class="r"><code>#model specification
 model1&lt;-&#39;
     Acad~Non_agg
@@ -919,19 +931,19 @@ summary(model1.est, ci=T)</code></pre>
 ## Regressions:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
 ##   Acad ~                                                                
-##     Non_agg           0.158    0.057    2.779    0.005    0.047    0.272
-##     Teach_r    (b)    0.328    0.049    6.740    0.000    0.229    0.431
+##     Non_agg           0.158    0.058    2.718    0.007    0.040    0.269
+##     Teach_r    (b)    0.328    0.048    6.799    0.000    0.232    0.422
 ##   Teach_r ~                                                             
-##     Non_agg    (c)    0.769    0.033   23.269    0.000    0.701    0.835
+##     Non_agg    (c)    0.769    0.033   23.584    0.000    0.704    0.832
 ## 
 ## Variances:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
-##    .Acad              0.919    0.055   16.702    0.000    0.810    1.029
-##    .Teach_r           0.713    0.042   16.783    0.000    0.631    0.800
+##    .Acad              0.919    0.055   16.784    0.000    0.810    1.023
+##    .Teach_r           0.713    0.044   16.316    0.000    0.628    0.800
 ## 
 ## Defined Parameters:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
-##     ind               0.252    0.038    6.649    0.000    0.178    0.329</code></pre>
+##     ind               0.252    0.038    6.648    0.000    0.177    0.329</code></pre>
 <p>We can see that the 95% bootstrapped confidence interval for the indirect effect of non-aggressive conduct problems on academic performance (‘ind’) does not include zero. We can conclude that the indirect effect is significant at <span class="math inline">\(p &lt;.05\)</span>. The direct effect is also statistically significant at <span class="math inline">\(p &lt; .05\)</span>.</p>
 </div>
 <p class="solution-end">
@@ -944,7 +956,10 @@ Question A5
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-7" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-7&#39;, &#39;sol-start-7&#39;)"> Solution </span>
+</div>
+<div id="sol-body-7" class="solution-body" style="display: none;">
 <p>We can create a new parameter that is the sum of the direct and indirect effect to evaluate the total effect of non-aggressive conduct problems on academic performance.</p>
 <pre class="r"><code>#model specification
 
@@ -986,20 +1001,20 @@ summary(model1.est, ci=T)</code></pre>
 ## Regressions:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
 ##   Acad ~                                                                
-##     Non_agg    (a)    0.158    0.057    2.792    0.005    0.048    0.270
-##     Teach_r    (b)    0.328    0.047    6.965    0.000    0.234    0.417
+##     Non_agg    (a)    0.158    0.058    2.732    0.006    0.039    0.270
+##     Teach_r    (b)    0.328    0.049    6.692    0.000    0.231    0.422
 ##   Teach_r ~                                                             
-##     Non_agg    (c)    0.769    0.032   24.313    0.000    0.708    0.832
+##     Non_agg    (c)    0.769    0.033   23.280    0.000    0.707    0.834
 ## 
 ## Variances:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
-##    .Acad              0.919    0.056   16.296    0.000    0.806    1.027
-##    .Teach_r           0.713    0.042   17.011    0.000    0.636    0.796
+##    .Acad              0.919    0.056   16.535    0.000    0.802    1.019
+##    .Teach_r           0.713    0.043   16.734    0.000    0.626    0.796
 ## 
 ## Defined Parameters:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
-##     ind               0.252    0.037    6.791    0.000    0.180    0.324
-##     total             0.410    0.043    9.552    0.000    0.329    0.495</code></pre>
+##     ind               0.252    0.039    6.483    0.000    0.177    0.327
+##     total             0.410    0.043    9.500    0.000    0.323    0.493</code></pre>
 </div>
 <p class="solution-end">
 </p>
@@ -1011,7 +1026,10 @@ Question A6
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-8" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-8&#39;, &#39;sol-start-8&#39;)"> Solution </span>
+</div>
+<div id="sol-body-8" class="solution-body" style="display: none;">
 <pre class="r"><code>#to include the parameter estimates we set what=&#39;est&#39;
 semPaths(model1.est, what=&#39;est&#39;) </code></pre>
 <p><img src="09_path_files/figure-html/visualise%20the%20model-1.png" width="80%" style="display: block; margin: auto;" /></p>
@@ -1028,7 +1046,10 @@ Question B1
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-9" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-9&#39;, &#39;sol-start-9&#39;)"> Solution </span>
+</div>
+<div id="sol-body-9" class="solution-body" style="display: none;">
 <pre class="r"><code>model2&lt;-
    &#39;Acad~Agg+Non_agg+b*Teach_r
     Teach_r~c1*Agg+c2*Non_agg
@@ -1048,7 +1069,10 @@ Question B2
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-10" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-10&#39;, &#39;sol-start-10&#39;)"> Solution </span>
+</div>
+<div id="sol-body-10" class="solution-body" style="display: none;">
 <pre class="r"><code>model2.est&lt;-sem(model2,  data=cp_teach,se=&#39;bootstrap&#39;) 
 summary(model2.est, ci=T)</code></pre>
 <pre><code>## lavaan 0.6-8 ended normally after 18 iterations
@@ -1073,22 +1097,22 @@ summary(model2.est, ci=T)</code></pre>
 ## Regressions:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
 ##   Acad ~                                                                
-##     Agg               0.171    0.060    2.832    0.005    0.057    0.289
-##     Non_agg           0.091    0.061    1.481    0.139   -0.029    0.215
-##     Teach_r    (b)    0.256    0.055    4.639    0.000    0.148    0.365
+##     Agg               0.171    0.062    2.772    0.006    0.050    0.293
+##     Non_agg           0.091    0.059    1.537    0.124   -0.021    0.204
+##     Teach_r    (b)    0.256    0.054    4.702    0.000    0.148    0.367
 ##   Teach_r ~                                                             
-##     Agg       (c1)    0.574    0.046   12.527    0.000    0.481    0.659
-##     Non_agg   (c2)    0.358    0.043    8.391    0.000    0.273    0.443
+##     Agg       (c1)    0.574    0.045   12.721    0.000    0.488    0.664
+##     Non_agg   (c2)    0.358    0.042    8.588    0.000    0.271    0.439
 ## 
 ## Variances:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
-##    .Acad              0.908    0.056   16.165    0.000    0.793    1.012
-##    .Teach_r           0.540    0.030   17.922    0.000    0.478    0.597
+##    .Acad              0.908    0.057   15.830    0.000    0.794    1.009
+##    .Teach_r           0.540    0.029   18.404    0.000    0.483    0.598
 ## 
 ## Defined Parameters:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
-##     ind1              0.147    0.034    4.364    0.000    0.081    0.219
-##     ind2              0.092    0.022    4.102    0.000    0.050    0.139</code></pre>
+##     ind1              0.147    0.033    4.439    0.000    0.084    0.216
+##     ind2              0.092    0.022    4.115    0.000    0.050    0.137</code></pre>
 <p>We can see that the 95% confidence intervals for both indirect effects do not include zero, therefore, we can conclude that they are significant at <span class="math inline">\(p &lt; .05\)</span>.</p>
 </div>
 <p class="solution-end">
@@ -1101,7 +1125,10 @@ Question B3
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<span id="sol-start-11" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-11&#39;, &#39;sol-start-11&#39;)"> Solution </span>
+</div>
+<div id="sol-body-11" class="solution-body" style="display: none;">
 <div class="int">
 <p>A path mediation model was used to test the direct and indirect effects (via teacher relationship quality) of aggressive and non-aggressive conduct problems on academic performance. In the model, academic performance was regressed on teacher relationship quality, non-aggressive conduct problems and aggressive conduct problems while teacher relationship quality (the mediator) was regressed on aggressive and non-aggressive conduct problems. The indirect effects were tested using the product of the coefficient for the regression of outcome on mediator and the coefficient for the regression of mediator on predictor. The statistical significance of the indirect effects were evaluated using boostrapped 95% confidence intervals with 1000 draws.</p>
 <p>Unstandardised parameter estimates are provided in Figure <a href="#fig:pathcp">9</a>. Solid lines indicate that a parameter is significant at <span class="math inline">\(p &lt;. 05\)</span>, while dashed lines represent non-significant paths.The indirect effects of both non-aggressive (<span class="math inline">\(b = 0.09\)</span>, 95% CI=0.05-0.14) and aggressive (<span class="math inline">\(b = 0.15\)</span>, 95% CI=0.08-0.22) conduct problems on academic performance were statistcally significant.</p>
@@ -1116,9 +1143,9 @@ Figure 9: Effect of conduct problems on academic performance mediated by quality
 <p class="solution-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-3" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-3&#39;, &#39;opt-start-3&#39;)"> Optional: Mediation the more manual way: back to lm()</span>
+<span id="opt-start-12" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-12&#39;, &#39;opt-start-12&#39;)"> Optional: Mediation the more manual way: back to lm()</span>
 </div>
-<div id="opt-body-3" class="optional-body" style="display: none;">
+<div id="opt-body-12" class="optional-body" style="display: none;">
 <p>Following <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.917.2326&amp;rep=rep1&amp;type=pdf">Baron &amp; Kenny 1986</a>, we can conduct mediation analysis by using three separate regression models.</p>
 <ol style="list-style-type: decimal">
 <li><span class="math inline">\(y \sim x\)</span></li>
@@ -1159,10 +1186,10 @@ summary(mediate(mod2, mod3, treat=&#39;religiosity&#39;, mediator=&#39;hlc&#39;,
 ## Nonparametric Bootstrap Confidence Intervals with the Percentile Method
 ## 
 ##                Estimate 95% CI Lower 95% CI Upper p-value    
-## ACME              3.033        1.848         4.33  &lt;2e-16 ***
-## ADE               0.270       -1.594         2.32   0.800    
-## Total Effect      3.303        1.410         5.50   0.008 ** 
-## Prop. Mediated    0.918        0.489         1.82   0.008 ** 
+## ACME              3.033        1.839         4.27  &lt;2e-16 ***
+## ADE               0.270       -1.700         2.19    0.76    
+## Total Effect      3.303        1.283         5.15  &lt;2e-16 ***
+## Prop. Mediated    0.918        0.511         2.13  &lt;2e-16 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
