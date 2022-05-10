@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Multilevel Model Checklist (sort of)</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="MSMR TEAM" />
+    <script src="jk_libs/libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# <b>Multilevel Model Checklist (sort of)</b>
+## Multivariate Statistics and Methodology using R<br><br>
+### MSMR TEAM
+### Department of Psychology<br/>The University of Edinburgh
+
+---
+
+
+
+
+
+
+
+
+---
+class: inverse, center, middle
+
+&lt;h2&gt;Part 1: Model Specification&lt;/h2&gt;
+&lt;h2 style="text-align: left;opacity:0.3;"&gt;Part 2: Analysis&lt;/h2&gt;
+&lt;h2 style="text-align: left;opacity:0.3;"&gt;Part 3: Reporting&lt;/h2&gt;
+
+---
+# Outcome and Fixed Effects  
+
+.br2.f4.gray.bg-white[
+(g)lmer(**outcome** ~ fixed effects + (random effects | grouping structure), family = error distribution)
+]
+
+.pull-left[
+- __What are we interested in explaining/predicting?__  
+
+]
+
+---
+count:false
+# Outcome and Fixed Effects  
+
+.br2.f4.gray.bg-white[
+**(g)lmer**(outcome ~ fixed effects + (random effects | grouping structure), **family = error distribution**)
+]
+
+.pull-left[
+
+- What are we interested in explaining/predicting?  
+
+  - __How is this measured?__
+
+]
+
+---
+count:false
+# Outcome and Fixed Effects  
+
+.br2.f4.gray.bg-white[
+(g)lmer(outcome ~ **fixed effects** + (random effects | grouping structure), family = error distribution)
+]
+
+.pull-left[
+
+- What are we interested in explaining/predicting?  
+
+  - How is this measured?
+
+- __What variables are we interested in explaining this by?__  
+
+]
+
+---
+# The Grouping Structure  
+
+.br2.f4.gray.bg-white[
+(g)lmer(outcome ~ fixed effects + (random effects | grouping structure), family = error distribution)
+]
+
+.pull-left[
+- In what different ways can we group our data?   
+
+]
+
+---
+count:false
+# The Grouping Structure  
+
+.br2.f4.gray.bg-white[
+(g)lmer(outcome ~ **fixed effects** + (random effects | grouping structure), family = error distribution)
+]
+
+.pull-left[
+- In what different ways can we group our data?   
+
+- **Of the different ways we can group our data, which groupings are of specific inferential interest?**  
+
+- Of the different ways we can group our data, which groupings do we think of as a random sample from a general population of groups? 
+
+]
+
+---
+count:false
+# The Grouping Structure  
+
+.br2.f4.gray.bg-white[
+(g)lmer(outcome ~ fixed effects + (random effects | **grouping structure**), family = error distribution)
+]
+
+.pull-left[
+- In what different ways can we group our data?   
+
+- Of the different ways we can group our data, which groupings are of specific inferential interest?  
+
+- **Of the different ways we can group our data, which groupings do we think of as a random sample from a general population of groups?** 
+
+]
+
+
+---
+# The Grouping Structure  
+
+.br2.f4.gray.bg-white[
+(g)lmer(outcome ~ fixed effects + (random effects | **grouping1 / grouping2**), family = error distribution)
+]
+
+.pull-left[
+- In what different ways can we group our data?   
+
+- Of the different ways we can group our data, which groupings are of specific inferential interest?  
+
+- Of the different ways we can group our data, which groupings do we think of as a random sample from a general population of groups? 
+
+  - Is there more than one grouping of this sort?
+      - __are these groupings nested? (and are the labels unique?)__  
+]
+
+---
+# The Grouping Structure  
+
+.br2.f4.gray.bg-white[
+(g)lmer(outcome ~ fixed effects + (random effects | **grouping1**) + (random effects | **grouping2**), family = error distribution)
+]
+
+.pull-left[
+- In what different ways can we group our data?   
+
+- Of the different ways we can group our data, which groupings are of specific inferential interest?  
+
+- Of the different ways we can group our data, which groupings do we think of as a random sample from a general population of groups? 
+
+  - Is there more than one grouping of this sort?  
+      - are these groupings nested? (and are the labels unique?)  
+      - __are the groupings crossed?__  
+  
+]
+
+---
+# The Grouping Structure  
+
+.br2.f4.gray.bg-white[
+(g)lmer(outcome ~ fixed effects + (random effects | **grouping structure**), family = error distribution)
+]
+
+.pull-left[
+- In what different ways can we group our data?   
+
+- Of the different ways we can group our data, which groupings are of specific inferential interest?  
+
+- Of the different ways we can group our data, which groupings do we think of as a random sample from a general population of groups? 
+
+  - Is there more than one grouping of this sort?  
+      - are these groupings nested? (and are the labels unique?)   
+      - are the groupings crossed?  
+  - For each level, how many groups have we sampled? (If small number, consider including it as a fixed effect instead). 
+]
+
+
+---
+# Random Intercepts and Slopes
+
+.br2.f4.gray.bg-white[
+(g)lmer(outcome ~ fixed effects + (**random effects** | grouping structure), family = error distribution)
+]
+
+.pull-left[
+
+- Which of our fixed effects can vary for our random groups?  
+
+  - "does a single group have multiple values for `\(x\)`?"  
+  
+  - "for the data from only one of our groups, can we estimate `\(y \sim x\)`?"
+
+]
+
+
+---
+class: inverse, center, middle
+
+&lt;h2 style="text-align: left;opacity:0.3;"&gt;Part 1: Model Specification&lt;/h2&gt;
+&lt;h2&gt;Part 2: Analysis&lt;/h2&gt;
+&lt;h2 style="text-align: left;opacity:0.3;"&gt;Part 3: Reporting&lt;/h2&gt;
+
+
+---
+# Model issues
+
+- Keep an eye out for convergence issues &amp; singular fits  
+
+
+
+  - Adjust optimisers, try all available optimisers (the `allFit()` function).  
+  - Consider simplifying your random effect structure.
+  - Look out for:  
+      - random effects with very small variance estimates (scale of outcome variable is relevant here)
+      - very strong correlations between random effects 
+
+
+
+- Always plot your residuals and your random effects.
+
+
+---
+# Inference
+
+.pull-left[
+## Tests
+
+- Model comparison
+  - Remember to be aware when you are fitting models with `REML=FALSE`
+
+- Parameter estimates
+
+
+]
+.pull-right[
+## Methods
+
+- df approximations
+  - load `library(lmerTest)`
+  - `pbkrtest::KRmodcomp()`
+  
+- Likelihood Ratio Tests  
+  `anova(model1, model2, ...)`
+- Bootstrap
+  - parametric bootstrap
+    `pbkrtest::PBmodcomp()` and `confint(method="boot")`
+  - case bootstrap
+    `lmeresampler::bootstrap(model, type = "case", resample = c(....))`
+]
+
+
+---
+class: inverse, center, middle
+
+&lt;h2 style="text-align: left;opacity:0.3;"&gt;Part 1: Model Specification&lt;/h2&gt;
+&lt;h2 style="text-align: left;opacity:0.3;"&gt;Part 2: Analysis&lt;/h2&gt;
+&lt;h2&gt;Part 3: Reporting&lt;/h2&gt;
+
+---
+# Reporting the analysis process
+
+- Data cleaning outlier/data removal, transformations _prior to_ analysis.  
+
+- Unplanned transformations and data removal which are carried out in order to meet assumptions.  
+
+--
+
+- Specify all fixed effects (explanatory variables &amp; covariates).  
+Link them to explicitly stated research questions/hypotheses. 
+
+- Explicitly state the hierarchical structure of the data and of the model.  
+Specify random effects according to the sampling units (schools/children etc) with which they interact. 
+
+--
+
+- State the software packages and versions used to fit the model(s), along with the estimation method (ML/REML) and optimiser used.   
+
+- If a proposed model fails to converge, clearly specify the procedure used to obtain converging model.  
+
+--
+
+- State clearly the relevant test/comparison/parameter estimate of interest.  
+Link to explicitly stated research questions/hypotheses.  
+  - Any model comparisons should be clearly stated so that the reader understands the structure of _both_ models being compared.  
+- Specify the method you plan to use to conduct inference (e.g. LRT, bootstrap)
+
+---
+# Reporting results from the model(s)
+
+Information to include:
+
+- all parameter estimates for fixed effects.  
+
+    - coefficients
+    - standard errors and/or confidence intervals
+    - associated test statistics and p-values (if used)  
+    
+- random effects  
+
+  - standard deviation and/or variance for each random effect
+  - correlations/covariances if modelled   
+  - residual variance/standard deviation
+  
+- some measure of model fit (marginal/conditional `\(R^2\)`)?  
+
+&lt;br&gt;
+`sjPlot::tab_model()` gets you a lot of the way there! 
+
+---
+# Visualising the model(s)  
+
+- Think about your questions  
+
+.pull-left[
+![](msmr_extra_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
+]
+
+--
+
+.pull-right[
+
+- `sjPlot::plot_model()` for quick easy plotting (less control)  
+
+- `as.data.frame(effects::effect(term = ??, mod = model))` for a dataframe of linear predictions you can use to plot.  
+
+- `broom.mixed::augment(model)` for the model fitted values (good for plotting group-level lines etc). 
+
+- `lme4::dotplot.ranef.mer(model)` for caterpillar plots of random effects
+
+]
+
+---
+class: inverse, center, middle, animated, rotateInDownLeft
+
+# End
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

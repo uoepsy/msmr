@@ -1,0 +1,145 @@
+---
+title: "SEM !"
+bibliography: references.bib
+biblio-style: apalike
+link-citations: yes
+params:
+    SHOW_SOLS: TRUE
+    TOGGLE: FALSE
+---
+
+```{r setup, include=FALSE}
+source('assets/setup.R')
+library(tidyverse)
+library(lavaan)
+library(semPlot)
+# knitr::opts_chunk$set(cache = TRUE)
+
+theme_set(theme_light(base_size = 12) +
+            theme(
+              panel.grid = element_blank()
+            ))
+```
+
+
+
+# TOC
+
+- why the need for SEM -jk
+- sim and diff with CFA & path analysis -jk
+
+- Notation: -un
+- Define the structural model to be tested -un
+- Create simulated data that we use for illustration -un
+- Fit the model to the data -un
+
+
+library(lavaan)
+library(semPlot)
+
+mdl.1 <- "
+f1 =~ y1 + y2 + y3
+f2 =~ y4 + y5
+"
+semPaths(lavaanify(mdl.1))
+
+mdl.2 <- "
+f1 =~ 1.2 * y1 + 3.1* y2 + 5 * y3
+f2 =~ 0.3 * y4 + 2 * y5
+# f1 ~~ f2 # depression & anxiety are related constructs
+# f1 ~ f2 # depression is "caused by" anxiety
+"
+semPaths(lavaanify(mdl.2))
+fitted(sem(mdl.2))
+
+set.seed(1234)
+df = simulateData(mdl.2, sample.nobs = 10000,
+                  ov.var = 0.1 * c(1,1,1,1,1))
+head(df)
+diag(cov(df))
+diag(fitted(sem(mdl.2))$cov) * 0.1
+
+
+
+# Fitting a SEM
+
+We're going to walk through the process of fitting a structural equation model by first simulating some data.  
+
+:::green
+**simulating data as an aid to learning**  
+An *extremely* useful approach to learning both R and statistics is to create yourself some fake data on which you can try things out. Because you create the data, you can control any relationships, group differences etc. In doing so, you can make yourself a target to aim for. 
+:::
+
+The data simulated was generated with the following parameters (expressed in lavaan syntax). You might describe this as the "data generating process".  
+The goal of statistics is to shed light on the data generating process when we don't know what it is (because we didn't fake the data). 
+
+```
+f1 =~ 0.8*item1 + 0.8*item2 + 0.5 * item3 + 0.5 * item4
+f2 =~ 0.7*item5 + 0.8*item6 + 0.3 * item7 + 0.5 * item8
+f3 =~ 0.4*item9 + 0.8*item10 + 0.4 * item11 + 0.5 * item12 + 0.4*item5
+f2 ~~ 0.3*f3
+f1 ~ .2*f2 + 0.8*f3
+```
+
+As you can see, in the data generating process, there are 3 factors each measured by 4 items (with the addition of item5 being cross-loaded on to f3). Factors f2 and f3 are correlated, and f1 is regressed on to f2 and f3.  
+
+You can find the data at LINK
+
+```{r}
+df <- read_csv("../../data/simsem.csv")
+```
+Try playing around fitting different models to the data, and evaluating how well they fit. What happens when you misspecify the measurement model? What 
+
+
+```{r include=FALSE}
+library(tidyverse)
+library(lavaan)
+library(semPlot)
+library(simstandard)
+
+mdl = "
+f1 =~ 0.8*item1 + 0.8*item2 + 0.5 * item3 + 0.5 * item4
+f2 =~ 0.7*item5 + 0.8*item6 + 0.3 * item7 + 0.5 * item8
+f3 =~ 0.4*item9 + 0.8*item10 + 0.4 * item11 + 0.5 * item12 + 0.4*item5
+f2 ~~ 0.3*f3
+f1 ~ .2*f2 + 0.8*f3
+"
+semPaths(lavaanify(mdl))
+
+df = simstandard::sim_standardized(mdl, n = 1e3,
+                                   latent = FALSE,
+                                   errors = FALSE)
+#write.csv(df, "../../data/simsem.csv", row.names=F)
+#mdlf = simstandard::fixed2free(mdl)
+#fit = sem(mdlf,df)
+#semPaths(fit, what="std")
+#summary(fit, standardized = TRUE)
+```
+
+Imagining that we don't 
+Researcher A comes along
+
+
+```{r}
+library(tidyverse)
+library(lavaan)
+library(semPlot)
+
+mdl <- '
+  f1 =~ item1 + item2 + item7 + item8
+  f2 =~ item5 + item6 + item3 + item4
+  f3 =~ item9 + item10 + item11 + item12
+  f2 ~~ f3
+  f1 ~~ f2
+  f1 ~~ f3
+'
+fit <- sem(mdl, df)
+summary(fit, standardized=T, fit.measures=T)
+modificationindices(fit, sort=T)
+```
+
+
+
+<!-- Formatting -->
+
+<div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>

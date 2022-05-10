@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>MLM Assumptions</title>
+
+<script src="site_libs/header-attrs-2.8/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<script>
+function toggle_visibility(id1, id2) {
+var e = document.getElementById(id1);
+var f = document.getElementById(id2);
+e.style.display = ((e.style.display!='none') ? 'none' : 'block');
+if(f.classList.contains('fa-plus')) {
+    f.classList.add('fa-minus')
+    f.classList.remove('fa-plus')
+} else {
+    f.classList.add('fa-plus')
+    f.classList.remove('fa-minus')
+}
+}
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+<link rel="stylesheet" href="assets/style-labs.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><strong>MSMR</strong></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fas fa-home"></span>
+     
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Mixed Effects Models
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01_intromlm.html">1: Intro to Multi-Level Modelling</a>
+    </li>
+    <li>
+      <a href="02_lmm_log.html">2: Logistic | Longitudinal (linear)</a>
+    </li>
+    <li>
+      <a href="03_nonlin.html">3: Longitudinal (non-linear)</a>
+    </li>
+    <li>
+      <a href="04_other_ranef.html">4: Other Random Effect Structures</a>
+    </li>
+    <li>
+      <a href="05_multilevel_recap.html">5: Recap | Individual Differences</a>
+    </li>
+    <li>
+      <a href="06_rev.html">Break Week</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Data Reduction &amp; SEM
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="07_efapca.html">PCA | EFA</a>
+    </li>
+    <li>
+      <a href="08_cfa.html">CFA</a>
+    </li>
+    <li>
+      <a href="09_path.html">Path Analysis</a>
+    </li>
+    <li>
+      <a href="10_sem1.html">SEM 1</a>
+    </li>
+    <li>
+      <a href="11_sem2.html">SEM 2</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    <span class="fas fa-info-circle"></span>
+     
+    Help
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="00_tidyverse_markdown.html">Recap - Tidyverse &amp; Markdown</a>
+    </li>
+    <li>
+      <a href="zz_writeuplogistic.html">Write-up &amp; Logistic GCA</a>
+    </li>
+    <li>
+      <a href="zz_assumpts.html">MLM Assumptions &amp; Diagnostics</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">MLM Assumptions</h1>
+
+</div>
+
+
+<div id="the-data" class="section level1">
+<h1>The data</h1>
+<p>For this example, we are going to re-use the WeightMaintain data, which you can find in <a href="https://uoepsy.github.io/msmr/labs/01_intromlm.html#Some_Less_Guided_Exercises">the exercises from Week 1</a>.<br />
+The codebook is copied below to remind you of the data generating process.</p>
+<div class="optional-begin">
+WeightMaintain Data Codebook<span id="opt-start-170" class="fa fa-plus optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-170&#39;, &#39;opt-start-170&#39;)"></span>
+</div>
+<div id="opt-body-170" class="optional-body" style="display: none;">
+<p>The weight maintenance data (<code>WeightMaintain3</code>), a made-up data set based on Lowe et al. (2014, Obesity, 22, 94-100), contains information on overweight participants who completed a 12-week weight loss program, and were then randomly assigned to one of three weight maintenance conditions:</p>
+<ul>
+<li>None (Control)<br />
+</li>
+<li>MR (meal replacements): use MR to replace one meal and snack per day<br />
+</li>
+<li>ED (energy density intervention): book and educational materials on purchasing and preparing foods lower in ED (reducing fat content and/or increasing water content of foods)</li>
+</ul>
+<p>Weight was assessed at baseline (start of maintenance), 12 months post, 24 months post, and 36 months post.</p>
+<p>It is available, in <strong>.rda</strong> format, at <a href="https://uoepsy.github.io/data/WeightMaintain3.rda" class="uri">https://uoepsy.github.io/data/WeightMaintain3.rda</a></p>
+</div>
+<p class="optional-end">
+</p>
+<pre class="r"><code>library(tidyverse)
+load(url(&quot;https://uoepsy.github.io/data/WeightMaintain3.rda&quot;))
+summary(WeightMaintain3)</code></pre>
+<pre><code>##        ID      Condition    Assessment    WeightChange    
+##  101    :  4   None:240   Min.   :0.00   Min.   :-8.3781  
+##  102    :  4   ED  :240   1st Qu.:0.75   1st Qu.:-0.5024  
+##  103    :  4   MR  :240   Median :1.50   Median : 0.7050  
+##  104    :  4              Mean   :1.50   Mean   : 1.4438  
+##  105    :  4              3rd Qu.:2.25   3rd Qu.: 2.8806  
+##  106    :  4              Max.   :3.00   Max.   :14.9449  
+##  (Other):696</code></pre>
+</div>
+<div id="the-model" class="section level1">
+<h1>The model</h1>
+<p>We fitted the multilevel model specified below:</p>
+<p><span class="math display">\[
+\begin{align}
+&amp; \text{for observation }j\text{ from subject }i \\
+\quad \\
+&amp; \text{Level 1:} \\
+&amp; \color{red}{WeightChange_{ij}} = \color{blue}{\beta_{0i} \cdot 1 + \beta_{1i} \cdot Assessment_{ij} + \beta_{2i} \cdot ConditionED_{ij} + } \\
+&amp; \color{blue}{\beta_{3i} \cdot ConditionMR_{ii} + \beta_{4i} \cdot Assessment_{ij} \cdot ConditionED_{ij} + } \\
+&amp; \color{blue}{\beta_{5i} \cdot Assessment_{ij} \cdot ConditionMR_{ij}} + \varepsilon_{ij} \\
+&amp; \text{Level 2:} \\
+&amp; \color{blue}{\beta_{0j}} = \gamma_{00} + \color{orange}{\zeta_{0i}} \\
+&amp; \color{blue}{\beta_{1j}} = \gamma_{10} + \color{orange}{\zeta_{1i}} \\
+\quad \\
+&amp; \text{Where:} \\
+&amp; \gamma_{00}\text{ is the population intercept, and }\color{orange}{\zeta_{0i}}\text{ is the deviation of subject }i\text{ from }\gamma_{00} \\
+&amp; \gamma_{10}\text{ is the population slope, and }\color{orange}{\zeta_{1i}}\text{ is the deviation of subject }i\text{ from }\gamma_{10} \\
+\end{align}
+\]</span></p>
+<div class="frame">
+<p><strong>Multilevel Equations and Mixed-Effects Equations</strong></p>
+<p>We can simply substitute in the Level 2 equations into the Level 1 equation, and get composite “mixed-effects” equation:</p>
+<p><span class="math display">\[
+\begin{align}
+&amp; \text{for observation }j\text{ from subject }i \\
+\quad \\
+&amp; \color{red}{WeightChange_{ij}} = \color{blue}{(\beta_{0} + \zeta_{0i}) \cdot 1 + (\beta_{1} + \zeta_{1i}) \cdot Assessment_{ij} + \beta_{2i} \cdot ConditionED_{ij} + } \\
+&amp; \color{blue}{\beta_{3i} \cdot ConditionMR_{ii} + \beta_{4i} \cdot Assessment_{ij} \cdot ConditionED_{ij} + } \\
+&amp; \color{blue}{\beta_{5i} \cdot Assessment_{ij} \cdot ConditionMR_{ij}} + \varepsilon_{ij} \\
+\end{align}
+\]</span></p>
+</div>
+<p>We use the <strong>lme4</strong> package, fitting the model like so:
+(Note there is a singular fit here which is likely due to the very small variation in participants’ WeightChange values at Assessment 0, we could consider removing the random intercept).</p>
+<pre class="r"><code>library(lme4)
+m.full &lt;- lmer(WeightChange ~ Assessment*Condition + (1 + Assessment | ID), 
+               data=WeightMaintain3, control = lmerControl(optimizer = &quot;bobyqa&quot;))
+summary(m.full)</code></pre>
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+## lmerModLmerTest]
+## Formula: WeightChange ~ Assessment * Condition + (1 + Assessment | ID)
+##    Data: WeightMaintain3
+## Control: lmerControl(optimizer = &quot;bobyqa&quot;)
+## 
+## REML criterion at convergence: 2530.9
+## 
+## Scaled residuals: 
+##      Min       1Q   Median       3Q      Max 
+## -3.10672 -0.58466  0.01148  0.61835  2.92076 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev. Corr 
+##  ID       (Intercept) 0.006303 0.07939       
+##           Assessment  1.899379 1.37818  -1.00
+##  Residual             0.820234 0.90567       
+## Number of obs: 720, groups:  ID, 180
+## 
+## Fixed effects:
+##                         Estimate Std. Error        df t value Pr(&gt;|t|)    
+## (Intercept)              0.06039    0.09836 513.99831   0.614  0.53953    
+## Assessment               1.84918    0.18545 177.44091   9.971  &lt; 2e-16 ***
+## ConditionED             -0.14303    0.13910 513.99831  -1.028  0.30431    
+## ConditionMR             -0.14945    0.13910 513.99831  -1.074  0.28316    
+## Assessment:ConditionED  -1.74950    0.26226 177.44091  -6.671 3.12e-10 ***
+## Assessment:ConditionMR  -0.83624    0.26226 177.44091  -3.189  0.00169 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Correlation of Fixed Effects:
+##             (Intr) Assssm CndtED CndtMR As:CED
+## Assessment  -0.325                            
+## ConditionED -0.707  0.230                     
+## ConditionMR -0.707  0.230  0.500              
+## Assssmn:CED  0.230 -0.707 -0.325 -0.162       
+## Assssmn:CMR  0.230 -0.707 -0.162 -0.325  0.500
+## optimizer (bobyqa) convergence code: 0 (OK)
+## boundary (singular) fit: see ?isSingular</code></pre>
+<p>And we can visualise the model fitted values using the <code>augment()</code> function from the <strong>broom.mixed</strong> package.</p>
+<pre class="r"><code>library(broom.mixed)
+augment(m.full) %&gt;%
+ggplot(., aes(Assessment, WeightChange, color=Condition)) + 
+  stat_summary(fun.data=mean_se, geom=&quot;pointrange&quot;, size=1) + 
+  stat_summary(aes(y=.fitted), fun=mean, geom=&quot;line&quot;) + 
+  theme_bw()</code></pre>
+<p><img src="zz_assumpts_files/figure-html/unnamed-chunk-4-1.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="the-assumptions" class="section level1">
+<h1>The assumptions</h1>
+<p>As with standard linear regression, our assumptions are concerning the residuals.
+There are some extra considerations (for instance, the number of random-effects, their covariance structure etc), but our distributional assumptions are placed on the residuals.
+However, note that the random-effects are the residuals of the equation at level 2, which means we have residuals here occurring at different levels (depicted in red in Figure <a href="#fig:unlmm">1</a> below). The assumptions are based on the Level-1 residuals (<span class="math inline">\(\epsilon_{ij}\)</span>) and the Level-2 residuals, or random-effects (<span class="math inline">\(\gamma_{0i}\)</span>). So we need to examine the distributions of those two components.</p>
+<div class="figure" style="text-align: center"><span id="fig:unlmm"></span>
+<img src="images/un_lmm.png" alt="You can think of the blue line as the level 1 equation (the fixed effects). The green line represents an example group i. Our model assumes that the lines for all the groups are normally distributed around the fixed effect. You could envisage this as lots of green lines above and below the blue line (random intercepts), with some steeper than the blue line, some shallower (random slopes)" width="80%" />
+<p class="caption">
+Figure 1: You can think of the blue line as the level 1 equation (the fixed effects). The green line represents an example group i. Our model assumes that the lines for all the groups are normally distributed around the fixed effect. You could envisage this as lots of green lines above and below the blue line (random intercepts), with some steeper than the blue line, some shallower (random slopes)
+</p>
+</div>
+<div id="level-1-residuals" class="section level2">
+<h2>Level 1 residuals</h2>
+<p>We can get out the Level 1 residuals using <code>augment()</code> (the <strong>.resid</strong> column), or <code>resid()</code>/<code>residuals()</code>.</p>
+<p>We can also get the model fitted <span class="math inline">\((\hat{y})\)</span> values from <code>augment()</code> (the <strong>.fitted</strong> column) or <code>fitted()</code>/<code>predict()</code>.</p>
+<p>We want to examine both the normality of the residuals, and that they have mean zero and constant variance as <span class="math inline">\(\mathbf{X}\)</span> (our predictors) varies. The easiest way to examine these is a histogram or qqplot of residuals for the former, and a residuals vs fitted plot for the latter.</p>
+<pre class="r"><code>out_mfull &lt;- augment(m.full)
+
+# histogram/density plot for residuals
+p1 = ggplot(data = out_mfull, aes(x = .resid)) +
+  stat_density(geom = &quot;line&quot;) +
+  xlab(&quot;Level 1 residuals&quot;)
+
+# residuals vs fitted plot
+p2 = ggplot(data = out_mfull, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  #fit a loess line
+  geom_smooth(se=FALSE) +
+  xlab(&quot;Fitted values&quot;) +
+  ylab(&quot;Level 1 residuals&quot;)
+
+# Plot side-by-side
+library(patchwork)
+p1 + p2</code></pre>
+<p><img src="zz_assumpts_files/figure-html/unnamed-chunk-5-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p>Based on these plots, it looks like the assumptions concerning the distributions of Level-1 residuals <em>may</em> be satisfied. The density plot looks reasonably normal, but it looks like the residual variance might be considerably larger around the 0 point, and is narrower at the extremes</p>
+</div>
+<div id="level-2-residuals-random-effects" class="section level2">
+<h2>Level-2 Residuals (random effects)</h2>
+<pre class="r"><code># Obtain a data frame of the random-effects
+level_2 = ranef(m.full)$ID
+
+p1 &lt;- ggplot(data = level_2, aes(x = `(Intercept)`)) +
+  stat_density(geom = &quot;line&quot;) +
+  theme_bw() +
+  xlab(&quot;Level-2 residuals (intercept)&quot;) 
+p2 &lt;- ggplot(data = level_2, aes(sample = `(Intercept)`)) +
+  stat_qq() +
+  stat_qq_line() + 
+  theme_bw()
+
+p3 &lt;- ggplot(data = level_2, aes(x = `Assessment`)) +
+  stat_density(geom = &quot;line&quot;) +
+  theme_bw() +
+  xlab(&quot;Level-2 residuals (slope)&quot;)
+p4 &lt;- ggplot(data = level_2, aes(sample = `(Intercept)`)) +
+  stat_qq() +
+  stat_qq_line() + 
+  theme_bw()
+
+(p1 + p2)/(p3 + p4)</code></pre>
+<p>These distributions both look relatively normal.</p>
+<div class="optional-begin">
+Optional: Handy packages!<span id="opt-start-171" class="fa fa-plus optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-171&#39;, &#39;opt-start-171&#39;)"></span>
+</div>
+<div id="opt-body-171" class="optional-body" style="display: none;">
+<p>As it happens, more and more new packages are being developed that make checking assumptions of multi-level models easier.</p>
+<p>The <strong>sjPlot</strong> package has <code>plot_model(model, type = "diag")</code> which works with <strong>lmer</strong> objects.<br />
+There is also a lovely new package shown below:</p>
+<pre class="r"><code>library(performance)
+library(see)
+check_model(m.full)</code></pre>
+<p><img src="zz_assumpts_files/figure-html/unnamed-chunk-7-1.png" width="80%" style="display: block; margin: auto;" />
+You can find more details <a href="https://easystats.github.io/see/articles/performance.html">here</a>.</p>
+</div>
+<p class="optional-end">
+</p>
+</div>
+</div>
+<div id="when-things-look-wrong" class="section level1">
+<h1>When things look wrong</h1>
+<div id="model-misspecification" class="section level2">
+<h2>model misspecification</h2>
+<p>Does your model specification make sense? Might you be overlooking something?</p>
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+## lmerModLmerTest]
+## Formula: WeightChange ~ Assessment * Condition + (1 | ID)
+##    Data: WeightMaintain3
+## Control: lmerControl(optimizer = &quot;bobyqa&quot;)
+## 
+## REML criterion at convergence: 3298
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -3.7303 -0.4968 -0.0065  0.4549  3.7735 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  ID       (Intercept) 3.141    1.772   
+##  Residual             3.978    1.995   
+## Number of obs: 720, groups:  ID, 180
+## 
+## Fixed effects:
+##                         Estimate Std. Error        df t value Pr(&gt;|t|)    
+## (Intercept)              0.06039    0.31427 342.26777   0.192    0.848    
+## Assessment               1.84918    0.11516 537.00000  16.058  &lt; 2e-16 ***
+## ConditionED             -0.14303    0.44444 342.26777  -0.322    0.748    
+## ConditionMR             -0.14945    0.44444 342.26777  -0.336    0.737    
+## Assessment:ConditionED  -1.74950    0.16286 537.00000 -10.743  &lt; 2e-16 ***
+## Assessment:ConditionMR  -0.83624    0.16286 537.00000  -5.135 3.96e-07 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Correlation of Fixed Effects:
+##             (Intr) Assssm CndtED CndtMR As:CED
+## Assessment  -0.550                            
+## ConditionED -0.707  0.389                     
+## ConditionMR -0.707  0.389  0.500              
+## Assssmn:CED  0.389 -0.707 -0.550 -0.275       
+## Assssmn:CMR  0.389 -0.707 -0.275 -0.550  0.500</code></pre>
+<p><img src="zz_assumpts_files/figure-html/unnamed-chunk-8-1.png" width="80%" style="display: block; margin: auto;" />
+## Transforamtions
+Is a transformation useful?
+Similar to the standard linear regression model, we can transform our variables, which may help with certain assumptions. For instance, we might perform a log-transformation to our outcome variable in order to lessen the heteroskedasticity we saw might be present above (in the level-1 residuals).</p>
+<ul>
+<li><code>log(y)</code> will log transform your outcome <code>y</code>. Bear in mind that the log of 0 is negative infinity, and you cannot take the log of a negative number. Often log transformations take the form <code>log(y + c)</code> where <code>c</code> is some constant. Log transformations shift right (positively) skewed data to being more symmetric.
+<img src="images/skew.png" width="350px" style="display: block; margin: auto;" /></li>
+<li>A neat trick to log transform left (negatively) skewed data is to reflect the values prior to log transforming: <code>log((max(y)-y) + c)</code></li>
+<li><code>BoxCox(y, lambda = "auto")</code> from the <strong>forecast</strong> package is an easy way to implement a Box-Cox transformation.</li>
+</ul>
+<div class="red">
+<p>Is it worth it? When you transform a variable, it changes the interpretation. Talking about increases in log(y) is much less intuitive than increases in y. If you’re keen to see how it may be possible to utilise mixed effects models while avoiding transforming data, <a href="https://www.frontiersin.org/articles/10.3389/fpsyg.2015.01171/full">this is an interesting paper</a>.</p>
+</div>
+</div>
+<div id="robustlmm" class="section level2">
+<h2>Robustlmm</h2>
+<p>There is a( <strong>robustlmm</strong> package, see <a href="https://cran.r-project.org/web/packages/robustlmm/vignettes/rlmer.pdf">https://cran.r-project.org/web/packages/robustlmm/vignettes/rlmer.pdf</a>, which aims to provide estimates where models may be contaminated by outliers at different levels of the equation.</p>
+<pre class="r"><code>library(robustlmm)
+# Refit the model with robust SEs
+m.full_robust &lt;- rlmer(WeightChange ~ Assessment*Condition + (1 + Assessment | ID), 
+               data=WeightMaintain3, control = lmerControl(optimizer = &quot;bobyqa&quot;))</code></pre>
+</div>
+</div>
+<div id="influence" class="section level1">
+<h1>Influence</h1>
+<p>If we think about what we’re interested in when we’re talking about things ‘influencing’ our results, we find we have multiple sources of influence. We are interested not only in the lower-level cases (individual observations) but also the groups (in this case the people). We have already seen examination of lower-level cases when learning about simple regression diagnositcs (cook’s distance, covratio, dffit, dfbeta etc - <a href="https://uoepsy.github.io/usmr/labs/07_slr.html#Exercises:_Assumptions__Diagnostics">see USMR week 8</a>). For multi-level models, the <a href="https://journal.r-project.org/archive/2012-2/RJournal_2012-2_Nieuwenhuis~et~al.pdf">influence.ME package</a> is great! We can easily extract DFbetaS and Cook’s Distance for each level (for example, the below). Check out the <a href="https://journal.r-project.org/archive/2012-2/RJournal_2012-2_Nieuwenhuis~et~al.pdf">package manual</a> for more!</p>
+<pre class="r"><code>library(influence.ME)
+# group level
+mfull_inc &lt;- influence(m.full, &quot;ID&quot;)
+
+plot(mfull_inc,
+  which=&quot;dfbetas&quot;,
+  xlab=&quot;DFbetaS&quot;,
+  ylab=&quot;ID&quot;)</code></pre>
+<p><img src="zz_assumpts_files/figure-html/unnamed-chunk-11-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(mfull_inc, 
+     which=&quot;cook&quot;,
+     cutoff=4/length(unique(WeightMaintain3$ID)), sort=TRUE,
+     xlab=&quot;Cook´s Distance&quot;,
+     ylab=&quot;ID&quot;)</code></pre>
+<p><img src="zz_assumpts_files/figure-html/unnamed-chunk-11-2.png" width="80%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># observation level
+mfull_inc2 &lt;- influence(m.full, obs=TRUE)
+
+plot(mfull_inc2,
+  which=&quot;dfbetas&quot;,
+  xlab=&quot;DFbetaS&quot;,
+  ylab=&quot;obs&quot;)</code></pre>
+<p><img src="zz_assumpts_files/figure-html/unnamed-chunk-12-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>plot(mfull_inc2, 
+     which=&quot;cook&quot;,
+     cutoff=4/nrow(WeightMaintain3), sort=TRUE,
+     xlab=&quot;Cook´s Distance&quot;,
+     ylab=&quot;obs&quot;)</code></pre>
+<p><img src="zz_assumpts_files/figure-html/unnamed-chunk-12-2.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+
+<link rel="stylesheet" href="https://uoepsy.github.io/assets/css/ccfooter.css" />
+<div class="ccfooter"></div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

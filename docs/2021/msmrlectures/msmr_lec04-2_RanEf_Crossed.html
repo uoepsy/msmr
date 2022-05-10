@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Week 4, part 2: Crossed Random Effects</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Dan Mirman" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# <b>Week 4, part 2: Crossed Random Effects</b>
+## Multivariate Statistics and Methodology using R (MSMR)<br><br>
+### Dan Mirman
+### Department of Psychology<br>The University of Edinburgh
+### AY 2020-2021
+
+---
+
+
+
+
+
+
+# Crossed random effects
+
+In most statistical tests, we are evaluating the reliability of some effect in the context of the variability in the data. The goal is to make an inference from the sample to the population from which from that sample was drawn.
+
+Usually, we want to make inferences about reliability/variability across **subjects**: i.e., in general, do participants tend to show this effect or is it just one or two people showing it? That is, would we expect the rest of the participant population to also behave this way?
+
+--
+
+We might also ask about reliability/variability across **items**. This often comes up in laboratory experimental contexts where we ask participants to solve N problems, or answer N questions, or recognize N words, etc. There will be variability across those N "items" and we should test whether our effects of interest are reliable in the context of that variability. That is, would we expect the same outcome for other problems, questions, words, etc. from the same population?
+
+--
+
+Historically, this was done by conducting separate by-subjects ("F1") and by-items ("F2") analyses and journals sometimes even required this (a long time ago, I had a paper rejected because a key result was statistically significant by subjects but only marginal by items).
+
+--
+
+**Multilevel models provide a better solution to this problem.**
+
+---
+# Improving problem solving
+Made-up data on an intervention to improve problem solving ability
+
+```r
+load("./data/problem_solving.Rdata")
+summary(problem_solving)
+```
+
+```
+##       Item      Prob_Type      Subject         Condition          RT       
+##  AC     : 115   Hard:1494   S101   :  30   Control  :1397   Min.   :  440  
+##  AV     : 109   Easy:1370   S109   :  30   Treatment:1467   1st Qu.: 1161  
+##  AE     : 107               S121   :  30                    Median : 1536  
+##  AB     : 105               S122   :  30                    Mean   : 1730  
+##  AH     : 102               S124   :  30                    3rd Qu.: 2040  
+##  AJ     : 102               S134   :  30                    Max.   :12753  
+##  (Other):2224               (Other):2684
+```
+
+* `Item`: word problem, can be *`Hard`* or *`Easy`*
+* `Prob_Type`: difficulty level of word problem (16 hard problems, 14 easy problems)
+* `Subject`: Participant ID (N=120)
+* `Condition`: whether the participant received the `Treatment` or not
+* `RT`: time to solve the problem
+
+Note: there is some missing data because trials where the participants failed to solve the problem are excluded.
+
+---
+# A traditional analysis approach
+
+.pull-left[
+Calculate subject-by-condition means
+
+
+```r
+ps_subj &lt;- problem_solving %&gt;%
+  group_by(Subject, Condition, Prob_Type) %&gt;%
+  summarise(RT = mean(RT))
+```
+]
+
+.pull-right[
+![](msmr_lec04-2_RanEf_Crossed_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
+]
+
+--
+
+* Everyone solves `Easy` problems faster than `Hard` ones
+* `Treatment` group seems faster at problem solving, esp. for `Hard` problems
+---
+# Repeated-measures ANOVA
+
+```r
+afex::aov_ez(id = "Subject", dv = "RT",
+  within = "Prob_Type", between = "Condition",
+  data = ps_subj)
+```
+
+```
+## Anova Table (Type 3 tests)
+## 
+## Response: RT
+##                Effect     df       MSE          F  ges p.value
+## 1           Condition 1, 118 255247.21       2.44 .015    .121
+## 2           Prob_Type 1, 118  98268.92 223.46 *** .345   &lt;.001
+## 3 Condition:Prob_Type 1, 118  98268.92       1.96 .005    .164
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
+```
+
+--
+
+Looks like there is an overall problem difficulty effect, and no effect(s) of the intervention.
+
+--
+
+But hang on: not all word problems are the same and we're going to make inferences about solving problems **of this type**, not just about solving these particular problems.
+
+---
+# By-items analysis
+Calculate item-by-condition means
+
+
+```r
+ps_item &lt;- problem_solving %&gt;%
+  group_by(Item, Condition, Prob_Type) %&gt;%
+  summarise(RT = mean(RT))
+# plot the item-level data
+ggplot(ps_item, aes(Condition, RT, fill=Prob_Type)) + geom_boxplot()
+```
+
+![](msmr_lec04-2_RanEf_Crossed_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+
+---
+# By-items repeated-measures ANOVA
+
+```r
+afex::aov_ez(id = "Item", dv = "RT", 
+             between = "Prob_Type", within = "Condition", 
+             data = ps_item)
+```
+
+```
+## Anova Table (Type 3 tests)
+## 
+## Response: RT
+##                Effect    df       MSE         F  ges p.value
+## 1           Prob_Type 1, 28 342623.14 17.47 *** .374   &lt;.001
+## 2           Condition 1, 28  15095.59  12.46 ** .018    .001
+## 3 Prob_Type:Condition 1, 28  15095.59    5.26 * .008    .030
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
+```
+
+All effects significant. **Hol up, why the difference?**
+
+---
+# By-items repeated-measures ANOVA
+
+```
+## Anova Table (Type 3 tests)
+## 
+## Response: RT
+##                Effect    df       MSE         F  ges p.value
+## 1           Prob_Type 1, 28 342623.14 17.47 *** .374   &lt;.001
+## 2           Condition 1, 28  15095.59  12.46 ** .018    .001
+## 3 Prob_Type:Condition 1, 28  15095.59    5.26 * .008    .030
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
+```
+
+* Problem type (difficulty) has a large effect, it is significant in both analyses
+* Condition (intervention) effect and its interaction with problem type are small
+
+--
+
+Condition is between-subjects but within-items, so the between-subjects variability is strong in the by-subjects analysis but averaged away in the by-items analysis. 
+
+This makes the by-items analysis look overly strong (subject variability is missing) and the by-subjects analysis look overly weak (items consistency is missing).
+
+--
+
+Also, the idea that effects should be significant in separate by-items and by-subjects analyses (aka F1 and F2) is generally thought to be overly conservative.
+
+---
+# A multilevel modeling approach 
+
+Multilevel models provide a way to simultaneously model random variability at subject and item levels, as well as the group-level effects that we are interested in.
+
+These data are nested (clustered observations that are not independent), but, unlike prior examples, they are not **hierarchical**. Items are clustered within subjects (subjects solved multiple problems); but also subjects are clustered within items (same problems were presented to multiple subjects). This can be modeled with **crossed random effects**.
+
+
+```r
+mod_ps &lt;- lmer(RT ~ Prob_Type*Condition + 
+                 (Prob_Type | Subject) + (Condition | Item), 
+                 data=problem_solving, REML=FALSE)
+```
+
+```
+## boundary (singular) fit: see ?isSingular
+```
+
+---
+# A multilevel modeling approach 
+
+```r
+gt(tidy(mod_ps))
+```
+
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#wmdmflqtch .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#wmdmflqtch .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#wmdmflqtch .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#wmdmflqtch .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#wmdmflqtch .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wmdmflqtch .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#wmdmflqtch .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#wmdmflqtch .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#wmdmflqtch .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#wmdmflqtch .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#wmdmflqtch .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#wmdmflqtch .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#wmdmflqtch .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#wmdmflqtch .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#wmdmflqtch .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#wmdmflqtch .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#wmdmflqtch .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#wmdmflqtch .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#wmdmflqtch .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wmdmflqtch .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#wmdmflqtch .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wmdmflqtch .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#wmdmflqtch .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wmdmflqtch .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#wmdmflqtch .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#wmdmflqtch .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#wmdmflqtch .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#wmdmflqtch .gt_left {
+  text-align: left;
+}
+
+#wmdmflqtch .gt_center {
+  text-align: center;
+}
+
+#wmdmflqtch .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#wmdmflqtch .gt_font_normal {
+  font-weight: normal;
+}
+
+#wmdmflqtch .gt_font_bold {
+  font-weight: bold;
+}
+
+#wmdmflqtch .gt_font_italic {
+  font-style: italic;
+}
+
+#wmdmflqtch .gt_super {
+  font-size: 65%;
+}
+
+#wmdmflqtch .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="wmdmflqtch" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">effect</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">group</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">term</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">estimate</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">std.error</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">statistic</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">df</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">p.value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_left">fixed</td>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_left">(Intercept)</td>
+      <td class="gt_row gt_right">1753.51</td>
+      <td class="gt_row gt_right">77.16</td>
+      <td class="gt_row gt_right">22.725</td>
+      <td class="gt_row gt_right">37.28</td>
+      <td class="gt_row gt_right">1.933e-23</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">fixed</td>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_left">Prob_Type1</td>
+      <td class="gt_row gt_right">325.24</td>
+      <td class="gt_row gt_right">73.50</td>
+      <td class="gt_row gt_right">4.425</td>
+      <td class="gt_row gt_right">30.88</td>
+      <td class="gt_row gt_right">1.115e-04</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">fixed</td>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_left">Condition1</td>
+      <td class="gt_row gt_right">58.34</td>
+      <td class="gt_row gt_right">29.43</td>
+      <td class="gt_row gt_right">1.982</td>
+      <td class="gt_row gt_right">111.64</td>
+      <td class="gt_row gt_right">4.989e-02</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">fixed</td>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_left">Prob_Type1:Condition1</td>
+      <td class="gt_row gt_right">36.14</td>
+      <td class="gt_row gt_right">17.73</td>
+      <td class="gt_row gt_right">2.038</td>
+      <td class="gt_row gt_right">86.73</td>
+      <td class="gt_row gt_right">4.462e-02</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">ran_pars</td>
+      <td class="gt_row gt_left">Subject</td>
+      <td class="gt_row gt_left">sd__(Intercept)</td>
+      <td class="gt_row gt_right">272.06</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">ran_pars</td>
+      <td class="gt_row gt_left">Subject</td>
+      <td class="gt_row gt_left">cor__(Intercept).Prob_Type1</td>
+      <td class="gt_row gt_right">1.00</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">ran_pars</td>
+      <td class="gt_row gt_left">Subject</td>
+      <td class="gt_row gt_left">sd__Prob_Type1</td>
+      <td class="gt_row gt_right">94.41</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">ran_pars</td>
+      <td class="gt_row gt_left">Item</td>
+      <td class="gt_row gt_left">sd__(Intercept)</td>
+      <td class="gt_row gt_right">391.54</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">ran_pars</td>
+      <td class="gt_row gt_left">Item</td>
+      <td class="gt_row gt_left">cor__(Intercept).Condition1</td>
+      <td class="gt_row gt_right">1.00</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">ran_pars</td>
+      <td class="gt_row gt_left">Item</td>
+      <td class="gt_row gt_left">sd__Condition1</td>
+      <td class="gt_row gt_right">37.31</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">ran_pars</td>
+      <td class="gt_row gt_left">Residual</td>
+      <td class="gt_row gt_left">sd__Observation</td>
+      <td class="gt_row gt_right">736.17</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+
+---
+# Plotting results
+
+Computing means and SE is a little tricky for trial-level data
+
+Conveniently, the `effects` package will do that based on the fitted model
+
+
+```r
+library(effects)
+efx &lt;- effect("Prob_Type:Condition", mod_ps) %&gt;% as.data.frame(.)
+efx
+```
+
+```
+##   Prob_Type Condition  fit    se lower upper
+## 1      Hard   Control 2173 120.5  1937  2410
+## 2      Easy   Control 1450 120.4  1214  1687
+## 3      Hard Treatment 1984 104.2  1780  2188
+## 4      Easy Treatment 1406 101.4  1207  1605
+```
+
+---
+# Plotting results
+
+```r
+ggplot(efx, aes(Condition, fit, color=Prob_Type)) + 
+  geom_point(size=3) + 
+  geom_linerange(aes(ymin=fit-se, ymax=fit+se), size=2) +
+  geom_linerange(aes(ymin=lower, ymax=upper), size=1) +
+  theme_bw() + labs(y="Response Time", color="Problem\nType")
+```
+
+![](msmr_lec04-2_RanEf_Crossed_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
+
+---
+# Not so different after all
+This week we covered some more complex random effect structures
+
+* 3-level nesting
+* Crossed random effects
+
+These are just kinds of MLM and the principles from other lectures also apply to these analyses
+
+* p-value (df) estimation using Satterthwaite method; model comparisons would've been a good alternative
+* use full random effect structure, where "full" is defined by study design; can simplify if model doesn't converge by removing correlations and random "slopes"
+* be aware of how your categorical variables as coded; can conduct pairwise comparisons using a single model
+* use logistic regression for binary outcomes
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
