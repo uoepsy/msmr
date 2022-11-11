@@ -1,0 +1,287 @@
+---
+title: "MLM Assumptions"
+bibliography: references.bib
+biblio-style: apalike
+link-citations: yes
+params: 
+    SHOW_SOLS: TRUE
+    TOGGLE: TRUE
+---
+
+```{r echo=FALSE}
+source('assets/setup.R')
+```
+
+# The data
+
+For this example, we are going to re-use the WeightMaintain data, which you can find in [the exercises from Week 1](https://uoepsy.github.io/msmr/labs/01_intromlm.html#Some_Less_Guided_Exercises).  
+The codebook is copied below to remind you of the data generating process. 
+
+`r optbegin("WeightMaintain Data Codebook", olabel=FALSE, toggle=params$TOGGLE)`
+The weight maintenance data (`WeightMaintain3`), a made-up data set based on Lowe et al. (2014, Obesity, 22, 94-100), contains information on overweight participants who completed a 12-week weight loss program, and were then randomly assigned to one of three weight maintenance conditions:
+
+* None (Control)  
+* MR (meal replacements): use MR to replace one meal and snack per day  
+* ED (energy density intervention): book and educational materials on purchasing and preparing foods lower in ED (reducing fat content and/or increasing water content of foods)  
+
+Weight was assessed at baseline (start of maintenance), 12 months post, 24 months post, and 36 months post.  
+
+It is available, in **.rda** format, at https://uoepsy.github.io/data/WeightMaintain3.rda   
+`r optend()`
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+load(url("https://uoepsy.github.io/data/WeightMaintain3.rda"))
+summary(WeightMaintain3)
+```
+
+# The model 
+
+We fitted the multilevel model specified below:
+
+$$
+\begin{align}
+& \text{for observation }j\text{ from subject }i \\
+\quad \\
+& \text{Level 1:} \\
+& \color{red}{WeightChange_{ij}} = \color{blue}{\beta_{0i} \cdot 1 + \beta_{1i} \cdot Assessment_{ij} + \beta_{2i} \cdot ConditionED_{ij} + } \\
+& \color{blue}{\beta_{3i} \cdot ConditionMR_{ii} + \beta_{4i} \cdot Assessment_{ij} \cdot ConditionED_{ij} + } \\
+& \color{blue}{\beta_{5i} \cdot Assessment_{ij} \cdot ConditionMR_{ij}} + \varepsilon_{ij} \\
+& \text{Level 2:} \\
+& \color{blue}{\beta_{0j}} = \gamma_{00} + \color{orange}{\zeta_{0i}} \\
+& \color{blue}{\beta_{1j}} = \gamma_{10} + \color{orange}{\zeta_{1i}} \\
+\quad \\
+& \text{Where:} \\
+& \gamma_{00}\text{ is the population intercept, and }\color{orange}{\zeta_{0i}}\text{ is the deviation of subject }i\text{ from }\gamma_{00} \\
+& \gamma_{10}\text{ is the population slope, and }\color{orange}{\zeta_{1i}}\text{ is the deviation of subject }i\text{ from }\gamma_{10} \\
+\end{align}
+$$
+
+:::frame
+**Multilevel Equations and Mixed-Effects Equations**  
+  
+We can simply substitute in the Level 2 equations into the Level 1 equation, and get  composite "mixed-effects" equation: 
+
+$$
+\begin{align}
+& \text{for observation }j\text{ from subject }i \\
+\quad \\
+& \color{red}{WeightChange_{ij}} = \color{blue}{(\beta_{0} + \zeta_{0i}) \cdot 1 + (\beta_{1} + \zeta_{1i}) \cdot Assessment_{ij} + \beta_{2i} \cdot ConditionED_{ij} + } \\
+& \color{blue}{\beta_{3i} \cdot ConditionMR_{ii} + \beta_{4i} \cdot Assessment_{ij} \cdot ConditionED_{ij} + } \\
+& \color{blue}{\beta_{5i} \cdot Assessment_{ij} \cdot ConditionMR_{ij}} + \varepsilon_{ij} \\
+\end{align}
+$$
+::: 
+
+We use the **lme4** package, fitting the model like so:
+(Note there is a singular fit here which is likely due to the very small variation in participants' WeightChange values at Assessment 0, we could consider removing the random intercept).  
+
+```{r}
+library(lme4)
+m.full <- lmer(WeightChange ~ Assessment*Condition + (1 + Assessment | ID), 
+               data=WeightMaintain3, control = lmerControl(optimizer = "bobyqa"))
+summary(m.full)
+```
+
+And we can visualise the model fitted values using the `augment()` function from the **broom.mixed** package.
+```{r}
+library(broom.mixed)
+augment(m.full) %>%
+ggplot(., aes(Assessment, WeightChange, color=Condition)) + 
+  stat_summary(fun.data=mean_se, geom="pointrange", size=1) + 
+  stat_summary(aes(y=.fitted), fun=mean, geom="line") + 
+  theme_bw()
+```
+
+# The assumptions
+
+As with standard linear regression, our assumptions are concerning the residuals. 
+There are some extra considerations (for instance, the number of random-effects, their covariance structure etc), but our distributional assumptions are placed on the residuals. 
+However, note that the random-effects are the residuals of the equation at level 2, which means we have residuals here occurring at different levels (depicted in red in Figure \@ref(fig:unlmm) below). The assumptions are based on the Level-1 residuals ($\epsilon_{ij}$) and the Level-2 residuals, or random-effects ($\gamma_{0i}$). So we need to examine the distributions of those two components.  
+
+```{r unlmm, echo=FALSE, fig.cap="You can think of the blue line as the level 1 equation (the fixed effects). The green line represents an example group i. Our model assumes that the lines for all the groups are normally distributed around the fixed effect. You could envisage this as lots of green lines above and below the blue line (random intercepts), with some steeper than the blue line, some shallower (random slopes)"}
+knitr::include_graphics("images/un_lmm.png")
+```
+
+## Level 1 residuals  
+
+We can get out the Level 1 residuals using `augment()` (the **.resid** column), or `resid()`/`residuals()`.  
+  
+We can also get the model fitted $(\hat{y})$ values from `augment()` (the **.fitted** column) or `fitted()`/`predict()`.  
+  
+We want to examine both the normality of the residuals, and that they have mean zero and constant variance as $\mathbf{X}$ (our predictors) varies. The easiest way to examine these is a histogram or qqplot of residuals for the former, and a residuals vs fitted plot for the latter. 
+
+
+```{r}
+out_mfull <- augment(m.full)
+
+# histogram/density plot for residuals
+p1 = ggplot(data = out_mfull, aes(x = .resid)) +
+  stat_density(geom = "line") +
+  xlab("Level 1 residuals")
+
+# residuals vs fitted plot
+p2 = ggplot(data = out_mfull, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  #fit a loess line
+  geom_smooth(se=FALSE) +
+  xlab("Fitted values") +
+  ylab("Level 1 residuals")
+
+# Plot side-by-side
+library(patchwork)
+p1 + p2
+```
+
+Based on these plots, it looks like the assumptions concerning the distributions of Level-1 residuals *may* be satisfied. The density plot looks reasonably normal, but it looks like the residual variance might be considerably larger around the 0 point, and is narrower at the extremes
+
+## Level-2 Residuals (random effects)
+
+```{r eval=FALSE, out.width='3in', fig.cap='Density Plots of the Estimated Random-Effects for Intercept and Slope, with accompanying QQplots', fig.pos='H'}
+# Obtain a data frame of the random-effects
+level_2 = ranef(m.full)$ID
+
+p1 <- ggplot(data = level_2, aes(x = `(Intercept)`)) +
+  stat_density(geom = "line") +
+  theme_bw() +
+  xlab("Level-2 residuals (intercept)") 
+p2 <- ggplot(data = level_2, aes(sample = `(Intercept)`)) +
+  stat_qq() +
+  stat_qq_line() + 
+  theme_bw()
+
+p3 <- ggplot(data = level_2, aes(x = `Assessment`)) +
+  stat_density(geom = "line") +
+  theme_bw() +
+  xlab("Level-2 residuals (slope)")
+p4 <- ggplot(data = level_2, aes(sample = `(Intercept)`)) +
+  stat_qq() +
+  stat_qq_line() + 
+  theme_bw()
+
+(p1 + p2)/(p3 + p4)
+
+```
+
+These distributions both look relatively normal.  
+
+`r optbegin("Optional: Handy packages!", olabel=FALSE, toggle=params$TOGGLE)` 
+
+As it happens, more and more new packages are being developed that make checking assumptions of multi-level models easier. 
+
+The **sjPlot** package has `plot_model(model, type = "diag")` which works with **lmer** objects.  
+There is also a lovely new package shown below: 
+
+```{r warning=FALSE, message=FALSE}
+library(performance)
+library(see)
+check_model(m.full)
+```
+You can find more details [here](https://easystats.github.io/see/articles/performance.html). 
+
+`r optend()`
+
+# When things look wrong
+
+## model misspecification
+
+Does your model specification make sense? Might you be overlooking something?
+```{r echo=FALSE}
+m.bad <- lmer(WeightChange ~ Assessment*Condition + (1 | ID), 
+               data=WeightMaintain3, control = lmerControl(optimizer = "bobyqa"))
+summary(m.bad)
+out_mbad <- augment(m.bad)
+
+# histogram/density plot for residuals
+p1 = ggplot(data = out_mbad, aes(x = .resid)) +
+  stat_density(geom = "line") +
+  xlab("Level 1 residuals")
+
+# residuals vs fitted plot
+p2 = ggplot(data = out_mbad, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  #fit a loess line
+  geom_smooth(se=FALSE) +
+  xlab("Fitted values") +
+  ylab("Level 1 residuals")
+
+# Plot side-by-side
+library(patchwork)
+p1 + p2 + plot_annotation(
+  title = 'lmer(WeightChange ~ Assessment*Condition + (1 | ID))',
+  subtitle = '(no random slope)'
+)
+```
+## Transforamtions 
+Is a transformation useful? 
+Similar to the standard linear regression model, we can transform our variables, which may help with certain assumptions. For instance, we might perform a log-transformation to our outcome variable in order to lessen the heteroskedasticity we saw might be present above (in the level-1 residuals). 
+
+- `log(y)` will log transform your outcome `y`. Bear in mind that the log of 0 is negative infinity, and you cannot take the log of a negative number. Often log transformations take the form `log(y + c)` where `c` is some constant. Log transformations shift right (positively) skewed data to being more symmetric. 
+    ```{r echo=FALSE, out.width="350px"}
+    knitr::include_graphics("images/skew.png")
+    ```
+- A neat trick to log transform left (negatively) skewed data is to reflect the values prior to log transforming: `log((max(y)-y) + c)`
+- `BoxCox(y, lambda = "auto")` from the **forecast** package is an easy way to implement a Box-Cox transformation. 
+
+:::red
+Is it worth it? When you transform a variable, it changes the interpretation. Talking about increases in log(y) is much less intuitive than increases in y. If you're keen to see how it may be possible to utilise mixed effects models while avoiding transforming data, [this is an interesting paper](https://www.frontiersin.org/articles/10.3389/fpsyg.2015.01171/full). 
+:::
+
+## Robustlmm 
+
+There is a( **robustlmm** package, see [https://cran.r-project.org/web/packages/robustlmm/vignettes/rlmer.pdf](https://cran.r-project.org/web/packages/robustlmm/vignettes/rlmer.pdf), which aims to provide estimates where models may be contaminated by outliers at different levels of the equation. 
+
+```{r eval=F}
+library(robustlmm)
+# Refit the model with robust SEs
+m.full_robust <- rlmer(WeightChange ~ Assessment*Condition + (1 + Assessment | ID), 
+               data=WeightMaintain3, control = lmerControl(optimizer = "bobyqa"))
+
+```
+
+
+# Influence
+
+If we think about what we're interested in when we're talking about things 'influencing' our results, we find we have multiple sources of influence. We are interested not only in the lower-level cases (individual observations) but also the groups (in this case the people). We have already seen examination of lower-level cases when learning about simple regression diagnositcs (cook's distance, covratio, dffit, dfbeta etc - [see USMR week 8](https://uoepsy.github.io/usmr/labs/07_slr.html#Exercises:_Assumptions__Diagnostics)). For multi-level models, the [influence.ME package](https://journal.r-project.org/archive/2012-2/RJournal_2012-2_Nieuwenhuis~et~al.pdf) is great! We can easily extract DFbetaS and Cook's Distance for each level (for example, the below). Check out the [package manual](https://journal.r-project.org/archive/2012-2/RJournal_2012-2_Nieuwenhuis~et~al.pdf) for more! 
+
+```{r message=FALSE,warning=FALSE}
+library(influence.ME)
+# group level
+mfull_inc <- influence(m.full, "ID")
+
+plot(mfull_inc,
+  which="dfbetas",
+  xlab="DFbetaS",
+  ylab="ID")
+
+plot(mfull_inc, 
+     which="cook",
+     cutoff=4/length(unique(WeightMaintain3$ID)), sort=TRUE,
+     xlab="Cook´s Distance",
+     ylab="ID")
+```
+
+```{r message=FALSE,warning=FALSE}
+# observation level
+mfull_inc2 <- influence(m.full, obs=TRUE)
+
+plot(mfull_inc2,
+  which="dfbetas",
+  xlab="DFbetaS",
+  ylab="obs")
+
+plot(mfull_inc2, 
+     which="cook",
+     cutoff=4/nrow(WeightMaintain3), sort=TRUE,
+     xlab="Cook´s Distance",
+     ylab="obs")
+```
+
+
+
+
+
+
+

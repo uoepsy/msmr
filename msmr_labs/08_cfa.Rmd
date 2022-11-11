@@ -556,7 +556,7 @@ Write a short paragraph summarising the method and results of the two factor mod
 A two-factor model was tested. Items 1-5 loaded on a 'non-aggressive conduct problems' factor and items 6-10 loaded on an 'aggression' factor and these factors were allowed to correlate. Scaling and identification were achieved by fixing the loading of item 1 on the non-aggressive conduct problems factor and item 6 on the aggression factor to 1. The model was estimated using maximum likelihood estimation. The model fit well with CFI=.99, TLI=0.99,  RMSEA=.04, and SRMR=.04 (Hu & Bentler, 1999).  All loadings were statistically significant and >|.3| on the standardised scale. Modification indices and expected parameter changes were inspected but no modifications were made because no expected parameter changes were judged large enough to merit the inclusion of additional parameters given that there was little theoretical rationale for their inclusion. Overall, therefore, a two-factor oblique model was supported for the conduct problems items. The correlation between the factors was r=.38 (p<.001).
 
 ```{r echo=FALSE, message = FALSE, warning=FALSE}
-invisible(summary(model2.est)$PE) %>% as_tibble() %>% 
+invisible(summary(model2.est)$pe) %>% as_tibble() %>% 
   mutate(parameter = paste0(lhs, op, rhs)) %>%
   mutate_if(is.numeric, ~round(.,3)) %>% 
   dplyr::select(-lhs, -op, -rhs, -exo) %>%

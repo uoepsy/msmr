@@ -484,11 +484,11 @@ ggplot(tx, aes(session, Score, color=group)) +
 Just for fun, let's add on the individual participant scores, and also make a plot for each therapist. 
 ```{r message=FALSE}
 ggplot(tx, aes(session, Score, color=group)) +
-  stat_summary(fun = mean_se, geom = "pointrange") +
+  stat_summary(fun.data = mean_se, geom = "pointrange") +
   stat_smooth() +
   theme_classic() +
   geom_line(aes(group = PID), alpha = .2) + 
-  facet_wrap(~ therapist)
+  facet_wrap(~therapist)
 ```
 `r solend()` 
 
@@ -612,9 +612,11 @@ An experiment was run to conceptually replicate "test-enhanced learning" (Roedig
 The critical (replication) prediction is that the `StudyStudy` group should perform somewhat better on the immediate recall test, but the `StudyTest` group will retain the material better and thus perform better on the 1-week follow-up test.
 
 The following code loads the data into your R environment by creating a variable called `tel`:
+
 ```{r eval=F}
 load(url("https://uoepsy.github.io/data/testenhancedlearning.RData"))
 ```
+
 ```{r echo=FALSE} 
 load(url("https://uoepsy.github.io/data/testenhancedlearning.RData"))
 tibble(

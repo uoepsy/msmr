@@ -653,13 +653,13 @@ Throughout each trial, participants' heart rate variability (HRV) was measured v
 
 The data is in stored in two separate files.  
 
-- Information on the conditions for each trial for each participant is stored in __.csv__ format at https://uoepsy.github.io/data/basketballconditions.csv (data collected is detailed in the table below).  
-- Information on participants' HRV for each trial is stored in **.csv** format, and can be downloaded from https://uoepsy.github.io/data/bballhrv.csv 
+- Information on the conditions for each trial for each participant is stored in __.csv__ format at https://uoepsy.github.io/data/basketballconditions_msmr.csv (data collected is detailed in the table below).  
+- Information on participants' HRV for each trial is stored in **.csv** format, and can be downloaded from https://uoepsy.github.io/data/bballhrv_msmr.csv 
 
 
 ```{r echo=F}
 data.frame(
-  variable = names(read_csv("https://uoepsy.github.io/data/basketballconditions.csv")),
+  variable = names(read_csv("https://uoepsy.github.io/data/basketballconditions_msmr.csv")),
   description = c("Points at stake (e.g. size of reward","Whether the participants are in the monetary condition or the reputation condition. In the monetary condition (labelled 'money'), points = £. In the reptutation condition (labelled 'kudos'), points = points on the scoreboard","participant ID", "whether the participant successfully threw the ball in the basekt","Trial number for each participant (each participant completed 20 trials)","Success rate of throws at each trial")) %>% knitr::kable()
 ```
 
@@ -671,8 +671,8 @@ Think back to all the data wrangling skills you learned about back in USMR. Run 
 ```{r}
 bball <- 
   left_join(
-    read_csv("https://uoepsy.github.io/data/basketballconditions.csv"),
-    read_csv("https://uoepsy.github.io/data/bballhrv.csv") %>%
+    read_csv("https://uoepsy.github.io/data/basketballconditions_msmr.csv"),
+    read_csv("https://uoepsy.github.io/data/bballhrv_msmr.csv") %>%
       pivot_longer(trial_1:trial_20, names_to = "trial_no", values_to = "hrv")
   ) %>%
   mutate(sub = factor(sub))

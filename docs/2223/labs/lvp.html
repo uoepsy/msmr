@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Likelihood vs Probability</title>
+
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<script>
+function toggle_visibility(id1, id2) {
+var e = document.getElementById(id1);
+var f = document.getElementById(id2);
+e.style.display = ((e.style.display!='none') ? 'none' : 'block');
+if(f.classList.contains('fa-chevron-circle-right')) {
+    f.classList.add('fa-chevron-circle-down')
+    f.classList.remove('fa-chevron-circle-right')
+} else {
+    f.classList.add('fa-chevron-circle-right')
+    f.classList.remove('fa-chevron-circle-down')
+}
+}
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="assets/style-labs.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><strong>MSMR</strong></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Mixed Effects Models
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01_intromlm.html">1: Intro to Multi-Level Modelling</a>
+    </li>
+    <li>
+      <a href="02_lmm_log.html">2: Logistic | Longitudinal (linear)</a>
+    </li>
+    <li>
+      <a href="03_nonlin.html">3: Longitudinal (non-linear)</a>
+    </li>
+    <li>
+      <a href="04_ranef.html">4: Random Effect Structures</a>
+    </li>
+    <li>
+      <a href="05_multilevel_recap.html">5: Multilevel Modelling Recap</a>
+    </li>
+    <li class="dropdown-header">Break Week</li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Data Reduction &amp; SEM
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="07_efapca.html">PCA | EFA</a>
+    </li>
+    <li>
+      <a href="08_cfa.html">CFA</a>
+    </li>
+    <li>
+      <a href="09_path.html">Path Analysis</a>
+    </li>
+    <li>
+      <a href="10_sem1.html">SEM 1</a>
+    </li>
+    <li>
+      <a href="11_sem2.html">SEM 2</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-info-circle"></span>
+     
+    Extras
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="00_tidyverse_markdown.html">Recap - Tidyverse &amp; Markdown</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Likelihood vs Probability</h1>
+
+</div>
+
+
+<p>Upon hearing the terms “probability” and “likelihood”, people will often tend to interpret them as synonymous. In statistics, however, the distinction between these two concepts is very important (and often misunderstood).</p>
+<div class="statbox">
+<p>Probability refers to the chance of observing possible results if some certain state of the world were true<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>Likelihood refers to hypotheses.</p>
+</div>
+<div id="setup" class="section level2">
+<h2>Setup</h2>
+<p>Let’s consider a coin toss. For a fair coin, the chance of getting a heads/tails for any given toss is 0.5.<br />
+We can simulate the number of “heads” in a single fair coin toss with the following code (because it is a single toss, it’s just going to return 0 or 1):</p>
+<pre class="r"><code>rbinom(n = 1, size = 1, prob = 0.5)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<p>We can simulate the number of “heads” in 8 fair coin tosses with the following code:</p>
+<pre class="r"><code>rbinom(n = 1, size = 8, prob = 0.5)</code></pre>
+<pre><code>## [1] 5</code></pre>
+<p>As the coin is fair, what number of heads would we expect to see out of 8 coin tosses? Answer: 4!
+Doing another 8 tosses:</p>
+<pre class="r"><code>rbinom(n = 1, size = 8, prob = 0.5)</code></pre>
+<pre><code>## [1] 6</code></pre>
+<p>and another 8:</p>
+<pre class="r"><code>rbinom(n = 1, size = 8, prob = 0.5)</code></pre>
+<pre><code>## [1] 3</code></pre>
+<p>We see that they tend to be around our intuition expected number of 4 heads. We can change <code>n = 1</code> to ask <code>rbinom()</code> to not just do 1 set of 8 coin tosses, but to do 1000 sets of 8 tosses:</p>
+<pre class="r"><code>table(rbinom(n = 1000, size = 8, prob = 0.5))</code></pre>
+<pre><code>## 
+##   0   1   2   3   4   5   6   7   8 
+##   4  25 115 210 294 216  98  34   4</code></pre>
+</div>
+<div id="probability" class="section level2">
+<h2>Probability</h2>
+<p>We can get to the <strong>probability</strong> of observing <span class="math inline">\(k\)</span> heads in 8 tosses of a fair coin using <code>dbinom()</code>.<br />
+Let’s calculate the probability of observing 2 heads in 8 tosses.</p>
+<p>As coin tosses are independent, we can calculate probability using the product rule: <span class="math inline">\(P(AB) = P(A) \times P(B)\)</span> where <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are independent.<br />
+So the probability of observing 2 heads in 2 tosses is <span class="math inline">\(0.5 \times 0.5 = 0.25\)</span>:</p>
+<pre class="r"><code>dbinom(2, size=2, prob=0.5)</code></pre>
+<pre><code>## [1] 0.25</code></pre>
+<p>What about the probability of 2 heads in 8 tosses?<br />
+In 8 tosses, those two heads could occur in various ways:</p>
+<table style="width:38%;">
+<colgroup>
+<col width="37%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">Ways to get 2 heads in 8
+tosses</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">TTTTHHTT</td>
+</tr>
+<tr class="even">
+<td align="center">HTTTTTTH</td>
+</tr>
+<tr class="odd">
+<td align="center">TTTTHTHT</td>
+</tr>
+<tr class="even">
+<td align="center">THHTTTTT</td>
+</tr>
+<tr class="odd">
+<td align="center">TTHHTTTT</td>
+</tr>
+<tr class="even">
+<td align="center">TTTTTHHT</td>
+</tr>
+<tr class="odd">
+<td align="center">THTHTTTT</td>
+</tr>
+<tr class="even">
+<td align="center">THTTTHTT</td>
+</tr>
+<tr class="odd">
+<td align="center">…</td>
+</tr>
+</tbody>
+</table>
+<p>In fact there are 28 different ways this could happen:</p>
+<pre class="r"><code>dim(combn(8, 2))</code></pre>
+<pre><code>## [1]  2 28</code></pre>
+<p>The probability of getting 2 heads in 8 tosses of a fair coin is, therefore:<br />
+<span class="math inline">\(28 \times (0.5 \times 0.5 \times 0.5 \times 0.5 \times 0.5 \times 0.5 \times 0.5 \times 0.5 \times 0.5)\)</span>.<br />
+Or, more succinctly:<br />
+<span class="math inline">\(28 \times 0.5^8\)</span>.<br />
+We can calculate this in R:</p>
+<pre class="r"><code>28 * (0.5^8)</code></pre>
+<pre><code>## [1] 0.109</code></pre>
+<p>Or, using <code>dbinom()</code></p>
+<pre class="r"><code>dbinom(2, size = 8, prob = 0.5)</code></pre>
+<pre><code>## [1] 0.109</code></pre>
+<div class="imp">
+<p>The important thing here is that when we are computing the probability, two things are fixed:</p>
+<ul>
+<li>the number of coin tosses (8)</li>
+<li>the value(s) that govern the coin’s behaviour (0.5 chance of landing on heads for <em>any given toss</em>)</li>
+</ul>
+<p>We can then can compute the probabilities for observing various numbers of heads:</p>
+<pre class="r"><code>dbinom(0:8, 8, prob = 0.5)</code></pre>
+<pre><code>## [1] 0.00391 0.03125 0.10938 0.21875 0.27344 0.21875 0.10938 0.03125 0.00391</code></pre>
+<p><img src="lvp_files/figure-html/unnamed-chunk-12-1.png" width="80%" style="display: block; margin: auto;" />
+Note that the probability of observing 10 heads in 8 coin tosses is 0, as we would hope!</p>
+<pre class="r"><code>dbinom(10, 8, prob = 0.5)</code></pre>
+<pre><code>## [1] 0</code></pre>
+</div>
+</div>
+<div id="likelihood" class="section level2">
+<h2>Likelihood</h2>
+<p>For likelihood, we are interested in hypotheses about our coin. Do we think it is a fair coin (for which the probability of heads is 0.5?).</p>
+<p>To consider these hypotheses, we need to observe some data, and so we need to have a given number of tosses, and a given number of heads. Whereas above we varied the number of heads, and fixed the parameter that designates the true chance of landing on heads for any given toss, for the likelihood we fix the number of heads observed, and can make statements about different possible parameters that might govern the coins behaviour.</p>
+<p>For example, if we <strong>did</strong> observe 2 heads in 8 tosses, what is the likelihood of this data given various parameters?<br />
+Our parameter can take any real number between from 0 to 1, but let’s do it for a selection:</p>
+<pre class="r"><code>poss_parameters = seq(from = 0, to = 1, by = 0.05)
+dbinom(2, 8, poss_parameters)</code></pre>
+<pre><code>##  [1] 0.00e+00 5.15e-02 1.49e-01 2.38e-01 2.94e-01 3.11e-01 2.96e-01 2.59e-01
+##  [9] 2.09e-01 1.57e-01 1.09e-01 7.03e-02 4.13e-02 2.17e-02 1.00e-02 3.85e-03
+## [17] 1.15e-03 2.30e-04 2.27e-05 3.95e-07 0.00e+00</code></pre>
+<p>So what we are doing here is considering the possible parameters that govern our coin. Given that we observed 2 heads in 8 coin tosses, it seems very unlikely that the coin weighted such that it lands on heads 80% of the time (e.g., the parameter of 0.8 is not likely). You can visualise this as below:</p>
+<p><img src="lvp_files/figure-html/unnamed-chunk-15-1.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="a-slightly-more-formal-approach" class="section level2">
+<h2>A slightly more formal approach</h2>
+<p>Let <span class="math inline">\(d\)</span> be our data (our <em>observed</em> outcome), and let <span class="math inline">\(\theta\)</span> be the parameters that govern the data generating process.</p>
+<p>When talking about “probability” we are talking about <span class="math inline">\(P(d | \theta)\)</span> for a given value of <span class="math inline">\(\theta\)</span>.</p>
+<p>In reality, we don’t actually know what <span class="math inline">\(\theta\)</span> is, but we do observe some data <span class="math inline">\(d\)</span>.
+Given that we know that <em>if we have a specific value for <span class="math inline">\(\theta\)</span></em>, then <span class="math inline">\(P(d | \theta)\)</span> gives us the probability of observing <span class="math inline">\(d\)</span>, it follows that we would like to figure out what values of <span class="math inline">\(\theta\)</span> maximise <span class="math inline">\(\mathcal{L}(\theta \vert d) = P(d \vert \theta)\)</span>, where <span class="math inline">\(\mathcal{L}(\theta \vert d)\)</span> is the “likelihood function” of our unknown parameters <span class="math inline">\(\theta\)</span>, conditioned upon our observed data <span class="math inline">\(d\)</span>.</p>
+</div>
+<div id="why-log-likelihood" class="section level2">
+<h2>Why log-likelihood?</h2>
+<p>While the usefulness of considering likelihoods is hopefully quite clear, you will often find that statistical methods actually involve computing <strong>log-likelihoods</strong>.</p>
+<p>The reason is actually a practical one.<br />
+In the example above, we were considering 2 heads in 8 coin tosses.<br />
+To calculate likelihood, we have to calculate the <strong>product</strong> of the likelihoods of each observation.<br />
+This is computationally quite difficult, but what we can do instead is calculate the <strong>sum</strong> of the log-likelihoods (because <span class="math inline">\(log(ab) = log(a) + log(b)\)</span>).</p>
+<!-- It is extremely useful for example when you want to calculate the joint likelihood for a set of independent and identically distributed points. Assuming that you have your points: -->
+<!-- X={x1,x2,…,xN} -->
+<!-- The total likelihood is the product of the likelihood for each point, i.e.: -->
+<!-- p(X∣Θ)=∏i=1Np(xi∣Θ) -->
+<!-- where Θ are the model parameters: vector of means μ and covariance matrix Σ. If you use the log-likelihood you will end up with sum instead of product: -->
+<!-- lnp(X∣Θ)=∑i=1Nlnp(xi∣Θ) -->
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>This is the typical frequentist stats view. In Bayesian statistics, probability relates to the reasonable expectation (or “plausibility”) of a belief<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+<link rel="stylesheet" href="https://uoepsy.github.io/assets/css/ccfooter.css" />
+<div class="ccfooter"></div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

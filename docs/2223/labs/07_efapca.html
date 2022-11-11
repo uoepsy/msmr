@@ -1,0 +1,2276 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>EFA and PCA</title>
+
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<script>
+function toggle_visibility(id1, id2) {
+var e = document.getElementById(id1);
+var f = document.getElementById(id2);
+e.style.display = ((e.style.display!='none') ? 'none' : 'block');
+if(f.classList.contains('fa-chevron-circle-right')) {
+    f.classList.add('fa-chevron-circle-down')
+    f.classList.remove('fa-chevron-circle-right')
+} else {
+    f.classList.add('fa-chevron-circle-right')
+    f.classList.remove('fa-chevron-circle-down')
+}
+}
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="assets/style-labs.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><strong>MSMR</strong></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Mixed Effects Models
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01_intromlm.html">1: Intro to Multi-Level Modelling</a>
+    </li>
+    <li>
+      <a href="02_lmm_log.html">2: Logistic | Longitudinal (linear)</a>
+    </li>
+    <li>
+      <a href="03_nonlin.html">3: Longitudinal (non-linear)</a>
+    </li>
+    <li>
+      <a href="04_ranef.html">4: Random Effect Structures</a>
+    </li>
+    <li>
+      <a href="05_multilevel_recap.html">5: Multilevel Modelling Recap</a>
+    </li>
+    <li class="dropdown-header">Break Week</li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Data Reduction &amp; SEM
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="07_efapca.html">PCA | EFA</a>
+    </li>
+    <li>
+      <a href="08_cfa.html">CFA</a>
+    </li>
+    <li>
+      <a href="09_path.html">Path Analysis</a>
+    </li>
+    <li>
+      <a href="10_sem1.html">SEM 1</a>
+    </li>
+    <li>
+      <a href="11_sem2.html">SEM 2</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-info-circle"></span>
+     
+    Extras
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="00_tidyverse_markdown.html">Recap - Tidyverse &amp; Markdown</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">EFA and PCA</h1>
+
+</div>
+
+
+<div class="frame">
+<p><strong>Thinking about measurement</strong></p>
+<p>In the second block of the Multivariate Stats course, we’re going to look at “latent variable modeling”.</p>
+<p>Take a moment to think about the various constructs that you are interested in as a researcher. This might be anything from personality traits, to language proficiency, social identity, anxiety etc.
+How we measure such constructs is a very important consideration for research. The things we’re interested in are very rarely the things we are <em>directly</em> measuring.</p>
+<p>The most common way to start thinking about latent variables is to consider how we might assess levels of anxiety or depression. More often than not, we measure these using questionnaire based methods. Can we ever directly measure anxiety? <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>. This inherently leads to the notion of measurement error - two people both scoring 11 on the Generalised Anxiety Disorder 7 (GAD-7) scale will not have identical levels of anxiety.</p>
+<p>Before we start to explore how we might use a latent variable modelling approach to accommodate this idea, we’re going to start with the basic concept of <em>reducing the dimensionality of our data</em>.</p>
+</div>
+<div class="frame">
+<p><strong>New packages</strong></p>
+<p>We’re going to be needing some different packages this week (no more lme4!).<br />
+Make sure you have these packages installed:</p>
+<ul>
+<li>psych<br />
+</li>
+<li>GPArotation<br />
+</li>
+<li>car</li>
+</ul>
+</div>
+<div id="principal-component-analysis-pca" class="section level1">
+<h1>Principal component analysis (PCA)</h1>
+<div class="yellow">
+<p>The goal of principal component analysis (PCA) is to find a <em>smaller</em> number of uncorrelated variables which are linear combinations of the original (<em>many</em>) variables and explain most of the variation in the data.</p>
+</div>
+<div class="frame">
+<p><strong>Data: Job Performance</strong></p>
+<p>The file <a href="https://uoepsy.github.io/data/job_performance.csv">job_performance.csv</a> (available at <a href="https://uoepsy.github.io/data/job_performance.csv" class="uri">https://uoepsy.github.io/data/job_performance.csv</a>) contains data on fifty police officers who were rated in six different categories as part of an HR procedure. The rated skills were:</p>
+<ul>
+<li>communication skills: <code>commun</code></li>
+<li>problem solving: <code>probl_solv</code></li>
+<li>logical ability: <code>logical</code></li>
+<li>learning ability: <code>learn</code></li>
+<li>physical ability: <code>physical</code></li>
+<li>appearance: <code>appearance</code></li>
+</ul>
+</div>
+<div class="question-begin">
+Question A1
+</div>
+<div class="question-body">
+<p>Load the job performance data into R and call it <code>job</code>.
+Check whether or not the data were read correctly into R - do the dimensions correspond to the description of the data above?</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-132" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-132&#39;, &#39;sol-start-132&#39;)"> Solution </span>
+</div>
+<div id="sol-body-132" class="solution-body" style="display: none;">
+<p>Let’s load the data:</p>
+<pre class="r"><code>library(tidyverse)
+
+job &lt;- read_csv(&#39;https://uoepsy.github.io/data/job_performance.csv&#39;)
+dim(job)</code></pre>
+<pre><code>## [1] 50  6</code></pre>
+<p>There are 50 observations on 6 variables.</p>
+<p>The top 6 rows in the data are:</p>
+<pre class="r"><code>head(job)</code></pre>
+<pre><code>## # A tibble: 6 × 6
+##   commun probl_solv logical learn physical appearance
+##    &lt;dbl&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt;
+## 1     12         52      20    44       48         16
+## 2     12         57      25    45       50         16
+## 3     12         54      21    45       50         16
+## 4     13         52      21    46       51         17
+## 5     14         54      24    46       51         17
+## 6     14         48      20    47       51         18</code></pre>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question A2
+</div>
+<div class="question-body">
+<p>Provide descriptive statistics for each variable in the dataset.</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-133" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-133&#39;, &#39;sol-start-133&#39;)"> Solution </span>
+</div>
+<div id="sol-body-133" class="solution-body" style="display: none;">
+<p>We now inspect some descriptive statistics for each variable in the dataset:</p>
+<pre class="r"><code># Quick summary
+summary(job)</code></pre>
+<pre><code>##      commun       probl_solv      logical       learn         physical   
+##  Min.   :12.0   Min.   :48.0   Min.   :20   Min.   :44.0   Min.   :48.0  
+##  1st Qu.:16.0   1st Qu.:52.2   1st Qu.:22   1st Qu.:48.0   1st Qu.:52.2  
+##  Median :18.0   Median :54.0   Median :24   Median :50.0   Median :54.0  
+##  Mean   :17.7   Mean   :54.2   Mean   :24   Mean   :50.3   Mean   :54.2  
+##  3rd Qu.:19.8   3rd Qu.:56.0   3rd Qu.:26   3rd Qu.:52.0   3rd Qu.:56.0  
+##  Max.   :24.0   Max.   :59.0   Max.   :31   Max.   :56.0   Max.   :59.0  
+##    appearance  
+##  Min.   :16.0  
+##  1st Qu.:19.0  
+##  Median :21.0  
+##  Mean   :21.1  
+##  3rd Qu.:23.0  
+##  Max.   :28.0</code></pre>
+<p><strong>OPTIONAL</strong></p>
+<p>If you wish to create a nice looking table for a report, you could try the following code.
+However, I should warn you: this code is quite difficult to understand so, if you are interested, attend a lab!</p>
+<pre class="r"><code>library(gt)
+
+# Mean and SD of each variable
+job %&gt;% 
+  summarise(across(everything(), list(M = mean, SD = sd))) %&gt;%
+  pivot_longer(everything()) %&gt;% 
+  mutate(
+    value = round(value, 2),
+    name = str_replace(name, &#39;_M&#39;, &#39;.M&#39;),
+    name = str_replace(name, &#39;_SD&#39;, &#39;.SD&#39;)
+  ) %&gt;%
+  separate(name, into = c(&#39;variable&#39;, &#39;summary&#39;), sep = &#39;\\.&#39;) %&gt;%
+  pivot_wider(names_from = summary, values_from = value) %&gt;% 
+  gt()</code></pre>
+<div id="plubkzxogv" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#plubkzxogv .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#plubkzxogv .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#plubkzxogv .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#plubkzxogv .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#plubkzxogv .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#plubkzxogv .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#plubkzxogv .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#plubkzxogv .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#plubkzxogv .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#plubkzxogv .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#plubkzxogv .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#plubkzxogv .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#plubkzxogv .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#plubkzxogv .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#plubkzxogv .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#plubkzxogv .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#plubkzxogv .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#plubkzxogv .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#plubkzxogv .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#plubkzxogv .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#plubkzxogv .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#plubkzxogv .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#plubkzxogv .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#plubkzxogv .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#plubkzxogv .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#plubkzxogv .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#plubkzxogv .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#plubkzxogv .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#plubkzxogv .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#plubkzxogv .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#plubkzxogv .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#plubkzxogv .gt_left {
+  text-align: left;
+}
+
+#plubkzxogv .gt_center {
+  text-align: center;
+}
+
+#plubkzxogv .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#plubkzxogv .gt_font_normal {
+  font-weight: normal;
+}
+
+#plubkzxogv .gt_font_bold {
+  font-weight: bold;
+}
+
+#plubkzxogv .gt_font_italic {
+  font-style: italic;
+}
+
+#plubkzxogv .gt_super {
+  font-size: 65%;
+}
+
+#plubkzxogv .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 75%;
+  vertical-align: 0.4em;
+}
+
+#plubkzxogv .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#plubkzxogv .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#plubkzxogv .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#plubkzxogv .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#plubkzxogv .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#plubkzxogv .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col">variable</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">M</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">SD</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">commun</td>
+<td class="gt_row gt_right">17.7</td>
+<td class="gt_row gt_right">2.74</td></tr>
+    <tr><td class="gt_row gt_left">probl_solv</td>
+<td class="gt_row gt_right">54.2</td>
+<td class="gt_row gt_right">2.41</td></tr>
+    <tr><td class="gt_row gt_left">logical</td>
+<td class="gt_row gt_right">24.0</td>
+<td class="gt_row gt_right">2.49</td></tr>
+    <tr><td class="gt_row gt_left">learn</td>
+<td class="gt_row gt_right">50.3</td>
+<td class="gt_row gt_right">2.84</td></tr>
+    <tr><td class="gt_row gt_left">physical</td>
+<td class="gt_row gt_right">54.2</td>
+<td class="gt_row gt_right">2.41</td></tr>
+    <tr><td class="gt_row gt_left">appearance</td>
+<td class="gt_row gt_right">21.1</td>
+<td class="gt_row gt_right">2.99</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div id="preliminaries" class="section level2">
+<h2>Preliminaries</h2>
+</div>
+<div id="is-pca-needed" class="section level2">
+<h2>Is PCA needed?</h2>
+<div class="lo">
+<p>If the original variables are highly correlated, it is possible to reduce the dimensionality of the problem under investigation without losing too much information.</p>
+<p>On the other side, when the correlation between the variables under study is weak, a larger number of components is needed in order to explain sufficient variability.</p>
+</div>
+<div class="question-begin">
+Question A3
+</div>
+<div class="question-body">
+<p>Investigate whether or not the recorded variables are highly correlated and explain whether or not you PCA might be useful in this case.</p>
+<p><strong>Hint:</strong> We only have 6 variables here, but if we had many, how might you visualise <code>cor(job)</code>?</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-134" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-134&#39;, &#39;sol-start-134&#39;)"> Solution </span>
+</div>
+<div id="sol-body-134" class="solution-body" style="display: none;">
+<p>Let’s start by looking at the correlation matrix of the data:</p>
+<pre class="r"><code>library(pheatmap)
+
+R &lt;- cor(job)
+
+pheatmap(R, breaks = seq(-1, 1, length.out = 100))</code></pre>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-5"></span>
+<img src="07_efapca_files/figure-html/unnamed-chunk-5-1.png" alt="Correlation between the variables in the ``Job'' dataset" width="80%" />
+<p class="caption">
+Figure 1: Correlation between the variables in the ``Job’’ dataset
+</p>
+</div>
+<p>The correlation between the variables seems to be quite large (it doesn’t matter about direction here, only magnitude; if negative correlations were present, we would think in absolute value).</p>
+<p>There appears to be a group of highly correlated variables comprising physical ability, appearance, communication skills, and learning ability which are correlated among themselves but uncorrelated with another group of variables.
+The second group comprises problem solving and logical ability.</p>
+<p>This suggests that PCA might be useful in this problem to reduce the dimensionality without a significant loss of information.</p>
+</div>
+<p class="solution-end">
+</p>
+</div>
+<div id="cov-vs-cor" class="section level2">
+<h2>Cov vs Cor</h2>
+<div class="statbox">
+<p><strong>Should we perform PCA on the covariance or the correlation matrix?</strong></p>
+<p>This depends on the variances of the variables in the dataset.
+If the variables have large differences in their variances, then the variables with the largest variances will tend to dominate the first few principal components.</p>
+<p>A solution to this is to standardise the variables prior to computing the covariance matrix - i.e., compute the correlation matrix!</p>
+<pre class="r"><code># show that the correlation matrix and the covariance matrix of the standardized variables are identical
+all.equal(cor(job), cov(scale(job)))</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+</div>
+<div class="question-begin">
+Question A4
+</div>
+<div class="question-body">
+<p>Look at the variance of the variables in the data set. Do you think that PCA should be carried on the covariance matrix or the correlation matrix?</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-135" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-135&#39;, &#39;sol-start-135&#39;)"> Solution </span>
+</div>
+<div id="sol-body-135" class="solution-body" style="display: none;">
+<p>Let’s have a look at the standard deviation of each variable:</p>
+<pre class="r"><code>job %&gt;% 
+  summarise(across(everything(), sd))</code></pre>
+<pre><code>## # A tibble: 1 × 6
+##   commun probl_solv logical learn physical appearance
+##    &lt;dbl&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt;
+## 1   2.74       2.41    2.49  2.84     2.41       2.99</code></pre>
+<p>As the standard deviations appear to be fairly similar (and so will the variances) we can perform PCA using the covariance matrix.</p>
+</div>
+<p class="solution-end">
+</p>
+</div>
+<div id="perform-pca" class="section level2">
+<h2>Perform PCA</h2>
+<div class="question-begin">
+Question A5
+</div>
+<div class="question-body">
+<p>Using the <code>principal()</code> function from the <code>psych</code> package, we can perform a PCA of the job performance data, Call the output <code>job_pca</code>.</p>
+<pre><code>job_pca &lt;- principal(job, nfactors = ncol(job), covar = ..., rotate = &#39;none&#39;)
+job_pca$loadings</code></pre>
+<p>Depending on your answer to the previous question, either set <code>covar = TRUE</code> or <code>covar = FALSE</code> within the <code>principal()</code> function.</p>
+<p><strong>Warning:</strong> the output of the function will be in terms of standardized variables nevertheless. So you will see output with standard deviation of 1.</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-136" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-136&#39;, &#39;sol-start-136&#39;)"> Solution </span>
+</div>
+<div id="sol-body-136" class="solution-body" style="display: none;">
+<pre class="r"><code>library(psych)
+
+job_pca &lt;- principal(job, nfactors = ncol(job), covar = TRUE, rotate = &#39;none&#39;)</code></pre>
+</div>
+<p class="solution-end">
+</p>
+</div>
+<div id="the-output" class="section level2">
+<h2>The output</h2>
+<div class="frame">
+<pre class="r"><code>job_pca$loadings</code></pre>
+<pre><code>## 
+## Loadings:
+##            PC1    PC2    PC3    PC4    PC5    PC6   
+## commun      0.984 -0.120                0.101       
+## probl_solv  0.223  0.810  0.543                     
+## logical     0.329  0.747 -0.578                     
+## learn       0.987 -0.110                       0.105
+## physical    0.988                      -0.110       
+## appearance  0.979 -0.125         0.161              
+## 
+##                  PC1   PC2   PC3   PC4   PC5   PC6
+## SS loadings    4.035 1.261 0.631 0.035 0.022 0.016
+## Proportion Var 0.673 0.210 0.105 0.006 0.004 0.003
+## Cumulative Var 0.673 0.883 0.988 0.994 0.997 1.000</code></pre>
+<p>The output is made up of two parts.</p>
+<p>First, it shows the <em>loading matrix</em>. In each column of the loading matrix we find how much each of the measured variables contributes to the computed new axis/direction (that is, the principal component).
+Notice that there are as many principal components as variables.</p>
+<p>The second part of the output displays the contribution of each component to the total variance.</p>
+<p>Before interpreting it however, let’s focus on the last row of that output called “Cumulative Var”. This displays the cumulative sum of the variances of each principal component.
+Taken all together, the six principal components taken explain all of the total variance in the original data.
+In other words, the total variance of the principal components (the sum of their variances) is equal to the total variance in the original data (the sum of the variances of the variables).</p>
+<p>However, our goal is to reduce the dimensionality of our data, so it comes natural to wonder which of the six principal components explain most of the variability, and which components instead do not contribute substantially to the total variance.</p>
+<p>To that end, the second row “Proportion Var” displays the proportion of the total variance explained by each component, i.e. the variance of the principal component divided by the total variance.</p>
+<p>The last row, as we saw, is the cumulative proportion of explained variance: <code>0.673</code>, <code>0.673 + 0.210</code>, <code>0.673 + 0.210 + 0.105</code>, and so on.</p>
+<p>We also notice that the first PC alone explains 67.3% of the total variability, while the first two components together explain almost 90% of the total variability.
+From the third component onwards, we do not see such a sharp increase in the proportion of explained variance, and the cumulative proportion slowly reaches the total ratio of 1 (or 100%).</p>
+</div>
+<div class="optional-begin">
+<span id="opt-start-137" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-137&#39;, &#39;opt-start-137&#39;)"> Optional: (some of) the math behind it</span>
+</div>
+<div id="opt-body-137" class="optional-body" style="display: none;">
+<p>Doing data reduction can feel a bit like magic, and in part that’s just because it’s quite complicated.</p>
+<p><strong>The intuition</strong></p>
+<p>Consider one way we might construct a correlation matrix - as the product of vector <span class="math inline">\(\mathbf{f}\)</span> with <span class="math inline">\(\mathbf{f&#39;}\)</span> (f transposed):
+<span class="math display">\[
+\begin{equation*}
+\mathbf{f} =
+\begin{bmatrix}
+0.9 \\
+0.8 \\
+0.7 \\
+0.6 \\
+0.5 \\
+0.4 \\
+\end{bmatrix}
+\qquad
+\mathbf{f} \mathbf{f&#39;} =
+\begin{bmatrix}
+0.9 \\
+0.8 \\
+0.7 \\
+0.6 \\
+0.5 \\
+0.4 \\
+\end{bmatrix}
+\begin{bmatrix}
+0.9, 0.8, 0.7, 0.6, 0.5, 0.4 \\
+\end{bmatrix}
+\qquad = \qquad
+\begin{bmatrix}
+0.81, 0.72, 0.63, 0.54, 0.45, 0.36 \\
+0.72, 0.64, 0.56, 0.48, 0.40, 0.32 \\
+0.63, 0.56, 0.49, 0.42, 0.35, 0.28 \\
+0.54, 0.48, 0.42, 0.36, 0.30, 0.24 \\
+0.45, 0.40, 0.35, 0.30, 0.25, 0.20 \\
+0.36, 0.32, 0.28, 0.24, 0.20, 0.16 \\
+\end{bmatrix}
+\end{equation*}
+\]</span></p>
+<p>But we constrain this such that the diagonal has values of 1 (the correlation of a variable with itself is 1), and lets call it <strong>R</strong>.
+<span class="math display">\[
+\begin{equation*}
+\mathbf{R} =
+\begin{bmatrix}
+1.00, 0.72, 0.63, 0.54, 0.45, 0.36 \\
+0.72, 1.00, 0.56, 0.48, 0.40, 0.32 \\
+0.63, 0.56, 1.00, 0.42, 0.35, 0.28 \\
+0.54, 0.48, 0.42, 1.00, 0.30, 0.24 \\
+0.45, 0.40, 0.35, 0.30, 1.00, 0.20 \\
+0.36, 0.32, 0.28, 0.24, 0.20, 1.00 \\
+\end{bmatrix}
+\end{equation*}
+\]</span></p>
+<p>PCA is about trying to determine possible vectors <strong>f</strong> which generate the correlation matrix <strong>R</strong>. a bit like unscrambling eggs!</p>
+<p>in PCA, we are expressing the correlation matrix <span class="math inline">\(\mathbf{R}\)</span> in terms of a set of vectors <span class="math inline">\(\mathbf{C}\)</span> which collectively reproduce <span class="math inline">\(\mathbf{R}\)</span> perfectly (such that <span class="math inline">\(\mathbf{R = CC&#39;}\)</span>). These vectors contain <em>weightings</em> for each of our observed variables, providing us with our <strong>principal components</strong>, which are the weighted composites. A given component <span class="math inline">\(\mathbf{PC}_i\)</span> is the linear sum of each variable (<span class="math inline">\(x_1\)</span> to <span class="math inline">\(x_n\)</span>) multiplied by some weighting:<br />
+<span class="math display">\[
+\mathbf{PC}_i = \sum_{j=1}^{n}w_{ij}x_{j}
+\]</span>
+And the set of these weightings <span class="math inline">\(w_i\)</span> for that principal component <span class="math inline">\(PC_i\)</span> is one of the vectors <span class="math inline">\(\mathbf{c}_i\)</span> in <span class="math inline">\(\mathbf{C}\)</span>.</p>
+<p><strong>How do we find <span class="math inline">\(C\)</span>?</strong></p>
+<p>To find the set of vectors that make up <span class="math inline">\(\mathbf{C}\)</span> is where “eigen decomposition” comes in.</p>
+<p>For the <span class="math inline">\(n \times n\)</span> correlation matrix <span class="math inline">\(\mathbf{R}\)</span>, there are <span class="math inline">\(n\)</span> <strong>eigenvectors</strong> <span class="math inline">\(v_i\)</span> that solve the equation:<br />
+<span class="math display">\[
+\mathbf{v_i R} = \lambda_i \mathbf{v_i}
+\]</span>
+Where the vector multiplied by the correlation matrix is equal to some value (an <strong>eigenvalue</strong>) <span class="math inline">\(\lambda_i\)</span> multiplied by that vector.<br />
+We can write this without subscript <span class="math inline">\(i\)</span> as:
+<span class="math display">\[
+\begin{align}
+&amp; \mathbf{R X} = \mathbf{X \lambda} \\
+&amp; \text{where:} \\
+&amp; \mathbf{R} = \text{correlation matrix} \\
+&amp; \mathbf{X} = \text{matrix of eigenvectors} \\
+&amp; \mathbf{\lambda} = \text{vector of eigenvalues}
+\end{align}
+\]</span>
+the vectors which make up <span class="math inline">\(\mathbf{X}\)</span> must be orthogonal <a href="https://miro.medium.com/max/700/1*kyg5XbrY1AOB946IE5nWWg.png">(<span class="math inline">\(\mathbf{XX&#39; = I}\)</span>)</a>, which means that <span class="math inline">\(\mathbf{R = X \lambda X&#39;}\)</span></p>
+<p>We can actually do this in R manually.<br />
+Let’s create a correlation matrix</p>
+<pre class="r"><code># lets create a correlation matrix, as the product of ff&#39;
+f &lt;- seq(.9,.4,-.1)
+R &lt;- f %*% t(f)
+#give rownames and colnames
+rownames(R)&lt;-colnames(R)&lt;-paste0(&quot;V&quot;,seq(1:6))
+#constrain diagonals to equal 1
+diag(R)&lt;-1
+R</code></pre>
+<pre><code>##      V1   V2   V3   V4   V5   V6
+## V1 1.00 0.72 0.63 0.54 0.45 0.36
+## V2 0.72 1.00 0.56 0.48 0.40 0.32
+## V3 0.63 0.56 1.00 0.42 0.35 0.28
+## V4 0.54 0.48 0.42 1.00 0.30 0.24
+## V5 0.45 0.40 0.35 0.30 1.00 0.20
+## V6 0.36 0.32 0.28 0.24 0.20 1.00</code></pre>
+<p>And let’s do some eigen decomposition:</p>
+<pre class="r"><code># do eigen decomposition
+e &lt;- eigen(R)
+print(e, digits=2)</code></pre>
+<pre><code>## eigen() decomposition
+## $values
+## [1] 3.16 0.82 0.72 0.59 0.44 0.26
+## 
+## $vectors
+##       [,1]   [,2]   [,3]  [,4]   [,5]   [,6]
+## [1,] -0.50 -0.061  0.092  0.14  0.238  0.816
+## [2,] -0.47 -0.074  0.121  0.21  0.657 -0.533
+## [3,] -0.43 -0.096  0.182  0.53 -0.675 -0.184
+## [4,] -0.39 -0.142  0.414 -0.78 -0.201 -0.104
+## [5,] -0.34 -0.299 -0.860 -0.20 -0.108 -0.067
+## [6,] -0.28  0.934 -0.178 -0.10 -0.067 -0.045</code></pre>
+<p>The eigenvectors are orthogonal (<span class="math inline">\(\mathbf{CC&#39; = I}\)</span>):</p>
+<pre class="r"><code>round(e$vectors %*% t(e$vectors),2)</code></pre>
+<pre><code>##      [,1] [,2] [,3] [,4] [,5] [,6]
+## [1,]    1    0    0    0    0    0
+## [2,]    0    1    0    0    0    0
+## [3,]    0    0    1    0    0    0
+## [4,]    0    0    0    1    0    0
+## [5,]    0    0    0    0    1    0
+## [6,]    0    0    0    0    0    1</code></pre>
+<p>The Principal Components <span class="math inline">\(\mathbf{C}\)</span> are the eigenvectors scaled by the square root of the eigenvalues:</p>
+<pre class="r"><code>#eigenvectors
+e$vectors</code></pre>
+<pre><code>##        [,1]    [,2]    [,3]   [,4]    [,5]    [,6]
+## [1,] -0.496 -0.0611  0.0923  0.139  0.2385  0.8155
+## [2,] -0.468 -0.0743  0.1210  0.214  0.6566 -0.5327
+## [3,] -0.433 -0.0963  0.1820  0.530 -0.6751 -0.1842
+## [4,] -0.390 -0.1416  0.4143 -0.778 -0.2006 -0.1036
+## [5,] -0.340 -0.2992 -0.8604 -0.197 -0.1076 -0.0669
+## [6,] -0.282  0.9338 -0.1784 -0.100 -0.0667 -0.0452</code></pre>
+<pre class="r"><code>#scaled by sqrt of eigenvalues
+diag(sqrt(e$values))</code></pre>
+<pre><code>##      [,1]  [,2]  [,3]  [,4]  [,5]  [,6]
+## [1,] 1.78 0.000 0.000 0.000 0.000 0.000
+## [2,] 0.00 0.906 0.000 0.000 0.000 0.000
+## [3,] 0.00 0.000 0.848 0.000 0.000 0.000
+## [4,] 0.00 0.000 0.000 0.769 0.000 0.000
+## [5,] 0.00 0.000 0.000 0.000 0.664 0.000
+## [6,] 0.00 0.000 0.000 0.000 0.000 0.512</code></pre>
+<pre class="r"><code>C &lt;- e$vectors %*% diag(sqrt(e$values))
+C</code></pre>
+<pre><code>##        [,1]    [,2]    [,3]    [,4]    [,5]    [,6]
+## [1,] -0.883 -0.0554  0.0782  0.1070  0.1584  0.4174
+## [2,] -0.833 -0.0673  0.1025  0.1648  0.4361 -0.2727
+## [3,] -0.770 -0.0873  0.1542  0.4077 -0.4483 -0.0943
+## [4,] -0.694 -0.1284  0.3512 -0.5987 -0.1332 -0.0530
+## [5,] -0.604 -0.2712 -0.7293 -0.1514 -0.0715 -0.0342
+## [6,] -0.502  0.8464 -0.1513 -0.0771 -0.0443 -0.0231</code></pre>
+<p>And we can reproduce our correlation matrix, because <span class="math inline">\(\mathbf{R = CC&#39;}\)</span>.</p>
+<pre class="r"><code>C %*% t(C)</code></pre>
+<pre><code>##      [,1] [,2] [,3] [,4] [,5] [,6]
+## [1,] 1.00 0.72 0.63 0.54 0.45 0.36
+## [2,] 0.72 1.00 0.56 0.48 0.40 0.32
+## [3,] 0.63 0.56 1.00 0.42 0.35 0.28
+## [4,] 0.54 0.48 0.42 1.00 0.30 0.24
+## [5,] 0.45 0.40 0.35 0.30 1.00 0.20
+## [6,] 0.36 0.32 0.28 0.24 0.20 1.00</code></pre>
+<p>So far so good, but we’re really just re-expressing our dataset with <span class="math inline">\(n\)</span> variables as <span class="math inline">\(n\)</span> <em>new</em> variables. The benefit comes when we use this technique to <strong>reduce the dimensionality of our data</strong>.</p>
+<p>Now lets imagine we only consider 1 principal component.<br />
+We’ll do it with the <code>principal()</code> function just to show that it matches:</p>
+<pre class="r"><code>library(psych)
+pc1&lt;-principal(R, nfactors = 1, covar = FALSE, rotate = &#39;none&#39;)
+pc1</code></pre>
+<pre><code>## Principal Components Analysis
+## Call: principal(r = R, nfactors = 1, rotate = &quot;none&quot;, covar = FALSE)
+## Standardized loadings (pattern matrix) based upon correlation matrix
+##     PC1   h2   u2 com
+## V1 0.88 0.78 0.22   1
+## V2 0.83 0.69 0.31   1
+## V3 0.77 0.59 0.41   1
+## V4 0.69 0.48 0.52   1
+## V5 0.60 0.37 0.63   1
+## V6 0.50 0.25 0.75   1
+## 
+##                 PC1
+## SS loadings    3.16
+## Proportion Var 0.53
+## 
+## Mean item complexity =  1
+## Test of the hypothesis that 1 component is sufficient.
+## 
+## The root mean square of the residuals (RMSR) is  0.09 
+## 
+## Fit based upon off diagonal values = 0.95</code></pre>
+<p>Look familiar? It looks like the first component we computed manually. The first column of <span class="math inline">\(\mathbf{C}\)</span>:</p>
+<pre class="r"><code>cbind(pc1$loadings, C=C[,1])</code></pre>
+<pre><code>##      PC1      C
+## V1 0.883 -0.883
+## V2 0.833 -0.833
+## V3 0.770 -0.770
+## V4 0.694 -0.694
+## V5 0.604 -0.604
+## V6 0.502 -0.502</code></pre>
+<p>We can ask “how well does the first component <em>on its own</em> recreate our correlation matrix?”<br />
+Remember that we are expressing our correlation matrix <span class="math inline">\(\mathbf{R}\)</span> in terms of our set of component vectors <span class="math inline">\(\mathbf{C}\)</span>. Well what if we just take the first of these, <span class="math inline">\(\mathbf{c_1}\)</span>, and look at how well <span class="math inline">\(\mathbf{c_1}\mathbf{c_1}&#39;\)</span> recreates <span class="math inline">\(\mathbf{R}\)</span>.</p>
+<pre class="r"><code>C[,1] %*% t(C[,1])</code></pre>
+<pre><code>##       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]
+## [1,] 0.780 0.735 0.680 0.613 0.534 0.444
+## [2,] 0.735 0.693 0.641 0.578 0.503 0.418
+## [3,] 0.680 0.641 0.592 0.534 0.465 0.387
+## [4,] 0.613 0.578 0.534 0.481 0.419 0.348
+## [5,] 0.534 0.503 0.465 0.419 0.365 0.304
+## [6,] 0.444 0.418 0.387 0.348 0.304 0.252</code></pre>
+<p>It looks close, but not quite. How much not quite? Measurably so!</p>
+<pre class="r"><code>R - (C[,1] %*% t(C[,1]))</code></pre>
+<pre><code>##         V1      V2      V3      V4      V5      V6
+## V1  0.2200 -0.0154 -0.0498 -0.0727 -0.0838 -0.0836
+## V2 -0.0154  0.3067 -0.0809 -0.0976 -0.1033 -0.0982
+## V3 -0.0498 -0.0809  0.4075 -0.1140 -0.1153 -0.1066
+## V4 -0.0727 -0.0976 -0.1140  0.5187 -0.1193 -0.1085
+## V5 -0.0838 -0.1033 -0.1153 -0.1193  0.6346 -0.1036
+## V6 -0.0836 -0.0982 -0.1066 -0.1085 -0.1036  0.7477</code></pre>
+<p>Notice the values on the diagonals of <span class="math inline">\(\mathbf{c_1}\mathbf{c_1}&#39;\)</span>.</p>
+<pre class="r"><code>diag(C[,1] %*% t(C[,1]))</code></pre>
+<pre><code>## [1] 0.780 0.693 0.592 0.481 0.365 0.252</code></pre>
+<p>These aren’t 1, like they are in <span class="math inline">\(R\)</span>. But they are proportional: this is the amount of variance in each observed variable that is explained by this first component. Sound familiar?</p>
+<pre class="r"><code>pc1$communality</code></pre>
+<pre><code>##    V1    V2    V3    V4    V5    V6 
+## 0.780 0.693 0.592 0.481 0.365 0.252</code></pre>
+<p>And likewise the 1 minus these is the unexplained variance:</p>
+<pre class="r"><code>1 - diag(C[,1] %*% t(C[,1]))</code></pre>
+<pre><code>## [1] 0.220 0.307 0.408 0.519 0.635 0.748</code></pre>
+<pre class="r"><code>pc1$uniquenesses</code></pre>
+<pre><code>##    V1    V2    V3    V4    V5    V6 
+## 0.220 0.307 0.408 0.519 0.635 0.748</code></pre>
+</div>
+<p class="optional-end">
+</p>
+</div>
+<div id="how-many-components-to-keep" class="section level2">
+<h2>How many components to keep?</h2>
+<div class="lo">
+<p>There is no single best method to select the optimal number of components to keep, while discarding the remaining ones (which are then considered as noise components).</p>
+<p>The following three heuristic rules are commonly used in the literature:</p>
+<ul>
+<li>The cumulative proportion of explained variance criterion</li>
+<li>Kaiser’s rule</li>
+<li>The scree plot</li>
+<li>Velicer’s Minimum Average Partial method</li>
+<li>Parallel analysis</li>
+</ul>
+<p>In the next sections we will analyse each of them in turn.</p>
+</div>
+<div class="statbox">
+<p><strong>The cumulative proportion of explained variance criterion</strong></p>
+<p>The rule suggests to <em>keep as many principal components as needed in order to explain approximately 80-90% of the total variance.</em></p>
+</div>
+<div class="question-begin">
+Question A6
+</div>
+<div class="question-body">
+<p>Looking again at the PCA output, how many principal components would you keep if you were following the cumulative proportion of explained variance criterion?</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-138" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-138&#39;, &#39;sol-start-138&#39;)"> Solution </span>
+</div>
+<div id="sol-body-138" class="solution-body" style="display: none;">
+<p>Let’s look again at the PCA summary:</p>
+<pre class="r"><code>job_pca$loadings</code></pre>
+<pre><code>## 
+## Loadings:
+##            PC1    PC2    PC3    PC4    PC5    PC6   
+## commun      0.984 -0.120                0.101       
+## probl_solv  0.223  0.810  0.543                     
+## logical     0.329  0.747 -0.578                     
+## learn       0.987 -0.110                       0.105
+## physical    0.988                      -0.110       
+## appearance  0.979 -0.125         0.161              
+## 
+##                  PC1   PC2   PC3   PC4   PC5   PC6
+## SS loadings    4.035 1.261 0.631 0.035 0.022 0.016
+## Proportion Var 0.673 0.210 0.105 0.006 0.004 0.003
+## Cumulative Var 0.673 0.883 0.988 0.994 0.997 1.000</code></pre>
+<p>The following part of the output tells us that the first two components explain 88.3% of the total variance.</p>
+<pre><code>Cumulative Var 0.673 0.883 0.988 0.994 0.997 1.000</code></pre>
+<p>According to this criterion, we should keep 2 principal components.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="statbox">
+<p><strong>Kaiser’s rule</strong></p>
+<p>According to Kaiser’s rule, we should <strong>keep the principal components having variance larger than 1</strong>. Standardized variables have a variance equal 1. Because we have 6 variables in the data set, and the total variance is 6, the value 1 represents the average variance in the data:
+<span class="math display">\[
+\frac{1 + 1 + 1 + 1 + 1 + 1}{6} = 1
+\]</span></p>
+<p><strong>Hint:</strong></p>
+<p>The variances of each PC are shown in the row of the output named <code>SS loadings</code> and also in
+<code>job_pca$values</code>. The average variance is:</p>
+<pre class="r"><code>mean(job_pca$values)</code></pre>
+<pre><code>## [1] 1</code></pre>
+</div>
+<div class="question-begin">
+Question A7
+</div>
+<div class="question-body">
+<p>Looking again at the PCA output, how many principal components would you keep if you were following Kaiser’s criterion?</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-139" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-139&#39;, &#39;sol-start-139&#39;)"> Solution </span>
+</div>
+<div id="sol-body-139" class="solution-body" style="display: none;">
+<pre class="r"><code>job_pca$loadings</code></pre>
+<pre><code>## 
+## Loadings:
+##            PC1    PC2    PC3    PC4    PC5    PC6   
+## commun      0.984 -0.120                0.101       
+## probl_solv  0.223  0.810  0.543                     
+## logical     0.329  0.747 -0.578                     
+## learn       0.987 -0.110                       0.105
+## physical    0.988                      -0.110       
+## appearance  0.979 -0.125         0.161              
+## 
+##                  PC1   PC2   PC3   PC4   PC5   PC6
+## SS loadings    4.035 1.261 0.631 0.035 0.022 0.016
+## Proportion Var 0.673 0.210 0.105 0.006 0.004 0.003
+## Cumulative Var 0.673 0.883 0.988 0.994 0.997 1.000</code></pre>
+<p>The variances are shown in the row</p>
+<pre><code>SS loadings    4.035 1.261 0.631 0.035 0.022 0.016</code></pre>
+<p>From the result we see that only the first two principal components have variance greater than 1, so this rule suggests to keep 2 PCs only.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="statbox">
+<p><strong>The scree plot</strong></p>
+<p>The scree plot is a graphical criterion which involves plotting the variance for each principal component.
+This can be easily done by calling <code>plot</code> on the variances, which are stored in <code>job_pca$values</code></p>
+<pre class="r"><code>plot(x = 1:length(job_pca$values), y = job_pca$values, 
+     type = &#39;b&#39;, xlab = &#39;&#39;, ylab = &#39;Variance&#39;, 
+     main = &#39;Police officers: scree plot&#39;, frame.plot = FALSE)</code></pre>
+<p><img src="07_efapca_files/figure-html/unnamed-chunk-25-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p>where the argument <code>type = 'b'</code> tells R that the plot should have <em>both</em> points and lines.</p>
+<p>A typical scree plot features higher variances for the initial components and quickly drops to small variances where the curve is almost flat.
+The flat part of the curve represents the noise components, which are not able to capture the main sources of variability in the system.</p>
+<p>According to the scree plot criterion, we should <strong>keep as many principal components as where the “elbow” in the plot occurs.</strong> By elbow we mean the variance before the curve looks almost flat.</p>
+<p>Alternatively, some people prefer to use the function <code>scree()</code> from the <code>psych</code> package:</p>
+<pre class="r"><code>scree(job, factors = FALSE)</code></pre>
+<p><img src="07_efapca_files/figure-html/unnamed-chunk-26-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p>This also draws a horizontal line at y = 1. So, if you are making a decision about how many PCs to keep by looking at where the plot falls below the y = 1 line, you are basically following Kaiser’s rule. In fact, Kaiser’s criterion tells you to keep as many PCs as are those with a variance (= eigenvalue) greater than 1.</p>
+</div>
+<div class="question-begin">
+Question A8
+</div>
+<div class="question-body">
+<p>According to the scree plot, how many principal components would you retain?</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-140" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-140&#39;, &#39;sol-start-140&#39;)"> Solution </span>
+</div>
+<div id="sol-body-140" class="solution-body" style="display: none;">
+<p>This criterion then suggests to keep three principal components.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="statbox">
+<p><strong>Velicer’s Minimum Average Partial method</strong></p>
+<p>The Minimum Average Partial (MAP) test computes the partial correlation matrix (removing and adjusting for a component from the correlation matrix), sequentially partialling out each component. At each step, the partial correlations are squared and their average is computed.<br />
+At first, the components which are removed will be those that are most representative of the shared variance between 2+ variables, meaning that the “average squared partial correlation” will decrease. At some point in the process, the components being removed will begin represent variance that is specific to individual variables, meaning that the average squared partial correlation will increase.<br />
+The MAP method is to keep the number of components for which the average squared partial correlation is at the minimum.</p>
+<p>We can conduct MAP in R using:</p>
+<pre class="r"><code>VSS(data, plot = FALSE, method=&quot;pc&quot;, n = ncol(data))</code></pre>
+<p>(be aware there is a lot of other information in this output too! For now just focus on the map column)</p>
+</div>
+<div class="question-begin">
+Question A9
+</div>
+<div class="question-body">
+<p>How many components should we keep according to the MAP method?</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-141" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-141&#39;, &#39;sol-start-141&#39;)"> Solution </span>
+</div>
+<div id="sol-body-141" class="solution-body" style="display: none;">
+<pre class="r"><code>job_map &lt;- VSS(job, plot=FALSE, method=&quot;pc&quot;, n = ncol(job))$map
+paste(&quot;MAP is lowest for&quot;, which.min(job_map), &quot;components&quot;)</code></pre>
+<pre><code>## [1] &quot;MAP is lowest for 2 components&quot;</code></pre>
+<p>According to the MAP criterion we should keep 2 principal components.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="statbox">
+<p><strong>Parallel analysis</strong></p>
+<p>Parallel analysis involves simulating lots of datasets of the same dimension but in which the variables are uncorrelated. For each of these simulations, a PCA is conducted on its correlation matrix, and the eigenvalues are extracted. We can then compare our eigenvalues from the PCA on our <em>actual</em> data to the average eigenvalues across these simulations.
+In theory, for uncorrelated variables, no components should explain more variance than any others, and eigenvalues should be equal to 1. In reality, variables are rarely truly uncorrelated, and so there will be slight variation in the magnitude of eigenvalues simply due to chance.
+The parallel analysis method suggests keeping those components for which the eigenvalues are greater than those from the simulations.</p>
+<p>It can be conducted in R using:</p>
+<pre class="r"><code>fa.parallel(job, fa=&quot;pc&quot;, quant=.95)</code></pre>
+</div>
+<div class="question-begin">
+Question A10
+</div>
+<div class="question-body">
+<p>How many components should we keep according to parallel analysis?</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-142" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-142&#39;, &#39;sol-start-142&#39;)"> Solution </span>
+</div>
+<div id="sol-body-142" class="solution-body" style="display: none;">
+<pre class="r"><code>fa.parallel(job, fa=&quot;pc&quot;, quant=.95)</code></pre>
+<p><img src="07_efapca_files/figure-html/unnamed-chunk-30-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<pre><code>## Parallel analysis suggests that the number of factors =  NA  and the number of components =  1</code></pre>
+<p>Parallel analysis suggests to keep 1 principal component only as there is only one PC with an eigenvalue higher than the simulated random ones in red.</p>
+</div>
+<p class="solution-end">
+</p>
+</div>
+<div id="interpretation" class="section level2">
+<h2>Interpretation</h2>
+<div class="frame">
+<p>Because three out of the five selection criteria introduced above suggest to keep 2 principal components, in the following we will work with the first two PCs only.</p>
+<p>Let’s have a look at the selected principal components:</p>
+<pre class="r"><code>job_pca$loadings[, 1:2]</code></pre>
+<pre><code>##              PC1     PC2
+## commun     0.984 -0.1197
+## probl_solv 0.223  0.8095
+## logical    0.329  0.7466
+## learn      0.987 -0.1097
+## physical   0.988 -0.0784
+## appearance 0.979 -0.1253</code></pre>
+<p>and at their corresponding proportion of total variance explained:</p>
+<pre class="r"><code>job_pca$values / sum(job_pca$values)</code></pre>
+<pre><code>## [1] 0.67253 0.21016 0.10510 0.00577 0.00372 0.00273</code></pre>
+<p>We see that the first PC accounts for 67.3% of the total variability. All loadings seem to have the same magnitude apart from <code>probl_solv</code> and <code>logical</code> which are closer to zero.
+The first component looks like a sort of average of the officers performance scores excluding problem solving and logical ability.</p>
+<p>The second principal component, which explains only 21% of the total variance, has two loadings clearly distant from zero: the ones associated to problem solving and logical ability.
+It distinguishes police officers with strong logical and problem solving skills and a low score on the test (note the negative magnitude) from the other officers.</p>
+<p>We have just seen how to interpret the first components by looking at the magnitude and sign of the coefficients for each measured variable.</p>
+<div class="rtip">
+<p>For interpretation purposes, it might help hiding very small loadings. This can be done by specifying the cutoff value in the <code>print()</code> function. However, this only works when you pass the loadings for <strong>all</strong> the PCs:</p>
+<pre class="r"><code>print(job_pca$loadings, cutoff = 0.3)</code></pre>
+<pre><code>## 
+## Loadings:
+##            PC1    PC2    PC3    PC4    PC5    PC6   
+## commun      0.984                                   
+## probl_solv         0.810  0.543                     
+## logical     0.329  0.747 -0.578                     
+## learn       0.987                                   
+## physical    0.988                                   
+## appearance  0.979                                   
+## 
+##                  PC1   PC2   PC3   PC4   PC5   PC6
+## SS loadings    4.035 1.261 0.631 0.035 0.022 0.016
+## Proportion Var 0.673 0.210 0.105 0.006 0.004 0.003
+## Cumulative Var 0.673 0.883 0.988 0.994 0.997 1.000</code></pre>
+</div>
+<p><br></p>
+<div class="optional-begin">
+<span id="opt-start-143" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-143&#39;, &#39;opt-start-143&#39;)"> Optional: How well are the units represented in the reduced space?</span>
+</div>
+<div id="opt-body-143" class="optional-body" style="display: none;">
+<p>We now focus our attention on the following question: Are all the statistical units (police officers) well represented in the 2D plot?</p>
+<p>The 2D representation of the original data, which comprise 6 measured variables, is an approximation and henceforth it may happen that not all units are well represented in this new space.</p>
+<p>Typically, it is good to assess the approximation for each statistical unit by inspecting the scores on the discarded principal components.
+If a unit has a high score on those components, then this is a sign that the unit might be highly misplaced in the new space and misrepresented.</p>
+<p>Consider the 3D example below. There are three cases (= units or individuals). In the original space they are all very different from each other. For example, cases 1 and 2 are very different in their x and y values, but very similar in their z value. Cases 2 and 3 are very similar in their x and y values but very different in their z value. Cases 1 and 3 have very different values for all three variables x, y, and z.</p>
+<p>However, when represented in the 2D space given by the two principal components, units 2 and 3 seems like they are very similar when, in fact, they were very different in the original space which also accounted for the z variable.</p>
+<p><img src="images/pcaefa/pca_bad_representation.png" width="\textwidth" style="display: block; margin: auto;" /></p>
+<p>We typically measure how badly a unit is represented in the new coordinate system by considering the <strong>sum of squared scores on the discarded principal components:</strong></p>
+<pre class="r"><code>scores_discarded &lt;- job_pca$scores[, -(1:2)]
+sum_sq &lt;- rowSums(scores_discarded^2)
+sum_sq</code></pre>
+<pre><code>##  [1]  28.51  46.89  63.69  64.24  36.58  17.39  49.24  35.10  18.56  19.27
+## [11]  18.56  24.44  12.39  59.10  24.43  33.18  13.40  12.69  11.22  78.87
+## [21]  14.16  34.18  95.57  18.40  16.45  14.41  31.97  33.52  40.12  32.48
+## [31]  16.85  24.85  30.84  16.00  29.59  11.01   8.07  18.18  14.60  23.73
+## [41]  29.82  41.37   9.30  65.42  21.98  63.97  36.09  84.98 129.65  88.00</code></pre>
+<p>Units with a high score should be considered for further inspection as it may happen that they are represented as close to another unit when, in fact, they might be very different.</p>
+<pre class="r"><code>boxplot(sum_sq)</code></pre>
+<p><img src="07_efapca_files/figure-html/unnamed-chunk-36-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p>There seem to be only five outliers, and they are not too high compared to the rest of the scores. For this reason, we will consider the 2D representation of the data to be satisfactory.</p>
+</div>
+<p class="optional-end">
+</p>
+</div>
+</div>
+<div id="pca-scores" class="section level2">
+<h2>PCA scores</h2>
+<p>Supposing that we decide to reduce our six variables down to two principal components:</p>
+<pre class="r"><code>job_pca2 &lt;- principal(job, nfactors = 2, covar = TRUE, rotate = &#39;none&#39;)</code></pre>
+<div class="rtip">
+<p>We can, for each of our observations, get their <em>scores</em> on each of our components.</p>
+<pre class="r"><code>head(job_pca2$scores)</code></pre>
+<pre><code>##        PC1    PC2
+## [1,] -6.10 -1.796
+## [2,] -4.69  4.164
+## [3,] -5.18 -0.131
+## [4,] -4.31 -1.758
+## [5,] -3.71  1.207
+## [6,] -3.88 -5.200</code></pre>
+</div>
+<p>In the literature, some authors also suggest to look at the correlation between each principal component and the measured variables:</p>
+<pre class="r"><code># First PC
+cor(job_pca2$scores[,1], job)</code></pre>
+<pre><code>##      commun probl_solv logical learn physical appearance
+## [1,]  0.985      0.214   0.319 0.988    0.989      0.981</code></pre>
+<p>The first PC is strongly correlated with all the measured variables except <code>probl_solv</code> and <code>logical</code>.
+As we mentioned above, all variables seem to contributed to the first PC.</p>
+<pre class="r"><code># Second PC
+cor(job_pca2$scores[,2], job)</code></pre>
+<pre><code>##      commun probl_solv logical  learn physical appearance
+## [1,] -0.163      0.792   0.738 -0.154   -0.122     -0.169</code></pre>
+<p>The second PC is strongly correlated with <code>probl_solv</code> and <code>logical</code>, and slightly negatively correlated with the remaining variables. This separates police offices with clear logical and problem solving skills and a small score on the test (negative sign) from the others.</p>
+<div class="lo">
+<p>We have reduced our six variables down to two principal components, and we are now able to use the scores on each component in a subsequent analysis!</p>
+<p>For instance, if we also had information on how many arrests each police officer made, and the HR department were interested in whether the 6 questions we started with are a good predictor of this.<br />
+We could imagine conducting an analysis like the below:</p>
+<pre class="r"><code># add the PCA scores to the dataset
+job &lt;- 
+  job %&gt;% mutate(
+    skills_score1 = job_pca2$scores[,1],
+    skills_score2 = job_pca2$scores[,2]
+  )
+# use the scores in an analysis
+lm(nr_arrests ~ skills_score1 + skills_score2, data = job)</code></pre>
+</div>
+</div>
+<div id="plotting-the-retained-principal-components" class="section level2">
+<h2>Plotting the retained principal components</h2>
+<p>We can also visualise the statistical units (police officers) in the reduced space given by the retained principal component scores.</p>
+<pre class="r"><code>tibble(pc1 = job_pca$scores[, 1],
+       pc2 = job_pca$scores[, 2]) %&gt;%
+  ggplot(.,aes(x=pc1,y=pc2))+
+  geom_point()</code></pre>
+<p><img src="07_efapca_files/figure-html/unnamed-chunk-42-1.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="exploratory-factor-analysis-efa" class="section level1">
+<h1>Exploratory Factor Analysis (EFA)</h1>
+<p>Where <strong>PCA</strong> aims to summarise a set of measured variables into a set of orthogonal (uncorrelated) components as linear combinations (a weighted average) of the measured variables, <strong>Factor Analysis (FA)</strong> assumes that the relationships between a set of measured variables can be explained by a number of underlying <em>latent factors</em>.</p>
+<p>Note how the directions of the arrows in Figure <a href="#fig:pcafa">2</a> are different between PCA and FA - in PCA, each component <span class="math inline">\(C_i\)</span> is the weighted combination of the observed variables <span class="math inline">\(y_1, ...,y_n\)</span>, whereas in FA, each measured variable <span class="math inline">\(y_i\)</span> is seen as <em>generated by</em> some latent factor(s) <span class="math inline">\(F_i\)</span> plus some unexplained variance <span class="math inline">\(u_i\)</span>.</p>
+<p>It might help to read the <span class="math inline">\(\lambda\)</span>s as beta-weights (<span class="math inline">\(b\)</span>, or <span class="math inline">\(\beta\)</span>), because that’s all they really are.
+The equation <span class="math inline">\(y_i = \lambda_{1i}F_1 + \lambda_{2i}F_2 + u_i\)</span> is just our way of saying that the variable <span class="math inline">\(y_i\)</span> is the manifestation of some amount (<span class="math inline">\(\lambda_{1i}\)</span>) of an underlying factor <span class="math inline">\(F_1\)</span>, some amount (<span class="math inline">\(\lambda_{2i}\)</span>) of some other underlying factor <span class="math inline">\(F_2\)</span>, and some error (<span class="math inline">\(u_i\)</span>).</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:pcafa"></span>
+<img src="images/pcaefa/pca_efa.png" alt="Path diagrams for PCA and FA" width="1000px" />
+<p class="caption">
+Figure 2: Path diagrams for PCA and FA
+</p>
+</div>
+<p>In <strong><em>Exploratory</em> Factor Analysis (EFA)</strong>, we are starting with no hypothesis about either the number of latent factors or about the specific relationships between latent factors and measured variables (known as the <em>factor structure</em>). Typically, all variables will load on all factors, and a transformation method such as a rotation (we’ll cover this in more detail below) is used to help make the results more easily interpretable.</p>
+<div class="frame">
+<p><strong>A brief look to next week</strong></p>
+<p>When we have some clear hypothesis about relationships between measured variables and latent factors, we might want to impose a specific factor structure on the data (e.g., items 1 to 10 all measure social anxiety, items 11 to 15 measure health anxiety, and so on). When we impose a specific factor structure, we are doing <strong>Confirmatory Factor Analysis (CFA)</strong>.</p>
+<p>This will be the focus of next week, but it’s important to note that in practice EFA is not wholly “exploratory” (your theory <em>will</em> influence the decisions you make) nor is CFA wholly “confirmatory” (in which you will inevitably get tempted to explore how changing your factor structure might improve fit).</p>
+</div>
+<div class="frame">
+<p><strong>Data: Conduct Problems</strong></p>
+<p>A researcher is developing a new brief measure of Conduct Problems. She has collected data from n=450 adolescents on 10 items, which cover the following behaviours:</p>
+<ol style="list-style-type: decimal">
+<li>Stealing</li>
+<li>Lying</li>
+<li>Skipping school</li>
+<li>Vandalism</li>
+<li>Breaking curfew</li>
+<li>Threatening others</li>
+<li>Bullying</li>
+<li>Spreading malicious rumours</li>
+<li>Using a weapon</li>
+<li>Fighting</li>
+</ol>
+<p>Your task is to use the dimension reduction techniques you learned about in the lecture to help inform how to organise the items she has developed into subscales.</p>
+<p>The data can be found at <a href="https://uoepsy.github.io/data/conduct_probs.csv" class="uri">https://uoepsy.github.io/data/conduct_probs.csv</a></p>
+</div>
+<div id="preliminaries-1" class="section level2">
+<h2>Preliminaries</h2>
+<div class="question-begin">
+Question B1
+</div>
+<div class="question-body">
+<p>Read in the dataset from <a href="https://uoepsy.github.io/data/conduct_probs.csv">https://uoepsy.github.io/data/conduct_probs.csv</a>.<br />
+The first column is clearly an ID column, and it is easiest just to discard this when we are doing factor analysis.</p>
+<p>Create a correlation matrix for <em>the items</em>.<br />
+Inspect the items to check their suitability for exploratory factor analysis.</p>
+<ul>
+<li>You can use a function such as <code>cor</code> or <code>corr.test(data)</code> (from the <strong>psych</strong> package) to create the correlation matrix.<br />
+</li>
+<li>The function <code>cortest.bartlett(cor(data), n = nrow(data))</code> conducts Bartlett’s test that the correlation matrix is proportional to the identity matrix (a matrix of all 0s except for 1s on the diagonal).<br />
+</li>
+<li>You can check linearity of relations using <code>pairs.panels(data)</code> (also from <strong>psych</strong>), and you can view the histograms on the diagonals, allowing you to check univariate normality (which is usually a good enough proxy for multivariate normality).</li>
+<li>You can check the “factorability” of the correlation matrix using <code>KMO(data)</code> (also from <strong>psych</strong>!).
+<ul>
+<li>Rules of thumb:
+<ul>
+<li><span class="math inline">\(0.8 &lt; MSA &lt; 1\)</span>: the sampling is adequate</li>
+<li><span class="math inline">\(MSA &lt;0.6\)</span>: sampling is not adequate</li>
+<li><span class="math inline">\(MSA \sim 0\)</span>: large partial correlations compared to the sum of correlations. Not good for FA</li>
+</ul></li>
+</ul></li>
+</ul>
+<div class="optional-begin">
+<span id="opt-start-144" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-144&#39;, &#39;opt-start-144&#39;)"> Optional Kaiser’s suggested cuts</span>
+</div>
+<div id="opt-body-144" class="optional-body" style="display: none;">
+<ul>
+<li>0.00 to 0.49 unacceptable<br />
+</li>
+<li>0.50 to 0.59 miserable<br />
+</li>
+<li>0.60 to 0.69 mediocre<br />
+</li>
+<li>0.70 to 0.79 middling<br />
+</li>
+<li>0.80 to 0.89 meritorious<br />
+</li>
+<li>0.90 to 1.00 marvelous</li>
+</ul>
+</div>
+<p class="optional-end">
+</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-145" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-145&#39;, &#39;sol-start-145&#39;)"> Solution </span>
+</div>
+<div id="sol-body-145" class="solution-body" style="display: none;">
+<pre class="r"><code>library(psych)
+df &lt;- read.csv(&quot;https://uoepsy.github.io/data/conduct_probs.csv&quot;)
+# discard the first column
+df &lt;- df[,-1]
+
+corr.test(df)  </code></pre>
+<pre><code>## Call:corr.test(x = df)
+## Correlation matrix 
+##        item1 item2 item3 item4 item5 item6 item7 item8 item9 item10
+## item1   1.00  0.59  0.49  0.48  0.60  0.17  0.30  0.32  0.26   0.20
+## item2   0.59  1.00  0.53  0.51  0.66  0.20  0.33  0.30  0.29   0.19
+## item3   0.49  0.53  1.00  0.49  0.55  0.15  0.25  0.24  0.25   0.15
+## item4   0.48  0.51  0.49  1.00  0.65  0.23  0.29  0.32  0.28   0.25
+## item5   0.60  0.66  0.55  0.65  1.00  0.21  0.30  0.29  0.27   0.21
+## item6   0.17  0.20  0.15  0.23  0.21  1.00  0.54  0.57  0.41   0.44
+## item7   0.30  0.33  0.25  0.29  0.30  0.54  1.00  0.83  0.61   0.58
+## item8   0.32  0.30  0.24  0.32  0.29  0.57  0.83  1.00  0.61   0.59
+## item9   0.26  0.29  0.25  0.28  0.27  0.41  0.61  0.61  1.00   0.44
+## item10  0.20  0.19  0.15  0.25  0.21  0.44  0.58  0.59  0.44   1.00
+## Sample Size 
+## [1] 450
+## Probability values (Entries above the diagonal are adjusted for multiple tests.) 
+##        item1 item2 item3 item4 item5 item6 item7 item8 item9 item10
+## item1      0     0     0     0     0     0     0     0     0      0
+## item2      0     0     0     0     0     0     0     0     0      0
+## item3      0     0     0     0     0     0     0     0     0      0
+## item4      0     0     0     0     0     0     0     0     0      0
+## item5      0     0     0     0     0     0     0     0     0      0
+## item6      0     0     0     0     0     0     0     0     0      0
+## item7      0     0     0     0     0     0     0     0     0      0
+## item8      0     0     0     0     0     0     0     0     0      0
+## item9      0     0     0     0     0     0     0     0     0      0
+## item10     0     0     0     0     0     0     0     0     0      0
+## 
+##  To see confidence intervals of the correlations, print with the short=FALSE option</code></pre>
+<pre class="r"><code>cortest.bartlett(cor(df), n=450)</code></pre>
+<pre><code>## $chisq
+## [1] 2238
+## 
+## $p.value
+## [1] 0
+## 
+## $df
+## [1] 45</code></pre>
+<pre class="r"><code>KMO(df)  </code></pre>
+<pre><code>## Kaiser-Meyer-Olkin factor adequacy
+## Call: KMO(r = df)
+## Overall MSA =  0.87
+## MSA for each item = 
+##  item1  item2  item3  item4  item5  item6  item7  item8  item9 item10 
+##   0.90   0.88   0.92   0.88   0.84   0.94   0.82   0.81   0.95   0.94</code></pre>
+<pre class="r"><code>pairs.panels(df)</code></pre>
+<p><img src="07_efapca_files/figure-html/unnamed-chunk-43-1.png" width="80%" style="display: block; margin: auto;" />
+or alternatively, if you want a ggplot based approach:</p>
+<pre class="r"><code>library(GGally)
+ggpairs(data=df, diag=list(continuous=&quot;density&quot;), axisLabels=&quot;show&quot;)</code></pre>
+<p><img src="07_efapca_files/figure-html/unnamed-chunk-44-1.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+<p class="solution-end">
+</p>
+</div>
+<div id="how-many-factors" class="section level2">
+<h2>How many factors?</h2>
+<div class="question-begin">
+Question B2
+</div>
+<div class="question-body">
+<p>How many dimensions should be retained? This question can be answered in the same way as we did above for PCA.</p>
+<p>Use a scree plot, parallel analysis, and MAP test to guide you.<br />
+You can use <code>fa.parallel(data, fm = "fa")</code> to conduct both parallel analysis and view the scree plot!</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-146" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-146&#39;, &#39;sol-start-146&#39;)"> Solution </span>
+</div>
+<div id="sol-body-146" class="solution-body" style="display: none;">
+<pre class="r"><code>fa.parallel(df, fa = &quot;fa&quot;)</code></pre>
+<p><img src="07_efapca_files/figure-html/unnamed-chunk-45-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<pre><code>## Parallel analysis suggests that the number of factors =  2  and the number of components =  NA</code></pre>
+<p>In this case the scree plot has a kink at the third factor, so we probably want to retain 2 factors.</p>
+<p>We can conduct the MAP test using <code>VSS(data)</code>.</p>
+<pre class="r"><code>VSS(df, plot = FALSE, n = ncol(df))$map</code></pre>
+<pre><code>##  [1] 0.1058 0.0338 0.0576 0.1035 0.1494 0.2520 0.3974 0.4552 1.0000     NA</code></pre>
+<p>The MAP test suggests retaining 2 factors.</p>
+</div>
+<p class="solution-end">
+</p>
+</div>
+<div id="perform-efa" class="section level2">
+<h2>Perform EFA</h2>
+<p>Now we need to perform the factor analysis. But there are two further things we need to consider, and they are:</p>
+<ol style="list-style-type: lower-alpha">
+<li>whether we want to apply a <strong>rotation</strong> to our factor loadings, in order to make them easier to interpret, and<br />
+</li>
+<li>how do we want to extract our factors (it turns out there are loads of different approaches!).</li>
+</ol>
+<div class="statbox">
+<p><strong>Rotations?</strong></p>
+Rotations are so called because they transform our loadings matrix in such a way that it can make it more easy to interpret. You can think of it as a transformation applied to our loadings in order to optimise interpretability, by maximising the loading of each item onto one factor, while minimising its loadings to others. We can do this by simple rotations, but maintaining our axes (the factors) as perpendicular (i.e., uncorrelated) as in Figure <a href="#fig:rot2">4</a>, or we can allow them to be transformed beyond a rotation to allow the factors to correlate (Figure <a href="#fig:rot3">5</a>).
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:rot1"></span>
+<img src="images/pcaefa/rot1.png" alt="No rotation" width="80%" />
+<p class="caption">
+Figure 3: No rotation
+</p>
+</div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:rot2"></span>
+<img src="images/pcaefa/rot2.png" alt="Orthogonal rotation" width="80%" />
+<p class="caption">
+Figure 4: Orthogonal rotation
+</p>
+</div>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:rot3"></span>
+<img src="images/pcaefa/rot3.png" alt="Oblique rotation" width="80%" />
+<p class="caption">
+Figure 5: Oblique rotation
+</p>
+</div>
+<p>In our path diagram of the model (Figure <a href="#fig:efarot">6</a>), all the factor loadings remain present, but some of them become negligible. We can also introduce the possible correlation between our factors, as indicated by the curved arrow between <span class="math inline">\(F_1\)</span> and <span class="math inline">\(F_2\)</span>.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:efarot"></span>
+<img src="images/pcaefa/efa_rot.png" alt="Path diagrams for EFA with rotation" width="1000px" />
+<p class="caption">
+Figure 6: Path diagrams for EFA with rotation
+</p>
+</div>
+</div>
+<div class="frame">
+<p><strong>Factor Extraction</strong></p>
+<p>PCA (using eigendecomposition) is itself a method of extracting the different dimensions from our data. However, there are lots more available for factor analysis.</p>
+<p>You can find a lot of discussion about different methods both in the help documentation for the <code>fa()</code> function from the psych package:</p>
+<blockquote>
+<p>Factoring method fm=“minres” will do a minimum residual as will fm=“uls”. Both of these use a first derivative. fm=“ols” differs very slightly from “minres” in that it minimizes the entire residual matrix using an OLS procedure but uses the empirical first derivative. This will be slower. fm=“wls” will do a weighted least squares (WLS) solution, fm=“gls” does a generalized weighted least squares (GLS), fm=“pa” will do the principal factor solution, fm=“ml” will do a maximum likelihood factor analysis. fm=“minchi” will minimize the sample size weighted chi square when treating pairwise correlations with different number of subjects per pair. fm =“minrank” will do a minimum rank factor analysis. “old.min” will do minimal residual the way it was done prior to April, 2017 (see discussion below). fm=“alpha” will do alpha factor analysis as described in Kaiser and Coffey (1965)</p>
+</blockquote>
+<p>And there are lots of discussions both in papers and on <a href="https://stats.stackexchange.com/questions/50745/best-factor-extraction-methods-in-factor-analysis">forums</a>.</p>
+<p>As you can see, this is a complicated issue, but when you have a large sample size, a large number of variables, for which you have similar communalities, then the extraction methods tend to agree. For now, don’t fret too much about the factor extraction method.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+</div>
+<div class="question-begin">
+Question B3
+</div>
+<div class="question-body">
+<p>Use the function <code>fa()</code> from the <strong>psych</strong> package to conduct and EFA to extract 2 factors (this is what <em>we</em> suggest based on the various tests above, but <em>you</em> might feel differently - the ideal number of factors is subjective!). Use a suitable rotation and extraction method (<code>fm</code>).</p>
+<pre class="r"><code>conduct_efa &lt;- fa(data, nfactors = ?, rotate = ?, fm = ?)</code></pre>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-147" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-147&#39;, &#39;sol-start-147&#39;)"> Solution </span>
+</div>
+<div id="sol-body-147" class="solution-body" style="display: none;">
+<p>For example, you could choose an oblimin rotation to allow factors to correlate and use minres as the extraction method.</p>
+<pre class="r"><code>conduct_efa &lt;- fa(df, nfactors=2, rotate=&#39;oblimin&#39;, fm=&quot;minres&quot;)</code></pre>
+</div>
+<p class="solution-end">
+</p>
+</div>
+<div id="inspect" class="section level2">
+<h2>Inspect</h2>
+<div class="statbox">
+<p><strong>DETAILS</strong></p>
+<p>If we think about a factor analysis being a set of regressions (convention in factor analysis is to use <span class="math inline">\( {\lambda_{,}} \)</span> instead of <span class="math inline">\(\beta\)</span>), then we can think of a given item being the manifestation of some latent factors, plus a bit of randomness:</p>
+<span class="math display">\[\begin{aligned}
+\text{Item}_{1}   &amp;=  {\lambda_{1,1}}  \cdot  \text{Factor}_{1}  +  {\lambda_{2,1}}  \cdot  \text{Factor}_{2}  + u_{1} \\
+\text{Item}_{2}   &amp;=  {\lambda_{1,2}}  \cdot  \text{Factor}_{1}  +  {\lambda_{2,2}}  \cdot  \text{Factor}_{2}  + u_{2} \\
+&amp;\vdots \\
+\text{Item}_{16}  &amp;=  {\lambda_{1,16}}  \cdot  \text{Factor}_{1}  +  {\lambda_{2,16}}  \cdot  \text{Factor}_{2}  + u_{16}
+\end{aligned}\]</span>
+<p><strong>Loadings</strong></p>
+<p>As you can see from the above, the 16 different items all stem from the same two factors (<span class="math inline">\( \text{Factor}_{1} ,  \text{Factor}_{2} \)</span>), plus some item-specific errors (<span class="math inline">\(u_{1}, \dots, u_{16}\)</span>). The <span class="math inline">\( {\lambda_{,}} \)</span> terms are called factor loadings, or “loadings” in short</p>
+<p><strong>Communality</strong> is sum of the squared factor loadings for each item.</p>
+<p>Intuitively, for each row, the two <span class="math inline">\( {\lambda_{,}} \)</span>s tell us how much each item depends on the two factors shared by the 16 items. The sum of the squared loadings tells us how much of one item’s information is due to the shared factors.</p>
+<p>The communality is a bit like the <span class="math inline">\(R^2\)</span> (the proportion of variance of an item that is explained by the factor structure).</p>
+<p>The <strong>uniqueness</strong> of each item is simply <span class="math inline">\(1 - \text{communality}\)</span>.<br />
+This is the leftover bit; the variance in each item that is left unexplained by the latent factors.</p>
+<p><em>Side note: this is what sets Factor Analysis apart from PCA, which is the linear combination of total variance (including error) in all our items. FA allows some of the variance to be shared by the underlying factors, and considers the remainder to be unique to the individual items (or, in another, error in how each item measures the construct).</em></p>
+<p>The <strong>complexity</strong> of an item corresponds to how well an item reflects a <em>single</em> underlying construct. Specifically, it is <span class="math inline">\({(\sum \lambda_i^2)^2}/{\sum \lambda_i^4}\)</span>, where <span class="math inline">\(\lambda_i\)</span> is the loading on to the <span class="math inline">\(i^{th}\)</span> factor. It will be equal to 1 for an item which loads <em>only</em> on one factor, and 2 if it loads evenly on to two factors, and so on.</p>
+<div class="rtip">
+<p>In R, we will often see these estimats under specific columns:</p>
+<ul>
+<li><strong>h2</strong> = item communality<br />
+</li>
+<li><strong>u</strong> = item uniqueness<br />
+</li>
+<li><strong>com</strong> = item complexity</li>
+</ul>
+</div>
+</div>
+<div class="question-begin">
+Question B4
+</div>
+<div class="question-body">
+<p>Inspect the loadings (<code>conduct_efa$loadings</code>) and give the factors you extracted labels based on the patterns of loadings.</p>
+<p>Look back to the description of the items, and suggest a name for your factors</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-148" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-148&#39;, &#39;sol-start-148&#39;)"> Solution </span>
+</div>
+<div id="sol-body-148" class="solution-body" style="display: none;">
+<p>You can inspect the loadings using:</p>
+<pre class="r"><code>print(conduct_efa$loadings, sort=T)</code></pre>
+<pre><code>## 
+## Loadings:
+##        MR1    MR2   
+## item6   0.634       
+## item7   0.890       
+## item8   0.924       
+## item9   0.629       
+## item10  0.669       
+## item1          0.706
+## item2          0.772
+## item3          0.681
+## item4          0.676
+## item5          0.872
+## 
+##                 MR1   MR2
+## SS loadings    2.90 2.784
+## Proportion Var 0.29 0.278
+## Cumulative Var 0.29 0.568</code></pre>
+<p>We can see that the first five items have high loadings for one factor and the second five items have high loadings for the other.</p>
+<p>The first five items all have in common that they are non-aggressive forms of conduct problems, while the last five items are all aggressive behaviours. We could, therefore, label our factors: ‘non-aggressive’ and ‘aggressive’ conduct problems.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question B5
+</div>
+<div class="question-body">
+<p>How correlated are your factors?</p>
+<p>We can inspect the factor correlations (if we used an oblique rotation) using:</p>
+<pre class="r"><code>conduct_efa$Phi</code></pre>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-149" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-149&#39;, &#39;sol-start-149&#39;)"> Solution </span>
+</div>
+<div id="sol-body-149" class="solution-body" style="display: none;">
+<pre class="r"><code>conduct_efa$Phi</code></pre>
+<pre><code>##      MR1  MR2
+## MR1 1.00 0.43
+## MR2 0.43 1.00</code></pre>
+<p>We can see here that there is a moderate correlation between the two factors. An oblique rotation would be appropriate here.</p>
+</div>
+<p class="solution-end">
+</p>
+</div>
+<div id="write-up" class="section level2">
+<h2>Write-up</h2>
+<div class="question-begin">
+Question B6
+</div>
+<div class="question-body">
+<p>Drawing on your previous answers and conducting any additional analyses you believe would be necessary to identify an optimal factor structure for the 10 conduct problems, write a brief text that summarises your method and the results from your chosen optimal model.</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-150" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-150&#39;, &#39;sol-start-150&#39;)"> Solution </span>
+</div>
+<div id="sol-body-150" class="solution-body" style="display: none;">
+<p>The main principles governing the reporting of statistical results are transparency and reproducibility (i.e., someone should be able to reproduce your analysis based on your description).</p>
+<p>An example summary would be:</p>
+<div class="int">
+<p>First, the data were checked for their suitability for factor analysis. Normality was checked using visual inspection of histograms, linearity was checked through the inspection of the linear and lowess lines for the pairwise relations of the variables, and factorability was confirmed using a KMO test, which yielded an overall KMO of <span class="math inline">\(.87\)</span> with no variable KMOs <span class="math inline">\(&lt;.50\)</span>.
+An exploratory factor analysis was conducted to inform the structure of a new conduct problems test. Inspection of a scree plot alongside parallel analysis (using principal components analysis; PA-PCA) and the MAP test were used to guide the number of factors to retain. All three methods suggested retaining two factors; however, a one-factor and three-factor solution were inspected to confirm that the two-factor solution was optimal from a substantive and practical perspective, e.g., that it neither blurred important factor distinctions nor included a minor factor that would be better combined with the other in a one-factor solution. These factor analyses were conducted using minres extraction and (for the two- and three-factor solutions) an oblimin rotation, because it was expected that the factors would correlate. Inspection of the factor loadings and correlations reinforced that the two-factor solution was optimal: both factors were well-determined, including 5 loadings <span class="math inline">\(&gt;|0.3|\)</span> and the one-factor model blurred the distinction between different forms of conduct problems.
+The factor loadings are provided in Table <a href="#tab:loading-table">1</a><a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. Based on the pattern of factor loadings, the two factors were labelled ‘aggressive conduct problems’ and ‘non-aggressive conduct problems’. These factors had a correlation of <span class="math inline">\(r=.43\)</span>. Overall, they accounted for 57% of the variance in the items, suggesting that a two-factor solution effectively summarised the variation in the items.</p>
+<table>
+<caption>
+<span id="tab:loading-table">Table 1: </span>Factor loadings.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+MR1
+</th>
+<th style="text-align:right;">
+MR2
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+item1
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+0.71
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+item2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+0.77
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+item3
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+0.68
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+item4
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+0.68
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+item5
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:right;">
+0.87
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+item6
+</td>
+<td style="text-align:right;">
+0.63
+</td>
+<td style="text-align:right;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+item7
+</td>
+<td style="text-align:right;">
+0.89
+</td>
+<td style="text-align:right;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+item8
+</td>
+<td style="text-align:right;">
+0.92
+</td>
+<td style="text-align:right;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+item9
+</td>
+<td style="text-align:right;">
+0.63
+</td>
+<td style="text-align:right;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+item10
+</td>
+<td style="text-align:right;">
+0.67
+</td>
+<td style="text-align:right;">
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p class="solution-end">
+</p>
+</div>
+<div id="pca-efa-comparison-exercise" class="section level2">
+<h2>PCA EFA Comparison exercise</h2>
+<div class="question-begin">
+Question B7
+</div>
+<div class="question-body">
+<p>Using the same data, conduct a PCA using the <code>principal()</code> function.</p>
+<p>What differences do you notice compared to your EFA?</p>
+<p>Do you think a PCA or an EFA is more appropriate in this particular case?</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-151" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-151&#39;, &#39;sol-start-151&#39;)"> Solution </span>
+</div>
+<div id="sol-body-151" class="solution-body" style="display: none;">
+<p>We can use:</p>
+<pre class="r"><code>principal(df, nfactors=2)</code></pre>
+<pre><code>## Principal Components Analysis
+## Call: principal(r = df, nfactors = 2)
+## Standardized loadings (pattern matrix) based upon correlation matrix
+##         RC1  RC2   h2   u2 com
+## item1  0.17 0.77 0.62 0.38 1.1
+## item2  0.17 0.81 0.68 0.32 1.1
+## item3  0.11 0.75 0.58 0.42 1.0
+## item4  0.21 0.74 0.60 0.40 1.2
+## item5  0.16 0.85 0.75 0.25 1.1
+## item6  0.73 0.08 0.53 0.47 1.0
+## item7  0.87 0.20 0.80 0.20 1.1
+## item8  0.88 0.19 0.82 0.18 1.1
+## item9  0.72 0.21 0.56 0.44 1.2
+## item10 0.75 0.09 0.57 0.43 1.0
+## 
+##                        RC1  RC2
+## SS loadings           3.29 3.22
+## Proportion Var        0.33 0.32
+## Cumulative Var        0.33 0.65
+## Proportion Explained  0.51 0.49
+## Cumulative Proportion 0.51 1.00
+## 
+## Mean item complexity =  1.1
+## Test of the hypothesis that 2 components are sufficient.
+## 
+## The root mean square of the residuals (RMSR) is  0.06 
+##  with the empirical chi square  166  with prob &lt;  1.9e-22 
+## 
+## Fit based upon off diagonal values = 0.98</code></pre>
+<p>We can see that while the loadings differ somewhat between the EFA and the PCA, the overall pattern is quite similar. This is not always the case, especially when the item communalities are low.</p>
+<p>In terms of which method is more appropriate, arguably EFA would be more appropriate in this case because our researcher wishes to measure a theoretical construct (conduct problems), rather than simply reduce the dimensions of her data.</p>
+</div>
+<p class="solution-end">
+</p>
+<!-- Formatting -->
+<div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;">
+
+</div>
+</div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>Even if we cut open someone’s brain, it’s unclear what we would be looking for in order to ‘measure’ it. It is unclear whether anxiety even exists as a physical thing, or rather if it is simply the overarching concept we apply to a set of behaviours and feelings<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>(It’s a <em>bit</em> like the optimiser issue in the multi-level model block)<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>You should provide the table of factor loadings. It is conventional to omit factor loadings <span class="math inline">\(&lt;|0.3|\)</span>; however, be sure to ensure that you mention this in a table note.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+<link rel="stylesheet" href="https://uoepsy.github.io/assets/css/ccfooter.css" />
+<div class="ccfooter"></div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

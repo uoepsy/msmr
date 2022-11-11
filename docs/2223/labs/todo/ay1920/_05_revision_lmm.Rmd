@@ -1,0 +1,354 @@
+---
+title: "Revision of mixed models"
+bibliography: references.bib
+biblio-style: apalike
+link-citations: yes
+params: 
+    SHOW_SOLS: FALSE
+    TOGGLE: TRUE
+---
+
+```{r setup, include=FALSE}
+source('assets/setup.R')
+
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+```{r echo=FALSE}
+library(lme4)
+library(lmerTest)
+library(effects)
+```
+
+
+:::red
+**Preliminaries**  
+ 
+Open Rstudio, and create a new RMarkdown document (giving it a title for this week). 
+:::
+
+
+# Introduction to mixed effects models
+
+> Do children scores in maths improve more in school 2020 vs school 2040?
+
+Consider the following data, representing longitudinal measurements on 10 students from an urban public primary school. The outcome of interest is mathematics achievement. 
+The data were collected at the end of first grade and annually thereafter up to sixth grade, but not all students have six observations. The variable year has been mean-centred to have mean 0 so that results will have as baseline the average.
+
+<br>
+
+```{r echo=FALSE}
+library(tidyverse)
+library(kableExtra)
+library(foreign)
+
+set.seed(5293)
+
+egm <- read.dta("https://data.princeton.edu/pop510/egm.dta")
+
+data <- egm %>% 
+    filter(schoolid %in% c(2020, 2040)) %>%
+    select(-female, - black, -hispanic, -retained, -`_merge`)
+```
+
+
+```{r eval=FALSE}
+data %>%
+    DT::datatable() %>%
+    DT::formatRound(columns=c('math', 'lowinc'), digits = 2)
+```
+
+
+We have 42 students, 21 in school with id 2020 and 21 in school with id 2040:
+
+```{r}
+data %>% 
+    select(schoolid, childid) %>% 
+    distinct() %>%
+    xtabs(~ childid + schoolid, data = .) %>% 
+    addmargins()
+```
+
+The number of observations per child are as follows. We can see that for some children we have fewer than the 6 observations: some have 3, 4, or 5.
+```{r}
+xtabs(~ childid, data = data)
+```
+
+
+
+
+<br>
+
+The mathematics achievement over time is shown, for each student, in the plot below:
+
+```{r echo=FALSE, fig.height = 6, fig.width = 7, out.width = '100%'}
+data %>% filter(schoolid == 2020) %>%
+ggplot(., aes(x = year, y = math)) +
+    geom_point() +
+    facet_wrap(~ childid, labeller = label_both) +
+    theme_light(base_size = 12) +
+    theme(
+        panel.grid = element_blank()
+    ) +
+    labs(x = "Year (mean centred)", y = "Maths achievement score")
+```
+
+```{r echo=FALSE, fig.height = 6, fig.width = 7, out.width = '100%'}
+data %>% filter(schoolid == 2040) %>%
+ggplot(., aes(x = year, y = math)) +
+    geom_point() +
+    facet_wrap(~ childid, labeller = label_both) +
+    theme_light(base_size = 12) +
+    theme(
+        panel.grid = element_blank()
+    ) +
+    labs(x = "Year (mean centred)", y = "Maths achievement score")
+```
+
+Clearly, the measurements of mathematics achievement related to each student are _grouped data_ as they refer to the same entity.
+
+If we were to ignore this grouping and consider all children and both schools as one single population, we would obtain misleading results as from the above picture we saw that some students had a much better performance than other students.
+
+The following plot considers all data as a single population
+```{r}
+ggplot(data, aes(x = year, y = math)) +
+    geom_point() +
+    geom_smooth(method = lm, se = FALSE) +
+    labs(x = "Year (mean centred)", y = "Maths achievement score")
+```
+
+This is a simple linear regression model of the form
+$$
+\text{math}_{ij} = \beta_0 + \beta_1 \ \text{year}_{ij} + \epsilon_{ij} 
+$$
+
+where the subscript $ij$ denotes the $j$th measurement from child $i$.
+
+Let's fit this in R
+```{r}
+m0 <- lm(math ~ year, data = data)
+summary(m0)
+```
+
+The intercept and slope of this model can be visually represented as:
+
+```{r echo=FALSE}
+b0 <- coef(m0)
+
+ggplot(data, aes(x = year, y = math)) +
+    geom_point() +
+    geom_smooth(method = lm, se = FALSE) +
+    labs(x = "Year (mean centred)", y = "Maths achievement score") +
+    annotate(geom = 'label', x = 0, y = b0[1], label = "beta[0]", 
+             parse = TRUE, color = 'red', size = 5) +
+    geom_segment(aes(x = 1, xend = 2, 
+                     y = b0 %*% c(1, 1), yend = b0 %*% c(1, 1)), col = 'red') +
+    geom_segment(aes(x = 2, xend = 2, 
+                     y = b0 %*% c(1, 1), yend = b0 %*% c(1, 2)), col = 'red') +
+    annotate(geom = 'label', x = 2, y = 1.5, label = "beta[1]", 
+             parse = TRUE, color = 'red', hjust = -0.3, size = 5)
+```
+
+
+# Random intercept and slopes
+
+In reality, we see that each student has its own line, with a different intercept and slope
+
+In other words, they all have different values of maths achievement when year =  0 and they also differ in their learning rate.
+See below 
+
+```{r echo=FALSE, fig.height = 8, fig.width = 8}
+data %>%
+ggplot(., aes(x = year, y = math, color = childid)) +
+    geom_point() +
+    geom_smooth(method = lm, se = FALSE, fullrange = TRUE, 
+                size = 0.5) +
+    labs(x = "Year (mean centred)", y = "Maths achievement score") +
+    theme(legend.position = 'bottom')
+```
+
+
+Let's try creating a model where each student has its own intercept and slope:
+$$
+\begin{aligned}
+\text{math}_{ij} 
+&= (\beta_0 + u_{0i}) + (\beta_1 + u_{1i}) \ \text{year}_{ij} + \epsilon_{ij} \\
+&= (\text{intercept for child } i) + (\text{slope for child } i) \ \text{year}_{ij} + \epsilon_{ij} \\
+&= \beta_{0i} + \beta_{1i} \ \text{year}_{ij} + \epsilon_{ij} 
+\end{aligned}
+$$
+
+where
+
+- $\beta_{0i} = (\beta_0 + u_{0i})$ is the intercept of the line for child $i$
+
+- $\beta_{1i} = (\beta_1 + u_{1i})$ is the slope of the line for child $i$
+
+- $\epsilon_{ij}$ are the deviations of each child's measurement $\text{math}_{ij}$ from the line of child $i$
+
+
+We can think each child-specific intercept and slope as being made up of two components: an "overall" intercept $\beta_0$ (slope $\beta_1$) and a child-specific deviation from the overall intercept $u_{0i}$ (slope $u_{1i}$):
+
+- $(\beta_0 + u_{0i}) = \text{(overall intercept) + (deviation for child }i)$
+
+- $(\beta_1 + u_{1i}) = \text{(overall slope) + (deviation for child }i)$
+
+
+:::yellow
+**Deviations sum to zero (and average to zero too)**
+
+As you know, deviations average to 0.
+This holds for the residuals, as well as the deviations $u_{0i}$ from the overall intercept and the deviations $u_{1i}$ from the overall slope.
+
+Think of data $y_1, ..., y_n$ and their mean $\bar y$. The average of the deviations from the mean is
+$$
+\begin{aligned}
+\frac{\sum_i (y_i - \bar y)}{n} 
+= \frac{\sum_i y_i }{n} - \frac{\sum_i \bar y}{n} 
+= \bar y - \frac{n \ \bar y}{n} 
+= \bar y - \bar y 
+= 0
+\end{aligned}
+$$
+:::
+
+
+The child-specific deviations $u_{0i}$ from the overall intercept have independent normal distributions with mean $0$ and standard deviation $\sigma_0$. Similarly, the deviation $u_{1i}$ of the slope for child $i$ from the overall slope comes from a normal distribution with mean $0$ and standard deviation $\sigma_1$. The correlation between random intercepts and slopes is $\rho = \text{Cor}(u_{0}, u_{1})$, constant and does not depend on $i$.
+
+$$
+\begin{bmatrix} u_{0} \\ u_{1} \end{bmatrix} 
+\sim N
+\left(
+    \begin{bmatrix} 0 \\ 0 \end{bmatrix}, 
+    \begin{bmatrix} 
+        \sigma_0^2 & \rho \sigma_0 \sigma_1 \\
+        \rho \sigma_0 \sigma_1 & \sigma_1^2
+    \end{bmatrix}
+\right), \quad \rho = \text{Cor}(u_{0}, u_{1})
+$$
+
+
+This is fitted using `lmer()`:
+```{r}
+library(lme4)
+library(lmerTest)
+
+m1 <- lmer(math ~ 1 + year + (1 + year | childid), data = data)
+summary(m1)
+```
+
+```{r echo=FALSE}
+b1 <- fixef(m1) %>% round(3)
+u1 <- ranef(m1)$childid %>% round(3)
+su <- as.data.frame(VarCorr(m1))[, 5] %>% round(3)
+s <- sigma(m1) %>% round(3)
+```
+
+
+
+The summary of the `lmer` output returns estimated values for
+
+Fixed effects:
+
+- $\widehat \beta_0 = `r b1[1]`$ 
+- $\widehat \beta_1 = `r b1[2]`$
+
+Variability of random effects:
+
+- $\widehat \sigma_{0} = `r su[1]`$
+- $\widehat \sigma_{1} = `r su[2]`$
+- $\widehat \rho = `r su[3]`$
+
+Residuals:
+
+- $\widehat \sigma = `r su[4]`$
+
+
+**Questions**
+
+1. How do I get the overall intercept and slope?
+
+```{r}
+fixef(m1)
+```
+
+
+2. How do I get the deviations from the overall intercept ($\widehat \beta_0 = `r b1[1]`$) and slope ($\widehat \beta_1 = `r b1[2]`$) for each child $i$?
+
+```{r}
+ranef(m1)
+```
+
+3. How do I get the actual intercept and slope for the line of child $i$?
+
+```{r}
+coef(m1)
+```
+
+Notice that the above are the fixed effects + random effects estimates, i.e. the overall intercept and slope + deviations for each child.
+
+
+
+
+
+```{r}
+par(mfrow = c(1,2))
+qqnorm(ranef(m1)$childid[, 1], main = "u0")
+qqline(ranef(m1)$childid[, 1])
+
+qqnorm(ranef(m1)$childid[, 2], main = "u1")
+qqline(ranef(m1)$childid[, 2])
+```
+
+
+```{r}
+ggplot(ranef(m1)$childid,
+       aes(x = `(Intercept)`, y = year)) +
+    geom_smooth(method = lm, se = FALSE, color = 'gray', size = 0.5) +
+    geom_point()
+```
+
+
+```{r}
+m2a <- lmer(math ~ 1 + year + (1 + year || childid), data = data)
+summary(m2a)
+```
+
+```{r}
+m2b <- lmer(math ~ 1 + year + (1 | childid) + (0 + year | childid), data = data)
+summary(m2b)
+```
+
+
+
+```{r}
+par(mfrow = c(1,2))
+qqnorm(ranef(m2a)$childid[, 1], main = "u0")
+qqline(ranef(m2a)$childid[, 1])
+
+qqnorm(ranef(m2a)$childid[, 2], main = "u1")
+qqline(ranef(m2a)$childid[, 2])
+```
+
+```{r}
+ggplot(ranef(m2a)$childid,
+       aes(x = `(Intercept)`, y = year)) +
+    geom_smooth(method = lm, se = FALSE, color = 'gray', size = 0.5) +
+    geom_point()
+```
+
+
+```{r}
+m3 <- lmer(math ~ 1 + year + schoolid + (1 + year || childid), data = data)
+summary(m3)
+```
+
+
+
+<!-- Formatting -->
+
+<div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
+
+
+
+

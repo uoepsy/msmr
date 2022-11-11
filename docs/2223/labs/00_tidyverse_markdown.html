@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Tidyverse &amp; RMarkdown</title>
+
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<script>
+function toggle_visibility(id1, id2) {
+var e = document.getElementById(id1);
+var f = document.getElementById(id2);
+e.style.display = ((e.style.display!='none') ? 'none' : 'block');
+if(f.classList.contains('fa-chevron-circle-right')) {
+    f.classList.add('fa-chevron-circle-down')
+    f.classList.remove('fa-chevron-circle-right')
+} else {
+    f.classList.add('fa-chevron-circle-right')
+    f.classList.remove('fa-chevron-circle-down')
+}
+}
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="assets/style-labs.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"><strong>MSMR</strong></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Mixed Effects Models
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="01_intromlm.html">1: Intro to Multi-Level Modelling</a>
+    </li>
+    <li>
+      <a href="02_lmm_log.html">2: Logistic | Longitudinal (linear)</a>
+    </li>
+    <li>
+      <a href="03_nonlin.html">3: Longitudinal (non-linear)</a>
+    </li>
+    <li>
+      <a href="04_ranef.html">4: Random Effect Structures</a>
+    </li>
+    <li>
+      <a href="05_multilevel_recap.html">5: Multilevel Modelling Recap</a>
+    </li>
+    <li class="dropdown-header">Break Week</li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Data Reduction &amp; SEM
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="07_efapca.html">PCA | EFA</a>
+    </li>
+    <li>
+      <a href="08_cfa.html">CFA</a>
+    </li>
+    <li>
+      <a href="09_path.html">Path Analysis</a>
+    </li>
+    <li>
+      <a href="10_sem1.html">SEM 1</a>
+    </li>
+    <li>
+      <a href="11_sem2.html">SEM 2</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-info-circle"></span>
+     
+    Extras
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="00_tidyverse_markdown.html">Recap - Tidyverse &amp; Markdown</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Tidyverse &amp; RMarkdown</h1>
+
+</div>
+
+
+<div class="red">
+<p>This is a little recap on Tidyverse &amp; RMarkdown, for anyone who wants it. It is mostly a repeat of the USMR course, but may come in handy as a quick refresher after the christmas break.</p>
+</div>
+<p>Tidyverse &amp; RMarkdown are a set of packages and tools which will help you to make your work in R (both analysis and reporting) more <strong>efficient</strong>, <strong>aesthetically pleasing</strong>, and (importantly) <strong>reproducible</strong>.</p>
+<div id="packages" class="section level2 unnumbered">
+<h2>Packages</h2>
+<p>You will likely already have these packages installed, but if not, then do so now.</p>
+<ul>
+<li>tidyverse (ggplot is part of tidyverse)</li>
+<li>rmarkdown<br />
+</li>
+<li>haven (<em>this one is just for reading in data from other software like SPSS or SAS</em>)</li>
+</ul>
+</div>
+<div id="lecture-slides" class="section level2 unnumbered">
+<h2>Lecture slides</h2>
+<p>There are some lecture slides which accompany these exercises. They can be accessed <a href="https://uoepsy.github.io/msmr/lectures/Lecture01_tidyverse-RMarkdown.html">here</a>.
+The data (in .RData format) for the lecture can be found at <a href="https://uoepsy.github.io/data/Weather_2014.RData" class="uri">https://uoepsy.github.io/data/Weather_2014.RData</a>. You can get it into your R workspace using:</p>
+<pre class="r"><code>load(url(&quot;https://uoepsy.github.io/data/Weather_2014.RData&quot;))</code></pre>
+</div>
+<div id="readings-resources" class="section level2 unnumbered">
+<h2>Readings &amp; Resources</h2>
+<p>R for Data Science: <a href="https://r4ds.had.co.nz/index.html">https://r4ds.had.co.nz/index.html</a></p>
+<ul>
+<li>Data visualization: Chapters 3 and 28<br />
+</li>
+<li>Data management (tidyverse): Chapters 5 and 12<br />
+</li>
+<li>R Markdown: Chapter 27</li>
+</ul>
+<p>Extras:</p>
+<ul>
+<li>Kieran Healey has a brilliant book on getting started with ggplot: <a href="https://socviz.co/index.html">Data Visualisation; a practical introduction</a><br />
+</li>
+<li>Another great one is <a href="https://serialmentor.com/dataviz/">Fundamentals of Data Visualisation</a> by Claus O. Wilke</li>
+</ul>
+</div>
+<div id="data-visualization-with-ggplot" class="section level1">
+<h1>Data Visualization with <code>ggplot</code></h1>
+<p>For plotting, you may be familiar with the popular <code>ggplot2</code> package from some of the USMR labs last semester. We’re going to be using this more and more, so the first part of today’s lab will focus on <code>ggplot</code>.</p>
+<p><strong>Visualization is the first step in analysis</strong></p>
+<!-- ![Same data, different graphs](../figs/SameData_DifferentGraphs.png) -->
+<div id="geoms-stat_summary" class="section level2">
+<h2>Geoms &amp; <code>stat_summary</code></h2>
+<p>To learn about some of the different functionalities of <code>ggplot</code>, we’re first going to need some data…</p>
+<div class="optional-begin">
+<span id="opt-start-1" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-1&#39;, &#39;opt-start-1&#39;)"> Kraus et al. (2019): Data Codebook</span>
+</div>
+<div id="opt-body-1" class="optional-body" style="display: none;">
+<p><strong>Data overview</strong></p>
+<p>Kraus et al. (2019) <em>Evidence for the reproduction of social class in brief speech</em>, Proc. Natl. Acad. Sci. U.S.A. (Study 1)</p>
+<ul>
+<li>N=189 speakers from the International Dialects of (North American) English Archive. Narrative speech and reading stories.</li>
+<li>Extracted 7 individual words that were produced by all speakers: “And”, “From”, “Thought”, “Beautiful”, “Imagine”, “Yellow”, and “The”.</li>
+<li>Participants (N=229, from AMT)
+<ul>
+<li>Listened to the 7 one-word clips</li>
+<li>Estimated the speaker’s race, gender, age, and educational attainment</li>
+<li>Each participant completed this for a random subset of 27 speakers</li>
+</ul></li>
+</ul>
+<p>The data can be found at <a href="https://uoepsy.github.io/data/Kraus_etal2019_Study1.Rdata" class="uri">https://uoepsy.github.io/data/Kraus_etal2019_Study1.Rdata</a></p>
+</div>
+<p class="optional-end">
+</p>
+<div class="question-begin">
+Question
+</div>
+<div class="question-body">
+<p>The <strong>ggplot2</strong> package comes as part of the <strong>tidyverse</strong>, so if we use <code>library(tidyverse)</code> then we are also loading ggplot2!</p>
+<p>Read in the data using <code>load()</code> and <code>url()</code>, and extract some summary statistics.</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-2" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-2&#39;, &#39;sol-start-2&#39;)"> Solution </span>
+</div>
+<div id="sol-body-2" class="solution-body" style="display: none;">
+<pre class="r"><code>library(ggplot2)
+load(url(&quot;https://uoepsy.github.io/data/Kraus_etal2019_Study1.Rdata&quot;))
+summary(speech_ses)</code></pre>
+<pre><code>##   ResponseId                Category      Accuracy      
+##  Length:912         Social Class:228   Min.   :  3.704  
+##  Class :character   Race        :228   1st Qu.: 55.556  
+##  Mode  :character   Age         :228   Median : 66.667  
+##                     Gender      :228   Mean   : 69.547  
+##                                        3rd Qu.: 82.407  
+##                                        Max.   :100.000</code></pre>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question
+</div>
+<div class="question-body">
+<p>Try to make a summary plot showing mean accuracy for each category of judgment<br />
+<strong>hint:</strong> try looking into <code>?stat_summary</code></p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-3" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-3&#39;, &#39;sol-start-3&#39;)"> Solution </span>
+</div>
+<div id="sol-body-3" class="solution-body" style="display: none;">
+<p>We need to use <code>stat_summary</code> because we want to summarise the y values on our plot into summary value(s) (in the case the mean).
+We could also calculate the mean accuracy for each category first, and <em>then</em> plot them using geom_bar directly, but <code>stat_summary</code> can be pretty useful</p>
+<pre class="r"><code>#one way of doing this:
+ggplot(speech_ses, aes(x = Category, y = Accuracy, fill = Category)) +
+  stat_summary(fun=mean, geom=&quot;bar&quot;)</code></pre>
+<p><img src="00_tidyverse_markdown_files/figure-html/unnamed-chunk-3-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p>We should also note that <code>stat_summary(fun=mean, geom="bar")</code> and <code>geom_bar(stat="summary",fun=mean)</code> are exactly the same! You could get the same plot using:</p>
+<pre class="r"><code>ggplot(speech_ses, aes(x = Category, y = Accuracy, fill = Category)) +
+  geom_bar(stat=&quot;summary&quot;,fun=mean)</code></pre>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question
+</div>
+<div class="question-body">
+<p>Explore the different ways of showing variability. Construct a plot using each of the following geoms:</p>
+</div>
+<p class="question-end">
+</p>
+<p>The top three plots (jitter, boxplots and violins) all show <em>all</em> of the data, so we don’t need to use <code>stat_summary</code> for these. However, the bottom two (errorbars and pointranges) require us to summarise the data into means and standard errors, so if you are using <code>stat_summary</code> we need to use <code>stat_summary(fun.data=mean_se)</code>.</p>
+<div class="solution-begin">
+<span id="sol-start-4" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-4&#39;, &#39;sol-start-4&#39;)"> Solution </span>
+</div>
+<div id="sol-body-4" class="solution-body" style="display: none;">
+<pre class="r"><code># * Boxplot
+ggplot(speech_ses, aes(x = Category, y = Accuracy, fill = Category)) +
+  geom_boxplot()
+# * Jitter
+ggplot(speech_ses, aes(x = Category, y = Accuracy, colour = Category)) +
+  geom_jitter(width=0.2, alpha=0.5)
+# * Violin plot
+ggplot(speech_ses, aes(x = Category, y = Accuracy, fill = Category)) +
+  geom_violin()
+# * Errorbar
+ggplot(speech_ses, aes(x = Category, y = Accuracy, colour = Category)) +
+  stat_summary(fun.data=mean_se, geom=&quot;errorbar&quot;)
+# * Pointrange
+ggplot(speech_ses, aes(x = Category, y = Accuracy, colour = Category)) +
+  stat_summary(fun.data=mean_se, geom=&quot;pointrange&quot;)</code></pre>
+</div>
+<p class="solution-end">
+</p>
+<p><img src="00_tidyverse_markdown_files/figure-html/unnamed-chunk-6-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<div class="question-begin">
+Question
+</div>
+<div class="question-body">
+<p>Combine two of the geoms used above to create a visualization of the mean accuracy, a measure of variability, and all of the data points.</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-5" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-5&#39;, &#39;sol-start-5&#39;)"> Solution </span>
+</div>
+<div id="sol-body-5" class="solution-body" style="display: none;">
+<pre class="r"><code>ggplot(speech_ses, aes(x = Category, y = Accuracy, colour = Category)) +
+  geom_jitter(width=0.2, alpha=0.5) + 
+  stat_summary(fun.data=mean_se, geom=&quot;errorbar&quot;, 
+               colour=&quot;black&quot;, width=0.4, size=1.5)</code></pre>
+<p><img src="00_tidyverse_markdown_files/figure-html/unnamed-chunk-7-1.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question
+</div>
+<div class="question-body">
+<p>Refine the plot by, for example, removing unnecessary elements, adding useful annotations (e.g., chance performance = 50%), selecting a good color scheme, etc.<br />
+<strong>tip:</strong> This is where google becomes really helpful, <a href="https://lmgtfy.com/?q=remove+a+legend+in+ggplot2" target="_blank">for example</a></p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-6" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-6&#39;, &#39;sol-start-6&#39;)"> Solution </span>
+</div>
+<div id="sol-body-6" class="solution-body" style="display: none;">
+<pre class="r"><code>ggplot(speech_ses, aes(x = Category, y = Accuracy, colour = Category)) +
+  geom_jitter(width=0.2, alpha=0.5) + 
+  stat_summary(fun.data=mean_se, geom=&quot;errorbar&quot;, 
+               colour=&quot;black&quot;, width=0.4, size=1.5) +
+  guides(colour = FALSE) + theme_bw() +
+  scale_color_brewer(palette = &quot;Set1&quot;) +
+  geom_hline(yintercept=50, linetype=&quot;dashed&quot;)</code></pre>
+<p><img src="00_tidyverse_markdown_files/figure-html/unnamed-chunk-8-1.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+<p class="solution-end">
+</p>
+</div>
+<div id="recreating-a-plot" class="section level2">
+<h2>Recreating a plot</h2>
+<div class="question-begin">
+Question
+</div>
+<div class="question-body">
+<p>Try to recreate the graph below using <code>ggplot</code> (if you like, try to make it better!).</p>
+</div>
+<p class="question-end">
+</p>
+<div class="figure">
+<img src="images/plot1_npr.png" alt="" />
+<p class="caption">Women in computer science</p>
+</div>
+<p>The data (in .csv format) can be downloaded from <a href="https://uoepsy.github.io/data/women_computer_science.csv" class="uri">https://uoepsy.github.io/data/women_computer_science.csv</a><br />
+You can use <code>read_csv("https://uoepsy.github.io/data/women_computer_science.csv")</code> to read it directly into R.</p>
+<div class="solution-begin">
+<span id="sol-start-7" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-7&#39;, &#39;sol-start-7&#39;)"> Solution </span>
+</div>
+<div id="sol-body-7" class="solution-body" style="display: none;">
+<pre class="r"><code>women_cs&lt;-read_csv(&quot;https://uoepsy.github.io/data/women_computer_science.csv&quot;)
+ggplot(women_cs, aes(x=date, y=pct_women_majors, color=field))+
+  labs(x=NULL,y=NULL, title=&quot;What happened to women in computer science?&quot;)+
+  geom_line()+
+  scale_color_manual(values=c(&#39;#11605E&#39;, &#39;#17807E&#39;, &#39;#8BC0BF&#39;,&#39;#D8472B&#39;))+
+  scale_y_continuous(label=scales::percent)+
+  theme_minimal(base_family=&quot;Helvetica&quot;)+
+  theme(legend.title=element_blank())</code></pre>
+<p><img src="00_tidyverse_markdown_files/figure-html/unnamed-chunk-9-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># If you want to get fancier, and add the labels at the end of the lines, check out the gghighlight package!</code></pre>
+</div>
+<p class="solution-end">
+</p>
+</div>
+</div>
+<div id="data-management-with-the-tidyverse" class="section level1">
+<h1>Data management with the Tidyverse</h1>
+<p>The collection of <code>R</code> packages known as the <code>tidyverse</code> provides many incredibly useful functions that can speed up your workflow. They are often contrasted to <code>Base R</code> in that they provide an <em>alternative grammar</em> which is aimed at being more predictable and consistent. Some people find the tidyverse a lot more intuitive, but others don’t, and the transition can sometimes be difficult!</p>
+<p>In USMR, we taught you both Base R and tidyverse alongside one another. You will have seen code like:</p>
+<pre class="r"><code>data %&gt;%
+  mutate(
+    newvar = oldvar*200
+  ) %&gt;% filter(newvar &gt; 400) %&gt;%
+  select(newvar)</code></pre>
+<p>as well as code such as:</p>
+<pre class="r"><code>data$newvar &lt;- data$oldvar*200
+data$newvar[data$newvar&gt;400]</code></pre>
+<p>We believe that there is no <em>right</em> way to write code. You should program in the way which you feel most comfortable with. For a great many people, that may involve using a combination of both Base R and tidyverse, for others it might be only Base R, and for some they might try to do everything the tidyverse way. All approaches are equally good.</p>
+<div id="piping" class="section level2">
+<h2>Piping!</h2>
+<p>It may look a bit weird (<code>%&gt;%</code>), but the pipe operator in R is incredibly useful. Its fundamental role is to ‘chain’ functions together. Previously we wrapped functions around one another, with lots of brackets, but with <code>%&gt;%</code> we can link the intermediate output of one function and take it as the input of another.</p>
+<p>The two functions <code>f</code> and <code>g</code>, when used in combination like <code>g(f(x))</code>, can now be written as <code>x %&gt;% f() %&gt;% g()</code>. You don’t even always need the brackets, and coulde write <code>x %&gt;% f %&gt;% g</code>!</p>
+<p>The default behaviour of <code>%&gt;%</code> is to put the output of the LHS (left hand side) in as the first argument in the RHS. However, you can change this by using <code>%&gt;%</code> in combination with a <code>.</code>, to specify which argument you want it to be inputted as:</p>
+<ul>
+<li><code>100 %&gt;% rnorm(10, ., 1)</code> is equal to <code>rnorm(10, 100, 1)</code></li>
+<li>The default behaviour: <code>100 %&gt;% rnorm(0, 1)</code> is implicitly saying <code>100 %&gt;% rnorm(., 0, 1)</code>, which is equal to <code>rnorm(100, 0, 1)</code>.</li>
+</ul>
+<div class="question-begin">
+Question
+</div>
+<div class="question-body">
+<p>Translate the following statements between Base R and sequences of pipes. The first is shown for you.</p>
+</div>
+<p class="question-end">
+</p>
+<div id="section" class="section level4 unnumbered">
+<h4>1</h4>
+<p>Base R:</p>
+<pre class="r"><code>round(mean(rnorm(100,0,1)))</code></pre>
+<p>Pipes :</p>
+<pre class="r"><code>rnorm(100,0,1) %&gt;% 
+  mean() %&gt;% 
+  round()</code></pre>
+</div>
+<div id="section-1" class="section level4 unnumbered">
+<h4>2</h4>
+<p>Base R:</p>
+<pre class="r"><code>x&lt;-10:100
+round(exp(diff(log(x))), 2)</code></pre>
+<p>Pipes:</p>
+<div class="solution-begin">
+<span id="sol-start-8" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-8&#39;, &#39;sol-start-8&#39;)"> Solution </span>
+</div>
+<div id="sol-body-8" class="solution-body" style="display: none;">
+<pre class="r"><code>10:100 %&gt;% log() %&gt;%
+    diff() %&gt;%
+    exp() %&gt;%
+    round(2)</code></pre>
+</div>
+<p class="solution-end">
+</p>
+</div>
+<div id="section-2" class="section level4 unnumbered">
+<h4>3</h4>
+<p>Pipes:</p>
+<pre class="r"><code>6 %&gt;% round(pi, digits=.)</code></pre>
+<p>Base R:</p>
+<div class="solution-begin">
+<span id="sol-start-9" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-9&#39;, &#39;sol-start-9&#39;)"> Solution </span>
+</div>
+<div id="sol-body-9" class="solution-body" style="display: none;">
+<pre class="r"><code>round(pi, digits=6)</code></pre>
+</div>
+<p class="solution-end">
+</p>
+</div>
+</div>
+<div id="grouping-summarising-filtering-mutating-and-selecting" class="section level2">
+<h2>Grouping, summarising, filtering, mutating and selecting</h2>
+<p>Tidyverse also gives us really useful functions for wrangling data. There are many, but some of the key ones we’ll look at here are:</p>
+<ul>
+<li><code>select()</code> extracts columns<br />
+</li>
+<li><code>filter()</code> subsets data based on conditions<br />
+</li>
+<li><code>mutate()</code> adds new variables<br />
+</li>
+<li><code>group_by()</code> group related rows together<br />
+</li>
+<li><code>summarise()</code>/<code>summarize()</code> reduces values down to a single summary</li>
+</ul>
+<p>For a quick example, if we want to calculate the median accuracy for each category, but only after removing those with an accuracy &lt;50, we could use:</p>
+<pre class="r"><code>speech_ses %&gt;% 
+  filter(Accuracy&gt;50) %&gt;%
+  group_by(Category) %&gt;% 
+  summarise(
+    mdn_accuracy = median(Accuracy)
+  )</code></pre>
+<p>And if we wanted to also calculate the total n, and the mean accuracy for each category, we could add:</p>
+<pre class="r"><code>speech_ses %&gt;% 
+  group_by(Category) %&gt;% 
+  summarise(
+    n = n(),
+    mean_acc = mean(Accuracy)
+  )</code></pre>
+<div class="question-begin">
+Question
+</div>
+<div class="question-body">
+<p>Load the <strong>haven</strong> package, and read in the data using <code>read_sav()</code> (.sav is the type of file which comes out of another stats software, SPSS).<br />
+Explore the data a bit for yourself in the way you feel most comfortable.
+You can download the data from <a href="https://uoepsy.github.io/data/exam.sav">https://uoepsy.github.io/data/exam.sav</a> to your computer, and then read it in, or you can do so straight from the url.</p>
+</div>
+<p class="question-end">
+</p>
+<pre class="r"><code>library(haven)
+exam &lt;- read_sav(&quot;https://uoepsy.github.io/data/exam.sav&quot;) </code></pre>
+<p>Using the <code>exam.sav</code> data:</p>
+<div class="question-begin">
+Question
+</div>
+<div class="question-body">
+<p>Calculate the mean score for each exam</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-10" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-10&#39;, &#39;sol-start-10&#39;)"> Solution </span>
+</div>
+<div id="sol-body-10" class="solution-body" style="display: none;">
+<pre class="r"><code>exam %&gt;% group_by(exam) %&gt;% 
+  summarize(M = mean(scores))</code></pre>
+<pre><code>## # A tibble: 3 × 2
+##    exam     M
+##   &lt;dbl&gt; &lt;dbl&gt;
+## 1     1  42.9
+## 2     2  37.9
+## 3     3  38.9</code></pre>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question
+</div>
+<div class="question-body">
+<p>Calculate the mean score for each exam for female students only</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-11" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-11&#39;, &#39;sol-start-11&#39;)"> Solution </span>
+</div>
+<div id="sol-body-11" class="solution-body" style="display: none;">
+<pre class="r"><code>exam %&gt;% 
+  filter(gender==&quot;f&quot;) %&gt;%
+  group_by(exam) %&gt;% 
+  summarize(M = mean(scores))</code></pre>
+<pre><code>## # A tibble: 3 × 2
+##    exam     M
+##   &lt;dbl&gt; &lt;dbl&gt;
+## 1     1  43.1
+## 2     2  36.6
+## 3     3  38.1</code></pre>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question
+</div>
+<div class="question-body">
+<p>Make a new dataframe containing only the exam scores for males for exam number 1, with a new variable indicating whether they passed or not (pass = a score of 40)</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-12" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-12&#39;, &#39;sol-start-12&#39;)"> Solution </span>
+</div>
+<div id="sol-body-12" class="solution-body" style="display: none;">
+<pre class="r"><code>exam_m1 &lt;- exam %&gt;% 
+  filter(exam == 1, gender == &quot;m&quot;) %&gt;%
+  mutate(pass = ifelse(scores&gt;40,&quot;pass&quot;,&quot;fail&quot;))</code></pre>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question
+</div>
+<div class="question-body">
+<p>Calculate the average score for each exam for male and female students</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-13" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-13&#39;, &#39;sol-start-13&#39;)"> Solution </span>
+</div>
+<div id="sol-body-13" class="solution-body" style="display: none;">
+<pre class="r"><code>exam %&gt;% group_by(exam, gender) %&gt;% 
+  summarize(M = mean(scores))</code></pre>
+<pre><code>## # A tibble: 6 × 3
+## # Groups:   exam [3]
+##    exam gender     M
+##   &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
+## 1     1 f       43.1
+## 2     1 m       42.7
+## 3     2 f       36.6
+## 4     2 m       39.1
+## 5     3 f       38.1
+## 6     3 m       39.7</code></pre>
+<pre class="r"><code>#    use spread() to make it easier to compare
+exam %&gt;% group_by(exam, gender) %&gt;% 
+  summarize(M = mean(scores)) %&gt;% 
+  spread(gender, M)</code></pre>
+<pre><code>## # A tibble: 3 × 3
+## # Groups:   exam [3]
+##    exam     f     m
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     1  43.1  42.7
+## 2     2  36.6  39.1
+## 3     3  38.1  39.7</code></pre>
+</div>
+<p class="solution-end">
+</p>
+</div>
+<div id="reshaping" class="section level2">
+<h2>Reshaping</h2>
+<p>The same data can be represented in many different ways. We often discern between <em>long</em> and <em>wide</em> formats, and each of these are useful in different ways.
+Consider, the below example, showing the same data in <em>long</em> format on the left, and in <em>wide</em> on the right.
+<img src="images/tidy-9.png" alt="Long to wide, from ‘R for datascience’" /></p>
+<p>There are some useful functions which we can use to move between these formats: <code>pivot_longer()</code> and <code>pivot_wider()</code>. Check out an explanation of them by typing <code>vignette("pivot")</code> into your console.</p>
+<div class="optional-begin">
+<span id="opt-start-14" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-14&#39;, &#39;opt-start-14&#39;)"> USArrests: Data Codebook</span>
+</div>
+<div id="opt-body-14" class="optional-body" style="display: none;">
+<p><strong>Data overview</strong></p>
+<p>The <code>USArrests</code> data set actually comes with R, and contains violent crime arrests (per 100,000 residents) in each of the 50 states in the USA in 1973 and the percent of the population of each state that lived in urban areas.
+You can see it by just typing <code>USArrests</code> in R.</p>
+</div>
+<p class="optional-end">
+</p>
+<div class="question-begin">
+Question
+</div>
+<div class="question-body">
+<p>Convert the USArrests data set from a wide to a long format so that instead of separate variables for each crime type (Murder, Assault, Rape), there is one variable that identifies the crime type and one variable that contains the rates for each crime type for each state.</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-15" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-15&#39;, &#39;sol-start-15&#39;)"> Solution </span>
+</div>
+<div id="sol-body-15" class="solution-body" style="display: none;">
+<pre class="r"><code>arrests_long &lt;- USArrests %&gt;% 
+  pivot_longer(cols = c(Murder, Assault, Rape), names_to = &quot;CrimeType&quot;, values_to = &quot;Rate&quot;)</code></pre>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question
+</div>
+<div class="question-body">
+<p>Make a scatterplot showing the relationship between each type of violent crime rate and percent of population living in urban areas.</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-16" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-16&#39;, &#39;sol-start-16&#39;)"> Solution </span>
+</div>
+<div id="sol-body-16" class="solution-body" style="display: none;">
+<pre class="r"><code>ggplot(arrests_long, aes(UrbanPop, Rate)) + 
+  facet_wrap(~CrimeType, scales=&quot;free&quot;, nrow=1) + 
+  geom_point() + stat_smooth(method=&quot;lm&quot;)</code></pre>
+<p><img src="00_tidyverse_markdown_files/figure-html/unnamed-chunk-26-1.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+<p class="solution-end">
+</p>
+</div>
+<div id="less-guidance" class="section level2 unnumbered">
+<h2>Less guidance</h2>
+<div class="optional-begin">
+<span id="opt-start-17" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-17&#39;, &#39;opt-start-17&#39;)"> Psych::ability Data Codebook</span>
+</div>
+<div id="opt-body-17" class="optional-body" style="display: none;">
+<p><strong>Data overview</strong></p>
+<p>The <code>ability</code> data set in the <code>psych</code> package contains accuracy of 1525 subjects on 16 multiple choice IQ-test-type questions. The questions are of 4 types: basic reasoning, letter sequence, matrix reasoning, and spatial rotation. There are four questions of each type.<br />
+You can get the data from <a href="https://uoepsy.github.io/data/psychability.rda">https://uoepsy.github.io/data/psychability.rda</a>
+The <strong>.rda</strong> format is like the <strong>RData</strong> format, and you can get it using the <code>load()</code> function.</p>
+</div>
+<p class="optional-end">
+</p>
+<div class="question-begin">
+Question
+</div>
+<div class="question-body">
+<p>Tidy the data and make a graph of average accuracy for each question type.<br />
+You might have to use <code>as_tibble(ability)</code> or <code>as.data.frame(ability)</code> because it is initially stored as a matrix.<br />
+<strong>Hint:</strong> the <code>separate()</code> function may come in handy at some point.</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<span id="sol-start-18" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-18&#39;, &#39;sol-start-18&#39;)"> Solution </span>
+</div>
+<div id="sol-body-18" class="solution-body" style="display: none;">
+<pre class="r"><code>load(url(&quot;https://uoepsy.github.io/data/psychability.rda&quot;))
+iq &lt;- as_tibble(ability) %&gt;% 
+  pivot_longer(., cols=1:16, names_to = &quot;Item&quot;, values_to = &quot;Correct&quot;) %&gt;%
+  # gather(key=&quot;Item&quot;, value=&quot;Correct&quot;, 1:16) %&gt;%         # The gather() alternative... 
+  separate(Item, c(&quot;Domain&quot;, &quot;Number&quot;))
+
+ggplot(iq, aes(Domain, Correct)) + 
+  stat_summary(fun = mean, geom=&quot;bar&quot;)</code></pre>
+<p><img src="00_tidyverse_markdown_files/figure-html/unnamed-chunk-27-1.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+<p class="solution-end">
+</p>
+</div>
+</div>
+<div id="reproducible-research-with-rmarkdown" class="section level1">
+<h1>Reproducible research with RMarkdown</h1>
+<p>We’re also going to keep using <code>RMarkdown</code>. This is a really useful means of making a report reproducible. Essentially, it is a combination of <code>R</code> code and normal text. It will require learning a few new formatting rules (the “markdown” bit), but it means that in one file you can read in and analyse your data, and compile it to a pdf. Which essentially means that if your data or analysis changes, then the results you report change too without having to edit them!</p>
+<p>You were required to use RMarkdown for your USMR coursework before christmas, so hopefully many of you are beginning to feel a bit more comfortable with it by now.
+If you want to, we suggest that you go over some of the videos below.</p>
+<div id="general-rstudio-overview" class="section level2">
+<h2>General RStudio Overview</h2>
+<p>(RMarkdown is introduced in part 2)</p>
+<iframe src="https://media.ed.ac.uk/embedplaylist/secure/embed/v2/1/playlistId/1_8iq22lv2/uiConfId/32949671" width="740" height="330" allowfullscreen webkitallowfullscreen mozAllowFullScreen allow="autoplay *; fullscreen *; encrypted-media *" referrerpolicy="no-referrer-when-downgrade" sandbox="allow-forms allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock allow-popups allow-modals allow-orientation-lock allow-popups-to-escape-sandbox allow-presentation allow-top-navigation-by-user-activation" frameborder="0" title="Kaltura Player">
+</iframe>
+</div>
+<div id="trial-and-error" class="section level2">
+<h2>Trial and Error</h2>
+<iframe id="kaltura_player" src="https://cdnapisec.kaltura.com/p/2010292/sp/201029200/embedIframeJs/uiconf_id/32599141/partner_id/2010292?iframeembed=true&amp;playerId=kaltura_player&amp;entry_id=1_gg3dpa3s&amp;flashvars[streamerType]=auto&amp;flashvars[localizationCode]=en&amp;flashvars[leadWithHTML5]=true&amp;flashvars[sideBarContainer.plugin]=true&amp;flashvars[sideBarContainer.position]=left&amp;flashvars[sideBarContainer.clickToClose]=true&amp;flashvars[chapters.plugin]=true&amp;flashvars[chapters.layout]=vertical&amp;flashvars[chapters.thumbnailRotator]=false&amp;flashvars[streamSelector.plugin]=true&amp;flashvars[EmbedPlayer.SpinnerTarget]=videoHolder&amp;flashvars[dualScreen.plugin]=true&amp;flashvars[Kaltura.addCrossoriginToIframe]=true&amp;&amp;wid=1_fukx0xoj" width="304" height="231" allowfullscreen webkitallowfullscreen mozAllowFullScreen allow="autoplay *; fullscreen *; encrypted-media *" sandbox="allow-forms allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock allow-popups allow-modals allow-orientation-lock allow-popups-to-escape-sandbox allow-presentation allow-top-navigation-by-user-activation" frameborder="0" title="Kaltura Player">
+</iframe>
+</div>
+<div id="tips-specifically-for-the-ppls-rstudio-server" class="section level2">
+<h2>Tips specifically for the PPLS Rstudio Server</h2>
+<iframe id="kaltura_player" src="https://cdnapisec.kaltura.com/p/2010292/sp/201029200/embedIframeJs/uiconf_id/32599141/partner_id/2010292?iframeembed=true&amp;playerId=kaltura_player&amp;entry_id=1_luvh9yqm&amp;flashvars[streamerType]=auto&amp;flashvars[localizationCode]=en&amp;flashvars[leadWithHTML5]=true&amp;flashvars[sideBarContainer.plugin]=true&amp;flashvars[sideBarContainer.position]=left&amp;flashvars[sideBarContainer.clickToClose]=true&amp;flashvars[chapters.plugin]=true&amp;flashvars[chapters.layout]=vertical&amp;flashvars[chapters.thumbnailRotator]=false&amp;flashvars[streamSelector.plugin]=true&amp;flashvars[EmbedPlayer.SpinnerTarget]=videoHolder&amp;flashvars[dualScreen.plugin]=true&amp;flashvars[Kaltura.addCrossoriginToIframe]=true&amp;&amp;wid=1_38tb4j0m" width="304" height="231" allowfullscreen webkitallowfullscreen mozAllowFullScreen allow="autoplay *; fullscreen *; encrypted-media *" sandbox="allow-forms allow-same-origin allow-scripts allow-top-navigation allow-pointer-lock allow-popups allow-modals allow-orientation-lock allow-popups-to-escape-sandbox allow-presentation allow-top-navigation-by-user-activation" frameborder="0" title="Kaltura Player">
+</iframe>
+</div>
+</div>
+
+<link rel="stylesheet" href="https://uoepsy.github.io/assets/css/ccfooter.css" />
+<div class="ccfooter"></div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

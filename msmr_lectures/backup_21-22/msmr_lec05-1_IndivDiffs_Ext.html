@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Week 5: Individual Differences, part 1</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Dan Mirman" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# <b>Week 5: Individual Differences, part 1</b>
+## Multivariate Statistics and Methodology using R (MSMR)<br><br>
+### Dan Mirman
+### Department of Psychology<br>The University of Edinburgh
+
+---
+
+
+
+
+
+
+# Individual differences
+
+**Individual differences provide an additional level of analysis for understanding phenomena**
+
+--
+
+* At a group level, a treatment works better than a placebo, but why does it work better for some people than for others?
+* People solve easy problems faster than hard problems, but why are some people a lot faster on the easy problems and other people only a little faster?
+
+--
+
+t-test and ANOVA methods treat individual differences as noise
+
+Multilevel models provide two ways to quantify and analyse individual differences
+
+---
+# "External" individual differences can be added as fixed effects
+
+Example: USA National Youth Survey longitudinal data on tolerance for deviant behaviour, exposure to deviant behaviour, and gender. Subset of 16 subjects printed in Willett (1997, Table 11.1). (`DeviantBehavior`)
+
+`Tolerance` was measured by asking whether it is wrong for someone their age to: 
+
+* cheat on tests
+* purposely destroy property of others
+* hit or threaten someone without reason
+* use alcohol
+* use marijuana
+* sell hard drugs
+* steal something worth less than $5
+* steal something worth more than $50
+* break into a building or vehicle to steal
+
+---
+# Tolerance for deviant behaviour
+
+
+```r
+load("./data/DeviantBehavior.RData")
+summary(DeviantBehavior)
+```
+
+```
+##      SubjID      Gender      Exposure          Age       Tolerance   
+##  S0009  : 5   Female:45   Min.   :0.810   Min.   :11   Min.   :1.00  
+##  S0045  : 5   Male  :35   1st Qu.:0.922   1st Qu.:12   1st Qu.:1.22  
+##  S0268  : 5               Median :1.145   Median :13   Median :1.50  
+##  S0314  : 5               Mean   :1.191   Mean   :13   Mean   :1.62  
+##  S0442  : 5               3rd Qu.:1.395   3rd Qu.:14   3rd Qu.:1.99  
+##  S0514  : 5               Max.   :1.990   Max.   :15   Max.   :3.46  
+##  (Other):50
+```
+
+![](msmr_lec05-1_IndivDiffs_Ext_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
+
+---
+## Research question 1
+
+**Does tolerance increase with age and is it modulated by gender?**
+
+
+```r
+m.base &lt;- lmer(Tolerance ~ Age*Gender + (Age | SubjID),
+                 contrasts=list(Gender="contr.sum"), data=DeviantBehavior)
+```
+<div id="nxagfmixwd" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#nxagfmixwd .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#nxagfmixwd .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#nxagfmixwd .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#nxagfmixwd .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#nxagfmixwd .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#nxagfmixwd .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#nxagfmixwd .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#nxagfmixwd .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#nxagfmixwd .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#nxagfmixwd .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#nxagfmixwd .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#nxagfmixwd .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#nxagfmixwd .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#nxagfmixwd .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#nxagfmixwd .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#nxagfmixwd .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#nxagfmixwd .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#nxagfmixwd .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#nxagfmixwd .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#nxagfmixwd .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#nxagfmixwd .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#nxagfmixwd .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#nxagfmixwd .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#nxagfmixwd .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#nxagfmixwd .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#nxagfmixwd .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#nxagfmixwd .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#nxagfmixwd .gt_left {
+  text-align: left;
+}
+
+#nxagfmixwd .gt_center {
+  text-align: center;
+}
+
+#nxagfmixwd .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#nxagfmixwd .gt_font_normal {
+  font-weight: normal;
+}
+
+#nxagfmixwd .gt_font_bold {
+  font-weight: bold;
+}
+
+#nxagfmixwd .gt_font_italic {
+  font-style: italic;
+}
+
+#nxagfmixwd .gt_super {
+  font-size: 65%;
+}
+
+#nxagfmixwd .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">effect</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">group</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">term</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">estimate</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">std.error</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">statistic</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">df</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">p.value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">(Intercept)</td>
+<td class="gt_row gt_right">-0.12563</td>
+<td class="gt_row gt_right">0.52444</td>
+<td class="gt_row gt_right">-0.2395</td>
+<td class="gt_row gt_right">14.04</td>
+<td class="gt_row gt_right">0.814143</td></tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">Age</td>
+<td class="gt_row gt_right">0.13488</td>
+<td class="gt_row gt_right">0.04403</td>
+<td class="gt_row gt_right">3.0634</td>
+<td class="gt_row gt_right">14.04</td>
+<td class="gt_row gt_right">0.008399</td></tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">Gender1</td>
+<td class="gt_row gt_right">0.35552</td>
+<td class="gt_row gt_right">0.52444</td>
+<td class="gt_row gt_right">0.6779</td>
+<td class="gt_row gt_right">14.04</td>
+<td class="gt_row gt_right">0.508852</td></tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">Age:Gender1</td>
+<td class="gt_row gt_right">-0.03255</td>
+<td class="gt_row gt_right">0.04403</td>
+<td class="gt_row gt_right">-0.7392</td>
+<td class="gt_row gt_right">14.04</td>
+<td class="gt_row gt_right">0.471957</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">SubjID</td>
+<td class="gt_row gt_left">sd__(Intercept)</td>
+<td class="gt_row gt_right">1.75026</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">SubjID</td>
+<td class="gt_row gt_left">cor__(Intercept).Age</td>
+<td class="gt_row gt_right">-0.99242</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">SubjID</td>
+<td class="gt_row gt_left">sd__Age</td>
+<td class="gt_row gt_right">0.15204</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">Residual</td>
+<td class="gt_row gt_left">sd__Observation</td>
+<td class="gt_row gt_right">0.27235</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+
+Significant increase with age, no significant effects of gender
+
+---
+## Research question 2
+
+**Is this modulated by exposure to deviant behavior?**
+
+`Exposure` scale is not clear and other effects would be estimated at `Exposure=0`, which is not an attested value. 
+
+If we center `Exposure`, its effects and the effects of other predictors will be easier to interpret.
+
+
+```r
+# center Exposure, but do not re-scale it
+DeviantBehavior$Exposure.center &lt;- scale(DeviantBehavior$Exposure, scale=FALSE)
+```
+
+--
+
+Fit the full model
+
+
+```r
+m.exp1 &lt;- lmer(Tolerance ~ Age*Gender*Exposure.center + (Age | SubjID), 
+               data=DeviantBehavior, contrasts=list(Gender="contr.sum"))
+```
+
+---
+
+
+```r
+gt(tidy(m.exp1))
+```
+
+<div id="ihwnrmyizg" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#ihwnrmyizg .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#ihwnrmyizg .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ihwnrmyizg .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#ihwnrmyizg .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#ihwnrmyizg .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ihwnrmyizg .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ihwnrmyizg .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#ihwnrmyizg .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#ihwnrmyizg .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#ihwnrmyizg .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#ihwnrmyizg .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#ihwnrmyizg .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ihwnrmyizg .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ihwnrmyizg .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#ihwnrmyizg .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#ihwnrmyizg .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#ihwnrmyizg .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#ihwnrmyizg .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ihwnrmyizg .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#ihwnrmyizg .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ihwnrmyizg .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#ihwnrmyizg .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#ihwnrmyizg .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ihwnrmyizg .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ihwnrmyizg .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#ihwnrmyizg .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ihwnrmyizg .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#ihwnrmyizg .gt_left {
+  text-align: left;
+}
+
+#ihwnrmyizg .gt_center {
+  text-align: center;
+}
+
+#ihwnrmyizg .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#ihwnrmyizg .gt_font_normal {
+  font-weight: normal;
+}
+
+#ihwnrmyizg .gt_font_bold {
+  font-weight: bold;
+}
+
+#ihwnrmyizg .gt_font_italic {
+  font-style: italic;
+}
+
+#ihwnrmyizg .gt_super {
+  font-size: 65%;
+}
+
+#ihwnrmyizg .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 65%;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">effect</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">group</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">term</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">estimate</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">std.error</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">statistic</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">df</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">p.value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">(Intercept)</td>
+<td class="gt_row gt_right">-0.38880</td>
+<td class="gt_row gt_right">0.43008</td>
+<td class="gt_row gt_right">-0.904</td>
+<td class="gt_row gt_right">12</td>
+<td class="gt_row gt_right">0.3837728</td></tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">Age</td>
+<td class="gt_row gt_right">0.15603</td>
+<td class="gt_row gt_right">0.03492</td>
+<td class="gt_row gt_right">4.468</td>
+<td class="gt_row gt_right">12</td>
+<td class="gt_row gt_right">0.0007678</td></tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">Gender1</td>
+<td class="gt_row gt_right">0.65192</td>
+<td class="gt_row gt_right">0.43008</td>
+<td class="gt_row gt_right">1.516</td>
+<td class="gt_row gt_right">12</td>
+<td class="gt_row gt_right">0.1554571</td></tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">Exposure.center</td>
+<td class="gt_row gt_right">-4.22668</td>
+<td class="gt_row gt_right">1.47540</td>
+<td class="gt_row gt_right">-2.865</td>
+<td class="gt_row gt_right">12</td>
+<td class="gt_row gt_right">0.0142277</td></tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">Age:Gender1</td>
+<td class="gt_row gt_right">-0.05921</td>
+<td class="gt_row gt_right">0.03492</td>
+<td class="gt_row gt_right">-1.696</td>
+<td class="gt_row gt_right">12</td>
+<td class="gt_row gt_right">0.1156925</td></tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">Age:Exposure.center</td>
+<td class="gt_row gt_right">0.38532</td>
+<td class="gt_row gt_right">0.11979</td>
+<td class="gt_row gt_right">3.217</td>
+<td class="gt_row gt_right">12</td>
+<td class="gt_row gt_right">0.0073996</td></tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">Gender1:Exposure.center</td>
+<td class="gt_row gt_right">3.62705</td>
+<td class="gt_row gt_right">1.47540</td>
+<td class="gt_row gt_right">2.458</td>
+<td class="gt_row gt_right">12</td>
+<td class="gt_row gt_right">0.0301300</td></tr>
+    <tr><td class="gt_row gt_left">fixed</td>
+<td class="gt_row gt_left">NA</td>
+<td class="gt_row gt_left">Age:Gender1:Exposure.center</td>
+<td class="gt_row gt_right">-0.28576</td>
+<td class="gt_row gt_right">0.11979</td>
+<td class="gt_row gt_right">-2.386</td>
+<td class="gt_row gt_right">12</td>
+<td class="gt_row gt_right">0.0344162</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">SubjID</td>
+<td class="gt_row gt_left">sd__(Intercept)</td>
+<td class="gt_row gt_right">1.22120</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">SubjID</td>
+<td class="gt_row gt_left">cor__(Intercept).Age</td>
+<td class="gt_row gt_right">-0.98960</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">SubjID</td>
+<td class="gt_row gt_left">sd__Age</td>
+<td class="gt_row gt_right">0.10379</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+    <tr><td class="gt_row gt_left">ran_pars</td>
+<td class="gt_row gt_left">Residual</td>
+<td class="gt_row gt_left">sd__Observation</td>
+<td class="gt_row gt_right">0.27224</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td>
+<td class="gt_row gt_right">NA</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+
+* Significant main effects: **Age** and **Exposure**
+* Significant interactions: **Age-by-Exposure**, **Gender-by-Exposure**, **Age-by-Gender-by-Exposure**
+
+---
+# How to plot the three-way interaction?
+
+The three-way Age-by-Gender-by-Exposure interaction is a relationship among four variables (Tolerance for deviant behaviour, Exposure to deviant behaviour, Age, and Gender), three of which are continuous variables. **This is hard to visualize.**
+
+To make it easier to visualize, can split the `Exposure` into levels
+
+--
+
+Option 1: Median split
+
+```r
+DeviantBehavior$ExposureMedSpl &lt;- ifelse(
+  DeviantBehavior$Exposure &gt;= median(DeviantBehavior$Exposure), "High", "Low")
+```
+
+---
+
+
+```r
+ggplot(DeviantBehavior, aes(Age, Tolerance, color=ExposureMedSpl)) + 
+  facet_wrap(~ Gender) + 
+  stat_summary(fun=mean, geom="point", size=3) +
+  stat_summary(fun.data=mean_se, geom="errorbar", width=0.2) + 
+  stat_summary(aes(y=fitted(m.exp1)), fun=mean, geom="line") +
+  labs(x="Age", y="Tolerance for deviant behavior", 
+       color="Exposure\n(Median Split)") + 
+  theme_bw() 
+```
+
+![](msmr_lec05-1_IndivDiffs_Ext_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+
+Adolescents with higher Exposure to deviant behaviour tend to have increased Tolerance for deviant behaviour as they get older, and more so for males than females.
+
+---
+# How to plot the three-way interaction?
+
+Option 2: tertile split provides a little more info than median split
+
+
+```r
+# define break points
+b &lt;- quantile(DeviantBehavior$Exposure, probs=seq(0, 1, by=1/3)) 
+# split continuous predictor and provide level labels
+DeviantBehavior$Exposure3 &lt;- cut(DeviantBehavior$Exposure, 
+                                 breaks=b, include.lowest=T, 
+                                 labels=c("Low", "Medium", "High"))
+```
+
+---
+
+```r
+ggplot(DeviantBehavior, aes(Age, Tolerance, color=Exposure3)) + 
+  facet_wrap(~ Gender) + 
+  stat_summary(fun=mean, geom="point", size=3) + 
+  stat_summary(fun.data=mean_se, geom="errorbar", width=0.2) + 
+  stat_summary(aes(y=fitted(m.exp1)), fun=mean, geom="line") +
+  labs(x="Age", y="Tolerance for deviant behavior", 
+       color="Exposure\n(Tertiles)") + 
+  theme_bw() 
+```
+
+![](msmr_lec05-1_IndivDiffs_Ext_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
+
+**Warning**: reviewers and readers may get confused about whether your *model* used continuous or categorical predictors, so you will need to be extra clear about this in your write-up.
+
+---
+# Key points
+
+* Individual differences provide deeper insights into group-level phenomena
+* Can assess them by adding them to the multilevel model
+* Dividing a continuous variable into levels can help to visualise complex interactions
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

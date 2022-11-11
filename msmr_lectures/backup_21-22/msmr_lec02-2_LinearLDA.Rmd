@@ -1,0 +1,166 @@
+---
+title: "<b>Week 2: Longitudinal Data Analysis using Multilevel Modeling</b>"
+subtitle: "Multivariate Statistics and Methodology using R (MSMR)<br><br> "
+author: "Dan Mirman"
+institute: "Department of Psychology<br>The University of Edinburgh"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      ratio: '16:9'
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+
+```{r setup, include=FALSE, message=FALSE}
+options(htmltools.dir.version = FALSE)
+options(digits = 4)
+library(knitr)
+library(kableExtra)
+library(patchwork)
+```
+
+```{r xaringan-themer, include = FALSE}
+library(xaringanthemer)
+style_mono_accent(
+  # base_color = "#0F4C81", # DAPR1
+  # base_color = "#BF1932", # DAPR2
+  # base_color = "#88B04B", # DAPR3 
+  # base_color = "#FCBB06", # USMR
+  base_color = "#a41ae4", # MSMR
+  header_color = "#000000",
+  header_font_google = google_font("Source Sans Pro"),
+  header_font_weight = 400,
+  text_font_google = google_font("Source Sans Pro", "400", "400i", "600", "600i"),
+  code_font_google = google_font("Source Code Pro"),
+  extra_css = list(".scroll-output" = list("height"="90%","overflow-y"="scroll"))
+) 
+```
+
+# Longitudinal data are a natural application domain for MLM
+
+* Longitudinal measurements are *nested* within subjects (by definition)
+* Longitudinal measurements are related by a continuous variable, spacing can be uneven across participants, and data can be missing
+    + These are problems rmANOVA
+* Trajectories of longitudinal change can be nonlinear (we'll get to that next week)
+
+--
+
+## We've already seen some of this...
+
+* Weight maintenance (Week 1 lab)
+* Visual search (not longitudinal, but principles are the same)
+
+---
+# Another example
+
+County-level percentage of adults who are physically active at recommended levels. Data from PHE for 2012-2015 (`PHE_MentalHealth.Rdata`)
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(lme4)
+library(effects)
+load("./data/PHE_MentalHealth.Rdata")
+str(mh_phe)
+```
+
+---
+# Indicators
+```{r}
+gt::gt(unique(mh_phe[, 1:2]))
+```
+
+The indicator ID for percentage of physically active adults is 90275
+
+---
+
+```{r fig.width=8, fig.height=4, warning=FALSE}
+filter(mh_phe, IndicatorID == 90275) %>%
+  ggplot(aes(Year, Value, color = Region)) +
+    stat_summary(fun = mean, geom="point") +
+    geom_smooth(method = "lm", se=FALSE)
+```
+
+Looks like there are some interesting differences. We can ask two kinds of questions:
+
+1.  Did the regions differ in their *baseline (2012)* percentage physically active adults?
+2.  Did the regions differ in their *slopes of change* of percentage physically active adults?
+
+---
+# What is the baseline?
+
+**Did the regions differ in their *baseline (2012)* percentage physically active adults?**
+
+We can answer this question using the **intercept** coefficients
+
+--
+
+But those will be estimated at `Year = 0`, and the question is not about physical activity the year Jesus was born.
+
+So we need to adjust the time variable so that 2012 corresponds to time 0 (and we can select just the physical activity values while we're at it):
+
+```{r}
+active_dat <- filter(mh_phe, IndicatorID == 90275) %>%
+  mutate(Time = Year - 2012)
+```
+
+Now `Time` is a variable just like `Year`, but going from 0 to 3 instead of 2012 to 2015
+
+---
+# Fit the models
+
+```{r}
+# base model: just change over time
+m <- lmer(Value ~ Time + (Time | County), data = active_dat, REML = F)
+# add baseline differences between regions
+m.0 <- lmer(Value ~ Time + Region + (Time | County), data = active_dat, REML = F)
+# add slope differences between regions
+m.1 <- lmer(Value ~ Time * Region + (Time | County), data = active_dat, REML = F)
+```
+
+---
+# Compare models
+
+```{r}
+anova(m, m.0, m.1)
+```
+
+Regions differed in baseline percentage of physically active adults ( $\chi^2(8) = 39.3, p < 0.0001$ ), but there not in terms of the slope of change ( $\chi^2(8) = 9.86, p = 0.28$ ).
+
+---
+# Visualize effects, Option 1: model-estimated percentages
+
+```{r fig.width=8, fig.height=4}
+ef <- as.data.frame(effect("Time:Region", m.1))
+ggplot(ef, aes(Time, fit, color=Region)) + 
+  geom_line() +
+  theme_bw() + scale_color_brewer(palette = "Set1")
+```
+
+---
+# Visualize effects, Option 2: estimated parameters
+
+```{r echo=FALSE}
+est <- broom.mixed::tidy(m.1) %>% 
+  filter(effect == "fixed") %>% 
+  mutate(Type = ifelse(str_detect(term, "Time"), "Slope", "Baseline")) %>%
+  arrange(Type, term) %>% 
+  mutate(Region = rep(sort(unique(active_dat$Region)), 2))
+# need to adjust non-reference estimates 
+est$estimate[2:9] <- est$estimate[2:9] + est$estimate[1] # adjust baselines using reference intercept
+est$estimate[11:18] <- est$estimate[11:18] + est$estimate[10] # adjust slopes using reference slope
+# order the regions by baseline physical activity
+est <- est %>% mutate(Region = fct_reorder(Region, estimate, .fun=sum))
+```
+
+[Side note: it took me a while to work out the data wrangling required to get the coefficients into a convenient form for plotting]
+
+```{r fig.width=9, fig.height=4}
+ggplot(est, aes(Region, estimate, ymin=(estimate-std.error), ymax=(estimate+std.error))) +
+  facet_wrap(~ Type, scales="free_x") +
+  geom_pointrange() + coord_flip()
+```
+
