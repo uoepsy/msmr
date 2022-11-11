@@ -362,7 +362,7 @@ div.tocify {
     <li>
       <a href="05_multilevel_recap.html">5: Multilevel Modelling Recap</a>
     </li>
-    <li class="dropdown-header">Break Week</li>
+    <li class="dropdown-header">FLW: Flexible Learning Week</li>
   </ul>
 </li>
 <li class="dropdown">
@@ -373,19 +373,19 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="07_efapca.html">PCA | EFA</a>
+      <a href="06_efapca.html">6: PCA | EFA</a>
     </li>
     <li>
-      <a href="08_cfa.html">CFA</a>
+      <a href="07_cfa.html">7: CFA</a>
     </li>
     <li>
-      <a href="09_path.html">Path Analysis</a>
+      <a href="08_path.html">8: Path Analysis</a>
     </li>
     <li>
-      <a href="10_sem1.html">SEM 1</a>
+      <a href="09_sem1.html">9: SEM 1</a>
     </li>
     <li>
-      <a href="11_sem2.html">SEM 2</a>
+      <a href="10_sem2.html">10: SEM 2</a>
     </li>
   </ul>
 </li>
@@ -1006,7 +1006,7 @@ R &lt;- cor(job)
 
 pheatmap(R, breaks = seq(-1, 1, length.out = 100))</code></pre>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-5"></span>
-<img src="07_efapca_files/figure-html/unnamed-chunk-5-1.png" alt="Correlation between the variables in the ``Job'' dataset" width="80%" />
+<img src="06_efapca_files/figure-html/unnamed-chunk-5-1.png" alt="Correlation between the variables in the ``Job'' dataset" width="80%" />
 <p class="caption">
 Figure 1: Correlation between the variables in the ``Job’’ dataset
 </p>
@@ -1445,14 +1445,14 @@ This can be easily done by calling <code>plot</code> on the variances, which are
 <pre class="r"><code>plot(x = 1:length(job_pca$values), y = job_pca$values, 
      type = &#39;b&#39;, xlab = &#39;&#39;, ylab = &#39;Variance&#39;, 
      main = &#39;Police officers: scree plot&#39;, frame.plot = FALSE)</code></pre>
-<p><img src="07_efapca_files/figure-html/unnamed-chunk-25-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="06_efapca_files/figure-html/unnamed-chunk-25-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <p>where the argument <code>type = 'b'</code> tells R that the plot should have <em>both</em> points and lines.</p>
 <p>A typical scree plot features higher variances for the initial components and quickly drops to small variances where the curve is almost flat.
 The flat part of the curve represents the noise components, which are not able to capture the main sources of variability in the system.</p>
 <p>According to the scree plot criterion, we should <strong>keep as many principal components as where the “elbow” in the plot occurs.</strong> By elbow we mean the variance before the curve looks almost flat.</p>
 <p>Alternatively, some people prefer to use the function <code>scree()</code> from the <code>psych</code> package:</p>
 <pre class="r"><code>scree(job, factors = FALSE)</code></pre>
-<p><img src="07_efapca_files/figure-html/unnamed-chunk-26-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="06_efapca_files/figure-html/unnamed-chunk-26-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <p>This also draws a horizontal line at y = 1. So, if you are making a decision about how many PCs to keep by looking at where the plot falls below the y = 1 line, you are basically following Kaiser’s rule. In fact, Kaiser’s criterion tells you to keep as many PCs as are those with a variance (= eigenvalue) greater than 1.</p>
 </div>
 <div class="question-begin">
@@ -1520,7 +1520,7 @@ Question A10
 </div>
 <div id="sol-body-142" class="solution-body" style="display: none;">
 <pre class="r"><code>fa.parallel(job, fa=&quot;pc&quot;, quant=.95)</code></pre>
-<p><img src="07_efapca_files/figure-html/unnamed-chunk-30-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="06_efapca_files/figure-html/unnamed-chunk-30-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <pre><code>## Parallel analysis suggests that the number of factors =  NA  and the number of components =  1</code></pre>
 <p>Parallel analysis suggests to keep 1 principal component only as there is only one PC with an eigenvalue higher than the simulated random ones in red.</p>
 </div>
@@ -1589,7 +1589,7 @@ sum_sq</code></pre>
 ## [41]  29.82  41.37   9.30  65.42  21.98  63.97  36.09  84.98 129.65  88.00</code></pre>
 <p>Units with a high score should be considered for further inspection as it may happen that they are represented as close to another unit when, in fact, they might be very different.</p>
 <pre class="r"><code>boxplot(sum_sq)</code></pre>
-<p><img src="07_efapca_files/figure-html/unnamed-chunk-36-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="06_efapca_files/figure-html/unnamed-chunk-36-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <p>There seem to be only five outliers, and they are not too high compared to the rest of the scores. For this reason, we will consider the 2D representation of the data to be satisfactory.</p>
 </div>
 <p class="optional-end">
@@ -1644,7 +1644,7 @@ lm(nr_arrests ~ skills_score1 + skills_score2, data = job)</code></pre>
        pc2 = job_pca$scores[, 2]) %&gt;%
   ggplot(.,aes(x=pc1,y=pc2))+
   geom_point()</code></pre>
-<p><img src="07_efapca_files/figure-html/unnamed-chunk-42-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="06_efapca_files/figure-html/unnamed-chunk-42-1.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="exploratory-factor-analysis-efa" class="section level1">
@@ -1788,11 +1788,11 @@ corr.test(df)  </code></pre>
 ##  item1  item2  item3  item4  item5  item6  item7  item8  item9 item10 
 ##   0.90   0.88   0.92   0.88   0.84   0.94   0.82   0.81   0.95   0.94</code></pre>
 <pre class="r"><code>pairs.panels(df)</code></pre>
-<p><img src="07_efapca_files/figure-html/unnamed-chunk-43-1.png" width="80%" style="display: block; margin: auto;" />
+<p><img src="06_efapca_files/figure-html/unnamed-chunk-43-1.png" width="80%" style="display: block; margin: auto;" />
 or alternatively, if you want a ggplot based approach:</p>
 <pre class="r"><code>library(GGally)
 ggpairs(data=df, diag=list(continuous=&quot;density&quot;), axisLabels=&quot;show&quot;)</code></pre>
-<p><img src="07_efapca_files/figure-html/unnamed-chunk-44-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="06_efapca_files/figure-html/unnamed-chunk-44-1.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
 <p class="solution-end">
 </p>
@@ -1814,7 +1814,7 @@ You can use <code>fa.parallel(data, fm = "fa")</code> to conduct both parallel a
 </div>
 <div id="sol-body-146" class="solution-body" style="display: none;">
 <pre class="r"><code>fa.parallel(df, fa = &quot;fa&quot;)</code></pre>
-<p><img src="07_efapca_files/figure-html/unnamed-chunk-45-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="06_efapca_files/figure-html/unnamed-chunk-45-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <pre><code>## Parallel analysis suggests that the number of factors =  2  and the number of components =  NA</code></pre>
 <p>In this case the scree plot has a kink at the third factor, so we probably want to retain 2 factors.</p>
 <p>We can conduct the MAP test using <code>VSS(data)</code>.</p>
