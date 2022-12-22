@@ -3,23 +3,6 @@ library(tidyverse)
 library(lme4)
 library(effects)
 
-# Part 1: logistic MLM
-# test-enhanced learning
-load("./data/TestEnhancedLearning.RData")
-summary(tel)
-ggplot(tel, aes(Delay, Correct, fill=Group)) +
-  stat_summary(fun=mean, geom="col", position = "dodge")
-
-m.tel <- glmer(Correct ~ Group*Delay + (Delay | Subject_ID), 
-               data=tel, family = "binomial")
-summary(m.tel)
-
-ef.tel <- as.data.frame(effect("Group:Delay", m.tel))
-ef.tel
-ggplot(ef.tel, aes(Delay, fit, color=Group)) +
-  geom_pointrange(aes(ymin=lower, ymax=upper), 
-                  position=position_dodge(width=0.2))
-
 # Part 2: linear LDA: weight maintenance lab exercise
 # following a weight-loss programme, participants were randomly assigned to one of three weight maintenance conditions: None (Control), MR (use a meal replacement to replace one meal and snack per day), or ED (book and educational materials on purchasing and preparing foods lower in energy density - reduced fat content and/or increased water content). Weight was assessed at baseline (start of maintenance), 12 months post, 24 months post, and 36 months post.
 load(url("https://uoepsy.github.io/msmr/data/WeightMaintain3.rda"))

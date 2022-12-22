@@ -229,10 +229,13 @@ Intercept ( $\beta_0$ ): Overall average
 
 --
 
-**Keep it maximal**: A full or maximal random effect structure is when all of the factors that could hypothetically vary across individual observational units are allowed to do so.
+Extend to polynomial terms: individual differences in "slope" (curvature) of quadratic, cubic, etc. components.
 
-* Incomplete random effects can inflate false alarms
-* Full random effects can produce convergence problems (we'll come back to this issue in a little while)
+--
+
+**Keep it maximal**: Incomplete random effects can inflate false alarms, but full random effects can produce convergence problems.
+
+If/when need to simplify random effects: consider which random effects are most expendable; that is, which individual differences are least important to your research questions or inferences.
 
 ---
 # Let's return to our example
@@ -285,7 +288,6 @@ ggplot(TargetFix.gca, aes(Time, meanFix, color=Condition)) +
   theme_bw() + expand_limits(y=c(0,1)) +
   labs(y="Fixation Proportion", x="Time since word onset (ms)")
 ```
-
 
 ---
 # The random effects
@@ -378,40 +380,6 @@ Outcome ~ (poly1+poly2+poly3)*Condition + (poly1+poly2+poly3 || Subject)
 ```
 
 ---
-# Participants as fixed vs. random effects
-**In general**, participants should be treated as random effects.
-
-This captures the typical assumption of random sampling from some population to which we wish to generalise.
-
-**Pooling**
-
-<img src="./figs/partial-pooling-vs-others-1.png" width="30%" />
-
-http://tjmahr.github.io/plotting-partial-pooling-in-mixed-effects-models/
-
----
-# Participants as fixed vs. random effects
-**In general**, participants should be treated as random effects.
-
-This captures the typical assumption of random sampling from some population to which we wish to generalise.
-
-**Shrinkage**
-
-<img src="./figs/shrinkage-plot-1.png" width="30%" />
-
-http://tjmahr.github.io/plotting-partial-pooling-in-mixed-effects-models/
-
-Another explanation of shrinkage: https://m-clark.github.io/posts/2019-05-14-shrinkage-in-mixed-models/
-
----
-# Participants as fixed vs. random effects
-**In general**, participants should be treated as random effects.
-
-This captures the typical assumption of random sampling from some population to which we wish to generalise.
-
-**Exceptions are possible**: e.g., neurological/neuropsychological case studies where the goal is to characterise the pattern of performance for each participant, not generalise to a population.
-
----
 # Key points
 
 .pull-left[
@@ -422,12 +390,13 @@ This captures the typical assumption of random sampling from some population to 
 * Random effect structure
     + Keep it maximal, but be ready to deal with convergence problems
     + For within-subject variables: "left" side of pipe (random slopes) is more flexible, but requires more data to estimate; "right" side of pipe (nested) is a good alternative
-* Participants as random effects
-    + Supports most inferences
-    + Partial pooling (aka shrinkage)
-    + Some exceptions (e.g., case studies)
 ]
 
 .pull-right[
 <img src="./figs/max_grad_tombstone.jpg" />
 ]
+
+---
+# Live R
+
+Fixations are binary - a participant is either looking at the target object or they are not - so let's revisit the target fixation example, this time using logistic MLM to analyse the data.

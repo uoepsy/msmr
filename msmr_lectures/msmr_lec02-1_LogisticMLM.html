@@ -11,10 +11,18 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
+.title[
 # <b>Week 2: Logistic Multilevel Modeling</b>
+]
+.subtitle[
 ## Multivariate Statistics and Methodology using R (MSMR)<br><br>
+]
+.author[
 ### Dan Mirman
+]
+.institute[
 ### Department of Psychology<br>The University of Edinburgh
+]
 
 ---
 
@@ -97,14 +105,14 @@ ggplot(nwl, aes(block, PropCorrect, color=group, shape=group)) +
   expand_limits(y=1.0) + theme_bw() + labs(x="Block", y="Proportion Correct")
 ```
 
-![](msmr_lec02_LogisticMLM_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
+![](msmr_lec02-1_LogisticMLM_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
 
 ---
 # Research questions 
 (just focus on test data for now)
 
 .pull-left[
-![](msmr_lec02_LogisticMLM_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
+![](msmr_lec02-1_LogisticMLM_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
 ]
 
 .pull-right[
@@ -143,7 +151,7 @@ m.recall &lt;- glmer(cbind(NumCorrect, NumError) ~ Phase * group +
 ```
 
 ```
-## boundary (singular) fit: see ?isSingular
+## boundary (singular) fit: see help('isSingular')
 ```
 
 --
@@ -197,7 +205,7 @@ summary(m.recall)
 ## grouppatint -0.725  0.094       
 ## PhsImmdt:gr  0.108 -0.800 -0.066
 ## optimizer (Nelder_Mead) convergence code: 0 (OK)
-## boundary (singular) fit: see ?isSingular
+## boundary (singular) fit: see help('isSingular')
 ```
 ]
 
@@ -243,7 +251,7 @@ ggplot(filter(nwl, block &gt; 7), aes(fct_rev(Phase), PropCorrect, fill=group)) 
   theme_bw() + labs(y="Proportion Correct", x="Test Phase") 
 ```
 
-![](msmr_lec02_LogisticMLM_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
+![](msmr_lec02-1_LogisticMLM_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
 
 ---
 # Simplify random effects
@@ -262,6 +270,11 @@ There is some disagreement about the *right* way to structure random effects. Th
 * Start with a maximal random effect structure
 * In case of convergence problems, look at the random effect variance-covariance matrix: are there terms with very low variance or unrealistic covariance (-1 or 1)? Consider removing these.
 * Compare fixed effect estimates under different random effect structures: ideally, the fixed effect estimates and SE should be (approximately) the same. If they are substantially different, then your modeling approach is not robust and you should reconsider and/or be *very* cautious about interpreting the results.
+
+---
+# Live R
+
+**Test-enhanced learning** (Roediger &amp; Karpicke, 2006; Roediger et al., 2011; Pan &amp; Rickard, 2018): attempting to recall information (i.e., a practice test) produces better learning than re-studying the material.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
@@ -310,6 +323,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable

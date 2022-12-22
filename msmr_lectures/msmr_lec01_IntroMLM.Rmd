@@ -32,7 +32,7 @@ style_mono_accent(
   header_font_weight = 400,
   text_font_google = google_font("Source Sans Pro", "400", "400i", "600", "600i"),
   code_font_google = google_font("Source Code Pro"),
-  extra_css = list(".scroll-output" = list("height"="90%","overflow-y"="scroll"))
+  extra_css = list(".scroll-output" = list("height"="70%","overflow-y"="scroll"))
 ) 
 ```
 
@@ -371,10 +371,37 @@ This semester you will be learning statistical methods that don't have "cookbook
 
 --
 
-Practice is absolutely critical to learning how to do this. You can't learn it just from the lectures; you have to try it with real data. You will make mistakes, run into problems, etc. Identifying the mistakes and solving those problems is how you'll master this material.
-
-We have made all of the example data sets and code available to you for exactly this reason.
+**Practice is absolutely critical** to learning how to do this. You can't learn it just from the lectures; you have to try it with real data. You will make mistakes, run into problems, etc. Identifying the mistakes and solving those problems is how you'll master this material. *We have made all of the example data sets and code available to you for exactly this reason.*
 
 --
 
-Come to our live Q&A sessions, do the lab exercises. If you're not sure, **try something** then try to figure out whether it worked or not. Ask questions when you're stuck -- we're here to help you learn, but it will only work if you engage in **active, hands-on learning**.
+Do the lab exercises! If you're not sure, **try something** then try to figure out whether it worked or not. Ask questions when you're stuck -- we're here to help you learn, but it will only work if you engage in **active, hands-on learning**.
+
+![gym](figs/stockvault-fitness-center106595.jpg)
+---
+# Live R
+
+Questions?
+
+--
+
+### Use MLM to run a 2x2 repeated-measures ANOVA
+
+--
+
+Recall: 
+
+1. ANOVA is a particular kind of GLM (linear regression with categorical predictors).
+2. Repeated-measures ANOVA is used for within-participant manipulations; aka, nested observations.
+
+--
+
+MLM is an extension of GLM with random effects to capture within-participant nesting, so we should be able to implement a 2x2 rm-ANOVA using MLM.
+
+--
+
+**Example 1**: Fazio (2020) Repetition Increases Perceived Truth Even for Known Falsehoods. *Collabra: Psychology, 6*(1):38. https://doi.org/10.1525/collabra.347. Data available at: https://osf.io/kt2p8/
+
+Participants had to determine whether statements were true or false. The manipulations were (1) whether the fact was known or unknown to the participant and (2) whether the participant had been previously exposed to the statement. We know repeated exposure increases "truthiness" of false statements, the key question is whether prior knowledge is a protective factor.
+
+That is, does *knowing* that the statement is false protect people from the repetition effect?
