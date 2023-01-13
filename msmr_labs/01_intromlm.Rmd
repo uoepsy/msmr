@@ -165,8 +165,8 @@ Note that if we highlight a specific toy type in our plot, we can see that the r
 ggplot(data = toys_read, aes(x = hrs_week, y = R_AGE))+
   geom_point(alpha=.5)+
   geom_smooth(method = "lm")+
-  geom_point(data=toys_read %>% filter(toy_type=="Scooby Doo"), col="red")+
-  geom_segment(data=broom::augment(simplemod)[toys_read$toy_type=="Scooby Doo",], aes(y=R_AGE,xend=hrs_week,yend=.fitted,xend=hrs_week),lty="dashed",col="red")+
+  geom_point(data=toys_read %>% filter(toy_type=="Scooby Doo"), color="red")+
+  geom_segment(data=broom::augment(simplemod)[toys_read$toy_type=="Scooby Doo",], aes(y=R_AGE,xend=hrs_week,yend=.fitted,xend=hrs_week),lty="dashed",color="red")+
   labs(subtitle="Scooby Doo Residuals")
 ```
 
@@ -192,7 +192,7 @@ ggplot(data = toys_read, aes(x=hrs_week, y=R_AGE))+
 ```
 
 ```{r}
-ggplot(data = toys_read, aes(x=hrs_week, y=R_AGE, col=toy_type))+
+ggplot(data = toys_read, aes(x=hrs_week, y=R_AGE, color=toy_type))+
   geom_point()+
   geom_smooth(method="lm",se=FALSE)
 ```
@@ -212,7 +212,7 @@ ggplot(toys_read, aes(x=hrs_week, y=R_AGE))+
   geom_abline(intercept = coef(simplemod)[1], slope = coef(simplemod)[2], lwd=2)+
   geom_text(inherit.aes=F,x=4.5,y=8, label="Complete Pooling Line")+
   theme(text=element_text(size=21))+
-  geom_point(data = filter(toys_read, str_detect(toy_type, "Scooby|Farm")), size=3, aes(col=toy_type))
+  geom_point(data = filter(toys_read, str_detect(toy_type, "Scooby|Farm")), size=3, aes(color=toy_type))
 ```
 
   
@@ -246,7 +246,7 @@ Can you construct a plot of the **fitted** values from this model, coloured by t
 ```{r}
 library(broom)
 augment(mod1) %>%
-  ggplot(.,aes(x=hrs_week, y=.fitted, col=toy_type))+
+  ggplot(.,aes(x=hrs_week, y=.fitted, color=toy_type))+
   geom_line()
 ```
 `r solend()`
@@ -259,7 +259,7 @@ What happens (to the plot, and to your parameter estimates) when you include the
 mod2 <- lm(R_AGE ~ hrs_week * toy_type, data = toys_read)
 
 broom::augment(mod2) %>%
-  ggplot(.,aes(x=hrs_week, y=.fitted, col=toy_type))+
+  ggplot(.,aes(x=hrs_week, y=.fitted, color=toy_type))+
   geom_line()
 ```
 We can see now that our model is fitting a different relationship between reading age and practice for each toy type. This is good - we're going to get better estimates for different types of toy (e.g. scooby doo's reading age increases with practice, farm animals don't).  
@@ -339,7 +339,7 @@ You will have seen some use of these functions in the lectures. The broad syntax
 
 We write the first bit of our **formula** just the same as our old friend the normal linear model `y ~ 1 + x + x2 + ...`, where `y` is the name of our outcome variable, `1` is the intercept (which we don't have to explicitly state as it will be included anyway) and `x`, `x2` etc are the names of our explanatory variables.  
 
-With **lme4**, we now have the addition of __random effect terms)), specified in parenthesis with the `|` operator (the vertical line | is often found to the left of the z key on QWERTY keyboards).  
+With **lme4**, we now have the addition of __random effect terms__, specified in parenthesis with the `|` operator (the vertical line | is often found to the left of the z key on QWERTY keyboards).  
 We use the `|` operator to separate the parameters (intercept, slope etc.) on the LHS, from the grouping variable(s) on the RHS, by which we would like to model these parameters as varying.  
 
 __Random Intercept__  
@@ -384,7 +384,7 @@ $$
 
 ### Maximum Likelihood (ML)  
 
-Remember back to [Week 10 of USMR](https://uoepsy.github.io/usmr/labs/09_glm.html#Introducing_GLM), when we introduced the generalised linear model (GLM) we briefly discussed **Maximum likelihood** in an explanation of how models are fitted.  
+Remember back to [Week 10 of USMR](https://uoepsy.github.io/usmr/2223/labs/10a_glm.html), when we introduced the generalised linear model (GLM) we briefly discussed **Maximum likelihood** in an explanation of how models are fitted.  
   
 The key idea of *maximum likelihood estimation* (MLE) is that we (well, the computer) iteratively finds the set of estimates for our model which it considers to best reproduce our observed data. Recall our simple linear regression model of how practice (hrs per week) affects reading age: 
 $$
