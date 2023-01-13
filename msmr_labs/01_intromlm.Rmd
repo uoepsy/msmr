@@ -508,7 +508,7 @@ augment(ri_model) %>%
 
 ```{r}
 augment(ri_model) %>%
-  ggplot(aes(x = hrs_week, y = .fitted, col = toy_type)) + 
+  ggplot(aes(x = hrs_week, y = .fitted, color = toy_type)) + 
   geom_line()
 ```
 `r solend()`
@@ -537,7 +537,7 @@ Can you add to the plot in the previous question, a thick black line with the in
 
 ```{r}
 augment(ri_model) %>%
-  ggplot(aes(x = hrs_week, y = .fitted, col = toy_type)) + 
+  ggplot(aes(x = hrs_week, y = .fitted, color = toy_type)) + 
   geom_line() + 
   geom_abline(intercept = fixef(ri_model)[1], slope = fixef(ri_model)[2], lwd = 2)
 ```
@@ -548,7 +548,7 @@ By now, you should have a plot which looks more or less like the left-hand figur
 <div style="display:inline-block; width: 55%;vertical-align: top;">
 ```{r modfit, echo=FALSE, fig.asp=1, fig.cap="Model fitted values"}
 augment(ri_model) %>%
-  ggplot(aes(x = hrs_week, y = .fitted, col = toy_type)) + 
+  ggplot(aes(x = hrs_week, y = .fitted, color = toy_type)) + 
   geom_line() + 
   geom_abline(intercept = fixef(ri_model)[1], slope = fixef(ri_model)[2], lwd = 2)+
   geom_point(aes(y=R_AGE), alpha=.4)
@@ -613,7 +613,7 @@ Then, using `augment()` again, plot the model fitted values. What do you think y
 ```{r}
 rs_model <- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toys_read)
 augment(rs_model) %>%
-  ggplot(aes(x = hrs_week, y = .fitted, col = toy_type)) + 
+  ggplot(aes(x = hrs_week, y = .fitted, color = toy_type)) + 
   geom_line() + 
   geom_point(aes(y=R_AGE), alpha=.4)
 ```
@@ -629,13 +629,13 @@ Do this for both the model with the random intercept only, and the model with bo
 ```{r}
 augment(ri_model) %>%
   filter(str_detect(toy_type, "Scooby|Farm")) %>%
-  ggplot(aes(x = hrs_week, y = .fitted, col = toy_type)) + 
+  ggplot(aes(x = hrs_week, y = .fitted, color = toy_type)) + 
   geom_line() + 
   geom_point(aes(y=R_AGE), alpha=.4)
 
 augment(rs_model) %>%
   filter(str_detect(toy_type, "Scooby|Farm")) %>%
-  ggplot(aes(x = hrs_week, y = .fitted, col = toy_type)) + 
+  ggplot(aes(x = hrs_week, y = .fitted, color = toy_type)) + 
   geom_line() + 
   geom_point(aes(y=R_AGE), alpha=.4)
 ```
