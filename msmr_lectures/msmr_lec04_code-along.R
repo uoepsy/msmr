@@ -71,3 +71,22 @@ summary(mod_grp)
 
 group_tx <- ungroup(dat5)
 save(group_tx, file="./data/group_tx.RData")
+
+####### data from Geller et al. semantic relatedness judgment study
+# participants saw pairs of words with different kinds of semantic relationships: taxonomic vs. thematic, high relatedness vs low relatedness
+
+sem_rel <- read_csv(url("https://osf.io/pwnf8/download"))
+summary(sem_rel)
+ggplot(sem_rel, aes(txthm, rt, fill=hilo)) + 
+  geom_boxplot() # note the outliers
+
+m_s <- lmer(rt ~ txthm*hilo + (txthm*hilo | subject), data=sem_rel)
+summary(m_s)
+
+# can use model residuals to trim outliers
+m_dat <- augment(m_s)
+summary(m_dat)
+
+m_trim <- lmer(rt ~ txthm*hilo + (txthm*hilo | subject), 
+               data=subset(m_dat, abs(.resid) < 3*sd(.resid)))
+summary(m_trim)

@@ -15,12 +15,17 @@ falsehood <- read_csv(url("https://osf.io/skmw5/download")) %>%
   pivot_longer(cols=2:9) %>% #
   separate(name, c("Knowledge", "Repetition", "Truth"))
 
-ggplot(falsehood, aes(Repetition, value, fill=Knowledge)) + 
+summary(falsehood)
+ggplot(falsehood, aes(Knowledge, value, fill=Repetition)) + 
   facet_wrap(~ Truth) +
-#  geom_violin()
   geom_boxplot()
 
-m_false <- lmer(value ~ Knowledge*Repetition + (Knowledge + Repetition | Subject), 
-                data=subset(falsehood, Truth == "false"))
-summary(m_false)
+m <- lmer(value ~ Knowledge*Repetition + 
+            (Knowledge+Repetition | Subject),
+          data=subset(falsehood, Truth=="false"),
+          REML=F)
+summary(m)
 
+library(effects)
+ef <- as.data.frame(effect("Knowledge:Repetition", m))
+ggplot(ef, aes(Knowledge, fit, color=Repetition, ymin=lower, ymax=upper)) + geom_pointrange() 
