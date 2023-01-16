@@ -11,10 +11,18 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
+.title[
 # <b>Week 3: Longitudinal Data Analysis using Multilevel Modeling - Nonlinear Change</b>
+]
+.subtitle[
 ## Multivariate Statistics and Methodology using R (MSMR)<br><br>
+]
+.author[
 ### Dan Mirman
+]
+.institute[
 ### Department of Psychology<br>The University of Edinburgh
+]
 
 ---
 
@@ -190,10 +198,13 @@ Intercept ( `\(\beta_0\)` ): Overall average
 
 --
 
-**Keep it maximal**: A full or maximal random effect structure is when all of the factors that could hypothetically vary across individual observational units are allowed to do so.
+Extend to polynomial terms: individual differences in "slope" (curvature) of quadratic, cubic, etc. components.
 
-* Incomplete random effects can inflate false alarms
-* Full random effects can produce convergence problems (we'll come back to this issue in a little while)
+--
+
+**Keep it maximal**: Incomplete random effects can inflate false alarms, but full random effects can produce convergence problems.
+
+If/when need to simplify random effects: consider which random effects are most expendable; that is, which individual differences are least important to your research questions or inferences.
 
 ---
 # Let's return to our example
@@ -268,7 +279,7 @@ m.full &lt;- lmer(meanFix ~ (poly1+poly2+poly3)*Condition + #fixed effects
 ```
 
 ```
-## boundary (singular) fit: see ?isSingular
+## boundary (singular) fit: see help('isSingular')
 ```
 
 ```r
@@ -300,7 +311,6 @@ ggplot(TargetFix.gca, aes(Time, meanFix, color=Condition)) +
 ```
 
 ![](msmr_lec03_NonLinearLDA_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
-
 
 ---
 # The random effects
@@ -462,40 +472,6 @@ Outcome ~ (poly1+poly2+poly3)*Condition + (poly1+poly2+poly3 || Subject)
 ```
 
 ---
-# Participants as fixed vs. random effects
-**In general**, participants should be treated as random effects.
-
-This captures the typical assumption of random sampling from some population to which we wish to generalise.
-
-**Pooling**
-
-&lt;img src="./figs/partial-pooling-vs-others-1.png" width="30%" /&gt;
-
-http://tjmahr.github.io/plotting-partial-pooling-in-mixed-effects-models/
-
----
-# Participants as fixed vs. random effects
-**In general**, participants should be treated as random effects.
-
-This captures the typical assumption of random sampling from some population to which we wish to generalise.
-
-**Shrinkage**
-
-&lt;img src="./figs/shrinkage-plot-1.png" width="30%" /&gt;
-
-http://tjmahr.github.io/plotting-partial-pooling-in-mixed-effects-models/
-
-Another explanation of shrinkage: https://m-clark.github.io/posts/2019-05-14-shrinkage-in-mixed-models/
-
----
-# Participants as fixed vs. random effects
-**In general**, participants should be treated as random effects.
-
-This captures the typical assumption of random sampling from some population to which we wish to generalise.
-
-**Exceptions are possible**: e.g., neurological/neuropsychological case studies where the goal is to characterise the pattern of performance for each participant, not generalise to a population.
-
----
 # Key points
 
 .pull-left[
@@ -506,15 +482,16 @@ This captures the typical assumption of random sampling from some population to 
 * Random effect structure
     + Keep it maximal, but be ready to deal with convergence problems
     + For within-subject variables: "left" side of pipe (random slopes) is more flexible, but requires more data to estimate; "right" side of pipe (nested) is a good alternative
-* Participants as random effects
-    + Supports most inferences
-    + Partial pooling (aka shrinkage)
-    + Some exceptions (e.g., case studies)
 ]
 
 .pull-right[
 &lt;img src="./figs/max_grad_tombstone.jpg" /&gt;
 ]
+
+---
+# Live R
+
+Fixations are binary - a participant is either looking at the target object or they are not - so let's revisit the target fixation example, this time using logistic MLM to analyse the data.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
@@ -563,6 +540,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable

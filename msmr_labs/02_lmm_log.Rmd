@@ -35,248 +35,250 @@ If I'm planning on doing some multi-level modelling, I will tend to load these b
     
 :::
 
-# Exercises: Longitudinal Models
 
-Last week when we introduced multilevel models (or "mixed effects models" or whatever we're calling them!), we saw in the lectures a little bit about the idea of having datapoints from the same participant _over time_. This kind of data tends to get termed "longitudinal" (mainly used to refer to studies which follow-up participants over the course of months or years). The lectures this week have also introduced this idea of 'change over time' by looking at some data from Public Health England.   
-   
-Let's work our way through an example. 
-  
+<!-- # Exercises: Longitudinal Models -->
 
-:::frame
-__WeightMaintain Data Codebook__  
+<!-- Last week when we introduced multilevel models (or "mixed effects models" or whatever we're calling them!), we saw in the lectures a little bit about the idea of having datapoints from the same participant _over time_. This kind of data tends to get termed "longitudinal" (mainly used to refer to studies which follow-up participants over the course of months or years). The lectures this week have also introduced this idea of 'change over time' by looking at some data from Public Health England.    -->
 
-The weight maintenance data (`WeightMaintain3`), a made-up data set based on Lowe et al. (2014, Obesity, 22, 94-100), contains information on overweight participants who completed a 12-week weight loss program, and were then randomly assigned to one of three weight maintenance conditions:
-
-* None (Control)  
-* MR (meal replacements): use MR to replace one meal and snack per day  
-* ED (energy density intervention): book and educational materials on purchasing and preparing foods lower in ED (reducing fat content and/or increasing water content of foods)  
-
-Weight was assessed on day 1 of maintenance, 12 months post, 24 months post, and 36 months post.
-
-It is available, in **.rda** format, at https://uoepsy.github.io/data/WeightMaintain3.rda  
-
-```{r echo=FALSE}
-load(url("https://uoepsy.github.io/data/WeightMaintain3.rda"))
-data.frame(
-  variable = names(WeightMaintain3),
-  description = c("Participant ID","Weight Maintenance Condition ('None' = No maintenance program, 'MR' = Meal replacement, 'ED' = Energy Density intervention)", "Assessment number (0 = Day 1, 1 = 12 months, 2 = 24 months, 3 = 36 months)", "Difference in weight (lbs) from end of 12-week weight loss program")
-) %>% knitr::kable()
-```
-
-:::
+<!-- Let's work our way through an example.  -->
 
 
-`r qbegin("A1")`
-Load the data, and take a look at what is in there. Hopefully it should match the description above.  
+<!-- :::frame -->
+<!-- __WeightMaintain Data Codebook__   -->
 
-**Hint:** `load(url("https://uoepsy.github.io/data/WeightMaintain3.rda"))`
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-```{r}
-load(url("https://uoepsy.github.io/data/WeightMaintain3.rda"))
-summary(WeightMaintain3)
-head(WeightMaintain3)
-```
-`r solend()`
+<!-- The weight maintenance data (`WeightMaintain3`), a made-up data set based on Lowe et al. (2014, Obesity, 22, 94-100), contains information on overweight participants who completed a 12-week weight loss program, and were then randomly assigned to one of three weight maintenance conditions: -->
 
-`r qbegin("A2")`  
+<!-- * None (Control)   -->
+<!-- * MR (meal replacements): use MR to replace one meal and snack per day   -->
+<!-- * ED (energy density intervention): book and educational materials on purchasing and preparing foods lower in ED (reducing fat content and/or increasing water content of foods)   -->
 
-> Q: Overall, did the participants maintain their weight loss or did their weights change?
+<!-- Weight was assessed on day 1 of maintenance, 12 months post, 24 months post, and 36 months post. -->
 
-We need to remember that each of our participants has measurements at 4 assessments. We have randomly sampled participants, and then within them have measured multiple observations. So our observations are __not independent__. We're not interested in estimating differences between specific participants - our participants are just a random sample of people. But we do want to account for the dependency they introduce in our data. This is why we would want to fit a multilevel model and incorporate participant-level variation into our model structure.   
+<!-- It is available, in **.rda** format, at https://uoepsy.github.io/data/WeightMaintain3.rda   -->
 
-1. Fit an "intercept-only" model. 
-2. Fit a model with weight change predicted by assessment.  
-3. Compare the two models (use `anova(model1, model2)` to conduct a likelihood ratio test).
+<!-- ```{r echo=FALSE} -->
+<!-- load(url("https://uoepsy.github.io/data/WeightMaintain3.rda")) -->
+<!-- data.frame( -->
+<!--   variable = names(WeightMaintain3), -->
+<!--   description = c("Participant ID","Weight Maintenance Condition ('None' = No maintenance program, 'MR' = Meal replacement, 'ED' = Energy Density intervention)", "Assessment number (0 = Day 1, 1 = 12 months, 2 = 24 months, 3 = 36 months)", "Difference in weight (lbs) from end of 12-week weight loss program") -->
+<!-- ) %>% knitr::kable() -->
+<!-- ``` -->
 
-Things to think about:  
+<!-- ::: -->
 
-- We _cannot_ compare models that differ in both the fixed *and* random parts.  
-- __For now__, ignore messages saying `boundary (singular) fit: see ?isSingular` (that comes in a couple of questions' time).    
 
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-This is our null model:
-```{r}
-m.null <- lmer(WeightChange ~ 1 + (1 | ID), data=WeightMaintain3)
-summary(m.null)
-```
-We can see the `3.77 / (3.77 + 6.43)`, or `r (3.77 / (3.77 + 6.43)) %>% round(.,2)` of the total variance is attributable to participant-level variation. 
+<!-- `r qbegin("A1")` -->
+<!-- Load the data, and take a look at what is in there. Hopefully it should match the description above.   -->
 
-Now lets suppose we want to compare this null model with a model with an effect of `Assessment` (to assess whether there is overall change over time).
-Which model should we compare `m.null` to?  
-```{r}
-modA <- lmer(WeightChange ~ 1 + Assessment + (1 + Assessment | ID), data=WeightMaintain3)
-modB <- lmer(WeightChange ~ 1 + Assessment + (1 | ID), data=WeightMaintain3)
-```
-A comparison between these `m.null` and `modA` will not be assessing the influence of _only_ the fixed effect of Assessment. Remember, we shouldn't compare models with different random effect structures.   
-However, `modB` doesn't include our by-participant random effects of assessment, so comparing this to `m.null` is potentially going to misattribute random deviations in participants' change to being an overall effect of assessment.  
+<!-- **Hint:** `load(url("https://uoepsy.github.io/data/WeightMaintain3.rda"))` -->
+<!-- `r qend()` -->
+<!-- `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)` -->
+<!-- ```{r} -->
+<!-- load(url("https://uoepsy.github.io/data/WeightMaintain3.rda")) -->
+<!-- summary(WeightMaintain3) -->
+<!-- head(WeightMaintain3) -->
+<!-- ``` -->
+<!-- `r solend()` -->
 
-If we want to conduct a model comparison to isolate the effect of overall change over time (a fixed effect of `Assessment`), we _might_ want to compare these two models:
-```{r}
-m.base0 <- lmer(WeightChange ~ 1 + (1 + Assessment | ID), data=WeightMaintain3)
-m.base <- lmer(WeightChange ~ 1 + Assessment + (1 + Assessment | ID), data=WeightMaintain3)
-```
-The first of these models is a bit weird to think about - how can we have by-participant random deviations of `Assessment` if we don't have a fixed effect of `Assessment`? That makes very little sense. What it is actually fitting is a model where there is assumed to be __no overall effect__ of Assessment. So the fixed effect is 0. 
+<!-- `r qbegin("A2")`   -->
 
-```{r}
-# Straightforward LRT
-anova(m.base0, m.base)
-```
+<!-- > Q: Overall, did the participants maintain their weight loss or did their weights change? -->
 
-This suggests that the inclusion Assessment does improve model fit, indicating that participants' weights changed over course of 36 month assessment period. 
+<!-- We need to remember that each of our participants has measurements at 4 assessments. We have randomly sampled participants, and then within them have measured multiple observations. So our observations are __not independent__. We're not interested in estimating differences between specific participants - our participants are just a random sample of people. But we do want to account for the dependency they introduce in our data. This is why we would want to fit a multilevel model and incorporate participant-level variation into our model structure.    -->
 
-`r solend()`
+<!-- 1. Fit an "intercept-only" model.  -->
+<!-- 2. Fit a model with weight change predicted by assessment.   -->
+<!-- 3. Compare the two models (use `anova(model1, model2)` to conduct a likelihood ratio test). -->
 
-`r qbegin("A3")`
-> Q: Did the experimental condition groups differ in overall weight change and rate of weight change (non-maintenance)?  
+<!-- Things to think about:   -->
 
-*Hint:* It helps to break it down. There are two questions here:  
+<!-- - We _cannot_ compare models that differ in both the fixed *and* random parts.   -->
+<!-- - __For now__, ignore messages saying `boundary (singular) fit: see ?isSingular` (that comes in a couple of questions' time).     -->
 
-  1. do groups differ overall?  
-  2. do groups differ over time?  
+<!-- `r qend()` -->
+<!-- `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)` -->
+<!-- This is our null model: -->
+<!-- ```{r} -->
+<!-- m.null <- lmer(WeightChange ~ 1 + (1 | ID), data=WeightMaintain3) -->
+<!-- summary(m.null) -->
+<!-- ``` -->
+<!-- We can see the `3.77 / (3.77 + 6.43)`, or `r (3.77 / (3.77 + 6.43)) %>% round(.,2)` of the total variance is attributable to participant-level variation.  -->
 
-We can begin to see that we're asking two questions about the `Condition` variable here: "is there an effect of Condition?" and "Is there an interaction between Assessment and Condition?".  
+<!-- Now lets suppose we want to compare this null model with a model with an effect of `Assessment` (to assess whether there is overall change over time). -->
+<!-- Which model should we compare `m.null` to?   -->
+<!-- ```{r} -->
+<!-- modA <- lmer(WeightChange ~ 1 + Assessment + (1 + Assessment | ID), data=WeightMaintain3) -->
+<!-- modB <- lmer(WeightChange ~ 1 + Assessment + (1 | ID), data=WeightMaintain3) -->
+<!-- ``` -->
+<!-- A comparison between these `m.null` and `modA` will not be assessing the influence of _only_ the fixed effect of Assessment. Remember, we shouldn't compare models with different random effect structures.    -->
+<!-- However, `modB` doesn't include our by-participant random effects of assessment, so comparing this to `m.null` is potentially going to misattribute random deviations in participants' change to being an overall effect of assessment.   -->
 
-Try fitting two more models which incrementally build these levels of complexity, and compare them (perhaps to one another, perhaps to models from the previous question - think about what each comparison is testing!)  
-  
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-```{r}
-m.int <- lmer(WeightChange ~ Assessment + Condition + (1 + Assessment | ID), 
-              data=WeightMaintain3)
-m.full <- lmer(WeightChange ~ Assessment*Condition + (1 + Assessment | ID), 
-               data=WeightMaintain3)
-```
+<!-- If we want to conduct a model comparison to isolate the effect of overall change over time (a fixed effect of `Assessment`), we _might_ want to compare these two models: -->
+<!-- ```{r} -->
+<!-- m.base0 <- lmer(WeightChange ~ 1 + (1 + Assessment | ID), data=WeightMaintain3) -->
+<!-- m.base <- lmer(WeightChange ~ 1 + Assessment + (1 + Assessment | ID), data=WeightMaintain3) -->
+<!-- ``` -->
+<!-- The first of these models is a bit weird to think about - how can we have by-participant random deviations of `Assessment` if we don't have a fixed effect of `Assessment`? That makes very little sense. What it is actually fitting is a model where there is assumed to be __no overall effect__ of Assessment. So the fixed effect is 0.  -->
 
-We're going to compare each model to the previous one to examine the improvement in fit due to inclusion of each parameter. 
-We could do this quickly with
-```{r}
-anova(m.base0, m.base, m.int, m.full)
-```
+<!-- ```{r} -->
+<!-- # Straightforward LRT -->
+<!-- anova(m.base0, m.base) -->
+<!-- ``` -->
 
-- Conditions differed overall in weight change $\chi^2(2)=9.4, p = .009$  
-- Conditions differed in change over assessment period $\chi^2(2)=40.4, p < .001$
-  
+<!-- This suggests that the inclusion Assessment does improve model fit, indicating that participants' weights changed over course of 36 month assessment period.  -->
 
-`r solend()`
+<!-- `r solend()` -->
 
-:::frame
-__`boundary (singular) fit: see ?isSingular`__  
-  
-Okay. Let's talk about those "singular fits" messages we keep getting.  
-By now, you have hopefully fitted a number of models which incrementally add predictors. Ours are below:  
-```{r}
-m.base0 <- lmer(WeightChange ~ 1 + (1 + Assessment | ID), data=WeightMaintain3)
-m.base <- lmer(WeightChange ~ Assessment + (1 + Assessment | ID), data=WeightMaintain3)
-m.int <- lmer(WeightChange ~ Assessment + Condition + (1 + Assessment | ID), data=WeightMaintain3)
-m.full <- lmer(WeightChange ~ Assessment * Condition + (1 + Assessment | ID), data=WeightMaintain3)
-```
+<!-- `r qbegin("A3")` -->
+<!-- > Q: Did the experimental condition groups differ in overall weight change and rate of weight change (non-maintenance)?   -->
 
-And many of these models were singular fits, and we just ignored them. __We shouldn't have.__  
+<!-- *Hint:* It helps to break it down. There are two questions here:   -->
 
-__What is the warning message telling us?__  
-The warning is telling us that our model has resulted in a 'singular fit'. The easiest way to think of this is to think of it as indicating that the model is 'overfitted' - that there is _not enough variation in our data_ for our model to be estimated properly.  
+<!--   1. do groups differ overall?   -->
+<!--   2. do groups differ over time?   -->
 
-__What can we do?__  
-In many cases, perhaps the most intuitive advice would be remove the most complex part of the random effects structure (i.e. random slopes). This leads to a simpler model that is not over-fitted. In other words, start simplifying from the top (where the most complexity is) to the bottom (where the lowest complexity is).
-Additionally, when variance estimates are very low for a specific random effect term, this indicates that the model is not estimating this parameter to differ much between the levels of your grouping variable. It might, in some experimental designs, be perfectly acceptable to remove this or simply include it as a fixed effect.
+<!-- We can begin to see that we're asking two questions about the `Condition` variable here: "is there an effect of Condition?" and "Is there an interaction between Assessment and Condition?".   -->
 
-A key point here is that when fitting a mixed model, __we should think about how the data are generated.__ Asking yourself questions such as "do we have good reason to assume subjects might vary over time, or to assume that they will have different starting points (i.e., different intercepts)?" can help you in specifying your random effect structure
+<!-- Try fitting two more models which incrementally build these levels of complexity, and compare them (perhaps to one another, perhaps to models from the previous question - think about what each comparison is testing!)   -->
 
-You can read in depth about what this means by reading the help documentation for `?isSingular`. For our purposes, a relevant section is copied below:  
+<!-- `r qend()` -->
+<!-- `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)` -->
+<!-- ```{r} -->
+<!-- m.int <- lmer(WeightChange ~ Assessment + Condition + (1 + Assessment | ID),  -->
+<!--               data=WeightMaintain3) -->
+<!-- m.full <- lmer(WeightChange ~ Assessment*Condition + (1 + Assessment | ID),  -->
+<!--                data=WeightMaintain3) -->
+<!-- ``` -->
 
-*... intercept-only models, or 2-dimensional random effects such as intercept + slope models, singularity is relatively easy to detect because it leads to random-effect variance estimates of (nearly) zero, or estimates of correlations that are (almost) exactly -1 or 1.*
+<!-- We're going to compare each model to the previous one to examine the improvement in fit due to inclusion of each parameter.  -->
+<!-- We could do this quickly with -->
+<!-- ```{r} -->
+<!-- anova(m.base0, m.base, m.int, m.full) -->
+<!-- ``` -->
 
-:::
+<!-- - Conditions differed overall in weight change $\chi^2(2)=9.4, p = .009$   -->
+<!-- - Conditions differed in change over assessment period $\chi^2(2)=40.4, p < .001$ -->
 
-`r qbegin("A4")`
-Re-read the description of the data, then ask yourself this question:  
 
-Do we think participants will vary in:  
+<!-- `r solend()` -->
 
-  a. their _starting_ weight differences `(1|ID)`?
-  b. their weight change over the course of the assessment period `(0 + Assessment | ID)`?
-  c. both `(1 + Assessment | ID)`?  
+<!-- :::frame -->
+<!-- __`boundary (singular) fit: see ?isSingular`__   -->
 
-_Hint:_  What do we think the baseline weight should be? Should it be the same for everyone? If so, might we want to remove the random intercept, which we do by setting it to 0
-  
-Can you re-fit your models without encountering singular fits?   
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-In this very specific research design, it may actually make a lot of sense to not model by-participant variation around the intercept.  
-As baseline is at the very start of the weight maintenance, it makes sense that we wouldn't have very much (if any) participant variation in change at this point. 
-Note that by removing the estimation of this parameter, our models now converge!
-```{r}
-m.base0 <- lmer(WeightChange ~ 1 + (0 + Assessment | ID), data=WeightMaintain3)
-m.base <- lmer(WeightChange ~ 1 + Assessment + (0 + Assessment | ID), data=WeightMaintain3)
-m.int <- lmer(WeightChange ~ 1 + Assessment + Condition + (0 + Assessment | ID), data=WeightMaintain3)
-m.full <- lmer(WeightChange ~ 1 + Assessment * Condition + (0 + Assessment | ID), data=WeightMaintain3)
-```
+<!-- Okay. Let's talk about those "singular fits" messages we keep getting.   -->
+<!-- By now, you have hopefully fitted a number of models which incrementally add predictors. Ours are below:   -->
+<!-- ```{r} -->
+<!-- m.base0 <- lmer(WeightChange ~ 1 + (1 + Assessment | ID), data=WeightMaintain3) -->
+<!-- m.base <- lmer(WeightChange ~ Assessment + (1 + Assessment | ID), data=WeightMaintain3) -->
+<!-- m.int <- lmer(WeightChange ~ Assessment + Condition + (1 + Assessment | ID), data=WeightMaintain3) -->
+<!-- m.full <- lmer(WeightChange ~ Assessment * Condition + (1 + Assessment | ID), data=WeightMaintain3) -->
+<!-- ``` -->
 
-We can check if a model has a singular fit:  
-```{r}
-isSingular(m.base)
-```
+<!-- And many of these models were singular fits, and we just ignored them. __We shouldn't have.__   -->
 
-`r solend()`
+<!-- __What is the warning message telling us?__   -->
+<!-- The warning is telling us that our model has resulted in a 'singular fit'. The easiest way to think of this is to think of it as indicating that the model is 'overfitted' - that there is _not enough variation in our data_ for our model to be estimated properly.   -->
 
-`r qbegin("A5")`
-Make a graph of the model fit *and* the observed means and standard errors at each time point for each condition.  
+<!-- __What can we do?__   -->
+<!-- In many cases, perhaps the most intuitive advice would be remove the most complex part of the random effects structure (i.e. random slopes). This leads to a simpler model that is not over-fitted. In other words, start simplifying from the top (where the most complexity is) to the bottom (where the lowest complexity is). -->
+<!-- Additionally, when variance estimates are very low for a specific random effect term, this indicates that the model is not estimating this parameter to differ much between the levels of your grouping variable. It might, in some experimental designs, be perfectly acceptable to remove this or simply include it as a fixed effect. -->
 
-Try using the **effects** package (hint, does this help: `as.data.frame(effect("Assessment:Condition", model))`?)
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-```{r}
-library(effects)
-ef <- as.data.frame(effect("Assessment:Condition", m.full))
+<!-- A key point here is that when fitting a mixed model, __we should think about how the data are generated.__ Asking yourself questions such as "do we have good reason to assume subjects might vary over time, or to assume that they will have different starting points (i.e., different intercepts)?" can help you in specifying your random effect structure -->
 
-ggplot(ef, aes(Assessment, fit, color=Condition)) + 
-  geom_line() +
-  stat_summary(data=WeightMaintain3, aes(y=WeightChange), 
-               fun.data=mean_se, geom="pointrange", size=1) +
-  theme_bw()
-```
-`r solend()`
+<!-- You can read in depth about what this means by reading the help documentation for `?isSingular`. For our purposes, a relevant section is copied below:   -->
 
-`r qbegin("A6")`
-Now let's move to interpreting the coefficients. 
-Remember, we can get the coefficients using `fixef(model)`. 
-We can also use `tidy(model)`, and similar to models fitted with `lm()`, we can pull out the bit of the `summary()` using:  
-```{r eval=FALSE}
-summary(model)$coefficients
-```
-  
-From your model from the previous question which investigates whether conditions differed in their rate of weight change, examine the parameter estimates and interpret them (i.e., what does each parameter represent?)
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-```{r}
-round(coef(summary(m.full)), 3)
-```
+<!-- *... intercept-only models, or 2-dimensional random effects such as intercept + slope models, singularity is relatively easy to detect because it leads to random-effect variance estimates of (nearly) zero, or estimates of correlations that are (almost) exactly -1 or 1.* -->
 
-* `(Intercept)` ==> weight change at baseline in None group
-* `Assessment`  ==> slope of weight change in None group
-* `ConditionED` ==> baseline weight change in ED group relative to None group
-* `ConditionMR` ==> baseline weight change in MR group relative to None group
-* `Assessment:ConditionED`  ==> slope of weight change in ED group relative to None group
-* `Assessment:ConditionMR`  ==> slope of weight change in MR groups relative to None group
+<!-- ::: -->
 
-`r solend()`
+<!-- `r qbegin("A4")` -->
+<!-- Re-read the description of the data, then ask yourself this question:   -->
 
-`r qbegin("A7")`
-Can you state how the conditions differed?  
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+<!-- Do we think participants will vary in:   -->
 
-```{r}
-summary(m.full)$coefficients
-```
+<!--   a. their _starting_ weight differences `(1|ID)`? -->
+<!--   b. their weight change over the course of the assessment period `(0 + Assessment | ID)`? -->
+<!--   c. both `(1 + Assessment | ID)`?   -->
 
-:::int
-Compared to no intervention, weight (re)gain was 1.75 lbs/year slower for the ED intervention and 0.84 lbs/year slower for the MR intervention.
-:::
+<!-- _Hint:_  What do we think the baseline weight should be? Should it be the same for everyone? If so, might we want to remove the random intercept, which we do by setting it to 0 -->
 
-`r solend()`
+<!-- Can you re-fit your models without encountering singular fits?    -->
+<!-- `r qend()` -->
+<!-- `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)` -->
+<!-- In this very specific research design, it may actually make a lot of sense to not model by-participant variation around the intercept.   -->
+<!-- As baseline is at the very start of the weight maintenance, it makes sense that we wouldn't have very much (if any) participant variation in change at this point.  -->
+<!-- Note that by removing the estimation of this parameter, our models now converge! -->
+<!-- ```{r} -->
+<!-- m.base0 <- lmer(WeightChange ~ 1 + (0 + Assessment | ID), data=WeightMaintain3) -->
+<!-- m.base <- lmer(WeightChange ~ 1 + Assessment + (0 + Assessment | ID), data=WeightMaintain3) -->
+<!-- m.int <- lmer(WeightChange ~ 1 + Assessment + Condition + (0 + Assessment | ID), data=WeightMaintain3) -->
+<!-- m.full <- lmer(WeightChange ~ 1 + Assessment * Condition + (0 + Assessment | ID), data=WeightMaintain3) -->
+<!-- ``` -->
+
+<!-- We can check if a model has a singular fit:   -->
+<!-- ```{r} -->
+<!-- isSingular(m.base) -->
+<!-- ``` -->
+
+<!-- `r solend()` -->
+
+<!-- `r qbegin("A5")` -->
+<!-- Make a graph of the model fit *and* the observed means and standard errors at each time point for each condition.   -->
+
+<!-- Try using the **effects** package (hint, does this help: `as.data.frame(effect("Assessment:Condition", model))`?) -->
+<!-- `r qend()` -->
+<!-- `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)` -->
+<!-- ```{r} -->
+<!-- library(effects) -->
+<!-- ef <- as.data.frame(effect("Assessment:Condition", m.full)) -->
+
+<!-- ggplot(ef, aes(Assessment, fit, color=Condition)) +  -->
+<!--   geom_line() + -->
+<!--   stat_summary(data=WeightMaintain3, aes(y=WeightChange),  -->
+<!--                fun.data=mean_se, geom="pointrange", size=1) + -->
+<!--   theme_bw() -->
+<!-- ``` -->
+<!-- `r solend()` -->
+
+<!-- `r qbegin("A6")` -->
+<!-- Now let's move to interpreting the coefficients.  -->
+<!-- Remember, we can get the coefficients using `fixef(model)`.  -->
+<!-- We can also use `tidy(model)`, and similar to models fitted with `lm()`, we can pull out the bit of the `summary()` using:   -->
+<!-- ```{r eval=FALSE} -->
+<!-- summary(model)$coefficients -->
+<!-- ``` -->
+
+<!-- From your model from the previous question which investigates whether conditions differed in their rate of weight change, examine the parameter estimates and interpret them (i.e., what does each parameter represent?) -->
+<!-- `r qend()` -->
+<!-- `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)` -->
+<!-- ```{r} -->
+<!-- round(coef(summary(m.full)), 3) -->
+<!-- ``` -->
+
+<!-- * `(Intercept)` ==> weight change at baseline in None group -->
+<!-- * `Assessment`  ==> slope of weight change in None group -->
+<!-- * `ConditionED` ==> baseline weight change in ED group relative to None group -->
+<!-- * `ConditionMR` ==> baseline weight change in MR group relative to None group -->
+<!-- * `Assessment:ConditionED`  ==> slope of weight change in ED group relative to None group -->
+<!-- * `Assessment:ConditionMR`  ==> slope of weight change in MR groups relative to None group -->
+
+<!-- `r solend()` -->
+
+<!-- `r qbegin("A7")` -->
+<!-- Can you state how the conditions differed?   -->
+<!-- `r qend()` -->
+<!-- `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)` -->
+
+<!-- ```{r} -->
+<!-- summary(m.full)$coefficients -->
+<!-- ``` -->
+
+<!-- :::int -->
+<!-- Compared to no intervention, weight (re)gain was 1.75 lbs/year slower for the ED intervention and 0.84 lbs/year slower for the MR intervention. -->
+<!-- ::: -->
+
+<!-- `r solend()` -->
+
 
 # Exercises: Logistic MLM
 

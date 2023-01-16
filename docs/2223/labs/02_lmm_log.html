@@ -431,350 +431,298 @@ library(lme4) # for fitting models
 library(broom.mixed) # for tidying model output</code></pre></li>
 </ol>
 </div>
-<div id="exercises-longitudinal-models" class="section level1">
-<h1>Exercises: Longitudinal Models</h1>
-<p>Last week when we introduced multilevel models (or “mixed effects models” or whatever we’re calling them!), we saw in the lectures a little bit about the idea of having datapoints from the same participant <em>over time</em>. This kind of data tends to get termed “longitudinal” (mainly used to refer to studies which follow-up participants over the course of months or years). The lectures this week have also introduced this idea of ‘change over time’ by looking at some data from Public Health England.</p>
-<p>Let’s work our way through an example.</p>
-<div class="frame">
-<p><strong>WeightMaintain Data Codebook</strong></p>
-<p>The weight maintenance data (<code>WeightMaintain3</code>), a made-up data set based on Lowe et al. (2014, Obesity, 22, 94-100), contains information on overweight participants who completed a 12-week weight loss program, and were then randomly assigned to one of three weight maintenance conditions:</p>
-<ul>
-<li>None (Control)<br />
-</li>
-<li>MR (meal replacements): use MR to replace one meal and snack per day<br />
-</li>
-<li>ED (energy density intervention): book and educational materials on purchasing and preparing foods lower in ED (reducing fat content and/or increasing water content of foods)</li>
-</ul>
-<p>Weight was assessed on day 1 of maintenance, 12 months post, 24 months post, and 36 months post.</p>
-<p>It is available, in <strong>.rda</strong> format, at <a href="https://uoepsy.github.io/data/WeightMaintain3.rda" class="uri">https://uoepsy.github.io/data/WeightMaintain3.rda</a></p>
-<table>
-<colgroup>
-<col width="9%" />
-<col width="90%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">variable</th>
-<th align="left">description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">ID</td>
-<td align="left">Participant ID</td>
-</tr>
-<tr class="even">
-<td align="left">Condition</td>
-<td align="left">Weight Maintenance Condition (‘None’ = No maintenance program, ‘MR’ = Meal replacement, ‘ED’ = Energy Density intervention)</td>
-</tr>
-<tr class="odd">
-<td align="left">Assessment</td>
-<td align="left">Assessment number (0 = Day 1, 1 = 12 months, 2 = 24 months, 3 = 36 months)</td>
-</tr>
-<tr class="even">
-<td align="left">WeightChange</td>
-<td align="left">Difference in weight (lbs) from end of 12-week weight loss program</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="question-begin">
-Question A1
-</div>
-<div class="question-body">
-<p>Load the data, and take a look at what is in there. Hopefully it should match the description above.</p>
-<p><strong>Hint:</strong> <code>load(url("https://uoepsy.github.io/data/WeightMaintain3.rda"))</code></p>
-</div>
-<p class="question-end">
-</p>
-<div class="solution-begin">
-<span id="sol-start-35" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-35&#39;, &#39;sol-start-35&#39;)"> Solution </span>
-</div>
-<div id="sol-body-35" class="solution-body" style="display: none;">
-<pre class="r"><code>load(url(&quot;https://uoepsy.github.io/data/WeightMaintain3.rda&quot;))
-summary(WeightMaintain3)</code></pre>
-<pre><code>##        ID      Condition    Assessment    WeightChange    
-##  101    :  4   None:240   Min.   :0.00   Min.   :-8.3781  
-##  102    :  4   ED  :240   1st Qu.:0.75   1st Qu.:-0.5024  
-##  103    :  4   MR  :240   Median :1.50   Median : 0.7050  
-##  104    :  4              Mean   :1.50   Mean   : 1.4438  
-##  105    :  4              3rd Qu.:2.25   3rd Qu.: 2.8806  
-##  106    :  4              Max.   :3.00   Max.   :14.9449  
-##  (Other):696</code></pre>
-<pre class="r"><code>head(WeightMaintain3)</code></pre>
-<pre><code>##    ID Condition Assessment WeightChange
-## 1 101      None          0 -0.116138529
-## 2 101      None          1  0.333508907
-## 3 101      None          2  1.678653492
-## 4 101      None          3  2.756023400
-## 5 102      None          0 -0.004420188
-## 6 102      None          1  1.746725487</code></pre>
-</div>
-<p class="solution-end">
-</p>
-<div class="question-begin">
-Question A2
-</div>
-<div class="question-body">
-<blockquote>
-<p>Q: Overall, did the participants maintain their weight loss or did their weights change?</p>
-</blockquote>
-<p>We need to remember that each of our participants has measurements at 4 assessments. We have randomly sampled participants, and then within them have measured multiple observations. So our observations are <strong>not independent</strong>. We’re not interested in estimating differences between specific participants - our participants are just a random sample of people. But we do want to account for the dependency they introduce in our data. This is why we would want to fit a multilevel model and incorporate participant-level variation into our model structure.</p>
-<ol style="list-style-type: decimal">
-<li>Fit an “intercept-only” model.</li>
-<li>Fit a model with weight change predicted by assessment.<br />
-</li>
-<li>Compare the two models (use <code>anova(model1, model2)</code> to conduct a likelihood ratio test).</li>
-</ol>
-<p>Things to think about:</p>
-<ul>
-<li>We <em>cannot</em> compare models that differ in both the fixed <em>and</em> random parts.<br />
-</li>
-<li><strong>For now</strong>, ignore messages saying <code>boundary (singular) fit: see ?isSingular</code> (that comes in a couple of questions’ time).</li>
-</ul>
-</div>
-<p class="question-end">
-</p>
-<div class="solution-begin">
-<span id="sol-start-36" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-36&#39;, &#39;sol-start-36&#39;)"> Solution </span>
-</div>
-<div id="sol-body-36" class="solution-body" style="display: none;">
-<p>This is our null model:</p>
-<pre class="r"><code>m.null &lt;- lmer(WeightChange ~ 1 + (1 | ID), data=WeightMaintain3)
-summary(m.null)</code></pre>
-<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
-## Formula: WeightChange ~ 1 + (1 | ID)
-##    Data: WeightMaintain3
-## 
-## REML criterion at convergence: 3601.2
-## 
-## Scaled residuals: 
-##     Min      1Q  Median      3Q     Max 
-## -2.4349 -0.5330 -0.1154  0.4255  3.7017 
-## 
-## Random effects:
-##  Groups   Name        Variance Std.Dev.
-##  ID       (Intercept) 3.765    1.940   
-##  Residual             6.431    2.536   
-## Number of obs: 720, groups:  ID, 180
-## 
-## Fixed effects:
-##             Estimate Std. Error t value
-## (Intercept)   1.4438     0.1728   8.357</code></pre>
-<p>We can see the <code>3.77 / (3.77 + 6.43)</code>, or 0.37 of the total variance is attributable to participant-level variation.</p>
-<p>Now lets suppose we want to compare this null model with a model with an effect of <code>Assessment</code> (to assess whether there is overall change over time).
-Which model should we compare <code>m.null</code> to?</p>
-<pre class="r"><code>modA &lt;- lmer(WeightChange ~ 1 + Assessment + (1 + Assessment | ID), data=WeightMaintain3)
-modB &lt;- lmer(WeightChange ~ 1 + Assessment + (1 | ID), data=WeightMaintain3)</code></pre>
-<p>A comparison between these <code>m.null</code> and <code>modA</code> will not be assessing the influence of <em>only</em> the fixed effect of Assessment. Remember, we shouldn’t compare models with different random effect structures.<br />
-However, <code>modB</code> doesn’t include our by-participant random effects of assessment, so comparing this to <code>m.null</code> is potentially going to misattribute random deviations in participants’ change to being an overall effect of assessment.</p>
-<p>If we want to conduct a model comparison to isolate the effect of overall change over time (a fixed effect of <code>Assessment</code>), we <em>might</em> want to compare these two models:</p>
-<pre class="r"><code>m.base0 &lt;- lmer(WeightChange ~ 1 + (1 + Assessment | ID), data=WeightMaintain3)
-m.base &lt;- lmer(WeightChange ~ 1 + Assessment + (1 + Assessment | ID), data=WeightMaintain3)</code></pre>
-<p>The first of these models is a bit weird to think about - how can we have by-participant random deviations of <code>Assessment</code> if we don’t have a fixed effect of <code>Assessment</code>? That makes very little sense. What it is actually fitting is a model where there is assumed to be <strong>no overall effect</strong> of Assessment. So the fixed effect is 0.</p>
-<pre class="r"><code># Straightforward LRT
-anova(m.base0, m.base)</code></pre>
-<pre><code>## Data: WeightMaintain3
-## Models:
-## m.base0: WeightChange ~ 1 + (1 + Assessment | ID)
-## m.base: WeightChange ~ 1 + Assessment + (1 + Assessment | ID)
-##         npar    AIC    BIC  logLik deviance Chisq Df Pr(&gt;Chisq)    
-## m.base0    5 2638.0 2660.9 -1314.0   2628.0                        
-## m.base     6 2579.4 2606.8 -1283.7   2567.4 60.66  1  6.782e-15 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<p>This suggests that the inclusion Assessment does improve model fit, indicating that participants’ weights changed over course of 36 month assessment period.</p>
-</div>
-<p class="solution-end">
-</p>
-<div class="question-begin">
-Question A3
-</div>
-<div class="question-body">
-<blockquote>
-<p>Q: Did the experimental condition groups differ in overall weight change and rate of weight change (non-maintenance)?</p>
-</blockquote>
-<p><em>Hint:</em> It helps to break it down. There are two questions here:</p>
-<ol style="list-style-type: decimal">
-<li>do groups differ overall?<br />
-</li>
-<li>do groups differ over time?</li>
-</ol>
-<p>We can begin to see that we’re asking two questions about the <code>Condition</code> variable here: “is there an effect of Condition?” and “Is there an interaction between Assessment and Condition?”.</p>
-<p>Try fitting two more models which incrementally build these levels of complexity, and compare them (perhaps to one another, perhaps to models from the previous question - think about what each comparison is testing!)</p>
-</div>
-<p class="question-end">
-</p>
-<div class="solution-begin">
-<span id="sol-start-37" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-37&#39;, &#39;sol-start-37&#39;)"> Solution </span>
-</div>
-<div id="sol-body-37" class="solution-body" style="display: none;">
-<pre class="r"><code>m.int &lt;- lmer(WeightChange ~ Assessment + Condition + (1 + Assessment | ID), 
-              data=WeightMaintain3)
-m.full &lt;- lmer(WeightChange ~ Assessment*Condition + (1 + Assessment | ID), 
-               data=WeightMaintain3)</code></pre>
-<p>We’re going to compare each model to the previous one to examine the improvement in fit due to inclusion of each parameter.
-We could do this quickly with</p>
-<pre class="r"><code>anova(m.base0, m.base, m.int, m.full)</code></pre>
-<pre><code>## Data: WeightMaintain3
-## Models:
-## m.base0: WeightChange ~ 1 + (1 + Assessment | ID)
-## m.base: WeightChange ~ 1 + Assessment + (1 + Assessment | ID)
-## m.int: WeightChange ~ Assessment + Condition + (1 + Assessment | ID)
-## m.full: WeightChange ~ Assessment * Condition + (1 + Assessment | ID)
-##         npar    AIC    BIC  logLik deviance   Chisq Df Pr(&gt;Chisq)    
-## m.base0    5 2638.0 2660.9 -1314.0   2628.0                          
-## m.base     6 2579.4 2606.8 -1283.7   2567.4 60.6605  1  6.782e-15 ***
-## m.int      8 2573.9 2610.6 -1279.0   2557.9  9.4418  2   0.008907 ** 
-## m.full    10 2537.5 2583.3 -1258.8   2517.5 40.3814  2  1.703e-09 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<ul>
-<li>Conditions differed overall in weight change <span class="math inline">\(\chi^2(2)=9.4, p = .009\)</span><br />
-</li>
-<li>Conditions differed in change over assessment period <span class="math inline">\(\chi^2(2)=40.4, p &lt; .001\)</span></li>
-</ul>
-</div>
-<p class="solution-end">
-</p>
-<div class="frame">
-<p><strong><code>boundary (singular) fit: see ?isSingular</code></strong></p>
-<p>Okay. Let’s talk about those “singular fits” messages we keep getting.<br />
-By now, you have hopefully fitted a number of models which incrementally add predictors. Ours are below:</p>
-<pre class="r"><code>m.base0 &lt;- lmer(WeightChange ~ 1 + (1 + Assessment | ID), data=WeightMaintain3)
-m.base &lt;- lmer(WeightChange ~ Assessment + (1 + Assessment | ID), data=WeightMaintain3)
-m.int &lt;- lmer(WeightChange ~ Assessment + Condition + (1 + Assessment | ID), data=WeightMaintain3)
-m.full &lt;- lmer(WeightChange ~ Assessment * Condition + (1 + Assessment | ID), data=WeightMaintain3)</code></pre>
-<p>And many of these models were singular fits, and we just ignored them. <strong>We shouldn’t have.</strong></p>
-<p><strong>What is the warning message telling us?</strong><br />
-The warning is telling us that our model has resulted in a ‘singular fit’. The easiest way to think of this is to think of it as indicating that the model is ‘overfitted’ - that there is <em>not enough variation in our data</em> for our model to be estimated properly.</p>
-<p><strong>What can we do?</strong><br />
-In many cases, perhaps the most intuitive advice would be remove the most complex part of the random effects structure (i.e. random slopes). This leads to a simpler model that is not over-fitted. In other words, start simplifying from the top (where the most complexity is) to the bottom (where the lowest complexity is).
-Additionally, when variance estimates are very low for a specific random effect term, this indicates that the model is not estimating this parameter to differ much between the levels of your grouping variable. It might, in some experimental designs, be perfectly acceptable to remove this or simply include it as a fixed effect.</p>
-<p>A key point here is that when fitting a mixed model, <strong>we should think about how the data are generated.</strong> Asking yourself questions such as “do we have good reason to assume subjects might vary over time, or to assume that they will have different starting points (i.e., different intercepts)?” can help you in specifying your random effect structure</p>
-<p>You can read in depth about what this means by reading the help documentation for <code>?isSingular</code>. For our purposes, a relevant section is copied below:</p>
-<p><em>… intercept-only models, or 2-dimensional random effects such as intercept + slope models, singularity is relatively easy to detect because it leads to random-effect variance estimates of (nearly) zero, or estimates of correlations that are (almost) exactly -1 or 1.</em></p>
-</div>
-<div class="question-begin">
-Question A4
-</div>
-<div class="question-body">
-<p>Re-read the description of the data, then ask yourself this question:</p>
-<p>Do we think participants will vary in:</p>
-<ol style="list-style-type: lower-alpha">
-<li>their <em>starting</em> weight differences <code>(1|ID)</code>?</li>
-<li>their weight change over the course of the assessment period <code>(0 + Assessment | ID)</code>?</li>
-<li>both <code>(1 + Assessment | ID)</code>?</li>
-</ol>
-<p><em>Hint:</em> What do we think the baseline weight should be? Should it be the same for everyone? If so, might we want to remove the random intercept, which we do by setting it to 0</p>
-<p>Can you re-fit your models without encountering singular fits?</p>
-</div>
-<p class="question-end">
-</p>
-<div class="solution-begin">
-<span id="sol-start-38" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-38&#39;, &#39;sol-start-38&#39;)"> Solution </span>
-</div>
-<div id="sol-body-38" class="solution-body" style="display: none;">
-<p>In this very specific research design, it may actually make a lot of sense to not model by-participant variation around the intercept.<br />
-As baseline is at the very start of the weight maintenance, it makes sense that we wouldn’t have very much (if any) participant variation in change at this point.
-Note that by removing the estimation of this parameter, our models now converge!</p>
-<pre class="r"><code>m.base0 &lt;- lmer(WeightChange ~ 1 + (0 + Assessment | ID), data=WeightMaintain3)
-m.base &lt;- lmer(WeightChange ~ 1 + Assessment + (0 + Assessment | ID), data=WeightMaintain3)
-m.int &lt;- lmer(WeightChange ~ 1 + Assessment + Condition + (0 + Assessment | ID), data=WeightMaintain3)
-m.full &lt;- lmer(WeightChange ~ 1 + Assessment * Condition + (0 + Assessment | ID), data=WeightMaintain3)</code></pre>
-<p>We can check if a model has a singular fit:</p>
-<pre class="r"><code>isSingular(m.base)</code></pre>
-<pre><code>## [1] FALSE</code></pre>
-</div>
-<p class="solution-end">
-</p>
-<div class="question-begin">
-Question A5
-</div>
-<div class="question-body">
-<p>Make a graph of the model fit <em>and</em> the observed means and standard errors at each time point for each condition.</p>
-<p>Try using the <strong>effects</strong> package (hint, does this help: <code>as.data.frame(effect("Assessment:Condition", model))</code>?)</p>
-</div>
-<p class="question-end">
-</p>
-<div class="solution-begin">
-<span id="sol-start-39" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-39&#39;, &#39;sol-start-39&#39;)"> Solution </span>
-</div>
-<div id="sol-body-39" class="solution-body" style="display: none;">
-<pre class="r"><code>library(effects)
-ef &lt;- as.data.frame(effect(&quot;Assessment:Condition&quot;, m.full))
+<!-- # Exercises: Longitudinal Models -->
+<!-- Last week when we introduced multilevel models (or "mixed effects models" or whatever we're calling them!), we saw in the lectures a little bit about the idea of having datapoints from the same participant _over time_. This kind of data tends to get termed "longitudinal" (mainly used to refer to studies which follow-up participants over the course of months or years). The lectures this week have also introduced this idea of 'change over time' by looking at some data from Public Health England.    -->
+<!-- Let's work our way through an example.  -->
+<!-- :::frame -->
+<!-- __WeightMaintain Data Codebook__   -->
+<!-- The weight maintenance data (`WeightMaintain3`), a made-up data set based on Lowe et al. (2014, Obesity, 22, 94-100), contains information on overweight participants who completed a 12-week weight loss program, and were then randomly assigned to one of three weight maintenance conditions: -->
+<!-- * None (Control)   -->
+<!-- * MR (meal replacements): use MR to replace one meal and snack per day   -->
+<!-- * ED (energy density intervention): book and educational materials on purchasing and preparing foods lower in ED (reducing fat content and/or increasing water content of foods)   -->
+<!-- Weight was assessed on day 1 of maintenance, 12 months post, 24 months post, and 36 months post. -->
+<!-- It is available, in **.rda** format, at https://uoepsy.github.io/data/WeightMaintain3.rda   -->
+<!-- ```{r echo=FALSE} -->
+<!-- load(url("https://uoepsy.github.io/data/WeightMaintain3.rda")) -->
+<!-- data.frame( -->
+<!--   variable = names(WeightMaintain3), -->
+<!--   description = c("Participant ID","Weight Maintenance Condition ('None' = No maintenance program, 'MR' = Meal replacement, 'ED' = Energy Density intervention)", "Assessment number (0 = Day 1, 1 = 12 months, 2 = 24 months, 3 = 36 months)", "Difference in weight (lbs) from end of 12-week weight loss program") -->
+<!-- ) %>% knitr::kable() -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- 
 
-ggplot(ef, aes(Assessment, fit, color=Condition)) + 
-  geom_line() +
-  stat_summary(data=WeightMaintain3, aes(y=WeightChange), 
-               fun.data=mean_se, geom=&quot;pointrange&quot;, size=1) +
-  theme_bw()</code></pre>
-<p><img src="02_lmm_log_files/figure-html/unnamed-chunk-13-1.png" width="80%" style="display: block; margin: auto;" /></p>
-</div>
-<p class="solution-end">
-</p>
-<div class="question-begin">
-Question A6
-</div>
-<div class="question-body">
-<p>Now let’s move to interpreting the coefficients.
-Remember, we can get the coefficients using <code>fixef(model)</code>.
-We can also use <code>tidy(model)</code>, and similar to models fitted with <code>lm()</code>, we can pull out the bit of the <code>summary()</code> using:</p>
-<pre class="r"><code>summary(model)$coefficients</code></pre>
-<p>From your model from the previous question which investigates whether conditions differed in their rate of weight change, examine the parameter estimates and interpret them (i.e., what does each parameter represent?)</p>
-</div>
-<p class="question-end">
-</p>
-<div class="solution-begin">
-<span id="sol-start-40" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-40&#39;, &#39;sol-start-40&#39;)"> Solution </span>
-</div>
-<div id="sol-body-40" class="solution-body" style="display: none;">
-<pre class="r"><code>round(coef(summary(m.full)), 3)</code></pre>
-<pre><code>##                        Estimate Std. Error t value
-## (Intercept)               0.060      0.098   0.616
-## Assessment                1.849      0.181  10.202
-## ConditionED              -0.143      0.139  -1.032
-## ConditionMR              -0.149      0.139  -1.078
-## Assessment:ConditionED   -1.749      0.256  -6.825
-## Assessment:ConditionMR   -0.836      0.256  -3.262</code></pre>
-<ul>
-<li><code>(Intercept)</code> ==&gt; weight change at baseline in None group</li>
-<li><code>Assessment</code> ==&gt; slope of weight change in None group</li>
-<li><code>ConditionED</code> ==&gt; baseline weight change in ED group relative to None group</li>
-<li><code>ConditionMR</code> ==&gt; baseline weight change in MR group relative to None group</li>
-<li><code>Assessment:ConditionED</code> ==&gt; slope of weight change in ED group relative to None group</li>
-<li><code>Assessment:ConditionMR</code> ==&gt; slope of weight change in MR groups relative to None group</li>
-</ul>
-</div>
-<p class="solution-end">
-</p>
-<div class="question-begin">
-Question A7
-</div>
-<div class="question-body">
-<p>Can you state how the conditions differed?</p>
-</div>
-<p class="question-end">
-</p>
-<div class="solution-begin">
-<span id="sol-start-41" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-41&#39;, &#39;sol-start-41&#39;)"> Solution </span>
-</div>
-<div id="sol-body-41" class="solution-body" style="display: none;">
-<pre class="r"><code>summary(m.full)$coefficients</code></pre>
-<pre><code>##                           Estimate Std. Error    t value
-## (Intercept)             0.06038642 0.09800169  0.6161773
-## Assessment              1.84917936 0.18125403 10.2021423
-## ConditionED            -0.14303302 0.13859533 -1.0320191
-## ConditionMR            -0.14944649 0.13859533 -1.0782939
-## Assessment:ConditionED -1.74949968 0.25633190 -6.8251344
-## Assessment:ConditionMR -0.83624053 0.25633190 -3.2623350</code></pre>
-<div class="int">
-<p>Compared to no intervention, weight (re)gain was 1.75 lbs/year slower for the ED intervention and 0.84 lbs/year slower for the MR intervention.</p>
-</div>
-</div>
-<p class="solution-end">
-</p>
-</div>
+<div class='question-begin'>Question A1</div><div class='question-body'>
+
+ -->
+<!-- Load the data, and take a look at what is in there. Hopefully it should match the description above.   -->
+<!-- **Hint:** `load(url("https://uoepsy.github.io/data/WeightMaintain3.rda"))` -->
+<!-- 
+
+</div><p class="question-end"></p>
+
+ -->
+<!-- 
+
+<div class="solution-begin"><span id='sol-start-35' class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-35', 'sol-start-35')">  Solution </span></div><div class="solution-body" id = "sol-body-35" style="display: none;">
+
+ -->
+<!-- ```{r} -->
+<!-- load(url("https://uoepsy.github.io/data/WeightMaintain3.rda")) -->
+<!-- summary(WeightMaintain3) -->
+<!-- head(WeightMaintain3) -->
+<!-- ``` -->
+<!-- 
+
+</div><p class="solution-end"></p>
+
+ -->
+<!-- 
+
+<div class='question-begin'>Question A2</div><div class='question-body'>
+
+   -->
+<!-- > Q: Overall, did the participants maintain their weight loss or did their weights change? -->
+<!-- We need to remember that each of our participants has measurements at 4 assessments. We have randomly sampled participants, and then within them have measured multiple observations. So our observations are __not independent__. We're not interested in estimating differences between specific participants - our participants are just a random sample of people. But we do want to account for the dependency they introduce in our data. This is why we would want to fit a multilevel model and incorporate participant-level variation into our model structure.    -->
+<!-- 1. Fit an "intercept-only" model.  -->
+<!-- 2. Fit a model with weight change predicted by assessment.   -->
+<!-- 3. Compare the two models (use `anova(model1, model2)` to conduct a likelihood ratio test). -->
+<!-- Things to think about:   -->
+<!-- - We _cannot_ compare models that differ in both the fixed *and* random parts.   -->
+<!-- - __For now__, ignore messages saying `boundary (singular) fit: see ?isSingular` (that comes in a couple of questions' time).     -->
+<!-- 
+
+</div><p class="question-end"></p>
+
+ -->
+<!-- 
+
+<div class="solution-begin"><span id='sol-start-36' class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-36', 'sol-start-36')">  Solution </span></div><div class="solution-body" id = "sol-body-36" style="display: none;">
+
+ -->
+<!-- This is our null model: -->
+<!-- ```{r} -->
+<!-- m.null <- lmer(WeightChange ~ 1 + (1 | ID), data=WeightMaintain3) -->
+<!-- summary(m.null) -->
+<!-- ``` -->
+<!-- We can see the `3.77 / (3.77 + 6.43)`, or 0.37 of the total variance is attributable to participant-level variation.  -->
+<!-- Now lets suppose we want to compare this null model with a model with an effect of `Assessment` (to assess whether there is overall change over time). -->
+<!-- Which model should we compare `m.null` to?   -->
+<!-- ```{r} -->
+<!-- modA <- lmer(WeightChange ~ 1 + Assessment + (1 + Assessment | ID), data=WeightMaintain3) -->
+<!-- modB <- lmer(WeightChange ~ 1 + Assessment + (1 | ID), data=WeightMaintain3) -->
+<!-- ``` -->
+<!-- A comparison between these `m.null` and `modA` will not be assessing the influence of _only_ the fixed effect of Assessment. Remember, we shouldn't compare models with different random effect structures.    -->
+<!-- However, `modB` doesn't include our by-participant random effects of assessment, so comparing this to `m.null` is potentially going to misattribute random deviations in participants' change to being an overall effect of assessment.   -->
+<!-- If we want to conduct a model comparison to isolate the effect of overall change over time (a fixed effect of `Assessment`), we _might_ want to compare these two models: -->
+<!-- ```{r} -->
+<!-- m.base0 <- lmer(WeightChange ~ 1 + (1 + Assessment | ID), data=WeightMaintain3) -->
+<!-- m.base <- lmer(WeightChange ~ 1 + Assessment + (1 + Assessment | ID), data=WeightMaintain3) -->
+<!-- ``` -->
+<!-- The first of these models is a bit weird to think about - how can we have by-participant random deviations of `Assessment` if we don't have a fixed effect of `Assessment`? That makes very little sense. What it is actually fitting is a model where there is assumed to be __no overall effect__ of Assessment. So the fixed effect is 0.  -->
+<!-- ```{r} -->
+<!-- # Straightforward LRT -->
+<!-- anova(m.base0, m.base) -->
+<!-- ``` -->
+<!-- This suggests that the inclusion Assessment does improve model fit, indicating that participants' weights changed over course of 36 month assessment period.  -->
+<!-- 
+
+</div><p class="solution-end"></p>
+
+ -->
+<!-- 
+
+<div class='question-begin'>Question A3</div><div class='question-body'>
+
+ -->
+<!-- > Q: Did the experimental condition groups differ in overall weight change and rate of weight change (non-maintenance)?   -->
+<!-- *Hint:* It helps to break it down. There are two questions here:   -->
+<!--   1. do groups differ overall?   -->
+<!--   2. do groups differ over time?   -->
+<!-- We can begin to see that we're asking two questions about the `Condition` variable here: "is there an effect of Condition?" and "Is there an interaction between Assessment and Condition?".   -->
+<!-- Try fitting two more models which incrementally build these levels of complexity, and compare them (perhaps to one another, perhaps to models from the previous question - think about what each comparison is testing!)   -->
+<!-- 
+
+</div><p class="question-end"></p>
+
+ -->
+<!-- 
+
+<div class="solution-begin"><span id='sol-start-37' class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-37', 'sol-start-37')">  Solution </span></div><div class="solution-body" id = "sol-body-37" style="display: none;">
+
+ -->
+<!-- ```{r} -->
+<!-- m.int <- lmer(WeightChange ~ Assessment + Condition + (1 + Assessment | ID),  -->
+<!--               data=WeightMaintain3) -->
+<!-- m.full <- lmer(WeightChange ~ Assessment*Condition + (1 + Assessment | ID),  -->
+<!--                data=WeightMaintain3) -->
+<!-- ``` -->
+<!-- We're going to compare each model to the previous one to examine the improvement in fit due to inclusion of each parameter.  -->
+<!-- We could do this quickly with -->
+<!-- ```{r} -->
+<!-- anova(m.base0, m.base, m.int, m.full) -->
+<!-- ``` -->
+<!-- - Conditions differed overall in weight change $\chi^2(2)=9.4, p = .009$   -->
+<!-- - Conditions differed in change over assessment period $\chi^2(2)=40.4, p < .001$ -->
+<!-- 
+
+</div><p class="solution-end"></p>
+
+ -->
+<!-- :::frame -->
+<!-- __`boundary (singular) fit: see ?isSingular`__   -->
+<!-- Okay. Let's talk about those "singular fits" messages we keep getting.   -->
+<!-- By now, you have hopefully fitted a number of models which incrementally add predictors. Ours are below:   -->
+<!-- ```{r} -->
+<!-- m.base0 <- lmer(WeightChange ~ 1 + (1 + Assessment | ID), data=WeightMaintain3) -->
+<!-- m.base <- lmer(WeightChange ~ Assessment + (1 + Assessment | ID), data=WeightMaintain3) -->
+<!-- m.int <- lmer(WeightChange ~ Assessment + Condition + (1 + Assessment | ID), data=WeightMaintain3) -->
+<!-- m.full <- lmer(WeightChange ~ Assessment * Condition + (1 + Assessment | ID), data=WeightMaintain3) -->
+<!-- ``` -->
+<!-- And many of these models were singular fits, and we just ignored them. __We shouldn't have.__   -->
+<!-- __What is the warning message telling us?__   -->
+<!-- The warning is telling us that our model has resulted in a 'singular fit'. The easiest way to think of this is to think of it as indicating that the model is 'overfitted' - that there is _not enough variation in our data_ for our model to be estimated properly.   -->
+<!-- __What can we do?__   -->
+<!-- In many cases, perhaps the most intuitive advice would be remove the most complex part of the random effects structure (i.e. random slopes). This leads to a simpler model that is not over-fitted. In other words, start simplifying from the top (where the most complexity is) to the bottom (where the lowest complexity is). -->
+<!-- Additionally, when variance estimates are very low for a specific random effect term, this indicates that the model is not estimating this parameter to differ much between the levels of your grouping variable. It might, in some experimental designs, be perfectly acceptable to remove this or simply include it as a fixed effect. -->
+<!-- A key point here is that when fitting a mixed model, __we should think about how the data are generated.__ Asking yourself questions such as "do we have good reason to assume subjects might vary over time, or to assume that they will have different starting points (i.e., different intercepts)?" can help you in specifying your random effect structure -->
+<!-- You can read in depth about what this means by reading the help documentation for `?isSingular`. For our purposes, a relevant section is copied below:   -->
+<!-- *... intercept-only models, or 2-dimensional random effects such as intercept + slope models, singularity is relatively easy to detect because it leads to random-effect variance estimates of (nearly) zero, or estimates of correlations that are (almost) exactly -1 or 1.* -->
+<!-- ::: -->
+<!-- 
+
+<div class='question-begin'>Question A4</div><div class='question-body'>
+
+ -->
+<!-- Re-read the description of the data, then ask yourself this question:   -->
+<!-- Do we think participants will vary in:   -->
+<!--   a. their _starting_ weight differences `(1|ID)`? -->
+<!--   b. their weight change over the course of the assessment period `(0 + Assessment | ID)`? -->
+<!--   c. both `(1 + Assessment | ID)`?   -->
+<!-- _Hint:_  What do we think the baseline weight should be? Should it be the same for everyone? If so, might we want to remove the random intercept, which we do by setting it to 0 -->
+<!-- Can you re-fit your models without encountering singular fits?    -->
+<!-- 
+
+</div><p class="question-end"></p>
+
+ -->
+<!-- 
+
+<div class="solution-begin"><span id='sol-start-38' class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-38', 'sol-start-38')">  Solution </span></div><div class="solution-body" id = "sol-body-38" style="display: none;">
+
+ -->
+<!-- In this very specific research design, it may actually make a lot of sense to not model by-participant variation around the intercept.   -->
+<!-- As baseline is at the very start of the weight maintenance, it makes sense that we wouldn't have very much (if any) participant variation in change at this point.  -->
+<!-- Note that by removing the estimation of this parameter, our models now converge! -->
+<!-- ```{r} -->
+<!-- m.base0 <- lmer(WeightChange ~ 1 + (0 + Assessment | ID), data=WeightMaintain3) -->
+<!-- m.base <- lmer(WeightChange ~ 1 + Assessment + (0 + Assessment | ID), data=WeightMaintain3) -->
+<!-- m.int <- lmer(WeightChange ~ 1 + Assessment + Condition + (0 + Assessment | ID), data=WeightMaintain3) -->
+<!-- m.full <- lmer(WeightChange ~ 1 + Assessment * Condition + (0 + Assessment | ID), data=WeightMaintain3) -->
+<!-- ``` -->
+<!-- We can check if a model has a singular fit:   -->
+<!-- ```{r} -->
+<!-- isSingular(m.base) -->
+<!-- ``` -->
+<!-- 
+
+</div><p class="solution-end"></p>
+
+ -->
+<!-- 
+
+<div class='question-begin'>Question A5</div><div class='question-body'>
+
+ -->
+<!-- Make a graph of the model fit *and* the observed means and standard errors at each time point for each condition.   -->
+<!-- Try using the **effects** package (hint, does this help: `as.data.frame(effect("Assessment:Condition", model))`?) -->
+<!-- 
+
+</div><p class="question-end"></p>
+
+ -->
+<!-- 
+
+<div class="solution-begin"><span id='sol-start-39' class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-39', 'sol-start-39')">  Solution </span></div><div class="solution-body" id = "sol-body-39" style="display: none;">
+
+ -->
+<!-- ```{r} -->
+<!-- library(effects) -->
+<!-- ef <- as.data.frame(effect("Assessment:Condition", m.full)) -->
+<!-- ggplot(ef, aes(Assessment, fit, color=Condition)) +  -->
+<!--   geom_line() + -->
+<!--   stat_summary(data=WeightMaintain3, aes(y=WeightChange),  -->
+<!--                fun.data=mean_se, geom="pointrange", size=1) + -->
+<!--   theme_bw() -->
+<!-- ``` -->
+<!-- 
+
+</div><p class="solution-end"></p>
+
+ -->
+<!-- 
+
+<div class='question-begin'>Question A6</div><div class='question-body'>
+
+ -->
+<!-- Now let's move to interpreting the coefficients.  -->
+<!-- Remember, we can get the coefficients using `fixef(model)`.  -->
+<!-- We can also use `tidy(model)`, and similar to models fitted with `lm()`, we can pull out the bit of the `summary()` using:   -->
+<!-- ```{r eval=FALSE} -->
+<!-- summary(model)$coefficients -->
+<!-- ``` -->
+<!-- From your model from the previous question which investigates whether conditions differed in their rate of weight change, examine the parameter estimates and interpret them (i.e., what does each parameter represent?) -->
+<!-- 
+
+</div><p class="question-end"></p>
+
+ -->
+<!-- 
+
+<div class="solution-begin"><span id='sol-start-40' class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-40', 'sol-start-40')">  Solution </span></div><div class="solution-body" id = "sol-body-40" style="display: none;">
+
+ -->
+<!-- ```{r} -->
+<!-- round(coef(summary(m.full)), 3) -->
+<!-- ``` -->
+<!-- * `(Intercept)` ==> weight change at baseline in None group -->
+<!-- * `Assessment`  ==> slope of weight change in None group -->
+<!-- * `ConditionED` ==> baseline weight change in ED group relative to None group -->
+<!-- * `ConditionMR` ==> baseline weight change in MR group relative to None group -->
+<!-- * `Assessment:ConditionED`  ==> slope of weight change in ED group relative to None group -->
+<!-- * `Assessment:ConditionMR`  ==> slope of weight change in MR groups relative to None group -->
+<!-- 
+
+</div><p class="solution-end"></p>
+
+ -->
+<!-- 
+
+<div class='question-begin'>Question A7</div><div class='question-body'>
+
+ -->
+<!-- Can you state how the conditions differed?   -->
+<!-- 
+
+</div><p class="question-end"></p>
+
+ -->
+<!-- 
+
+<div class="solution-begin"><span id='sol-start-41' class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-41', 'sol-start-41')">  Solution </span></div><div class="solution-body" id = "sol-body-41" style="display: none;">
+
+ -->
+<!-- ```{r} -->
+<!-- summary(m.full)$coefficients -->
+<!-- ``` -->
+<!-- :::int -->
+<!-- Compared to no intervention, weight (re)gain was 1.75 lbs/year slower for the ED intervention and 0.84 lbs/year slower for the MR intervention. -->
+<!-- ::: -->
+<!-- 
+
+</div><p class="solution-end"></p>
+
+ -->
 <div id="exercises-logistic-mlm" class="section level1">
 <h1>Exercises: Logistic MLM</h1>
 <div class="frame">
@@ -806,12 +754,12 @@ That content will provide a lot of the groundwork for this week, so we recommend
 <p>For binary regression, all the data in our outcome variable has to be a 0 or a 1.<br />
 For example, the <code>correct</code> variable below:<br />
 <br></p>
-<div id="hnsjhvzhiv" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="idwepyshtn" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#hnsjhvzhiv .gt_table {
+#idwepyshtn .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -836,7 +784,7 @@ For example, the <code>correct</code> variable below:<br />
   border-left-color: #D3D3D3;
 }
 
-#hnsjhvzhiv .gt_heading {
+#idwepyshtn .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -848,7 +796,12 @@ For example, the <code>correct</code> variable below:<br />
   border-right-color: #D3D3D3;
 }
 
-#hnsjhvzhiv .gt_title {
+#idwepyshtn .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#idwepyshtn .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -860,7 +813,7 @@ For example, the <code>correct</code> variable below:<br />
   border-bottom-width: 0;
 }
 
-#hnsjhvzhiv .gt_subtitle {
+#idwepyshtn .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -872,13 +825,13 @@ For example, the <code>correct</code> variable below:<br />
   border-top-width: 0;
 }
 
-#hnsjhvzhiv .gt_bottom_border {
+#idwepyshtn .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#hnsjhvzhiv .gt_col_headings {
+#idwepyshtn .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -893,7 +846,7 @@ For example, the <code>correct</code> variable below:<br />
   border-right-color: #D3D3D3;
 }
 
-#hnsjhvzhiv .gt_col_heading {
+#idwepyshtn .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -913,7 +866,7 @@ For example, the <code>correct</code> variable below:<br />
   overflow-x: hidden;
 }
 
-#hnsjhvzhiv .gt_column_spanner_outer {
+#idwepyshtn .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -925,15 +878,15 @@ For example, the <code>correct</code> variable below:<br />
   padding-right: 4px;
 }
 
-#hnsjhvzhiv .gt_column_spanner_outer:first-child {
+#idwepyshtn .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#hnsjhvzhiv .gt_column_spanner_outer:last-child {
+#idwepyshtn .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#hnsjhvzhiv .gt_column_spanner {
+#idwepyshtn .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -945,7 +898,7 @@ For example, the <code>correct</code> variable below:<br />
   width: 100%;
 }
 
-#hnsjhvzhiv .gt_group_heading {
+#idwepyshtn .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -968,9 +921,10 @@ For example, the <code>correct</code> variable below:<br />
   border-right-width: 1px;
   border-right-color: #D3D3D3;
   vertical-align: middle;
+  text-align: left;
 }
 
-#hnsjhvzhiv .gt_empty_group_heading {
+#idwepyshtn .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -985,15 +939,15 @@ For example, the <code>correct</code> variable below:<br />
   vertical-align: middle;
 }
 
-#hnsjhvzhiv .gt_from_md > :first-child {
+#idwepyshtn .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#hnsjhvzhiv .gt_from_md > :last-child {
+#idwepyshtn .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#hnsjhvzhiv .gt_row {
+#idwepyshtn .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1012,7 +966,7 @@ For example, the <code>correct</code> variable below:<br />
   overflow-x: hidden;
 }
 
-#hnsjhvzhiv .gt_stub {
+#idwepyshtn .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1025,7 +979,7 @@ For example, the <code>correct</code> variable below:<br />
   padding-right: 5px;
 }
 
-#hnsjhvzhiv .gt_stub_row_group {
+#idwepyshtn .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1039,11 +993,11 @@ For example, the <code>correct</code> variable below:<br />
   vertical-align: top;
 }
 
-#hnsjhvzhiv .gt_row_group_first td {
+#idwepyshtn .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#hnsjhvzhiv .gt_summary_row {
+#idwepyshtn .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1053,16 +1007,16 @@ For example, the <code>correct</code> variable below:<br />
   padding-right: 5px;
 }
 
-#hnsjhvzhiv .gt_first_summary_row {
+#idwepyshtn .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#hnsjhvzhiv .gt_first_summary_row.thick {
+#idwepyshtn .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#hnsjhvzhiv .gt_last_summary_row {
+#idwepyshtn .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1072,7 +1026,7 @@ For example, the <code>correct</code> variable below:<br />
   border-bottom-color: #D3D3D3;
 }
 
-#hnsjhvzhiv .gt_grand_summary_row {
+#idwepyshtn .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1082,7 +1036,7 @@ For example, the <code>correct</code> variable below:<br />
   padding-right: 5px;
 }
 
-#hnsjhvzhiv .gt_first_grand_summary_row {
+#idwepyshtn .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1092,11 +1046,11 @@ For example, the <code>correct</code> variable below:<br />
   border-top-color: #D3D3D3;
 }
 
-#hnsjhvzhiv .gt_striped {
+#idwepyshtn .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#hnsjhvzhiv .gt_table_body {
+#idwepyshtn .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1105,7 +1059,7 @@ For example, the <code>correct</code> variable below:<br />
   border-bottom-color: #D3D3D3;
 }
 
-#hnsjhvzhiv .gt_footnotes {
+#idwepyshtn .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1119,7 +1073,7 @@ For example, the <code>correct</code> variable below:<br />
   border-right-color: #D3D3D3;
 }
 
-#hnsjhvzhiv .gt_footnote {
+#idwepyshtn .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -1128,7 +1082,7 @@ For example, the <code>correct</code> variable below:<br />
   padding-right: 5px;
 }
 
-#hnsjhvzhiv .gt_sourcenotes {
+#idwepyshtn .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1142,7 +1096,7 @@ For example, the <code>correct</code> variable below:<br />
   border-right-color: #D3D3D3;
 }
 
-#hnsjhvzhiv .gt_sourcenote {
+#idwepyshtn .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1150,64 +1104,64 @@ For example, the <code>correct</code> variable below:<br />
   padding-right: 5px;
 }
 
-#hnsjhvzhiv .gt_left {
+#idwepyshtn .gt_left {
   text-align: left;
 }
 
-#hnsjhvzhiv .gt_center {
+#idwepyshtn .gt_center {
   text-align: center;
 }
 
-#hnsjhvzhiv .gt_right {
+#idwepyshtn .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#hnsjhvzhiv .gt_font_normal {
+#idwepyshtn .gt_font_normal {
   font-weight: normal;
 }
 
-#hnsjhvzhiv .gt_font_bold {
+#idwepyshtn .gt_font_bold {
   font-weight: bold;
 }
 
-#hnsjhvzhiv .gt_font_italic {
+#idwepyshtn .gt_font_italic {
   font-style: italic;
 }
 
-#hnsjhvzhiv .gt_super {
+#idwepyshtn .gt_super {
   font-size: 65%;
 }
 
-#hnsjhvzhiv .gt_footnote_marks {
+#idwepyshtn .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#hnsjhvzhiv .gt_asterisk {
+#idwepyshtn .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#hnsjhvzhiv .gt_indent_1 {
+#idwepyshtn .gt_indent_1 {
   text-indent: 5px;
 }
 
-#hnsjhvzhiv .gt_indent_2 {
+#idwepyshtn .gt_indent_2 {
   text-indent: 10px;
 }
 
-#hnsjhvzhiv .gt_indent_3 {
+#idwepyshtn .gt_indent_3 {
   text-indent: 15px;
 }
 
-#hnsjhvzhiv .gt_indent_4 {
+#idwepyshtn .gt_indent_4 {
   text-indent: 20px;
 }
 
-#hnsjhvzhiv .gt_indent_5 {
+#idwepyshtn .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1215,24 +1169,24 @@ For example, the <code>correct</code> variable below:<br />
   
   <thead class="gt_col_headings">
     <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">participant</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">question</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">correct</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="participant">participant</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="question">question</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="correct">correct</th>
     </tr>
   </thead>
   <tbody class="gt_table_body">
-    <tr><td class="gt_row gt_right">1</td>
-<td class="gt_row gt_right">1</td>
-<td class="gt_row gt_right">1</td></tr>
-    <tr><td class="gt_row gt_right">1</td>
-<td class="gt_row gt_right">2</td>
-<td class="gt_row gt_right">0</td></tr>
-    <tr><td class="gt_row gt_right">1</td>
-<td class="gt_row gt_right">3</td>
-<td class="gt_row gt_right">1</td></tr>
-    <tr><td class="gt_row gt_right">...</td>
-<td class="gt_row gt_right">...</td>
-<td class="gt_row gt_right">...</td></tr>
+    <tr><td headers="participant" class="gt_row gt_right">1</td>
+<td headers="question" class="gt_row gt_right">1</td>
+<td headers="correct" class="gt_row gt_right">1</td></tr>
+    <tr><td headers="participant" class="gt_row gt_right">1</td>
+<td headers="question" class="gt_row gt_right">2</td>
+<td headers="correct" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="participant" class="gt_row gt_right">1</td>
+<td headers="question" class="gt_row gt_right">3</td>
+<td headers="correct" class="gt_row gt_right">1</td></tr>
+    <tr><td headers="participant" class="gt_row gt_right">...</td>
+<td headers="question" class="gt_row gt_right">...</td>
+<td headers="correct" class="gt_row gt_right">...</td></tr>
   </tbody>
   
   
@@ -1240,12 +1194,12 @@ For example, the <code>correct</code> variable below:<br />
 </div>
 <p><br>
 But we can re-express this information in a different way, when we know the total number of questions asked:</p>
-<div id="kewhmgcqcs" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="tbfkzqdpla" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#kewhmgcqcs .gt_table {
+#tbfkzqdpla .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -1270,7 +1224,7 @@ But we can re-express this information in a different way, when we know the tota
   border-left-color: #D3D3D3;
 }
 
-#kewhmgcqcs .gt_heading {
+#tbfkzqdpla .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1282,7 +1236,12 @@ But we can re-express this information in a different way, when we know the tota
   border-right-color: #D3D3D3;
 }
 
-#kewhmgcqcs .gt_title {
+#tbfkzqdpla .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#tbfkzqdpla .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1294,7 +1253,7 @@ But we can re-express this information in a different way, when we know the tota
   border-bottom-width: 0;
 }
 
-#kewhmgcqcs .gt_subtitle {
+#tbfkzqdpla .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1306,13 +1265,13 @@ But we can re-express this information in a different way, when we know the tota
   border-top-width: 0;
 }
 
-#kewhmgcqcs .gt_bottom_border {
+#tbfkzqdpla .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#kewhmgcqcs .gt_col_headings {
+#tbfkzqdpla .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1327,7 +1286,7 @@ But we can re-express this information in a different way, when we know the tota
   border-right-color: #D3D3D3;
 }
 
-#kewhmgcqcs .gt_col_heading {
+#tbfkzqdpla .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1347,7 +1306,7 @@ But we can re-express this information in a different way, when we know the tota
   overflow-x: hidden;
 }
 
-#kewhmgcqcs .gt_column_spanner_outer {
+#tbfkzqdpla .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1359,15 +1318,15 @@ But we can re-express this information in a different way, when we know the tota
   padding-right: 4px;
 }
 
-#kewhmgcqcs .gt_column_spanner_outer:first-child {
+#tbfkzqdpla .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#kewhmgcqcs .gt_column_spanner_outer:last-child {
+#tbfkzqdpla .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#kewhmgcqcs .gt_column_spanner {
+#tbfkzqdpla .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1379,7 +1338,7 @@ But we can re-express this information in a different way, when we know the tota
   width: 100%;
 }
 
-#kewhmgcqcs .gt_group_heading {
+#tbfkzqdpla .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1402,9 +1361,10 @@ But we can re-express this information in a different way, when we know the tota
   border-right-width: 1px;
   border-right-color: #D3D3D3;
   vertical-align: middle;
+  text-align: left;
 }
 
-#kewhmgcqcs .gt_empty_group_heading {
+#tbfkzqdpla .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1419,15 +1379,15 @@ But we can re-express this information in a different way, when we know the tota
   vertical-align: middle;
 }
 
-#kewhmgcqcs .gt_from_md > :first-child {
+#tbfkzqdpla .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#kewhmgcqcs .gt_from_md > :last-child {
+#tbfkzqdpla .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#kewhmgcqcs .gt_row {
+#tbfkzqdpla .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1446,7 +1406,7 @@ But we can re-express this information in a different way, when we know the tota
   overflow-x: hidden;
 }
 
-#kewhmgcqcs .gt_stub {
+#tbfkzqdpla .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1459,7 +1419,7 @@ But we can re-express this information in a different way, when we know the tota
   padding-right: 5px;
 }
 
-#kewhmgcqcs .gt_stub_row_group {
+#tbfkzqdpla .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1473,11 +1433,11 @@ But we can re-express this information in a different way, when we know the tota
   vertical-align: top;
 }
 
-#kewhmgcqcs .gt_row_group_first td {
+#tbfkzqdpla .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#kewhmgcqcs .gt_summary_row {
+#tbfkzqdpla .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1487,16 +1447,16 @@ But we can re-express this information in a different way, when we know the tota
   padding-right: 5px;
 }
 
-#kewhmgcqcs .gt_first_summary_row {
+#tbfkzqdpla .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#kewhmgcqcs .gt_first_summary_row.thick {
+#tbfkzqdpla .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#kewhmgcqcs .gt_last_summary_row {
+#tbfkzqdpla .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1506,7 +1466,7 @@ But we can re-express this information in a different way, when we know the tota
   border-bottom-color: #D3D3D3;
 }
 
-#kewhmgcqcs .gt_grand_summary_row {
+#tbfkzqdpla .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1516,7 +1476,7 @@ But we can re-express this information in a different way, when we know the tota
   padding-right: 5px;
 }
 
-#kewhmgcqcs .gt_first_grand_summary_row {
+#tbfkzqdpla .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1526,11 +1486,11 @@ But we can re-express this information in a different way, when we know the tota
   border-top-color: #D3D3D3;
 }
 
-#kewhmgcqcs .gt_striped {
+#tbfkzqdpla .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#kewhmgcqcs .gt_table_body {
+#tbfkzqdpla .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1539,7 +1499,7 @@ But we can re-express this information in a different way, when we know the tota
   border-bottom-color: #D3D3D3;
 }
 
-#kewhmgcqcs .gt_footnotes {
+#tbfkzqdpla .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1553,7 +1513,7 @@ But we can re-express this information in a different way, when we know the tota
   border-right-color: #D3D3D3;
 }
 
-#kewhmgcqcs .gt_footnote {
+#tbfkzqdpla .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -1562,7 +1522,7 @@ But we can re-express this information in a different way, when we know the tota
   padding-right: 5px;
 }
 
-#kewhmgcqcs .gt_sourcenotes {
+#tbfkzqdpla .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1576,7 +1536,7 @@ But we can re-express this information in a different way, when we know the tota
   border-right-color: #D3D3D3;
 }
 
-#kewhmgcqcs .gt_sourcenote {
+#tbfkzqdpla .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1584,64 +1544,64 @@ But we can re-express this information in a different way, when we know the tota
   padding-right: 5px;
 }
 
-#kewhmgcqcs .gt_left {
+#tbfkzqdpla .gt_left {
   text-align: left;
 }
 
-#kewhmgcqcs .gt_center {
+#tbfkzqdpla .gt_center {
   text-align: center;
 }
 
-#kewhmgcqcs .gt_right {
+#tbfkzqdpla .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#kewhmgcqcs .gt_font_normal {
+#tbfkzqdpla .gt_font_normal {
   font-weight: normal;
 }
 
-#kewhmgcqcs .gt_font_bold {
+#tbfkzqdpla .gt_font_bold {
   font-weight: bold;
 }
 
-#kewhmgcqcs .gt_font_italic {
+#tbfkzqdpla .gt_font_italic {
   font-style: italic;
 }
 
-#kewhmgcqcs .gt_super {
+#tbfkzqdpla .gt_super {
   font-size: 65%;
 }
 
-#kewhmgcqcs .gt_footnote_marks {
+#tbfkzqdpla .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#kewhmgcqcs .gt_asterisk {
+#tbfkzqdpla .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#kewhmgcqcs .gt_indent_1 {
+#tbfkzqdpla .gt_indent_1 {
   text-indent: 5px;
 }
 
-#kewhmgcqcs .gt_indent_2 {
+#tbfkzqdpla .gt_indent_2 {
   text-indent: 10px;
 }
 
-#kewhmgcqcs .gt_indent_3 {
+#tbfkzqdpla .gt_indent_3 {
   text-indent: 15px;
 }
 
-#kewhmgcqcs .gt_indent_4 {
+#tbfkzqdpla .gt_indent_4 {
   text-indent: 20px;
 }
 
-#kewhmgcqcs .gt_indent_5 {
+#tbfkzqdpla .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1649,24 +1609,24 @@ But we can re-express this information in a different way, when we know the tota
   
   <thead class="gt_col_headings">
     <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">participant</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">questions_correct</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col">questions_incorrect</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="participant">participant</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="questions_correct">questions_correct</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="questions_incorrect">questions_incorrect</th>
     </tr>
   </thead>
   <tbody class="gt_table_body">
-    <tr><td class="gt_row gt_right">1</td>
-<td class="gt_row gt_right">2</td>
-<td class="gt_row gt_right">1</td></tr>
-    <tr><td class="gt_row gt_right">2</td>
-<td class="gt_row gt_right">1</td>
-<td class="gt_row gt_right">2</td></tr>
-    <tr><td class="gt_row gt_right">3</td>
-<td class="gt_row gt_right">3</td>
-<td class="gt_row gt_right">0</td></tr>
-    <tr><td class="gt_row gt_right">...</td>
-<td class="gt_row gt_right">...</td>
-<td class="gt_row gt_right">...</td></tr>
+    <tr><td headers="participant" class="gt_row gt_right">1</td>
+<td headers="questions_correct" class="gt_row gt_right">2</td>
+<td headers="questions_incorrect" class="gt_row gt_right">1</td></tr>
+    <tr><td headers="participant" class="gt_row gt_right">2</td>
+<td headers="questions_correct" class="gt_row gt_right">1</td>
+<td headers="questions_incorrect" class="gt_row gt_right">2</td></tr>
+    <tr><td headers="participant" class="gt_row gt_right">3</td>
+<td headers="questions_correct" class="gt_row gt_right">3</td>
+<td headers="questions_incorrect" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="participant" class="gt_row gt_right">...</td>
+<td headers="questions_correct" class="gt_row gt_right">...</td>
+<td headers="questions_incorrect" class="gt_row gt_right">...</td></tr>
   </tbody>
   
   
@@ -2082,7 +2042,7 @@ Figure 2: Differences between groups in the average proportion of correct respon
   scale_x_continuous(breaks=1:9, labels=c(1:7, &quot;Test&quot;, &quot;Follow-Up&quot;)) + 
   theme_bw(base_size=10) + 
   labs(x=&quot;Block&quot;, y=&quot;Proportion Correct&quot;, shape=&quot;Lesion\nLocation&quot;, color=&quot;Lesion\nLocation&quot;)</code></pre>
-<p><img src="02_lmm_log_files/figure-html/unnamed-chunk-25-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="02_lmm_log_files/figure-html/unnamed-chunk-10-1.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
 <p class="solution-end">
 </p>
@@ -2091,7 +2051,7 @@ Figure 2: Differences between groups in the average proportion of correct respon
 <p>Remember that categorical predictors get inputted into our model as a series of variables which are 0s and 1s? Previously the variable in our model for lesion location was actually being coded with 0 representing one level, and 1 representing the other. This is known as “treatment coding”.</p>
 <p>There are lots of other ways we might encode our categorical predictors. One common approach is to use “effects coding”. In the case where we have a binary predictor, this makes zero the mid-point between the two - i.e., the overall mean (this is a bit like mean-centering a continuous predictor).</p>
 <p>If we recall that the intercept is “when all predictors are zero”, and that when we have an interaction <code>Y~A+B+A*B</code> in our model, the individual coefficients for <code>A</code> and <code>B</code> are estimated “when the other variable is zero”, then we can start to understand how these different ways of encoding our categorical predictors can change what we are getting out of our model. (Note, they don’t actually change anything about the model fit, but they change what information we are estimating from the model).</p>
-<p><img src="02_lmm_log_files/figure-html/unnamed-chunk-26-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="02_lmm_log_files/figure-html/unnamed-chunk-11-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <p>If you want to understand this a little more, take a look <a href="zz_quickcontrasts.html">here</a>.</p>
 </div>
 <div class="question-begin">
