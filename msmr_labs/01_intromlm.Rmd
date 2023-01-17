@@ -305,6 +305,22 @@ We are now assuming $\color{orange}{\zeta_0}$, $\color{orange}{\zeta_1}$, and $\
 
 The $\color{orange}{\zeta}$ components also get termed the "random effects" part of the model, Hence names like "random effects model", etc. 
 
+__Visually__
+
+```{r echo=FALSE}
+knitr::include_graphics("images/lmm_visual.png")
+```
+
+- In blue you see the overall line and the overall intercept $\gamma_{00}$ and slope $\gamma_{10}$
+
+- In green you see the line of a specific group (the green points). The green group has a line with a different intercept and slope from the overall line (in blue). Multilevel models specify group-specific lines in relation to the overall line. As such the intercept of the group-specific line $\beta_{0i}$ is written as the overall intercept $\gamma_{00}$ plus a random adjustment $\zeta_{0i}$. Similarly, the group-specific slope $\beta_{1i}$ is written as the overall slope $\gamma_{10}$ plus a random adjustment $\zeta_{1i}$.
+
+- The residuals $\epsilon_{ij}$ represent the deviations of each point to the group-specific line.
+
+- The random adjustments to the intercept, $\zeta_{0i}$ are random variables called the __random intercept__, and have mean zero and variance $\sigma^2_{\zeta_{0}} = \text{var}(\zeta_{0,\text{group1}}, ..., \zeta_{0,\text{groupG}})$.
+
+- The random adjustments to the slope, $\zeta_{1i}$ are random variables called the __random slope__, and have mean zero and variance $\sigma^2_{\zeta_{1}} = \text{var}(\zeta_{1,\text{group1}}, ..., \zeta_{1,\text{groupG}})$.
+
 `r optbegin("Alternative notation", toggle=params$TOGGLE)`
 Many people use the symbol $u$ in place of $\zeta$.  
 In various resources, you are likely to see $\alpha$ used to denote the intercept instead of $\beta_0$.  
