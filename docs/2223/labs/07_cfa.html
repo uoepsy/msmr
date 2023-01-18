@@ -15,7 +15,7 @@
 
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
@@ -548,7 +548,7 @@ mreg_sem &lt;- sem(mreg_model, data=toys_read)</code></pre>
 ##       2.122       0.686       0.188</code></pre>
 <p>And you can see the estimated parameters are the same for our <code>sem()</code> model!</p>
 <pre class="r"><code>summary(mreg_sem)</code></pre>
-<pre><code>## lavaan 0.6-12 ended normally after 19 iterations
+<pre><code>## lavaan 0.6.13 ended normally after 19 iterations
 ## 
 ##   Estimator                                         ML
 ##   Optimization method                           NLMINB
@@ -796,7 +796,7 @@ Question B1
 </div>
 <div id="sol-body-158" class="solution-body" style="display: none;">
 <pre class="r"><code>summary(model1.est, fit.measures=TRUE)</code></pre>
-<pre><code>## lavaan 0.6-12 ended normally after 45 iterations
+<pre><code>## lavaan 0.6.13 ended normally after 45 iterations
 ## 
 ##   Estimator                                         ML
 ##   Optimization method                           NLMINB
@@ -828,14 +828,15 @@ Question B1
 ##                                                       
 ##   Akaike (AIC)                               15485.309
 ##   Bayesian (BIC)                             15573.248
-##   Sample-size adjusted Bayesian (BIC)        15509.753
+##   Sample-size adjusted Bayesian (SABIC)      15509.753
 ## 
 ## Root Mean Square Error of Approximation:
 ## 
 ##   RMSEA                                          0.224
 ##   90 Percent confidence interval - lower         0.213
 ##   90 Percent confidence interval - upper         0.236
-##   P-value RMSEA &lt;= 0.05                          0.000
+##   P-value H_0: RMSEA &lt;= 0.050                    0.000
+##   P-value H_0: RMSEA &gt;= 0.080                    1.000
 ## 
 ## Standardized Root Mean Square Residual:
 ## 
@@ -940,7 +941,7 @@ Does the model fit well?</p>
 <p><code>cfa()</code> uses a reference indicator to scale the latent variables by default, so we only need to specify the name of the object with the model syntax and the name of the dataset.</p>
 <pre class="r"><code>model2.est&lt;-cfa(model2, data=df)
 summary(model2.est, fit.measures=T)</code></pre>
-<pre><code>## lavaan 0.6-12 ended normally after 27 iterations
+<pre><code>## lavaan 0.6.13 ended normally after 27 iterations
 ## 
 ##   Estimator                                         ML
 ##   Optimization method                           NLMINB
@@ -972,14 +973,15 @@ summary(model2.est, fit.measures=T)</code></pre>
 ##                                                       
 ##   Akaike (AIC)                               14463.881
 ##   Bayesian (BIC)                             14556.217
-##   Sample-size adjusted Bayesian (BIC)        14489.548
+##   Sample-size adjusted Bayesian (SABIC)      14489.548
 ## 
 ## Root Mean Square Error of Approximation:
 ## 
 ##   RMSEA                                          0.039
 ##   90 Percent confidence interval - lower         0.025
 ##   90 Percent confidence interval - upper         0.054
-##   P-value RMSEA &lt;= 0.05                          0.884
+##   P-value H_0: RMSEA &lt;= 0.050                    0.884
+##   P-value H_0: RMSEA &gt;= 0.080                    0.000
 ## 
 ## Standardized Root Mean Square Residual:
 ## 
@@ -1120,7 +1122,7 @@ Typically we would want standardised loadings to be <span class="math inline">\(
 </div>
 <div id="sol-body-162" class="solution-body" style="display: none;">
 <pre class="r"><code>summary(model2.est, standardized=T)</code></pre>
-<pre><code>## lavaan 0.6-12 ended normally after 27 iterations
+<pre><code>## lavaan 0.6.13 ended normally after 27 iterations
 ## 
 ##   Estimator                                         ML
 ##   Optimization method                           NLMINB

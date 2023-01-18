@@ -109,18 +109,24 @@ tibble(variable=names(toys_read),
 Recall that in the course last semester we learned all about the linear regression model: 
 
 $$
-\begin{align}\\
-& \text{for observation }i \\
-& \color{red}{Y_i} = \color{blue}{\beta_0 \cdot{} 1 + \beta_1 \cdot{} X_{1i} \ + \ ... \ + \ \beta_p \cdot{} X_{pi}} + \varepsilon_i \\ 
+\begin{align}
+& \text{for observation }i: \\ \\
+& \qquad y_i = \color{blue}{\beta_0} \cdot 1 + \color{blue}{\beta_1} \cdot x_{1i} + \dots  + \color{blue}{\beta_p} \cdot x_{pi} + \color{red}{\varepsilon_i} \\ 
 \end{align}
 $$
 
+We used the following colour-coding:
+
+- Blue denotes a fixed population parameter
+- Red denotes a random variable representing a deviation. In this case $\color{red}{\varepsilon_i}$ represents the error between a point and the line prediction.
+
 (You might be more familiar with the notation of $b$ rather than $\beta$, but they're the same thing here).  
-If we wanted to write this more simply, we can express $X_1$ to $X_p$ (our predictor variables) as an $n \times p$ matrix (samplesize $\times$ parameters), and $\beta_0$ to $\beta_p$ as a vector of coefficients:
+
+If we wanted to write this more simply, we can express $x_1$ to $x_p$ (our predictor variables) as an $n \times p$ matrix (samplesize $\times$ parameters), and $\beta_0$ to $\beta_p$ as a vector of coefficients:
 
 $$
-\mathbf{y} = \boldsymbol{X\beta} + \boldsymbol{\varepsilon}
-\quad \\
+\mathbf{y} = \boldsymbol{X} \boldsymbol{\beta} + \boldsymbol{\varepsilon}
+\quad
 \text{where} \quad \varepsilon \sim N(0, \sigma) \text{ independently}
 $$
 
@@ -283,43 +289,52 @@ But accounting for this heterogeneity over clusters in the effect of interest co
 
 Multilevel Models (MLMs) (or "Linear Mixed Models" (LMMs)) take the approach of allowing the groups/clusters to vary around our $\beta$ estimates. 
 
+__Equation__  
+
 In the lectures, we saw this as:
 
 $$
 \begin{align}
-& \text{for observation }j\text{ in group }i \\
+& \text{for observation }j\text{ in group }i: \\
 \quad \\
-& \text{Level 1:} \\
-& \color{red}{y_{ij}} = \color{blue}{\beta_{0i} \cdot 1 + \beta_{1i} \cdot x_{ij}} + \varepsilon_{ij} \\
-& \text{Level 2:} \\
-& \color{blue}{\beta_{0i}} = \gamma_{00} + \color{orange}{\zeta_{0i}} \\
-& \color{blue}{\beta_{1i}} = \gamma_{10} + \color{orange}{\zeta_{1i}} \\
+& \text{level 1:} \\
+& \qquad y_{ij} = \color{green}{\beta_{0i}} \cdot 1 + \color{green}{\beta_{1i}} \cdot x_{ij} + \color{red}{\varepsilon_{ij}} \\\\
+& \text{level 2:} \\
+& \qquad \color{green}{\beta_{0i}} = \color{blue}{\gamma_{00}} + \color{red}{\zeta_{0i}} \\
+& \qquad \color{green}{\beta_{1i}} = \color{blue}{\gamma_{10}} + \color{red}{\zeta_{1i}} \\
 \quad \\
-& \text{Where:} \\
-& \gamma_{00}\text{ is the population intercept, and }\color{orange}{\zeta_{0i}}\text{ is the deviation of group }i\text{ from }\gamma_{00} \\
-& \gamma_{10}\text{ is the population slope, and }\color{orange}{\zeta_{1i}}\text{ is the deviation of group }i\text{ from }\gamma_{10} \\
+& \text{where:} \\
+& \qquad \color{blue}{\gamma_{00}} \text{ is the population intercept, and }\color{red}{\zeta_{0i}}\text{ is the deviation of group }i\text{ from }\color{blue}{\gamma_{00}} \\
+& \qquad \color{blue}{\gamma_{10}} \text{ is the population slope, and }\color{red}{\zeta_{1i}}\text{ is the deviation of group }i\text{ from }\color{blue}{\gamma_{10}} \\
+& \qquad \color{red}{\varepsilon_{ij}} \text{ is the deviation between a point and the line of the group that point belongs to}
 \end{align}
 $$
 
-We are now assuming $\color{orange}{\zeta_0}$, $\color{orange}{\zeta_1}$, and $\varepsilon$ to be normally distributed with a mean of 0, and we denote their variances as $\sigma_{\color{orange}{\zeta_0}}^2$, $\sigma_{\color{orange}{\zeta_1}}^2$, $\sigma_\varepsilon^2$ respectively. 
+We are now assuming $\color{red}{\zeta_0}$, $\color{red}{\zeta_1}$, and $\color{red}{\varepsilon}$ to be normally distributed with a mean of 0, and we denote their variances as $\sigma_{\zeta_0}^2$, $\sigma_{\zeta_1}^2$, $\sigma_{\varepsilon}^2$ respectively. 
 
-The $\color{orange}{\zeta}$ components also get termed the "random effects" part of the model, Hence names like "random effects model", etc. 
+The $\color{red}{\zeta}$ components also get termed the "random effects" part of the model, Hence names like "random effects model", etc. 
+
+We used the following colour-coding:
+
+- Blue denotes a fixed population parameter (overall parameter)
+- Red denotes a random variable representing a deviation / adjustment
+- Green denotes a random variable representing a group-specific parameter
 
 __Visually__
 
-```{r echo=FALSE}
+```{r echo=FALSE, out.width = "100%"}
 knitr::include_graphics("images/lmm_visual.png")
 ```
 
-- In blue you see the overall line with the overall intercept $\gamma_{00}$ and slope $\gamma_{10}$
+- In blue you see the overall line with the overall intercept $\color{blue}{\gamma_{00}}$ and slope $\color{blue}{\gamma_{10}}$
 
-In green you see the line of a specific group (the green points). The green group has a line with a different intercept and slope from the overall line (in blue). Multilevel models specify group-specific lines in relation to the overall line. As such, the intercept of the group-specific line $\beta_{0i}$ is written as the overall intercept $\gamma_{00}$ plus a group-specific random adjustment $\zeta_{0i}$. Similarly, the group-specific slope $\beta_{1i}$ is written as the overall slope $\gamma_{10}$ plus a group-specific random adjustment $\zeta_{1i}$.
+- In green you see the line of a specific group (the green points). The green group has a line with a different intercept and slope from the overall line (in blue). Multilevel models specify group-specific lines in relation to the overall line. As such, the intercept of the group-specific line $\color{green}{\beta_{0i}}$ is written as the overall intercept $\color{blue}{\gamma_{00}}$ plus a group-specific random adjustment $\color{red}{\zeta_{0i}}$. Similarly, the group-specific slope $\color{green}{\beta_{1i}}$ is written as the overall slope $\color{blue}{\gamma_{10}}$ plus a group-specific random adjustment $\color{red}{\zeta_{1i}}$.
 
-- The residuals $\epsilon_{ij}$ represent the deviations of each point to the group-specific line.
+- The residuals $\color{red}{\varepsilon_{ij}}$ represent the deviations of each point to the group-specific line.
 
-- The random adjustment to the intercept, $\zeta_{0i}$ is a random variable called the __random intercept__, and has mean zero and variance $\sigma^2_{\zeta_{0}} = \text{var}(\zeta_{0,\text{group1}}, ..., \zeta_{0,\text{groupG}})$.
+- The random adjustment to the intercept, $\color{red}{\zeta_{0i}}$ is a random variable called the __random intercept__, and has mean zero and variance $\sigma^2_{\zeta_{0}} = \text{Var}(\zeta_{0,\text{group1}}, ..., \zeta_{0,\text{groupG}})$.
 
-- The random adjustment to the slope, $\zeta_{1i}$ is a random variable called the __random slope__, and has mean zero and variance $\sigma^2_{\zeta_{1}} = \text{var}(\zeta_{1,\text{group1}}, ..., \zeta_{1,\text{groupG}})$.
+- The random adjustment to the slope, $\color{red}{\zeta_{1i}}$ is a random variable called the __random slope__, and has mean zero and variance $\sigma^2_{\zeta_{1}} = \text{Var}(\zeta_{1,\text{group1}}, ..., \zeta_{1,\text{groupG}})$.
 
 `r optbegin("Alternative notation", toggle=params$TOGGLE)`
 Many people use the symbol $u$ in place of $\zeta$.  
@@ -328,7 +343,7 @@ In various resources, you are likely to see $\alpha$ used to denote the intercep
 Sometimes, you will see the levels collapsed into one equation, as it might make for more intuitive reading. This often fits with the name "mixed effects" for these models:
 
 $$
-\color{red}{y_{ij}} = (\color{blue}{\beta_0} + \color{orange}{\zeta_{0i}}) \cdot 1 + ( \color{blue}{\beta_{1}} + \color{orange}{\zeta_{1i}} ) \cdot x_{ij}  +  \varepsilon_{ij} \\
+y_{ij} = (\color{blue}{\beta_0} + \color{red}{\zeta_{0i}}) \cdot 1 + ( \color{blue}{\beta_{1}} + \color{red}{\zeta_{1i}} ) \cdot x_{ij}  +  \color{red}{\varepsilon_{ij}} \\
 $$
 
 And then we also have the condensed matrix form of the model, in which the Z matrix represents the grouping structure, and the $u$ (or $\zeta$) are the estimated random deviations. 
@@ -366,10 +381,10 @@ We can such a model by allowing the intercept to vary by our grouping variable (
 <center>`lmer(y ~ 1 + x + (1|g), data = df)`</center>
 $$
 \begin{align}
-& \text{Level 1:} \\
-& \color{red}{Y_{ij}} = \color{blue}{\beta_{0i} \cdot 1 + \beta_{1} \cdot X_{ij}} + \varepsilon_{ij} \\
-& \text{Level 2:} \\
-& \color{blue}{\beta_{0i}} = \gamma_{00} + \color{orange}{\zeta_{0i}} \\
+& \text{level 1:} \\
+& \qquad y_{ij} = \color{green}{\beta_{0i}} \cdot 1 + \color{blue}{\beta_{1}} \cdot x_{ij} + \color{red}{\varepsilon_{ij}} \\
+& \text{level 2:} \\
+& \qquad \color{green}{\beta_{0i}} = \color{blue}{\gamma_{00}} + \color{red}{\zeta_{0i}} \\
 \end{align}
 $$
 :::
@@ -384,11 +399,14 @@ By extension we can also allow the effect `y~x` to vary between groups, by inclu
 <center>`lmer(y ~ 1 + x + (1 + x |g), data = df)`</center>
 $$
 \begin{align}
-& \text{Level 1:} \\
-& \color{red}{y_{ij}} = \color{blue}{\beta_{0i} \cdot 1 + \beta_{1i} \cdot x_{ij}} + \varepsilon_{ij} \\
-& \text{Level 2:} \\
-& \color{blue}{\beta_{0i}} = \gamma_{00} + \color{orange}{\zeta_{0i}} \\
-& \color{blue}{\beta_{1i}} = \gamma_{10} + \color{orange}{\zeta_{1i}} \\
+& \text{level 1:} \\
+    & \qquad y_{ij} = 
+        \color{green}{\beta_{0i}} \cdot 1 + \color{green}{\beta_{1i}} \cdot x_{ij} + \color{red}{\varepsilon_{ij}} \\
+& \text{level 2:} \\
+        & \qquad \color{green}{\beta_{0i}} = 
+            \color{blue}{\gamma_{00}} + \color{red}{\zeta_{0i}} \\
+        & \qquad \color{green}{\beta_{1i}} = 
+            \color{blue}{\gamma_{10}} + \color{red}{\zeta_{1i}} \\
 \end{align}
 $$
 :::
@@ -404,7 +422,7 @@ Remember back to [Week 10 of USMR](https://uoepsy.github.io/usmr/2223/labs/10a_g
   
 The key idea of *maximum likelihood estimation* (MLE) is that we (well, the computer) iteratively finds the set of estimates for our model which it considers to best reproduce our observed data. Recall our simple linear regression model of how practice (hrs per week) affects reading age: 
 $$
-\color{red}{ReadingAge_i} = \color{blue}{\beta_0 \cdot{} 1 + \beta_1 \cdot{} Practice_{i}} + \varepsilon_i
+\text{ReadingAge}_i = \color{blue}{\beta_0} \cdot 1 + \color{blue}{\beta_1} \cdot\text{Practice}_{i} + \color{red}{\varepsilon_i}
 $$
 There are values of $\beta_0$ and $\beta_1$ and $\sigma_\varepsilon$ which maximise the probability of observing the data that we have. For linear regression, these we obtained these same values a different way, via minimising the sums of squares. And we saw that this is not possible for more complex models (e.g., logistic), which is where we turn to MLE.  
 
@@ -530,9 +548,13 @@ augment(ri_model) %>%
 We have just fitted the model:
 $$
 \begin{align}
-& \text{For toy } j \text{ of toy-type } i \\
-& \color{red}{\textrm{Reading_Age}_{ij}} = \color{blue}{\beta_{0i} \cdot 1 + \beta_{1} \cdot \textrm{Practice}_{ij}} + \varepsilon_{ij} \\
-& \color{blue}{\beta_{0i}} = \gamma_{00} + \color{orange}{\zeta_{0i}} \\
+& \text{for toy } j \text{ of toy-type } i \\
+\\
+&\text{level 1:}\\
+    & \qquad \text{ReadingAge}_{ij} = \color{green}{\beta_{0i}} \cdot 1 + \color{blue}{\beta_{1}} \cdot \text{Practice}_{ij} + \color{red}{\varepsilon_{ij}} \\
+\\
+&\text{level 2:}\\
+    & \qquad \color{green}{\beta_{0i}} = \color{blue}{\gamma_{00}} + \color{red}{\zeta_{0i}} \\
 \end{align}
 $$
 
@@ -596,21 +618,24 @@ Can you now map those same coloured sections in Figure \@ref(fig:lmersummap) to 
 
 $$
 \begin{align}
-& \text{Level 1:} \\
-& \color{red}{ReadingAge_{ij}} = \color{blue}{\beta_{0i} \cdot 1 + \beta_{1} \cdot Practice_{ij}} + \varepsilon_{ij} \\
-& \text{Level 2:} \\
-& \color{blue}{\beta_{0i}} = \gamma_{00} + \color{orange}{\zeta_{0i}} \\
+& \text{level 1:} \\
+    & \qquad \text{ReadingAge}_{ij} = \color{green}{\beta_{0i}} \cdot 1 + \color{blue}{\beta_{1}} \cdot \text{Practice}_{ij} + \color{red}{\varepsilon_{ij}} \\
+\\
+& \text{level 2:} \\
+    & \qquad \color{green}{\beta_{0i}} = \color{blue}{\gamma_{00}} + \color{red}{\zeta_{0i}} \\
 \quad \\
-& \text{where} \\
-& \color{orange}{\zeta_0} \sim N(0, \sigma_{\color{orange}{\zeta_{0}}})  \text{ independently} \\
-& \varepsilon \sim N(0, \sigma_{\varepsilon}) \text{ independently} \\
+& \text{where:} \\
+    & \qquad \color{red}{\zeta_0} \sim N(0, \sigma_{\zeta_{0}})  \text{ independently} \\
+    & \qquad \color{red}{\varepsilon} \sim N(0, \sigma_{\varepsilon}) \text{ independently} \\
 \end{align}
 $$
 
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 
-+ Yellow = $\sigma_{\color{orange}{\zeta_{0}}}$   
+The circles in Figure \@ref(fig:lmersummap) correspond to:
+
++ Yellow = $\sigma_{\zeta_{0}}$   
 + Red = $\sigma_{\varepsilon}$    
 + Blue = $\gamma_{00}$  
 + Orange = $\beta_{1}$   
@@ -752,3 +777,7 @@ plot_model(mod, type = "int")
 `r solend()`
 
 
+<!-- Formatting -->
+
+
+<div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
