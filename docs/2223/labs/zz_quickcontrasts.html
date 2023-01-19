@@ -11,7 +11,7 @@
 
 
 
-<title>Contrasts - A quick overview</title>
+<title>Contrasts: a Quick Overview</title>
 
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -401,16 +401,16 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="00_tidyverse_markdown.html">Tidyverse &amp; Markdown Recap</a>
+      <a href="zz_tidyverse_markdown.html">Tidyverse &amp; Markdown Recap</a>
     </li>
     <li>
-      <a href="zz_binary_binomial.html">Binary vs Binomial</a>
+      <a href="zz_binary_binomial.html">Binary vs Binomial Data</a>
     </li>
     <li>
       <a href="zz_quickcontrasts.html">Contrasts: a Quick Overview</a>
     </li>
     <li>
-      <a href="lvp.html">Likelihood vs Probability</a>
+      <a href="zz_lvp.html">Likelihood vs Probability</a>
     </li>
   </ul>
 </li>
@@ -423,7 +423,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Contrasts - A quick overview</h1>
+<h1 class="title toc-ignore">Contrasts: a Quick Overview</h1>
 
 </div>
 
@@ -478,9 +478,9 @@ We’re going to switch back to the normal <code>lm()</code> world here for a bi
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-185" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-185&#39;, &#39;sol-start-185&#39;)"> Solution </span>
+<span id="sol-start-167" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-167&#39;, &#39;sol-start-167&#39;)"> Solution </span>
 </div>
-<div id="sol-body-185" class="solution-body" style="display: none;">
+<div id="sol-body-167" class="solution-body" style="display: none;">
 <p>You don’t have to do it this way. This was just the first way to calculate the difference in means that came to my head. <code>group_by()</code> will definitely come in handy though.</p>
 <pre class="r"><code>toy_utils %&gt;% group_by(type) %&gt;%
   summarise(
@@ -506,9 +506,9 @@ We’re going to switch back to the normal <code>lm()</code> world here for a bi
 <p>In our regression model we are fitting an intercept plus a coefficient for each explanatory variable, and any categorical predictors are coded as 0s and 1s.</p>
 <p>We can add constraints to our the way our contrasts are coded. In fact, with the default <strong>treatment</strong> coding, we already have applied one - we constrained them such that the intercept (<span class="math inline">\(\beta_0\)</span>) = the mean of one of the groups.</p>
 <div class="optional-begin">
-<span id="opt-start-186" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-186&#39;, &#39;opt-start-186&#39;)"> Optional: Why constraints?</span>
+<span id="opt-start-168" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-168&#39;, &#39;opt-start-168&#39;)"> Optional: Why constraints?</span>
 </div>
-<div id="opt-body-186" class="optional-body" style="display: none;">
+<div id="opt-body-168" class="optional-body" style="display: none;">
 <p>Why do we not have:</p>
 <ul>
 <li><code>Intercept</code></li>
@@ -551,9 +551,9 @@ Question 2
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-187" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-187&#39;, &#39;sol-start-187&#39;)"> Solution </span>
+<span id="sol-start-169" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-169&#39;, &#39;sol-start-169&#39;)"> Solution </span>
 </div>
-<div id="sol-body-187" class="solution-body" style="display: none;">
+<div id="sol-body-169" class="solution-body" style="display: none;">
 <pre class="r"><code>model_sum &lt;- lm(UTILITY ~ type, contrasts = list(type = &quot;contr.sum&quot;), data = toy_utils)
 
 globmean &lt;- mean(toy_utils$UTILITY)
