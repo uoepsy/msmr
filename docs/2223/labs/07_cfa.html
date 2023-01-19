@@ -348,13 +348,13 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="01_intromlm.html">1: Intro to Multi-Level Modelling</a>
+      <a href="01_intromlm.html">1: Introduction to Multilevel Models</a>
     </li>
     <li>
-      <a href="02_lmm_log.html">2: Logistic | Longitudinal (linear)</a>
+      <a href="02_lmm_log.html">2: Logistic Multilevel Models</a>
     </li>
     <li>
-      <a href="03_nonlin.html">3: Longitudinal (non-linear)</a>
+      <a href="03_nonlin.html">3: Longitudinal Nonlinear Models</a>
     </li>
     <li>
       <a href="04_ranef.html">4: Random Effect Structures</a>
@@ -401,7 +401,16 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="00_tidyverse_markdown.html">Recap - Tidyverse &amp; Markdown</a>
+      <a href="00_tidyverse_markdown.html">Tidyverse &amp; Markdown Recap</a>
+    </li>
+    <li>
+      <a href="zz_binary_binomial.html">Binary vs Binomial</a>
+    </li>
+    <li>
+      <a href="zz_quickcontrasts.html">Contrasts: a Quick Overview</a>
+    </li>
+    <li>
+      <a href="lvp.html">Likelihood vs Probability</a>
     </li>
   </ul>
 </li>
@@ -525,9 +534,9 @@ In lavaan, we continue to fit regressions using the <code>~</code> symbol, but w
 </ol>
 </div>
 <div class="optional-begin">
-<span id="opt-start-152" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-152&#39;, &#39;opt-start-152&#39;)"> Optional: Fitting a multiple regression model with lavaan</span>
+<span id="opt-start-144" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-144&#39;, &#39;opt-start-144&#39;)"> Optional: Fitting a multiple regression model with lavaan</span>
 </div>
-<div id="opt-body-152" class="optional-body" style="display: none;">
+<div id="opt-body-144" class="optional-body" style="display: none;">
 <p>You can see a multiple regression fitted with lavaan here, we define the model as a character string, and then we pass that to the relevant lavaan function, such as <code>cfa()</code> or in this case <code>sem()</code> (we’ll use <code>sem()</code> more in the weeks to come).</p>
 <pre class="r"><code>library(tidyverse)
 library(lavaan)
@@ -607,9 +616,9 @@ Recall that specifying a factor structure is simply to say that some measured va
 <p>The <strong>semPlot</strong> package contains the function <code>semPaths()</code>, which is well established and works “out of the box” but is harder to edit. Alternatively, you can try your hand at a newer package which promises more customisable features for SEM diagrams called <a href="https://cjvanlissa.github.io/tidySEM/articles/Plotting_graphs.html"><strong>tidySEM</strong></a>. Often, if we want to include a SEM diagram in a report the raw output from <code>semPaths()</code> would not usually meet publication standards, and instead we tend to draw them in programs like powerpoint!</p>
 </div>
 <div class="optional-begin">
-<span id="opt-start-153" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-153&#39;, &#39;opt-start-153&#39;)"> Optional: visualising a multiple regression model as a path diagram</span>
+<span id="opt-start-145" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-145&#39;, &#39;opt-start-145&#39;)"> Optional: visualising a multiple regression model as a path diagram</span>
 </div>
-<div id="opt-body-153" class="optional-body" style="display: none;">
+<div id="opt-body-145" class="optional-body" style="display: none;">
 <pre class="r"><code>library(semPlot)
 semPaths(mreg_sem, whatLabels = &quot;est&quot;, intercepts = F)</code></pre>
 <p><img src="07_cfa_files/figure-html/unnamed-chunk-8-1.png" width="80%" style="display: block; margin: auto;" /></p>
@@ -649,9 +658,9 @@ Question A1
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-154" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-154&#39;, &#39;sol-start-154&#39;)"> Solution </span>
+<span id="sol-start-146" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-146&#39;, &#39;sol-start-146&#39;)"> Solution </span>
 </div>
-<div id="sol-body-154" class="solution-body" style="display: none;">
+<div id="sol-body-146" class="solution-body" style="display: none;">
 <pre class="r"><code>df &lt;- read.csv(&quot;https://uoepsy.github.io/data/conduct_problems_2.csv&quot;)
 cor(df)</code></pre>
 <pre><code>##        item1 item2  item3 item4 item5  item6 item7 item8 item9 item10
@@ -681,9 +690,9 @@ Do not estimate the model yet, simply specify it in a character string, in prepa
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-155" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-155&#39;, &#39;sol-start-155&#39;)"> Solution </span>
+<span id="sol-start-147" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-147&#39;, &#39;sol-start-147&#39;)"> Solution </span>
 </div>
-<div id="sol-body-155" class="solution-body" style="display: none;">
+<div id="sol-body-147" class="solution-body" style="display: none;">
 <pre class="r"><code>model1&lt;-&#39;CP=~item1+item2+item3+item4+item5+item6+item7+item8+item9+item10&#39;</code></pre>
 </div>
 <p class="solution-end">
@@ -701,9 +710,9 @@ Question A3
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-156" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-156&#39;, &#39;sol-start-156&#39;)"> Solution </span>
+<span id="sol-start-148" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-148&#39;, &#39;sol-start-148&#39;)"> Solution </span>
 </div>
-<div id="sol-body-156" class="solution-body" style="display: none;">
+<div id="sol-body-148" class="solution-body" style="display: none;">
 <pre class="r"><code>model1.est&lt;-cfa(model1, data=df, std.lv = TRUE)</code></pre>
 </div>
 <p class="solution-end">
@@ -726,9 +735,9 @@ Question A3
 <strong>under-</strong> and <strong>over-</strong> identified models correspond to those with <span class="math inline">\(&lt;0\)</span> and <span class="math inline">\(&gt;0\)</span> degrees of freedom respectively.</p>
 <p>An example of a <em>just-identified</em> model is the multiple regression model! In multiple regression, everything is allowed to vary with everything else, which means that there is a unique solution for all of the model’s parameters because there are <em>as many paths as there are observed covariances</em>. This means that <em>in the SEM world</em>, a multiple regression model is “just-identified”.</p>
 <div class="optional-begin">
-<span id="opt-start-157" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-157&#39;, &#39;opt-start-157&#39;)"> demonstration</span>
+<span id="opt-start-149" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-149&#39;, &#39;opt-start-149&#39;)"> demonstration</span>
 </div>
-<div id="opt-body-157" class="optional-body" style="display: none;">
+<div id="opt-body-149" class="optional-body" style="display: none;">
 <p>If I have two predictors and one outcome variable, then there are 6 variances and covariances available. For instance:</p>
 <pre class="r"><code>cov(toys_read %&gt;% select(R_AGE, hrs_week, age))</code></pre>
 <pre><code>##           R_AGE hrs_week   age
@@ -792,9 +801,9 @@ Question B1
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-158" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-158&#39;, &#39;sol-start-158&#39;)"> Solution </span>
+<span id="sol-start-150" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-150&#39;, &#39;sol-start-150&#39;)"> Solution </span>
 </div>
-<div id="sol-body-158" class="solution-body" style="display: none;">
+<div id="sol-body-150" class="solution-body" style="display: none;">
 <pre class="r"><code>summary(model1.est, fit.measures=TRUE)</code></pre>
 <pre><code>## lavaan 0.6.13 ended normally after 45 iterations
 ## 
@@ -911,9 +920,9 @@ The first one below is filled in for you:</p>
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-159" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-159&#39;, &#39;sol-start-159&#39;)"> Solution </span>
+<span id="sol-start-151" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-151&#39;, &#39;sol-start-151&#39;)"> Solution </span>
 </div>
-<div id="sol-body-159" class="solution-body" style="display: none;">
+<div id="sol-body-151" class="solution-body" style="display: none;">
 <p>We can specify the model as below.</p>
 <pre class="r"><code>model2&lt;-&#39;
     LV1=~item1+item2+item3+item4+item5
@@ -935,9 +944,9 @@ Does the model fit well?</p>
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-160" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-160&#39;, &#39;sol-start-160&#39;)"> Solution </span>
+<span id="sol-start-152" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-152&#39;, &#39;sol-start-152&#39;)"> Solution </span>
 </div>
-<div id="sol-body-160" class="solution-body" style="display: none;">
+<div id="sol-body-152" class="solution-body" style="display: none;">
 <p><code>cfa()</code> uses a reference indicator to scale the latent variables by default, so we only need to specify the name of the object with the model syntax and the name of the dataset.</p>
 <pre class="r"><code>model2.est&lt;-cfa(model2, data=df)
 summary(model2.est, fit.measures=T)</code></pre>
@@ -1041,9 +1050,9 @@ Question B4
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-161" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-161&#39;, &#39;sol-start-161&#39;)"> Solution </span>
+<span id="sol-start-153" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-153&#39;, &#39;sol-start-153&#39;)"> Solution </span>
 </div>
-<div id="sol-body-161" class="solution-body" style="display: none;">
+<div id="sol-body-153" class="solution-body" style="display: none;">
 <pre class="r"><code>modindices(model2.est, sort=T)</code></pre>
 <pre><code>##      lhs op    rhs     mi    epc sepc.lv sepc.all sepc.nox
 ## 72 item6 ~~ item10 10.747  0.082   0.082    0.144    0.144
@@ -1118,9 +1127,9 @@ Typically we would want standardised loadings to be <span class="math inline">\(
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-162" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-162&#39;, &#39;sol-start-162&#39;)"> Solution </span>
+<span id="sol-start-154" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-154&#39;, &#39;sol-start-154&#39;)"> Solution </span>
 </div>
-<div id="sol-body-162" class="solution-body" style="display: none;">
+<div id="sol-body-154" class="solution-body" style="display: none;">
 <pre class="r"><code>summary(model2.est, standardized=T)</code></pre>
 <pre><code>## lavaan 0.6.13 ended normally after 27 iterations
 ## 
@@ -1192,9 +1201,9 @@ Using R, represent the model, including the standardised parameters as a SEM dia
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-163" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-163&#39;, &#39;sol-start-163&#39;)"> Solution </span>
+<span id="sol-start-155" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-155&#39;, &#39;sol-start-155&#39;)"> Solution </span>
 </div>
-<div id="sol-body-163" class="solution-body" style="display: none;">
+<div id="sol-body-155" class="solution-body" style="display: none;">
 <p>In the <code>semPaths()</code> function, we can include the unstandardised estimates by setting <code>what='est'</code> and the standardised estimates by setting <code>what='stand'</code>.</p>
 <pre class="r"><code>library(semPlot)
 semPaths(model2.est, what=&#39;stand&#39;)</code></pre>
@@ -1217,9 +1226,9 @@ Question B7
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-164" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-164&#39;, &#39;sol-start-164&#39;)"> Solution </span>
+<span id="sol-start-156" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-156&#39;, &#39;sol-start-156&#39;)"> Solution </span>
 </div>
-<div id="sol-body-164" class="solution-body" style="display: none;">
+<div id="sol-body-156" class="solution-body" style="display: none;">
 <div class="int">
 <p>A two-factor model was tested. Items 1-5 loaded on a ‘non-aggressive conduct problems’ factor and items 6-10 loaded on an ‘aggression’ factor and these factors were allowed to correlate. Scaling and identification were achieved by fixing the loading of item 1 on the non-aggressive conduct problems factor and item 6 on the aggression factor to 1. The model was estimated using maximum likelihood estimation. The model fit well with CFI=.99, TLI=0.99, RMSEA=.04, and SRMR=.04 (Hu &amp; Bentler, 1999). All loadings were statistically significant and &gt;|.3| on the standardised scale. Modification indices and expected parameter changes were inspected but no modifications were made because no expected parameter changes were judged large enough to merit the inclusion of additional parameters given that there was little theoretical rationale for their inclusion. Overall, therefore, a two-factor oblique model was supported for the conduct problems items. The correlation between the factors was r=.38 (p&lt;.001).</p>
 <table>

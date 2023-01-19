@@ -348,13 +348,13 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="01_intromlm.html">1: Intro to Multi-Level Modelling</a>
+      <a href="01_intromlm.html">1: Introduction to Multilevel Models</a>
     </li>
     <li>
-      <a href="02_lmm_log.html">2: Logistic | Longitudinal (linear)</a>
+      <a href="02_lmm_log.html">2: Logistic Multilevel Models</a>
     </li>
     <li>
-      <a href="03_nonlin.html">3: Longitudinal (non-linear)</a>
+      <a href="03_nonlin.html">3: Longitudinal Nonlinear Models</a>
     </li>
     <li>
       <a href="04_ranef.html">4: Random Effect Structures</a>
@@ -401,7 +401,16 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="00_tidyverse_markdown.html">Recap - Tidyverse &amp; Markdown</a>
+      <a href="00_tidyverse_markdown.html">Tidyverse &amp; Markdown Recap</a>
+    </li>
+    <li>
+      <a href="zz_binary_binomial.html">Binary vs Binomial</a>
+    </li>
+    <li>
+      <a href="zz_quickcontrasts.html">Contrasts: a Quick Overview</a>
+    </li>
+    <li>
+      <a href="lvp.html">Likelihood vs Probability</a>
     </li>
   </ul>
 </li>
@@ -466,9 +475,9 @@ Check whether or not the data were read correctly into R - do the dimensions cor
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-132" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-132&#39;, &#39;sol-start-132&#39;)"> Solution </span>
+<span id="sol-start-124" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-124&#39;, &#39;sol-start-124&#39;)"> Solution </span>
 </div>
-<div id="sol-body-132" class="solution-body" style="display: none;">
+<div id="sol-body-124" class="solution-body" style="display: none;">
 <p>Let’s load the data:</p>
 <pre class="r"><code>library(tidyverse)
 
@@ -499,9 +508,9 @@ Question A2
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-133" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-133&#39;, &#39;sol-start-133&#39;)"> Solution </span>
+<span id="sol-start-125" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-125&#39;, &#39;sol-start-125&#39;)"> Solution </span>
 </div>
-<div id="sol-body-133" class="solution-body" style="display: none;">
+<div id="sol-body-125" class="solution-body" style="display: none;">
 <p>We now inspect some descriptive statistics for each variable in the dataset:</p>
 <pre class="r"><code># Quick summary
 summary(job)</code></pre>
@@ -1002,9 +1011,9 @@ Question A3
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-134" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-134&#39;, &#39;sol-start-134&#39;)"> Solution </span>
+<span id="sol-start-126" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-126&#39;, &#39;sol-start-126&#39;)"> Solution </span>
 </div>
-<div id="sol-body-134" class="solution-body" style="display: none;">
+<div id="sol-body-126" class="solution-body" style="display: none;">
 <p>Let’s start by looking at the correlation matrix of the data:</p>
 <pre class="r"><code>library(pheatmap)
 
@@ -1045,9 +1054,9 @@ Question A4
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-135" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-135&#39;, &#39;sol-start-135&#39;)"> Solution </span>
+<span id="sol-start-127" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-127&#39;, &#39;sol-start-127&#39;)"> Solution </span>
 </div>
-<div id="sol-body-135" class="solution-body" style="display: none;">
+<div id="sol-body-127" class="solution-body" style="display: none;">
 <p>Let’s have a look at the standard deviation of each variable:</p>
 <pre class="r"><code>job %&gt;% 
   summarise(across(everything(), sd))</code></pre>
@@ -1075,9 +1084,9 @@ job_pca$loadings</code></pre>
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-136" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-136&#39;, &#39;sol-start-136&#39;)"> Solution </span>
+<span id="sol-start-128" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-128&#39;, &#39;sol-start-128&#39;)"> Solution </span>
 </div>
-<div id="sol-body-136" class="solution-body" style="display: none;">
+<div id="sol-body-128" class="solution-body" style="display: none;">
 <pre class="r"><code>library(psych)
 
 job_pca &lt;- principal(job, nfactors = ncol(job), covar = TRUE, rotate = &#39;none&#39;)</code></pre>
@@ -1117,9 +1126,9 @@ In other words, the total variance of the principal components (the sum of their
 From the third component onwards, we do not see such a sharp increase in the proportion of explained variance, and the cumulative proportion slowly reaches the total ratio of 1 (or 100%).</p>
 </div>
 <div class="optional-begin">
-<span id="opt-start-137" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-137&#39;, &#39;opt-start-137&#39;)"> Optional: (some of) the math behind it</span>
+<span id="opt-start-129" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-129&#39;, &#39;opt-start-129&#39;)"> Optional: (some of) the math behind it</span>
 </div>
-<div id="opt-body-137" class="optional-body" style="display: none;">
+<div id="opt-body-129" class="optional-body" style="display: none;">
 <p>Doing data reduction can feel a bit like magic, and in part that’s just because it’s quite complicated.</p>
 <p><strong>The intuition</strong></p>
 <p>Consider one way we might construct a correlation matrix - as the product of vector <span class="math inline">\(\mathbf{f}\)</span> with <span class="math inline">\(\mathbf{f&#39;}\)</span> (f transposed):
@@ -1374,9 +1383,9 @@ Question A6
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-138" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-138&#39;, &#39;sol-start-138&#39;)"> Solution </span>
+<span id="sol-start-130" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-130&#39;, &#39;sol-start-130&#39;)"> Solution </span>
 </div>
-<div id="sol-body-138" class="solution-body" style="display: none;">
+<div id="sol-body-130" class="solution-body" style="display: none;">
 <p>Let’s look again at the PCA summary:</p>
 <pre class="r"><code>job_pca$loadings</code></pre>
 <pre><code>## 
@@ -1420,9 +1429,9 @@ Question A7
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-139" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-139&#39;, &#39;sol-start-139&#39;)"> Solution </span>
+<span id="sol-start-131" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-131&#39;, &#39;sol-start-131&#39;)"> Solution </span>
 </div>
-<div id="sol-body-139" class="solution-body" style="display: none;">
+<div id="sol-body-131" class="solution-body" style="display: none;">
 <pre class="r"><code>job_pca$loadings</code></pre>
 <pre><code>## 
 ## Loadings:
@@ -1470,9 +1479,9 @@ Question A8
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-140" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-140&#39;, &#39;sol-start-140&#39;)"> Solution </span>
+<span id="sol-start-132" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-132&#39;, &#39;sol-start-132&#39;)"> Solution </span>
 </div>
-<div id="sol-body-140" class="solution-body" style="display: none;">
+<div id="sol-body-132" class="solution-body" style="display: none;">
 <p>This criterion then suggests to keep three principal components.</p>
 </div>
 <p class="solution-end">
@@ -1495,9 +1504,9 @@ Question A9
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-141" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-141&#39;, &#39;sol-start-141&#39;)"> Solution </span>
+<span id="sol-start-133" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-133&#39;, &#39;sol-start-133&#39;)"> Solution </span>
 </div>
-<div id="sol-body-141" class="solution-body" style="display: none;">
+<div id="sol-body-133" class="solution-body" style="display: none;">
 <pre class="r"><code>job_map &lt;- VSS(job, plot=FALSE, method=&quot;pc&quot;, n = ncol(job))$map
 paste(&quot;MAP is lowest for&quot;, which.min(job_map), &quot;components&quot;)</code></pre>
 <pre><code>## [1] &quot;MAP is lowest for 2 components&quot;</code></pre>
@@ -1522,9 +1531,9 @@ Question A10
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-142" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-142&#39;, &#39;sol-start-142&#39;)"> Solution </span>
+<span id="sol-start-134" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-134&#39;, &#39;sol-start-134&#39;)"> Solution </span>
 </div>
-<div id="sol-body-142" class="solution-body" style="display: none;">
+<div id="sol-body-134" class="solution-body" style="display: none;">
 <pre class="r"><code>fa.parallel(job, fa=&quot;pc&quot;, quant=.95)</code></pre>
 <p><img src="06_efapca_files/figure-html/unnamed-chunk-30-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <pre><code>## Parallel analysis suggests that the number of factors =  NA  and the number of components =  1</code></pre>
@@ -1574,9 +1583,9 @@ It distinguishes police officers with strong logical and problem solving skills 
 </div>
 <p><br></p>
 <div class="optional-begin">
-<span id="opt-start-143" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-143&#39;, &#39;opt-start-143&#39;)"> Optional: How well are the units represented in the reduced space?</span>
+<span id="opt-start-135" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-135&#39;, &#39;opt-start-135&#39;)"> Optional: How well are the units represented in the reduced space?</span>
 </div>
-<div id="opt-body-143" class="optional-body" style="display: none;">
+<div id="opt-body-135" class="optional-body" style="display: none;">
 <p>We now focus our attention on the following question: Are all the statistical units (police officers) well represented in the 2D plot?</p>
 <p>The 2D representation of the original data, which comprise 6 measured variables, is an approximation and henceforth it may happen that not all units are well represented in this new space.</p>
 <p>Typically, it is good to assess the approximation for each statistical unit by inspecting the scores on the discarded principal components.
@@ -1716,9 +1725,9 @@ Inspect the items to check their suitability for exploratory factor analysis.</p
 </ul></li>
 </ul>
 <div class="optional-begin">
-<span id="opt-start-144" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-144&#39;, &#39;opt-start-144&#39;)"> Optional Kaiser’s suggested cuts</span>
+<span id="opt-start-136" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-136&#39;, &#39;opt-start-136&#39;)"> Optional Kaiser’s suggested cuts</span>
 </div>
-<div id="opt-body-144" class="optional-body" style="display: none;">
+<div id="opt-body-136" class="optional-body" style="display: none;">
 <ul>
 <li>0.00 to 0.49 unacceptable<br />
 </li>
@@ -1739,9 +1748,9 @@ Inspect the items to check their suitability for exploratory factor analysis.</p
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-145" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-145&#39;, &#39;sol-start-145&#39;)"> Solution </span>
+<span id="sol-start-137" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-137&#39;, &#39;sol-start-137&#39;)"> Solution </span>
 </div>
-<div id="sol-body-145" class="solution-body" style="display: none;">
+<div id="sol-body-137" class="solution-body" style="display: none;">
 <pre class="r"><code>library(psych)
 df &lt;- read.csv(&quot;https://uoepsy.github.io/data/conduct_probs.csv&quot;)
 # discard the first column
@@ -1816,9 +1825,9 @@ You can use <code>fa.parallel(data, fm = "fa")</code> to conduct both parallel a
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-146" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-146&#39;, &#39;sol-start-146&#39;)"> Solution </span>
+<span id="sol-start-138" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-138&#39;, &#39;sol-start-138&#39;)"> Solution </span>
 </div>
-<div id="sol-body-146" class="solution-body" style="display: none;">
+<div id="sol-body-138" class="solution-body" style="display: none;">
 <pre class="r"><code>fa.parallel(df, fa = &quot;fa&quot;)</code></pre>
 <p><img src="06_efapca_files/figure-html/unnamed-chunk-45-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <pre><code>## Parallel analysis suggests that the number of factors =  2  and the number of components =  NA</code></pre>
@@ -1888,9 +1897,9 @@ Question B3
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-147" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-147&#39;, &#39;sol-start-147&#39;)"> Solution </span>
+<span id="sol-start-139" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-139&#39;, &#39;sol-start-139&#39;)"> Solution </span>
 </div>
-<div id="sol-body-147" class="solution-body" style="display: none;">
+<div id="sol-body-139" class="solution-body" style="display: none;">
 <p>For example, you could choose an oblimin rotation to allow factors to correlate and use minres as the extraction method.</p>
 <pre class="r"><code>conduct_efa &lt;- fa(df, nfactors=2, rotate=&#39;oblimin&#39;, fm=&quot;minres&quot;)</code></pre>
 </div>
@@ -1938,9 +1947,9 @@ Question B4
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-148" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-148&#39;, &#39;sol-start-148&#39;)"> Solution </span>
+<span id="sol-start-140" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-140&#39;, &#39;sol-start-140&#39;)"> Solution </span>
 </div>
-<div id="sol-body-148" class="solution-body" style="display: none;">
+<div id="sol-body-140" class="solution-body" style="display: none;">
 <p>You can inspect the loadings using:</p>
 <pre class="r"><code>print(conduct_efa$loadings, sort=T)</code></pre>
 <pre><code>## 
@@ -1977,9 +1986,9 @@ Question B5
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-149" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-149&#39;, &#39;sol-start-149&#39;)"> Solution </span>
+<span id="sol-start-141" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-141&#39;, &#39;sol-start-141&#39;)"> Solution </span>
 </div>
-<div id="sol-body-149" class="solution-body" style="display: none;">
+<div id="sol-body-141" class="solution-body" style="display: none;">
 <pre class="r"><code>conduct_efa$Phi</code></pre>
 <pre><code>##      MR1  MR2
 ## MR1 1.00 0.43
@@ -2000,9 +2009,9 @@ Question B6
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-150" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-150&#39;, &#39;sol-start-150&#39;)"> Solution </span>
+<span id="sol-start-142" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-142&#39;, &#39;sol-start-142&#39;)"> Solution </span>
 </div>
-<div id="sol-body-150" class="solution-body" style="display: none;">
+<div id="sol-body-142" class="solution-body" style="display: none;">
 <p>The main principles governing the reporting of statistical results are transparency and reproducibility (i.e., someone should be able to reproduce your analysis based on your description).</p>
 <p>An example summary would be:</p>
 <div class="int">
@@ -2146,9 +2155,9 @@ Question B7
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-151" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-151&#39;, &#39;sol-start-151&#39;)"> Solution </span>
+<span id="sol-start-143" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-143&#39;, &#39;sol-start-143&#39;)"> Solution </span>
 </div>
-<div id="sol-body-151" class="solution-body" style="display: none;">
+<div id="sol-body-143" class="solution-body" style="display: none;">
 <p>We can use:</p>
 <pre class="r"><code>principal(df, nfactors=2)</code></pre>
 <pre><code>## Principal Components Analysis

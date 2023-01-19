@@ -348,13 +348,13 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="01_intromlm.html">1: Intro to Multi-Level Modelling</a>
+      <a href="01_intromlm.html">1: Introduction to Multilevel Models</a>
     </li>
     <li>
-      <a href="02_lmm_log.html">2: Logistic | Longitudinal (linear)</a>
+      <a href="02_lmm_log.html">2: Logistic Multilevel Models</a>
     </li>
     <li>
-      <a href="03_nonlin.html">3: Longitudinal (non-linear)</a>
+      <a href="03_nonlin.html">3: Longitudinal Nonlinear Models</a>
     </li>
     <li>
       <a href="04_ranef.html">4: Random Effect Structures</a>
@@ -401,7 +401,16 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="00_tidyverse_markdown.html">Recap - Tidyverse &amp; Markdown</a>
+      <a href="00_tidyverse_markdown.html">Tidyverse &amp; Markdown Recap</a>
+    </li>
+    <li>
+      <a href="zz_binary_binomial.html">Binary vs Binomial</a>
+    </li>
+    <li>
+      <a href="zz_quickcontrasts.html">Contrasts: a Quick Overview</a>
+    </li>
+    <li>
+      <a href="lvp.html">Likelihood vs Probability</a>
     </li>
   </ul>
 </li>
@@ -650,9 +659,9 @@ Question A2
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-177" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-177&#39;, &#39;sol-start-177&#39;)"> Solution </span>
+<span id="sol-start-169" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-169&#39;, &#39;sol-start-169&#39;)"> Solution </span>
 </div>
-<div id="sol-body-177" class="solution-body" style="display: none;">
+<div id="sol-body-169" class="solution-body" style="display: none;">
 <p>Either one or the other of:</p>
 <pre class="r"><code>load(url(&quot;https://uoepsy.github.io/data/TPB_data.Rdata&quot;))
 
@@ -670,9 +679,9 @@ Are the measurement models satisfactory? <em>(check their fit measures)</em>.</p
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-178" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-178&#39;, &#39;sol-start-178&#39;)"> Solution </span>
+<span id="sol-start-170" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-170&#39;, &#39;sol-start-170&#39;)"> Solution </span>
 </div>
-<div id="sol-body-178" class="solution-body" style="display: none;">
+<div id="sol-body-170" class="solution-body" style="display: none;">
 <pre class="r"><code># specify one factor CFA model for attitudes
 attitude_model &lt;- &#39;att =~ attitude1 + attitude2 + attitude3 + attitude4&#39;
 # estimate the model
@@ -780,9 +789,9 @@ Question A4
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-179" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-179&#39;, &#39;sol-start-179&#39;)"> Solution </span>
+<span id="sol-start-171" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-171&#39;, &#39;sol-start-171&#39;)"> Solution </span>
 </div>
-<div id="sol-body-179" class="solution-body" style="display: none;">
+<div id="sol-body-171" class="solution-body" style="display: none;">
 <pre class="r"><code>TPB_model&lt;-&#39;
 #measurement models for attitudes, subjective norms and perceived behavioural control
   
@@ -820,9 +829,9 @@ Question A5
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-180" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-180&#39;, &#39;sol-start-180&#39;)"> Solution </span>
+<span id="sol-start-172" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-172&#39;, &#39;sol-start-172&#39;)"> Solution </span>
 </div>
-<div id="sol-body-180" class="solution-body" style="display: none;">
+<div id="sol-body-172" class="solution-body" style="display: none;">
 <p>We can estimate the model using the <code>sem()</code> function.<br />
 By default the <code>sem()</code> function will scale the latent variables by fixing the loading of the first item for each latent variable to 1 but we can override this by setting <code>std.lv=T</code> if we wanted to. By default, maximum likelihood estimation will be used.</p>
 <pre class="r"><code>TPB_model.est&lt;-sem(TPB_model, data=TPB_data, std.lv=T)
@@ -966,9 +975,9 @@ Question A6
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-181" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-181&#39;, &#39;sol-start-181&#39;)"> Solution </span>
+<span id="sol-start-173" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-173&#39;, &#39;sol-start-173&#39;)"> Solution </span>
 </div>
-<div id="sol-body-181" class="solution-body" style="display: none;">
+<div id="sol-body-173" class="solution-body" style="display: none;">
 <pre class="r"><code>modindices(TPB_model.est)</code></pre>
 <pre><code>##           lhs op       rhs     mi    epc sepc.lv sepc.all sepc.nox
 ## 54        att =~       SN1  1.663  0.049   0.049    0.047    0.047
@@ -1265,9 +1274,9 @@ Question A7
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-182" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-182&#39;, &#39;sol-start-182&#39;)"> Solution </span>
+<span id="sol-start-174" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-174&#39;, &#39;sol-start-174&#39;)"> Solution </span>
 </div>
-<div id="sol-body-182" class="solution-body" style="display: none;">
+<div id="sol-body-174" class="solution-body" style="display: none;">
 <p>To test these indirect effects we create new a parameter for each indirect effect:</p>
 <pre class="r"><code>TPB_model2&lt;-&#39;
 #measurement models for attitudes, subjective norms and perceived behavioural control
@@ -1510,9 +1519,9 @@ Question A8
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-183" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-183&#39;, &#39;sol-start-183&#39;)"> Solution </span>
+<span id="sol-start-175" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-175&#39;, &#39;sol-start-175&#39;)"> Solution </span>
 </div>
-<div id="sol-body-183" class="solution-body" style="display: none;">
+<div id="sol-body-175" class="solution-body" style="display: none;">
 <p>An example write up would be as follows:</p>
 <div class="int">
 <p><strong>Method</strong></p>
