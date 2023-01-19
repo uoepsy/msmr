@@ -337,18 +337,27 @@ knitr::include_graphics("images/lmm_visual.png")
 - The random adjustment to the slope, $\color{red}{\zeta_{1i}}$ is a random variable called the __random slope__, and has mean zero and variance $\sigma^2_{\zeta_{1}} = \text{Var}(\zeta_{1,\text{group1}}, ..., \zeta_{1,\text{groupG}})$.
 
 `r optbegin("Alternative notation", toggle=params$TOGGLE)`
-Many people use the symbol $u$ in place of $\zeta$.  
-In various resources, you are likely to see $\alpha$ used to denote the intercept instead of $\beta_0$.  
 
-Sometimes, you will see the levels collapsed into one equation, as it might make for more intuitive reading. This often fits with the name "mixed effects" for these models:
+- Sometimes, you will see the levels collapsed into one equation, as it might make for more intuitive reading. This often fits with the name "mixed effects" for these models:
 
 $$
-y_{ij} = (\color{blue}{\beta_0} + \color{red}{\zeta_{0i}}) \cdot 1 + ( \color{blue}{\beta_{1}} + \color{red}{\zeta_{1i}} ) \cdot x_{ij}  +  \color{red}{\varepsilon_{ij}} \\
+y_{ij} = 
+    (\color{blue}{\beta_0} + \color{red}{\zeta_{0i}}) \cdot 1 + 
+    ( \color{blue}{\beta_{1}} + \color{red}{\zeta_{1i}} ) \cdot x_{ij} +
+    \color{red}{\varepsilon_{ij}} \\
 $$
 
-And then we also have the condensed matrix form of the model, in which the Z matrix represents the grouping structure, and the $u$ (or $\zeta$) are the estimated random deviations. 
+- In various resources, you are likely to see $\color{blue}{\alpha}$ used to denote the intercept instead of $\color{blue}{\beta_0}$. 
+
+- Many people use the symbol $\color{red}{u}$ in place of $\color{red}{\zeta}$.
+
+- Some people use the condensed matrix form of the model, in which the $\boldsymbol{Z}$ matrix represents the grouping structure, and the $\color{red}{\boldsymbol{u}}$ (or $\color{red}{\boldsymbol{\zeta}}$) are the estimated random deviations. 
+
 $$
-\mathbf{y} = \boldsymbol{X\beta} + \boldsymbol{Zu} + \boldsymbol{\varepsilon}
+\mathbf{y} = 
+    \boldsymbol{X}\color{blue}{\boldsymbol{\beta}} + 
+    \boldsymbol{Z}\color{red}{\boldsymbol{u}} + 
+    \color{red}{\boldsymbol{\varepsilon}}
 $$
 `r optend()`
 
