@@ -11,11 +11,11 @@
 
 
 
-<title>Longitudinal Mixed Models (linear growth) | Logistic Mixed Models</title>
+<title>Logistic Multilevel Models</title>
 
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
@@ -348,13 +348,13 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="01_intromlm.html">1: Intro to Multi-Level Modelling</a>
+      <a href="01_intromlm.html">1: Introduction to Multilevel Models</a>
     </li>
     <li>
-      <a href="02_lmm_log.html">2: Logistic | Longitudinal (linear)</a>
+      <a href="02_lmm_log.html">2: Logistic Multilevel Models</a>
     </li>
     <li>
-      <a href="03_nonlin.html">3: Longitudinal (non-linear)</a>
+      <a href="03_nonlin.html">3: Longitudinal Nonlinear Models</a>
     </li>
     <li>
       <a href="04_ranef.html">4: Random Effect Structures</a>
@@ -401,7 +401,16 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="00_tidyverse_markdown.html">Recap - Tidyverse &amp; Markdown</a>
+      <a href="zz_tidyverse_markdown.html">Tidyverse &amp; Markdown Recap</a>
+    </li>
+    <li>
+      <a href="zz_binary_binomial.html">Binary vs Binomial Data</a>
+    </li>
+    <li>
+      <a href="zz_quickcontrasts.html">Contrasts: a Quick Overview</a>
+    </li>
+    <li>
+      <a href="zz_lvp.html">Likelihood vs Probability</a>
     </li>
   </ul>
 </li>
@@ -414,7 +423,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Longitudinal Mixed Models (linear growth) | Logistic Mixed Models</h1>
+<h1 class="title toc-ignore">Logistic Multilevel Models</h1>
 
 </div>
 
@@ -431,305 +440,8 @@ library(lme4) # for fitting models
 library(broom.mixed) # for tidying model output</code></pre></li>
 </ol>
 </div>
-<!-- # Exercises: Longitudinal Models -->
-<!-- Last week when we introduced multilevel models (or "mixed effects models" or whatever we're calling them!), we saw in the lectures a little bit about the idea of having datapoints from the same participant _over time_. This kind of data tends to get termed "longitudinal" (mainly used to refer to studies which follow-up participants over the course of months or years). The lectures this week have also introduced this idea of 'change over time' by looking at some data from Public Health England.    -->
-<!-- Let's work our way through an example.  -->
-<!-- :::frame -->
-<!-- __WeightMaintain Data Codebook__   -->
-<!-- The weight maintenance data (`WeightMaintain3`), a made-up data set based on Lowe et al. (2014, Obesity, 22, 94-100), contains information on overweight participants who completed a 12-week weight loss program, and were then randomly assigned to one of three weight maintenance conditions: -->
-<!-- * None (Control)   -->
-<!-- * MR (meal replacements): use MR to replace one meal and snack per day   -->
-<!-- * ED (energy density intervention): book and educational materials on purchasing and preparing foods lower in ED (reducing fat content and/or increasing water content of foods)   -->
-<!-- Weight was assessed on day 1 of maintenance, 12 months post, 24 months post, and 36 months post. -->
-<!-- It is available, in **.rda** format, at https://uoepsy.github.io/data/WeightMaintain3.rda   -->
-<!-- ```{r echo=FALSE} -->
-<!-- load(url("https://uoepsy.github.io/data/WeightMaintain3.rda")) -->
-<!-- data.frame( -->
-<!--   variable = names(WeightMaintain3), -->
-<!--   description = c("Participant ID","Weight Maintenance Condition ('None' = No maintenance program, 'MR' = Meal replacement, 'ED' = Energy Density intervention)", "Assessment number (0 = Day 1, 1 = 12 months, 2 = 24 months, 3 = 36 months)", "Difference in weight (lbs) from end of 12-week weight loss program") -->
-<!-- ) %>% knitr::kable() -->
-<!-- ``` -->
-<!-- ::: -->
-<!-- 
-
-<div class='question-begin'>Question A1</div><div class='question-body'>
-
- -->
-<!-- Load the data, and take a look at what is in there. Hopefully it should match the description above.   -->
-<!-- **Hint:** `load(url("https://uoepsy.github.io/data/WeightMaintain3.rda"))` -->
-<!-- 
-
-</div><p class="question-end"></p>
-
- -->
-<!-- 
-
-<div class="solution-begin"><span id='sol-start-35' class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-35', 'sol-start-35')">  Solution </span></div><div class="solution-body" id = "sol-body-35" style="display: none;">
-
- -->
-<!-- ```{r} -->
-<!-- load(url("https://uoepsy.github.io/data/WeightMaintain3.rda")) -->
-<!-- summary(WeightMaintain3) -->
-<!-- head(WeightMaintain3) -->
-<!-- ``` -->
-<!-- 
-
-</div><p class="solution-end"></p>
-
- -->
-<!-- 
-
-<div class='question-begin'>Question A2</div><div class='question-body'>
-
-   -->
-<!-- > Q: Overall, did the participants maintain their weight loss or did their weights change? -->
-<!-- We need to remember that each of our participants has measurements at 4 assessments. We have randomly sampled participants, and then within them have measured multiple observations. So our observations are __not independent__. We're not interested in estimating differences between specific participants - our participants are just a random sample of people. But we do want to account for the dependency they introduce in our data. This is why we would want to fit a multilevel model and incorporate participant-level variation into our model structure.    -->
-<!-- 1. Fit an "intercept-only" model.  -->
-<!-- 2. Fit a model with weight change predicted by assessment.   -->
-<!-- 3. Compare the two models (use `anova(model1, model2)` to conduct a likelihood ratio test). -->
-<!-- Things to think about:   -->
-<!-- - We _cannot_ compare models that differ in both the fixed *and* random parts.   -->
-<!-- - __For now__, ignore messages saying `boundary (singular) fit: see ?isSingular` (that comes in a couple of questions' time).     -->
-<!-- 
-
-</div><p class="question-end"></p>
-
- -->
-<!-- 
-
-<div class="solution-begin"><span id='sol-start-36' class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-36', 'sol-start-36')">  Solution </span></div><div class="solution-body" id = "sol-body-36" style="display: none;">
-
- -->
-<!-- This is our null model: -->
-<!-- ```{r} -->
-<!-- m.null <- lmer(WeightChange ~ 1 + (1 | ID), data=WeightMaintain3) -->
-<!-- summary(m.null) -->
-<!-- ``` -->
-<!-- We can see the `3.77 / (3.77 + 6.43)`, or 0.37 of the total variance is attributable to participant-level variation.  -->
-<!-- Now lets suppose we want to compare this null model with a model with an effect of `Assessment` (to assess whether there is overall change over time). -->
-<!-- Which model should we compare `m.null` to?   -->
-<!-- ```{r} -->
-<!-- modA <- lmer(WeightChange ~ 1 + Assessment + (1 + Assessment | ID), data=WeightMaintain3) -->
-<!-- modB <- lmer(WeightChange ~ 1 + Assessment + (1 | ID), data=WeightMaintain3) -->
-<!-- ``` -->
-<!-- A comparison between these `m.null` and `modA` will not be assessing the influence of _only_ the fixed effect of Assessment. Remember, we shouldn't compare models with different random effect structures.    -->
-<!-- However, `modB` doesn't include our by-participant random effects of assessment, so comparing this to `m.null` is potentially going to misattribute random deviations in participants' change to being an overall effect of assessment.   -->
-<!-- If we want to conduct a model comparison to isolate the effect of overall change over time (a fixed effect of `Assessment`), we _might_ want to compare these two models: -->
-<!-- ```{r} -->
-<!-- m.base0 <- lmer(WeightChange ~ 1 + (1 + Assessment | ID), data=WeightMaintain3) -->
-<!-- m.base <- lmer(WeightChange ~ 1 + Assessment + (1 + Assessment | ID), data=WeightMaintain3) -->
-<!-- ``` -->
-<!-- The first of these models is a bit weird to think about - how can we have by-participant random deviations of `Assessment` if we don't have a fixed effect of `Assessment`? That makes very little sense. What it is actually fitting is a model where there is assumed to be __no overall effect__ of Assessment. So the fixed effect is 0.  -->
-<!-- ```{r} -->
-<!-- # Straightforward LRT -->
-<!-- anova(m.base0, m.base) -->
-<!-- ``` -->
-<!-- This suggests that the inclusion Assessment does improve model fit, indicating that participants' weights changed over course of 36 month assessment period.  -->
-<!-- 
-
-</div><p class="solution-end"></p>
-
- -->
-<!-- 
-
-<div class='question-begin'>Question A3</div><div class='question-body'>
-
- -->
-<!-- > Q: Did the experimental condition groups differ in overall weight change and rate of weight change (non-maintenance)?   -->
-<!-- *Hint:* It helps to break it down. There are two questions here:   -->
-<!--   1. do groups differ overall?   -->
-<!--   2. do groups differ over time?   -->
-<!-- We can begin to see that we're asking two questions about the `Condition` variable here: "is there an effect of Condition?" and "Is there an interaction between Assessment and Condition?".   -->
-<!-- Try fitting two more models which incrementally build these levels of complexity, and compare them (perhaps to one another, perhaps to models from the previous question - think about what each comparison is testing!)   -->
-<!-- 
-
-</div><p class="question-end"></p>
-
- -->
-<!-- 
-
-<div class="solution-begin"><span id='sol-start-37' class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-37', 'sol-start-37')">  Solution </span></div><div class="solution-body" id = "sol-body-37" style="display: none;">
-
- -->
-<!-- ```{r} -->
-<!-- m.int <- lmer(WeightChange ~ Assessment + Condition + (1 + Assessment | ID),  -->
-<!--               data=WeightMaintain3) -->
-<!-- m.full <- lmer(WeightChange ~ Assessment*Condition + (1 + Assessment | ID),  -->
-<!--                data=WeightMaintain3) -->
-<!-- ``` -->
-<!-- We're going to compare each model to the previous one to examine the improvement in fit due to inclusion of each parameter.  -->
-<!-- We could do this quickly with -->
-<!-- ```{r} -->
-<!-- anova(m.base0, m.base, m.int, m.full) -->
-<!-- ``` -->
-<!-- - Conditions differed overall in weight change $\chi^2(2)=9.4, p = .009$   -->
-<!-- - Conditions differed in change over assessment period $\chi^2(2)=40.4, p < .001$ -->
-<!-- 
-
-</div><p class="solution-end"></p>
-
- -->
-<!-- :::frame -->
-<!-- __`boundary (singular) fit: see ?isSingular`__   -->
-<!-- Okay. Let's talk about those "singular fits" messages we keep getting.   -->
-<!-- By now, you have hopefully fitted a number of models which incrementally add predictors. Ours are below:   -->
-<!-- ```{r} -->
-<!-- m.base0 <- lmer(WeightChange ~ 1 + (1 + Assessment | ID), data=WeightMaintain3) -->
-<!-- m.base <- lmer(WeightChange ~ Assessment + (1 + Assessment | ID), data=WeightMaintain3) -->
-<!-- m.int <- lmer(WeightChange ~ Assessment + Condition + (1 + Assessment | ID), data=WeightMaintain3) -->
-<!-- m.full <- lmer(WeightChange ~ Assessment * Condition + (1 + Assessment | ID), data=WeightMaintain3) -->
-<!-- ``` -->
-<!-- And many of these models were singular fits, and we just ignored them. __We shouldn't have.__   -->
-<!-- __What is the warning message telling us?__   -->
-<!-- The warning is telling us that our model has resulted in a 'singular fit'. The easiest way to think of this is to think of it as indicating that the model is 'overfitted' - that there is _not enough variation in our data_ for our model to be estimated properly.   -->
-<!-- __What can we do?__   -->
-<!-- In many cases, perhaps the most intuitive advice would be remove the most complex part of the random effects structure (i.e. random slopes). This leads to a simpler model that is not over-fitted. In other words, start simplifying from the top (where the most complexity is) to the bottom (where the lowest complexity is). -->
-<!-- Additionally, when variance estimates are very low for a specific random effect term, this indicates that the model is not estimating this parameter to differ much between the levels of your grouping variable. It might, in some experimental designs, be perfectly acceptable to remove this or simply include it as a fixed effect. -->
-<!-- A key point here is that when fitting a mixed model, __we should think about how the data are generated.__ Asking yourself questions such as "do we have good reason to assume subjects might vary over time, or to assume that they will have different starting points (i.e., different intercepts)?" can help you in specifying your random effect structure -->
-<!-- You can read in depth about what this means by reading the help documentation for `?isSingular`. For our purposes, a relevant section is copied below:   -->
-<!-- *... intercept-only models, or 2-dimensional random effects such as intercept + slope models, singularity is relatively easy to detect because it leads to random-effect variance estimates of (nearly) zero, or estimates of correlations that are (almost) exactly -1 or 1.* -->
-<!-- ::: -->
-<!-- 
-
-<div class='question-begin'>Question A4</div><div class='question-body'>
-
- -->
-<!-- Re-read the description of the data, then ask yourself this question:   -->
-<!-- Do we think participants will vary in:   -->
-<!--   a. their _starting_ weight differences `(1|ID)`? -->
-<!--   b. their weight change over the course of the assessment period `(0 + Assessment | ID)`? -->
-<!--   c. both `(1 + Assessment | ID)`?   -->
-<!-- _Hint:_  What do we think the baseline weight should be? Should it be the same for everyone? If so, might we want to remove the random intercept, which we do by setting it to 0 -->
-<!-- Can you re-fit your models without encountering singular fits?    -->
-<!-- 
-
-</div><p class="question-end"></p>
-
- -->
-<!-- 
-
-<div class="solution-begin"><span id='sol-start-38' class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-38', 'sol-start-38')">  Solution </span></div><div class="solution-body" id = "sol-body-38" style="display: none;">
-
- -->
-<!-- In this very specific research design, it may actually make a lot of sense to not model by-participant variation around the intercept.   -->
-<!-- As baseline is at the very start of the weight maintenance, it makes sense that we wouldn't have very much (if any) participant variation in change at this point.  -->
-<!-- Note that by removing the estimation of this parameter, our models now converge! -->
-<!-- ```{r} -->
-<!-- m.base0 <- lmer(WeightChange ~ 1 + (0 + Assessment | ID), data=WeightMaintain3) -->
-<!-- m.base <- lmer(WeightChange ~ 1 + Assessment + (0 + Assessment | ID), data=WeightMaintain3) -->
-<!-- m.int <- lmer(WeightChange ~ 1 + Assessment + Condition + (0 + Assessment | ID), data=WeightMaintain3) -->
-<!-- m.full <- lmer(WeightChange ~ 1 + Assessment * Condition + (0 + Assessment | ID), data=WeightMaintain3) -->
-<!-- ``` -->
-<!-- We can check if a model has a singular fit:   -->
-<!-- ```{r} -->
-<!-- isSingular(m.base) -->
-<!-- ``` -->
-<!-- 
-
-</div><p class="solution-end"></p>
-
- -->
-<!-- 
-
-<div class='question-begin'>Question A5</div><div class='question-body'>
-
- -->
-<!-- Make a graph of the model fit *and* the observed means and standard errors at each time point for each condition.   -->
-<!-- Try using the **effects** package (hint, does this help: `as.data.frame(effect("Assessment:Condition", model))`?) -->
-<!-- 
-
-</div><p class="question-end"></p>
-
- -->
-<!-- 
-
-<div class="solution-begin"><span id='sol-start-39' class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-39', 'sol-start-39')">  Solution </span></div><div class="solution-body" id = "sol-body-39" style="display: none;">
-
- -->
-<!-- ```{r} -->
-<!-- library(effects) -->
-<!-- ef <- as.data.frame(effect("Assessment:Condition", m.full)) -->
-<!-- ggplot(ef, aes(Assessment, fit, color=Condition)) +  -->
-<!--   geom_line() + -->
-<!--   stat_summary(data=WeightMaintain3, aes(y=WeightChange),  -->
-<!--                fun.data=mean_se, geom="pointrange", size=1) + -->
-<!--   theme_bw() -->
-<!-- ``` -->
-<!-- 
-
-</div><p class="solution-end"></p>
-
- -->
-<!-- 
-
-<div class='question-begin'>Question A6</div><div class='question-body'>
-
- -->
-<!-- Now let's move to interpreting the coefficients.  -->
-<!-- Remember, we can get the coefficients using `fixef(model)`.  -->
-<!-- We can also use `tidy(model)`, and similar to models fitted with `lm()`, we can pull out the bit of the `summary()` using:   -->
-<!-- ```{r eval=FALSE} -->
-<!-- summary(model)$coefficients -->
-<!-- ``` -->
-<!-- From your model from the previous question which investigates whether conditions differed in their rate of weight change, examine the parameter estimates and interpret them (i.e., what does each parameter represent?) -->
-<!-- 
-
-</div><p class="question-end"></p>
-
- -->
-<!-- 
-
-<div class="solution-begin"><span id='sol-start-40' class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-40', 'sol-start-40')">  Solution </span></div><div class="solution-body" id = "sol-body-40" style="display: none;">
-
- -->
-<!-- ```{r} -->
-<!-- round(coef(summary(m.full)), 3) -->
-<!-- ``` -->
-<!-- * `(Intercept)` ==> weight change at baseline in None group -->
-<!-- * `Assessment`  ==> slope of weight change in None group -->
-<!-- * `ConditionED` ==> baseline weight change in ED group relative to None group -->
-<!-- * `ConditionMR` ==> baseline weight change in MR group relative to None group -->
-<!-- * `Assessment:ConditionED`  ==> slope of weight change in ED group relative to None group -->
-<!-- * `Assessment:ConditionMR`  ==> slope of weight change in MR groups relative to None group -->
-<!-- 
-
-</div><p class="solution-end"></p>
-
- -->
-<!-- 
-
-<div class='question-begin'>Question A7</div><div class='question-body'>
-
- -->
-<!-- Can you state how the conditions differed?   -->
-<!-- 
-
-</div><p class="question-end"></p>
-
- -->
-<!-- 
-
-<div class="solution-begin"><span id='sol-start-41' class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-41', 'sol-start-41')">  Solution </span></div><div class="solution-body" id = "sol-body-41" style="display: none;">
-
- -->
-<!-- ```{r} -->
-<!-- summary(m.full)$coefficients -->
-<!-- ``` -->
-<!-- :::int -->
-<!-- Compared to no intervention, weight (re)gain was 1.75 lbs/year slower for the ED intervention and 0.84 lbs/year slower for the MR intervention. -->
-<!-- ::: -->
-<!-- 
-
-</div><p class="solution-end"></p>
-
- -->
-<div id="exercises-logistic-mlm" class="section level1">
-<h1>Exercises: Logistic MLM</h1>
-<div class="frame">
-<p><strong>Don’t forget to look back at other materials!</strong></p>
-<p>Back in USMR, we introduced logistic regression in week 10. The lectures followed the example of some <a href="https://uoepsy.github.io/usmr/lectures/lecture_9.html#1">singing aliens that either survived or were splatted</a>, and the exercises used some simulated data based on a hypothetical study <a href="https://uoepsy.github.io/usmr/labs/09_glm.html">about inattentional blindness</a>.
-That content will provide a lot of the groundwork for this week, so we recommend revisiting it if you feel like it might be useful.</p>
-</div>
+<div id="exercises" class="section level1">
+<h1>Exercises</h1>
 <div class="rtip">
 <p><strong>lmer() &gt;&gt; glmer()</strong></p>
 <p>Remember how we simply used <code>glm()</code> and could specify the <code>family = "binomial"</code> in order to fit a logistic regression? Well it’s much the same thing for multi-level models!</p>
@@ -741,902 +453,12 @@ That content will provide a lot of the groundwork for this week, so we recommend
 </ul></li>
 <li>Binomial model:
 <ul>
-<li><code>glmer(y ~ x1 + x2 + (1 | g), data = data, family = binomial(link='logit'))</code></li>
-<li>or just <code>glmer(y ~ x1 + x2 + (1 | g), data = data, family = "binomial")</code></li>
-<li>or <code>glmer(y ~ x1 + x2 + (1 | g), data = data, family = binomial)</code></li>
+<li><code>glmer(y ~ x1 + x2 + (1 | g), data = data, family = binomial(link='logit'))</code><br>or</li>
+<li><code>glmer(y ~ x1 + x2 + (1 | g), data = data, family = "binomial")</code><br>or</li>
+<li><code>glmer(y ~ x1 + x2 + (1 | g), data = data, family = binomial)</code></li>
 </ul></li>
 </ul>
-<div class="optional-begin">
-<span id="opt-start-42" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-42&#39;, &#39;opt-start-42&#39;)"> Binary? Binomial? Huh?</span>
-</div>
-<div id="opt-body-42" class="optional-body" style="display: none;">
-<p>Very briefly in the USMR materials we made the distinction between <strong>binary</strong> and <strong>binomial</strong>. This wasn’t hugely relevant at the time just because we only looked at binary outcomes.</p>
-<p>For binary regression, all the data in our outcome variable has to be a 0 or a 1.<br />
-For example, the <code>correct</code> variable below:<br />
-<br></p>
-<div id="idwepyshtn" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>html {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
-}
-
-#idwepyshtn .gt_table {
-  display: table;
-  border-collapse: collapse;
-  margin-left: auto;
-  margin-right: auto;
-  color: #333333;
-  font-size: 16px;
-  font-weight: normal;
-  font-style: normal;
-  background-color: #FFFFFF;
-  width: auto;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #A8A8A8;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #A8A8A8;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-}
-
-#idwepyshtn .gt_heading {
-  background-color: #FFFFFF;
-  text-align: center;
-  border-bottom-color: #FFFFFF;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#idwepyshtn .gt_caption {
-  padding-top: 4px;
-  padding-bottom: 4px;
-}
-
-#idwepyshtn .gt_title {
-  color: #333333;
-  font-size: 125%;
-  font-weight: initial;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-color: #FFFFFF;
-  border-bottom-width: 0;
-}
-
-#idwepyshtn .gt_subtitle {
-  color: #333333;
-  font-size: 85%;
-  font-weight: initial;
-  padding-top: 0;
-  padding-bottom: 6px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-color: #FFFFFF;
-  border-top-width: 0;
-}
-
-#idwepyshtn .gt_bottom_border {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#idwepyshtn .gt_col_headings {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#idwepyshtn .gt_col_heading {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 6px;
-  padding-left: 5px;
-  padding-right: 5px;
-  overflow-x: hidden;
-}
-
-#idwepyshtn .gt_column_spanner_outer {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  padding-top: 0;
-  padding-bottom: 0;
-  padding-left: 4px;
-  padding-right: 4px;
-}
-
-#idwepyshtn .gt_column_spanner_outer:first-child {
-  padding-left: 0;
-}
-
-#idwepyshtn .gt_column_spanner_outer:last-child {
-  padding-right: 0;
-}
-
-#idwepyshtn .gt_column_spanner {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  overflow-x: hidden;
-  display: inline-block;
-  width: 100%;
-}
-
-#idwepyshtn .gt_group_heading {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  text-align: left;
-}
-
-#idwepyshtn .gt_empty_group_heading {
-  padding: 0.5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: middle;
-}
-
-#idwepyshtn .gt_from_md > :first-child {
-  margin-top: 0;
-}
-
-#idwepyshtn .gt_from_md > :last-child {
-  margin-bottom: 0;
-}
-
-#idwepyshtn .gt_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  margin: 10px;
-  border-top-style: solid;
-  border-top-width: 1px;
-  border-top-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  overflow-x: hidden;
-}
-
-#idwepyshtn .gt_stub {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#idwepyshtn .gt_stub_row_group {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 5px;
-  padding-right: 5px;
-  vertical-align: top;
-}
-
-#idwepyshtn .gt_row_group_first td {
-  border-top-width: 2px;
-}
-
-#idwepyshtn .gt_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#idwepyshtn .gt_first_summary_row {
-  border-top-style: solid;
-  border-top-color: #D3D3D3;
-}
-
-#idwepyshtn .gt_first_summary_row.thick {
-  border-top-width: 2px;
-}
-
-#idwepyshtn .gt_last_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#idwepyshtn .gt_grand_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#idwepyshtn .gt_first_grand_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-style: double;
-  border-top-width: 6px;
-  border-top-color: #D3D3D3;
-}
-
-#idwepyshtn .gt_striped {
-  background-color: rgba(128, 128, 128, 0.05);
-}
-
-#idwepyshtn .gt_table_body {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#idwepyshtn .gt_footnotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#idwepyshtn .gt_footnote {
-  margin: 0px;
-  font-size: 90%;
-  padding-left: 4px;
-  padding-right: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#idwepyshtn .gt_sourcenotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#idwepyshtn .gt_sourcenote {
-  font-size: 90%;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#idwepyshtn .gt_left {
-  text-align: left;
-}
-
-#idwepyshtn .gt_center {
-  text-align: center;
-}
-
-#idwepyshtn .gt_right {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-#idwepyshtn .gt_font_normal {
-  font-weight: normal;
-}
-
-#idwepyshtn .gt_font_bold {
-  font-weight: bold;
-}
-
-#idwepyshtn .gt_font_italic {
-  font-style: italic;
-}
-
-#idwepyshtn .gt_super {
-  font-size: 65%;
-}
-
-#idwepyshtn .gt_footnote_marks {
-  font-style: italic;
-  font-weight: normal;
-  font-size: 75%;
-  vertical-align: 0.4em;
-}
-
-#idwepyshtn .gt_asterisk {
-  font-size: 100%;
-  vertical-align: 0;
-}
-
-#idwepyshtn .gt_indent_1 {
-  text-indent: 5px;
-}
-
-#idwepyshtn .gt_indent_2 {
-  text-indent: 10px;
-}
-
-#idwepyshtn .gt_indent_3 {
-  text-indent: 15px;
-}
-
-#idwepyshtn .gt_indent_4 {
-  text-indent: 20px;
-}
-
-#idwepyshtn .gt_indent_5 {
-  text-indent: 25px;
-}
-</style>
-<table class="gt_table">
-  
-  <thead class="gt_col_headings">
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="participant">participant</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="question">question</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="correct">correct</th>
-    </tr>
-  </thead>
-  <tbody class="gt_table_body">
-    <tr><td headers="participant" class="gt_row gt_right">1</td>
-<td headers="question" class="gt_row gt_right">1</td>
-<td headers="correct" class="gt_row gt_right">1</td></tr>
-    <tr><td headers="participant" class="gt_row gt_right">1</td>
-<td headers="question" class="gt_row gt_right">2</td>
-<td headers="correct" class="gt_row gt_right">0</td></tr>
-    <tr><td headers="participant" class="gt_row gt_right">1</td>
-<td headers="question" class="gt_row gt_right">3</td>
-<td headers="correct" class="gt_row gt_right">1</td></tr>
-    <tr><td headers="participant" class="gt_row gt_right">...</td>
-<td headers="question" class="gt_row gt_right">...</td>
-<td headers="correct" class="gt_row gt_right">...</td></tr>
-  </tbody>
-  
-  
-</table>
-</div>
-<p><br>
-But we can re-express this information in a different way, when we know the total number of questions asked:</p>
-<div id="tbfkzqdpla" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>html {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
-}
-
-#tbfkzqdpla .gt_table {
-  display: table;
-  border-collapse: collapse;
-  margin-left: auto;
-  margin-right: auto;
-  color: #333333;
-  font-size: 16px;
-  font-weight: normal;
-  font-style: normal;
-  background-color: #FFFFFF;
-  width: auto;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #A8A8A8;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #A8A8A8;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-}
-
-#tbfkzqdpla .gt_heading {
-  background-color: #FFFFFF;
-  text-align: center;
-  border-bottom-color: #FFFFFF;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#tbfkzqdpla .gt_caption {
-  padding-top: 4px;
-  padding-bottom: 4px;
-}
-
-#tbfkzqdpla .gt_title {
-  color: #333333;
-  font-size: 125%;
-  font-weight: initial;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-color: #FFFFFF;
-  border-bottom-width: 0;
-}
-
-#tbfkzqdpla .gt_subtitle {
-  color: #333333;
-  font-size: 85%;
-  font-weight: initial;
-  padding-top: 0;
-  padding-bottom: 6px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-color: #FFFFFF;
-  border-top-width: 0;
-}
-
-#tbfkzqdpla .gt_bottom_border {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#tbfkzqdpla .gt_col_headings {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#tbfkzqdpla .gt_col_heading {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 6px;
-  padding-left: 5px;
-  padding-right: 5px;
-  overflow-x: hidden;
-}
-
-#tbfkzqdpla .gt_column_spanner_outer {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  padding-top: 0;
-  padding-bottom: 0;
-  padding-left: 4px;
-  padding-right: 4px;
-}
-
-#tbfkzqdpla .gt_column_spanner_outer:first-child {
-  padding-left: 0;
-}
-
-#tbfkzqdpla .gt_column_spanner_outer:last-child {
-  padding-right: 0;
-}
-
-#tbfkzqdpla .gt_column_spanner {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  overflow-x: hidden;
-  display: inline-block;
-  width: 100%;
-}
-
-#tbfkzqdpla .gt_group_heading {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  text-align: left;
-}
-
-#tbfkzqdpla .gt_empty_group_heading {
-  padding: 0.5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: middle;
-}
-
-#tbfkzqdpla .gt_from_md > :first-child {
-  margin-top: 0;
-}
-
-#tbfkzqdpla .gt_from_md > :last-child {
-  margin-bottom: 0;
-}
-
-#tbfkzqdpla .gt_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  margin: 10px;
-  border-top-style: solid;
-  border-top-width: 1px;
-  border-top-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  overflow-x: hidden;
-}
-
-#tbfkzqdpla .gt_stub {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#tbfkzqdpla .gt_stub_row_group {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 5px;
-  padding-right: 5px;
-  vertical-align: top;
-}
-
-#tbfkzqdpla .gt_row_group_first td {
-  border-top-width: 2px;
-}
-
-#tbfkzqdpla .gt_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#tbfkzqdpla .gt_first_summary_row {
-  border-top-style: solid;
-  border-top-color: #D3D3D3;
-}
-
-#tbfkzqdpla .gt_first_summary_row.thick {
-  border-top-width: 2px;
-}
-
-#tbfkzqdpla .gt_last_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#tbfkzqdpla .gt_grand_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#tbfkzqdpla .gt_first_grand_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-style: double;
-  border-top-width: 6px;
-  border-top-color: #D3D3D3;
-}
-
-#tbfkzqdpla .gt_striped {
-  background-color: rgba(128, 128, 128, 0.05);
-}
-
-#tbfkzqdpla .gt_table_body {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#tbfkzqdpla .gt_footnotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#tbfkzqdpla .gt_footnote {
-  margin: 0px;
-  font-size: 90%;
-  padding-left: 4px;
-  padding-right: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#tbfkzqdpla .gt_sourcenotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#tbfkzqdpla .gt_sourcenote {
-  font-size: 90%;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#tbfkzqdpla .gt_left {
-  text-align: left;
-}
-
-#tbfkzqdpla .gt_center {
-  text-align: center;
-}
-
-#tbfkzqdpla .gt_right {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-#tbfkzqdpla .gt_font_normal {
-  font-weight: normal;
-}
-
-#tbfkzqdpla .gt_font_bold {
-  font-weight: bold;
-}
-
-#tbfkzqdpla .gt_font_italic {
-  font-style: italic;
-}
-
-#tbfkzqdpla .gt_super {
-  font-size: 65%;
-}
-
-#tbfkzqdpla .gt_footnote_marks {
-  font-style: italic;
-  font-weight: normal;
-  font-size: 75%;
-  vertical-align: 0.4em;
-}
-
-#tbfkzqdpla .gt_asterisk {
-  font-size: 100%;
-  vertical-align: 0;
-}
-
-#tbfkzqdpla .gt_indent_1 {
-  text-indent: 5px;
-}
-
-#tbfkzqdpla .gt_indent_2 {
-  text-indent: 10px;
-}
-
-#tbfkzqdpla .gt_indent_3 {
-  text-indent: 15px;
-}
-
-#tbfkzqdpla .gt_indent_4 {
-  text-indent: 20px;
-}
-
-#tbfkzqdpla .gt_indent_5 {
-  text-indent: 25px;
-}
-</style>
-<table class="gt_table">
-  
-  <thead class="gt_col_headings">
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="participant">participant</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="questions_correct">questions_correct</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="questions_incorrect">questions_incorrect</th>
-    </tr>
-  </thead>
-  <tbody class="gt_table_body">
-    <tr><td headers="participant" class="gt_row gt_right">1</td>
-<td headers="questions_correct" class="gt_row gt_right">2</td>
-<td headers="questions_incorrect" class="gt_row gt_right">1</td></tr>
-    <tr><td headers="participant" class="gt_row gt_right">2</td>
-<td headers="questions_correct" class="gt_row gt_right">1</td>
-<td headers="questions_incorrect" class="gt_row gt_right">2</td></tr>
-    <tr><td headers="participant" class="gt_row gt_right">3</td>
-<td headers="questions_correct" class="gt_row gt_right">3</td>
-<td headers="questions_incorrect" class="gt_row gt_right">0</td></tr>
-    <tr><td headers="participant" class="gt_row gt_right">...</td>
-<td headers="questions_correct" class="gt_row gt_right">...</td>
-<td headers="questions_incorrect" class="gt_row gt_right">...</td></tr>
-  </tbody>
-  
-  
-</table>
-</div>
-<p><br><br />
-To model data when it is in this form, we can express our outcome as <code>cbind(questions_correct, questions_incorrect)</code></p>
-</div>
-<p class="optional-end">
-</p>
+<p>For more on Binary vs Binomial, see this <a href="zz_binary_binomial.html">in depth section</a>.</p>
 </div>
 <div class="frame">
 <p><strong>Novel Word Learning: Data Codebook</strong></p>
@@ -1700,7 +522,7 @@ Figure 1: Differences between groups in the average proportion of correct respon
 </table>
 </div>
 <div class="question-begin">
-Question B1
+Question A1
 </div>
 <div class="question-body">
 <p>Load the data. Take a look around. Any missing values? Can you think of why?</p>
@@ -1708,9 +530,9 @@ Question B1
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-43" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-43&#39;, &#39;sol-start-43&#39;)"> Solution </span>
+<span id="sol-start-17" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-17&#39;, &#39;sol-start-17&#39;)"> Solution </span>
 </div>
-<div id="sol-body-43" class="solution-body" style="display: none;">
+<div id="sol-body-17" class="solution-body" style="display: none;">
 <pre class="r"><code>load(url(&quot;https://uoepsy.github.io/msmr/data/nwl.RData&quot;))
 summary(nwl)</code></pre>
 <pre><code>##      group      lesion_location     block    PropCorrect       NumCorrect   
@@ -1734,7 +556,7 @@ summary(nwl)</code></pre>
 <p class="solution-end">
 </p>
 <div class="question-begin">
-Question B2
+Question A2
 </div>
 <div class="question-body">
 <p>Our broader research aim today is to compare two groups (those with anterior vs. posterior lesions) with respect to their accuracy of responses over the course of the study.</p>
@@ -1746,9 +568,9 @@ Question B2
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-44" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-44&#39;, &#39;sol-start-44&#39;)"> Solution </span>
+<span id="sol-start-18" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-18&#39;, &#39;sol-start-18&#39;)"> Solution </span>
 </div>
-<div id="sol-body-44" class="solution-body" style="display: none;">
+<div id="sol-body-18" class="solution-body" style="display: none;">
 <ol style="list-style-type: decimal">
 <li>The outcome here is (in words) “the proportion of correct answers in each block”. This makes it tempting to look straight to the variable called <code>PropCorrect</code>. Unfortunately, this is encoded as a proportion (i.e., is bounded by 0 and 1), and of the models we have learned about so far, we don’t definitely have the necessary tools to model this.
 <ul>
@@ -1761,19 +583,18 @@ Question B2
 <p class="solution-end">
 </p>
 <div class="question-begin">
-Question B3
+Question A3
 </div>
 <div class="question-body">
 <blockquote>
 <p><strong>Research Question 1:</strong><br />
-Is the learning rate (training blocks) different between these two groups?</p>
+Is the learning rate (training blocks) different between the two lesion location groups?</p>
 </blockquote>
 <p><strong>Hints</strong>:</p>
 <ul>
 <li><p>Do we want <code>cbind(num_successes, num_failures)</code>?</p></li>
-<li><p>Make sure we’re running models on only the data we are actually interested in.<br />
-</p></li>
-<li><p>Think back to what we did in the exercises above using model comparison via likelihood ratio tests (using <code>anova(model1, model2, model3, ...)</code>. We could use this approach for this question, to compare:</p>
+<li><p>Make sure we’re running models on only the data we are actually interested in.</p></li>
+<li><p>We could use model comparison via likelihood ratio tests (using <code>anova(model1, model2, model3, ...)</code>. For this question, we could compare:</p>
 <ul>
 <li>A model with just the change over the sequence of blocks</li>
 <li>A model with the change over the sequence of blocks <em>and</em> an overall difference between groups</li>
@@ -1786,10 +607,13 @@ Is the learning rate (training blocks) different between these two groups?</p>
 <li>What do you want your model to allow to vary within these groups?</li>
 </ol></li>
 </ul>
-<div class="optional-begin">
-<span id="opt-start-45" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-45&#39;, &#39;opt-start-45&#39;)"> Suggested answers to the hints if you don’t know where to start</span>
 </div>
-<div id="opt-body-45" class="optional-body" style="display: none;">
+<p class="question-end">
+</p>
+<div class="optional-begin">
+<span id="opt-start-19" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-19&#39;, &#39;opt-start-19&#39;)"> Suggested answers to the hints if you don’t know where to start</span>
+</div>
+<div id="opt-body-19" class="optional-body" style="display: none;">
 <ul>
 <li>Make sure we’re running models on only the data we are actually interested in.
 <ul>
@@ -1823,13 +647,10 @@ What do you want your model to allow to vary within these groups?</li>
 </div>
 <p class="optional-end">
 </p>
-</div>
-<p class="question-end">
-</p>
 <div class="solution-begin">
-<span id="sol-start-46" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-46&#39;, &#39;sol-start-46&#39;)"> Solution </span>
+<span id="sol-start-20" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-20&#39;, &#39;sol-start-20&#39;)"> Solution </span>
 </div>
-<div id="sol-body-46" class="solution-body" style="display: none;">
+<div id="sol-body-20" class="solution-body" style="display: none;">
 <pre class="r"><code>m.base &lt;- glmer(cbind(NumCorrect, NumError) ~ block + (block | ID), 
                 data = filter(nwl, block &lt; 8, !is.na(lesion_location)),
                 family=binomial)
@@ -1857,7 +678,7 @@ anova(m.base, m.loc0, m.loc1, test=&quot;Chisq&quot;)</code></pre>
 <p class="solution-end">
 </p>
 <div class="question-begin">
-Question B4
+Question A4
 </div>
 <div class="question-body">
 <blockquote>
@@ -1874,9 +695,9 @@ In the testing phase, does performance on the immediate test differ between lesi
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-47" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-47&#39;, &#39;sol-start-47&#39;)"> Solution </span>
+<span id="sol-start-21" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-21&#39;, &#39;sol-start-21&#39;)"> Solution </span>
 </div>
-<div id="sol-body-47" class="solution-body" style="display: none;">
+<div id="sol-body-21" class="solution-body" style="display: none;">
 <pre class="r"><code>nwl_test &lt;- filter(nwl, block &gt; 7, !is.na(lesion_location)) %&gt;%
   mutate(
     Phase = fct_relevel(factor(Phase),&quot;Immediate&quot;)
@@ -1927,8 +748,8 @@ summary(m.recall.loc)</code></pre>
 </p>
 <div class="frame">
 <p><strong>Interpreting coefficients in logistic regression</strong><br />
-Take some time to remind yourself from USMR of the <a href="https://uoepsy.github.io/usmr/labs/09_glm.html#Introducing_GLM">interpretation of logistic regression coefficients</a>.</p>
-<p>The interpretation of the fixed effects of a logistic multi-level model is not very different.<br />
+Take some time to remind yourself from USMR of the interpretation of logistic regression coefficients.</p>
+<p>The interpretation of the fixed effects of a logistic multilevel model is not very different.<br />
 We can obtain the fixed effects from our model by using:</p>
 <ul>
 <li><code>fixef(model)</code></li>
@@ -1939,10 +760,10 @@ We can obtain the fixed effects from our model by using:</p>
 </li>
 <li>(there are probably more ways, but I can’t think of them right now!)</li>
 </ul>
-<p>It’s just that for multi-level models, we can model by-cluster random variation around these effects.</p>
+<p>It’s just that for multilevel models, we can model by-cluster random variation around these effects.</p>
 </div>
 <div class="question-begin">
-Question B5
+Question A5
 </div>
 <div class="question-body">
 <ol style="list-style-type: decimal">
@@ -1954,9 +775,9 @@ Question B5
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-48" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-48&#39;, &#39;sol-start-48&#39;)"> Solution </span>
+<span id="sol-start-22" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-22&#39;, &#39;sol-start-22&#39;)"> Solution </span>
 </div>
-<div id="sol-body-48" class="solution-body" style="display: none;">
+<div id="sol-body-22" class="solution-body" style="display: none;">
 <ol style="list-style-type: decimal">
 <li><p>The link function is the <code>logit</code>, or log-odds (other link functions are available).</p></li>
 <li><p>To convert log-odds to odds, we can use <code>exp()</code>, to get odds and odds ratios.</p></li>
@@ -1965,7 +786,7 @@ Question B5
 <p class="solution-end">
 </p>
 <div class="question-begin">
-Question B6
+Question A6
 </div>
 <div class="question-body">
 <p>Make sure you pay attention to trying to interpret each fixed effect from your models.<br />
@@ -1975,7 +796,7 @@ These can be difficult, especially when it’s logistic, and especially when the
 </ul>
 <!-- 
 
-<div class="optional-begin"><span id='opt-start-49' class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility('opt-body-49', 'opt-start-49')">  Optional help: Our Solution to B4</span></div><div class="optional-body" id = "opt-body-49" style="display: none;">
+<div class="optional-begin"><span id='opt-start-23' class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility('opt-body-23', 'opt-start-23')">  Optional help: Our Solution to A4</span></div><div class="optional-body" id = "opt-body-23" style="display: none;">
 
  -->
 <!-- ```{r eval=F} -->
@@ -1995,9 +816,9 @@ These can be difficult, especially when it’s logistic, and especially when the
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-50" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-50&#39;, &#39;sol-start-50&#39;)"> Solution </span>
+<span id="sol-start-24" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-24&#39;, &#39;sol-start-24&#39;)"> Solution </span>
 </div>
-<div id="sol-body-50" class="solution-body" style="display: none;">
+<div id="sol-body-24" class="solution-body" style="display: none;">
 <ul>
 <li><code>(Intercept)</code> ==&gt; Anterior lesion group performance in immediate test. This is the log-odds of them answering correctly in the immediate test.</li>
 <li><code>PhaseFollow-up</code> ==&gt; Change in performance (for the anterior lesion group) from immediate to follow-up test.</li>
@@ -2013,7 +834,7 @@ These can be difficult, especially when it’s logistic, and especially when the
 <p class="solution-end">
 </p>
 <div class="question-begin">
-OPTIONAL: B7
+OPTIONAL: A7
 </div>
 <div class="question-body">
 <p>Recreate the visualisation in Figure <a href="#fig:nwl-fig2">2</a>.</p>
@@ -2027,22 +848,24 @@ Figure 2: Differences between groups in the average proportion of correct respon
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-51" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-51&#39;, &#39;sol-start-51&#39;)"> Solution </span>
+<span id="sol-start-25" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-25&#39;, &#39;sol-start-25&#39;)"> Solution </span>
 </div>
-<div id="sol-body-51" class="solution-body" style="display: none;">
+<div id="sol-body-25" class="solution-body" style="display: none;">
 <pre class="r"><code>ggplot(filter(nwl, !is.na(lesion_location)), aes(block, PropCorrect, 
-                                            color=lesion_location, 
-                                            shape=lesion_location)) +
-  #geom_line(aes(group=ID),alpha=.2) + 
-  stat_summary(fun.data=mean_se, geom=&quot;pointrange&quot;) + 
-  stat_summary(data=filter(nwl, !is.na(lesion_location), block &lt;= 7), 
-                           fun=mean, geom=&quot;line&quot;) + 
-  geom_hline(yintercept=0.5, linetype=&quot;dashed&quot;) + 
-  geom_vline(xintercept=c(7.5, 8.5), linetype=&quot;dashed&quot;) + 
-  scale_x_continuous(breaks=1:9, labels=c(1:7, &quot;Test&quot;, &quot;Follow-Up&quot;)) + 
-  theme_bw(base_size=10) + 
-  labs(x=&quot;Block&quot;, y=&quot;Proportion Correct&quot;, shape=&quot;Lesion\nLocation&quot;, color=&quot;Lesion\nLocation&quot;)</code></pre>
-<p><img src="02_lmm_log_files/figure-html/unnamed-chunk-10-1.png" width="80%" style="display: block; margin: auto;" /></p>
+                                                 color=lesion_location, 
+                                                 shape=lesion_location)) +
+    #geom_line(aes(group=ID),alpha=.2) + 
+    stat_summary(fun.data=mean_se, geom=&quot;pointrange&quot;) + 
+    stat_summary(data=filter(nwl, !is.na(lesion_location), block &lt;= 7), 
+                 fun=mean, geom=&quot;line&quot;) + 
+    geom_hline(yintercept=0.5, linetype=&quot;dashed&quot;) + 
+    geom_vline(xintercept=c(7.5, 8.5), linetype=&quot;dashed&quot;) + 
+    scale_x_continuous(breaks=1:9, 
+                       labels=c(1:7, &quot;Test&quot;, &quot;Follow-Up&quot;)) + 
+    theme_bw(base_size=10) + 
+    labs(x=&quot;Block&quot;, y=&quot;Proportion Correct&quot;, 
+         shape=&quot;Lesion\nLocation&quot;, color=&quot;Lesion\nLocation&quot;)</code></pre>
+<p><img src="02_lmm_log_files/figure-html/unnamed-chunk-8-1.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
 <p class="solution-end">
 </p>
@@ -2051,31 +874,31 @@ Figure 2: Differences between groups in the average proportion of correct respon
 <p>Remember that categorical predictors get inputted into our model as a series of variables which are 0s and 1s? Previously the variable in our model for lesion location was actually being coded with 0 representing one level, and 1 representing the other. This is known as “treatment coding”.</p>
 <p>There are lots of other ways we might encode our categorical predictors. One common approach is to use “effects coding”. In the case where we have a binary predictor, this makes zero the mid-point between the two - i.e., the overall mean (this is a bit like mean-centering a continuous predictor).</p>
 <p>If we recall that the intercept is “when all predictors are zero”, and that when we have an interaction <code>Y~A+B+A*B</code> in our model, the individual coefficients for <code>A</code> and <code>B</code> are estimated “when the other variable is zero”, then we can start to understand how these different ways of encoding our categorical predictors can change what we are getting out of our model. (Note, they don’t actually change anything about the model fit, but they change what information we are estimating from the model).</p>
-<p><img src="02_lmm_log_files/figure-html/unnamed-chunk-11-1.png" width="80%" style="display: block; margin: auto;" /></p>
-<p>If you want to understand this a little more, take a look <a href="zz_quickcontrasts.html">here</a>.</p>
+<p><img src="02_lmm_log_files/figure-html/unnamed-chunk-9-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p>If you want to understand this a little more, take a look at this <a href="zz_quickcontrasts.html">in depth section</a>.</p>
 </div>
 <div class="question-begin">
-Question B8
+Question A8
 </div>
 <div class="question-body">
-<p>This code is that we used to answer question B4 above, only we have edited it to change lesion location to be fitted with “effects coding”.</p>
+<p>This code is that we used to answer question A4 above, only we have edited it to change lesion location to be fitted with “effects coding”.</p>
 <pre class="r"><code>nwl_test &lt;- filter(nwl, block &gt; 7, !is.na(lesion_location)) %&gt;%
-  mutate(
-    Phase = fct_relevel(factor(Phase),&quot;Immediate&quot;)
-  )
+    mutate(
+        Phase = fct_relevel(factor(Phase),&quot;Immediate&quot;)
+    )
 
 m.recall.loc.effcoding &lt;- glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (Phase | ID), 
-                      contrasts = list(lesion_location = &quot;contr.sum&quot;),
-                  nwl_test, family=&quot;binomial&quot;)</code></pre>
+                                contrasts = list(lesion_location = &quot;contr.sum&quot;),
+                                data = nwl_test, family=&quot;binomial&quot;)</code></pre>
 <p>The interpretation of this is going to get pretty tricky - we have a logistic regression, and we have different coding scheme for our categorical predictor, and we have an interaction.. 🤯</p>
 <p>Can you work out the interpretation of the fixed effects estimates?</p>
 </div>
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-52" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-52&#39;, &#39;sol-start-52&#39;)"> Solution </span>
+<span id="sol-start-26" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-26&#39;, &#39;sol-start-26&#39;)"> Solution </span>
 </div>
-<div id="sol-body-52" class="solution-body" style="display: none;">
+<div id="sol-body-26" class="solution-body" style="display: none;">
 <ul>
 <li><code>(Intercept)</code> ==&gt; Overall performance in immediate test. This is the overall log-odds of answering correctly in the immediate test.</li>
 <li><code>PhaseFollow-up</code> ==&gt; Average change in performance from immediate to follow-up test.</li>
@@ -2092,9 +915,9 @@ contrasts(nwl_test$lesion_location)</code></pre>
 ## posterior   -1</code></pre>
 <p>Because there are only two levels to this variable, the estimate will simply flip sign (positive/negative) depending on which way the contrast is leveled.</p>
 <div class="optional-begin">
-<span id="opt-start-53" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-53&#39;, &#39;opt-start-53&#39;)"> Optional: I liked my coefficients being named properly</span>
+<span id="opt-start-27" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-27&#39;, &#39;opt-start-27&#39;)"> Optional: I liked my coefficients being named properly</span>
 </div>
-<div id="opt-body-53" class="optional-body" style="display: none;">
+<div id="opt-body-27" class="optional-body" style="display: none;">
 <pre class="r"><code>colnames(contrasts(nwl_test$lesion_location)) &lt;- &quot;PeppaPig&quot;
 
 contrasts(nwl_test$lesion_location)</code></pre>
@@ -2102,7 +925,7 @@ contrasts(nwl_test$lesion_location)</code></pre>
 ## anterior         1
 ## posterior       -1</code></pre>
 <pre class="r"><code>modeltest &lt;- glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (Phase | ID),
-                  nwl_test, family=&quot;binomial&quot;)
+                   nwl_test, family=&quot;binomial&quot;)
 summary(modeltest)$coefficients</code></pre>
 <pre><code>##                                          Estimate Std. Error    z value
 ## (Intercept)                             0.3858449  0.2341574  1.6478019
@@ -2128,9 +951,9 @@ summary(modeltest)$coefficients</code></pre>
 </div>
 <div id="reading-inference-in-mlm" class="section level1">
 <h1>Reading: Inference in MLM</h1>
-<p>In USMR, we fitted various simple linear models using <code>lm()</code>, and we could get out either a table of coefficients (for example, <a href="#tab:lmcoeftab">1</a>) or a table of the reduction in sums of squared residuals (for example, <a href="#tab:lmanovtab">2</a>). In both of these cases we had a nice set of p-values for us to look at (in R, we often find the p-values in the column named something like <code>Pr(&gt;F)</code>).</p>
+<p>In USMR, we fitted various simple linear models using <code>lm()</code>, and we could get out either a table of coefficients (for example, Table <a href="#tab:lmcoeftab">1</a>) or a table of the reduction in sums of squared residuals (for example, Table <a href="#tab:lmanovtab">2</a>). In both of these cases we had a nice set of p-values for us to look at (in R, we often find the p-values in the column named something like <code>Pr(&gt;F)</code>).</p>
 <div class="statbox">
-<p><strong>A quick reminder:</strong> a p-value is the probability of observing results as or more extreme than the data, <em>if the data were really generated by a hypothesised chance process</em>).</p>
+<p><strong>A quick reminder:</strong> a p-value is the probability of observing results as or more extreme than the obtained ones, <em>if the data were really generated by the hypothesised model or process</em>).</p>
 </div>
 <table>
 <caption><span id="tab:lmcoeftab">Table 1: </span>t-tests for slope coefficients for predictors in a linear model</caption>
@@ -2206,7 +1029,7 @@ summary(modeltest)$coefficients</code></pre>
 </tr>
 </tbody>
 </table>
-<p>We could get p-values for these models because we know what the distribution of test statistics of interest (e.g. <span class="math inline">\(F\)</span>-statistics and <span class="math inline">\(t\)</span>-statistics), will look like if the null hypothesis were true (i.e., we can describe what they look like in terms of <span class="math inline">\(F\)</span> and <span class="math inline">\(t\)</span> distributions with specific degrees of freedom (look back to the <a href="https://uoepsy.github.io/usmr/labs/07_regression.html#More_Model_Evaluation">USMR materials for a formula</a>).</p>
+<p>We could get p-values for these models because we know what the distribution of test statistics of interest (e.g. <span class="math inline">\(F\)</span>-statistics and <span class="math inline">\(t\)</span>-statistics), will look like if the null hypothesis were true (i.e., we can describe what they look like in terms of <span class="math inline">\(F\)</span> and <span class="math inline">\(t\)</span> distributions with specific degrees of freedom (look back to the <a href="https://uoepsy.github.io/usmr/2223/labs/07a_slr.html#the-f-statistic">USMR materials for a formula</a>).</p>
 <p>Unfortunately, the same is not true of multilevel models. For the multilevel model, we can think of it as having residuals at multiple levels: we have the random variation of clusters around the fixed effects, and then random variation of observations around the cluster-level effects (more on this in Week 4).<br />
 In the rare occasion that you have a perfectly balanced experimental design, then ratios of sums of squares for multi-level models follow an <span class="math inline">\(F\)</span>-distribution, in which we know the numerator and denominator degrees of freedom (this means we can work out the degrees of freedom for the <span class="math inline">\(t\)</span>-test of our fixed effect parameters). Unfortunately, in the real world where things are not often perfectly balanced, determining the denominator degrees of freedom becomes unclear.</p>
 <p>Last week, we mentioned a couple of approaches that we might take for drawing inferences, finding ways to compute p-values or confidence intervals.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> We’re going to now extend this to include a few more, and discuss the strengths and limitations of the different approaches.</p>
@@ -2215,13 +1038,39 @@ In the rare occasion that you have a perfectly balanced experimental design, the
 <p>For the following examples, we’re going to return to our dataset of various toys, and we are going to be concerned with whether practice (the <code>hrs_week</code> variable) is associated with changes in reading ages (<code>R_AGE</code> variable).<br />
 To accommodate for the clustered nature of the data, we are going to fit a model with both intercepts and slopes varying by toy-type.</p>
 <pre class="r"><code>toys_read &lt;- read_csv(&quot;https://uoepsy.github.io/data/toyexample.csv&quot;)
-full_model &lt;- lmer(R_AGE ~ hrs_week + (1 + hrs_week | toy_type), data = toys_read)</code></pre>
+full_model &lt;- lmer(R_AGE ~ hrs_week + (1 + hrs_week | toy_type), data = toys_read)
+summary(full_model)</code></pre>
+<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+## Formula: R_AGE ~ hrs_week + (1 + hrs_week | toy_type)
+##    Data: toys_read
+## 
+## REML criterion at convergence: 637.8
+## 
+## Scaled residuals: 
+##      Min       1Q   Median       3Q      Max 
+## -2.51393 -0.58005 -0.00348  0.64053  2.38403 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev. Corr
+##  toy_type (Intercept) 2.0349   1.4265       
+##           hrs_week    0.7834   0.8851   0.63
+##  Residual             4.3702   2.0905       
+## Number of obs: 132, groups:  toy_type, 20
+## 
+## Fixed effects:
+##             Estimate Std. Error t value
+## (Intercept)   1.7559     0.9610   1.827
+## hrs_week      1.1435     0.2957   3.867
+## 
+## Correlation of Fixed Effects:
+##          (Intr)
+## hrs_week -0.547</code></pre>
 </div>
 <div class="optional-begin">
-<span id="opt-start-54" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-54&#39;, &#39;opt-start-54&#39;)"> Use a normal approximation (not advisable)</span>
+<span id="opt-start-28" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-28&#39;, &#39;opt-start-28&#39;)"> Use a normal approximation (not advisable)</span>
 </div>
-<div id="opt-body-54" class="optional-body" style="display: none;">
-<p>Remember that the <span class="math inline">\(t\)</span> distribution starts to look more and more like the <span class="math inline">\(z\)</span> (“normal”) distribution when degrees of freedom increase? We could just assume we have infinite degrees of freedom in our test statistics, and pretend that the <span class="math inline">\(t\)</span>-values we get are actually <span class="math inline">\(z\)</span>-values. This is “anti-conservative” inasmuch as it is not a very cautious approach, and we are likely to have a higher false positive rate (e.g. more chance of saying “there <strong>is</strong> an effect!” when there actually isn’t.)</p>
+<div id="opt-body-28" class="optional-body" style="display: none;">
+<p>Remember that the <span class="math inline">\(t\)</span> distribution starts to look more and more like the <span class="math inline">\(z\)</span> (“normal”) distribution when degrees of freedom increase? We could just assume we have infinite degrees of freedom in our test statistics, and pretend that the <span class="math inline">\(t\)</span>-values we get are actually <span class="math inline">\(z\)</span>-values. This is “anti-conservative” in as much as it is not a very cautious approach, and we are likely to have a higher false positive rate (e.g. more chance of saying “there <strong>is</strong> an effect!” when there actually isn’t.)</p>
 <pre class="r"><code>coefs &lt;- as.data.frame(summary(full_model)$coefficients)
 coefs$p.z &lt;- 2 * (1 - pnorm(abs(coefs[,3])))
 coefs</code></pre>
@@ -2232,9 +1081,9 @@ coefs</code></pre>
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-55" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-55&#39;, &#39;opt-start-55&#39;)"> Satterthwaite df approximation</span>
+<span id="opt-start-29" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-29&#39;, &#39;opt-start-29&#39;)"> Satterthwaite df approximation</span>
 </div>
-<div id="opt-body-55" class="optional-body" style="display: none;">
+<div id="opt-body-29" class="optional-body" style="display: none;">
 <p>There have been a couple of methods proposed to estimate the degrees of freedom in order to provide a better approximation to the null distribution of our tests. The way the Satterthwaite method has been implemented in R will just add a column for p-values to your <code>summary(model)</code> output).</p>
 <p>Load the <strong>lmerTest</strong> package, refit the model, and voila!</p>
 <pre class="r"><code>library(lmerTest)
@@ -2248,7 +1097,7 @@ summary(full_model)$coefficients</code></pre>
 <p>To account for the extra uncertainty brought by the inclusion of random effects in the model, the degrees of freedom in the coefficients tests have been corrected via Satterthwaite’s method.<br />
 …<br />
 …<br />
-Weekly hours of reading practice was associated increased reading age (<span class="math inline">\(\beta = 1.14,\ SE = 0.30,\ t(17.52^*) = 3.87,\ p = .001\)</span>).</p>
+Weekly hours of reading practice was associated with increased reading age (<span class="math inline">\(\beta = 1.14,\ SE = 0.30,\ t(17.52^*) = 3.87,\ p = .001\)</span>).</p>
 </div>
 <p><strong>Note:</strong> if you have the <strong>lmerTest</strong> package loaded, then all the models you fit with <code>lmer()</code> will show p-values! If you want to stop this, then you will have to detach/unload the package, and refit the model.</p>
 <pre class="r"><code>detach(&quot;package:lmerTest&quot;, unload=TRUE)</code></pre>
@@ -2256,9 +1105,9 @@ Weekly hours of reading practice was associated increased reading age (<span cla
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-56" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-56&#39;, &#39;opt-start-56&#39;)"> Kenward Rogers df approximations</span>
+<span id="opt-start-30" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-30&#39;, &#39;opt-start-30&#39;)"> Kenward Rogers df approximations</span>
 </div>
-<div id="opt-body-56" class="optional-body" style="display: none;">
+<div id="opt-body-30" class="optional-body" style="display: none;">
 <p>The Kenward-Rogers approach is slightly more conservative than the Satterthwaite method, and has been implemented for model comparison between a full model and a restricted model (a model without the parameter of interest), using the KR adjustment for the denominator degrees of freedom in the <span class="math inline">\(F\)</span>-test.<br />
 For this, models must be fitted with REML, <strong>not</strong> ML. The function <code>KRmodcomp()</code> will take care of this and re-fit them for you.</p>
 <pre class="r"><code>library(pbkrtest)
@@ -2282,14 +1131,13 @@ Inclusion of weekly hours of reading practice as a predictor was associated with
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-57" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-57&#39;, &#39;opt-start-57&#39;)"> Likelihood Ratio Test (LRT)</span>
+<span id="opt-start-31" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-31&#39;, &#39;opt-start-31&#39;)"> Likelihood Ratio Test (LRT)</span>
 </div>
-<div id="opt-body-57" class="optional-body" style="display: none;">
+<div id="opt-body-31" class="optional-body" style="display: none;">
 <p>Conduct a model comparison between your model and a restricted model (a model without the parameter of interest), evaluating the change in log-likelihood.</p>
 <div class="statbox">
 <p><strong>Likelihood</strong></p>
-<p>“likelihood” is a function that associates to a parameter the probability (or probability density) of observing the given sample data.<br />
-In simpler terms, the likelihood is the probability of the model given that we have this data.</p>
+<p>“likelihood” is a function that associates to a parameter the probability (or probability density) of observing the given sample data.</p>
 <p>The intuition behind likelihood:</p>
 <ol style="list-style-type: decimal">
 <li>I toss a coin 10 time and observed 8 Heads.<br />
@@ -2306,7 +1154,7 @@ I have two models:</li>
 <ol start="3" style="list-style-type: decimal">
 <li>Given the data I observe (see 1, above), we can (hopefully) intuit that Model 2 is more likely than Model 1.</li>
 </ol>
-<p>For a (slightly) more detailed explanation, see <a href="lvp.html">here</a>.</p>
+<p>For a (slightly) more detailed explanation, see <a href="zz_lvp.html">here</a>.</p>
 </div>
 <p>This method assumes that the ratio of two likelihoods will (as sample size increases) become closer to being <span class="math inline">\(\chi^2\)</span> distributed, and so may be unreliable for small samples.</p>
 <p>Models must be fitted with ML, <strong>not</strong> REML. The function <code>anova()</code> will re-fit them for you.</p>
@@ -2331,9 +1179,9 @@ anova(restricted_model, full_model, test = &quot;Chisq&quot;)</code></pre>
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-58" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-58&#39;, &#39;opt-start-58&#39;)"> Optional: Parametric Bootstrap LRT</span>
+<span id="opt-start-32" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-32&#39;, &#39;opt-start-32&#39;)"> Optional: Parametric Bootstrap LRT</span>
 </div>
-<div id="opt-body-58" class="optional-body" style="display: none;">
+<div id="opt-body-32" class="optional-body" style="display: none;">
 <p>There are also various “bootstrapping” methods which it is worth looking into. Think back to USMR when we first learned about hypothesis testing. Remember that we did lots of simulating data, so that we can compare what we actually observe with what we would expect if the null hypothesis were true? By doing this, we were essentially <em>creating</em> a null distribution, so that our calculating a p-value can become an issue of summarising data (e.g. calculate the proportion of our simulated null distribution that is more extreme than our observed statistic)</p>
 <p>Instead of assuming that the likelihood ratio test statistics are <span class="math inline">\(\chi^2\)</span>-distributed, we can bootstrap this test instead. This approach simulates data from the simpler model, fits both the simple model and the complex model and evaluates the change in log-likelihood. By doing this over and over again, we build a distribution of what changes in log-likelihood we would be likely to see if the more complex model is not any better. In this way it actually constructs a distribution reflecting our null hypothesis, against which we can then compare our actual observed effect</p>
 <pre class="r"><code>library(pbkrtest)
@@ -2346,9 +1194,9 @@ PBmodcomp(full_model, restricted_model, nsim=1000)</code></pre>
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-59" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-59&#39;, &#39;opt-start-59&#39;)"> Optional: Parametric Bootstrap Confidence Intervals</span>
+<span id="opt-start-33" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-33&#39;, &#39;opt-start-33&#39;)"> Optional: Parametric Bootstrap Confidence Intervals</span>
 </div>
-<div id="opt-body-59" class="optional-body" style="display: none;">
+<div id="opt-body-33" class="optional-body" style="display: none;">
 <p>Much the same as above, but with just one model we simulate data many times and refit the model, so that we get an empirical distribution that we can use to construct confidence intervals for our effects.</p>
 <pre class="r"><code>confint(full_model, method=&quot;boot&quot;)  </code></pre>
 <div class="int">
@@ -2362,9 +1210,9 @@ Weekly hours of reading practice was associated increased reading age (<span cla
 <p class="optional-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-60" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-60&#39;, &#39;opt-start-60&#39;)"> Optional: Case-based Bootstrap Confidence Intervals</span>
+<span id="opt-start-34" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-34&#39;, &#39;opt-start-34&#39;)"> Optional: Case-based Bootstrap Confidence Intervals</span>
 </div>
-<div id="opt-body-60" class="optional-body" style="display: none;">
+<div id="opt-body-34" class="optional-body" style="display: none;">
 <p>It’s worth noting that there are many different types of bootstrapping that we can conduct. Different methods of bootstrapping vary with respect to the assumptions we will have to make when using them for drawing inferences. For instance, the parametric bootstrap discussed above assumes that explanatory variables are fixed and that model specification and the distributions such as <span class="math inline">\(\zeta_i \sim N(0,\sigma_{\zeta})\)</span> and <span class="math inline">\(\varepsilon_i \sim N(0,\sigma_{\varepsilon})\)</span> are correct.<br />
 An alternative is to generate a distribution by <strong>resampling with replacement</strong> from our data, fitting our model to the resample, and then repeating this over and over. This doesn’t have to rely on assumptions about the shape of the distributions of <span class="math inline">\(\zeta_i\)</span> and <span class="math inline">\(\varepsilon_i\)</span> - we just need to ensure that we correctly specify the hierarchical dependency of data. It does, however, require the decision of at which levels to resample (this is discussed more in week 4, and is what the <strong>lmeresampler</strong> package is all about).</p>
 </div>
@@ -2373,6 +1221,7 @@ An alternative is to generate a distribution by <strong>resampling with replacem
 <div class="frame">
 <p>If you want more information (not required reading for this course), then Julian Faraway has a page <a href="https://people.bath.ac.uk/jjf23/mixchange/index.html">here</a> with links to some worked examples, and Ben Bolker has a wealth of information on his <a href="http://bbolker.github.io/mixedmodels-misc/glmmFAQ.html#why-doesnt-lme4-display-denominator-degrees-of-freedomp-values-what-other-options-do-i-have">GLMM FAQ pages</a>.</p>
 </div>
+<!-- Formatting -->
 <div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;">
 
 </div>

@@ -15,7 +15,7 @@
 
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
@@ -348,13 +348,13 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="01_intromlm.html">1: Intro to Multi-Level Modelling</a>
+      <a href="01_intromlm.html">1: Introduction to Multilevel Models</a>
     </li>
     <li>
-      <a href="02_lmm_log.html">2: Logistic | Longitudinal (linear)</a>
+      <a href="02_lmm_log.html">2: Logistic Multilevel Models</a>
     </li>
     <li>
-      <a href="03_nonlin.html">3: Longitudinal (non-linear)</a>
+      <a href="03_nonlin.html">3: Longitudinal Nonlinear Models</a>
     </li>
     <li>
       <a href="04_ranef.html">4: Random Effect Structures</a>
@@ -401,7 +401,16 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="00_tidyverse_markdown.html">Recap - Tidyverse &amp; Markdown</a>
+      <a href="zz_tidyverse_markdown.html">Tidyverse &amp; Markdown Recap</a>
+    </li>
+    <li>
+      <a href="zz_binary_binomial.html">Binary vs Binomial Data</a>
+    </li>
+    <li>
+      <a href="zz_quickcontrasts.html">Contrasts: a Quick Overview</a>
+    </li>
+    <li>
+      <a href="zz_lvp.html">Likelihood vs Probability</a>
     </li>
   </ul>
 </li>
@@ -498,9 +507,9 @@ Figure 4: My theory about my system of variables
 <p>As it happens, we have already seen the conventions for how to depict variables and parameters in these type of diagrams in last week’s lab: by using rectangles (observed variables), ovals (latent variables), single headed arrows (regression paths) and double headed arrows (covariances), we can draw various model structures (as mentioned at the top of this page, we are temporarily putting aside the latent variables today).</p>
 <p>We <em>could</em> try to fit some of these more complex models by just using <code>lm()</code> many times over and fitting various regression models. Path analysis is a bit like this, but all in one. It involves fitting a set of regression equations simultaneously. One obvious benefit of this is that it can allow us to talk about “model fit” (in the way we discussed in last week’s lab) in relation to our entire <em>theory</em>, rather than to individual regressions that make up only part of the theoretical model.</p>
 <div class="optional-begin">
-<span id="opt-start-165" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-165&#39;, &#39;opt-start-165&#39;)"> Refresher on path diagrams</span>
+<span id="opt-start-139" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-139&#39;, &#39;opt-start-139&#39;)"> Refresher on path diagrams</span>
 </div>
-<div id="opt-body-165" class="optional-body" style="display: none;">
+<div id="opt-body-139" class="optional-body" style="display: none;">
 <ul>
 <li><strong>Observed variables</strong> are represented by squares or rectangles. These are the named variables of interest which exist in our dataset - i.e. the ones which we have measured directly.<br />
 </li>
@@ -582,9 +591,9 @@ round(cor(egdat),2)</code></pre>
 </ul>
 <p>And with some substituting and rearranging, we can work out the values of <span class="math inline">\(a\)</span>, <span class="math inline">\(b\)</span> and <span class="math inline">\(c\)</span>.</p>
 <div class="optional-begin">
-<span id="opt-start-166" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-166&#39;, &#39;opt-start-166&#39;)"> Click for answers</span>
+<span id="opt-start-140" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-140&#39;, &#39;opt-start-140&#39;)"> Click for answers</span>
 </div>
-<div id="opt-body-166" class="optional-body" style="display: none;">
+<div id="opt-body-140" class="optional-body" style="display: none;">
 <p>This is what I get:</p>
 <p>a = 0.61<br />
 b = 0.38<br />
@@ -718,7 +727,7 @@ It is common to estimate the indirect effect using bootstrapping (a method of re
 <pre class="r"><code>mm1.est &lt;- sem(med_model, data=vax, se = &quot;bootstrap&quot;) </code></pre>
 <p>And we can get out estimates for all our parameters, including the one we created called “indirect”.</p>
 <pre class="r"><code>summary(mm1.est, ci = TRUE)</code></pre>
-<pre><code>## lavaan 0.6-12 ended normally after 1 iterations
+<pre><code>## lavaan 0.6.13 ended normally after 1 iteration
 ## 
 ##   Estimator                                         ML
 ##   Optimization method                           NLMINB
@@ -735,24 +744,24 @@ It is common to estimate the indirect effect using bootstrapping (a method of re
 ## 
 ##   Standard errors                            Bootstrap
 ##   Number of requested bootstrap draws             1000
-##   Number of successful bootstrap draws            1000
+##   Number of successful bootstrap draws             996
 ## 
 ## Regressions:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
 ##   intention ~                                                           
-##     religiosty        0.270    1.028    0.263    0.793   -1.763    2.381
-##     hlc        (a)    5.971    0.936    6.380    0.000    4.040    7.773
+##     religiosty        0.270    1.036    0.261    0.794   -1.791    2.295
+##     hlc        (a)    5.971    0.914    6.529    0.000    4.131    7.883
 ##   hlc ~                                                                 
-##     religiosty (b)    0.508    0.090    5.658    0.000    0.351    0.693
+##     religiosty (b)    0.508    0.087    5.843    0.000    0.342    0.688
 ## 
 ## Variances:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
-##    .intention        62.090    7.659    8.107    0.000   46.049   75.756
-##    .hlc               0.753    0.106    7.123    0.000    0.540    0.946
+##    .intention        62.090    8.158    7.611    0.000   45.305   78.483
+##    .hlc               0.753    0.102    7.394    0.000    0.545    0.947
 ## 
 ## Defined Parameters:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
-##     indirect          3.033    0.684    4.432    0.000    1.877    4.497</code></pre>
+##     indirect          3.033       NA                      1.889    4.470</code></pre>
 </div>
 <div id="mediation-exercises" class="section level1">
 <h1>Mediation Exercises</h1>
@@ -769,9 +778,9 @@ Question A1
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-167" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-167&#39;, &#39;sol-start-167&#39;)"> Solution </span>
+<span id="sol-start-141" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-141&#39;, &#39;sol-start-141&#39;)"> Solution </span>
 </div>
-<div id="sol-body-167" class="solution-body" style="display: none;">
+<div id="sol-body-141" class="solution-body" style="display: none;">
 <pre class="r"><code>cp_teach&lt;-read_csv(&quot;https://uoepsy.github.io/data/cp_teachacad.csv&quot;)
 summary(cp_teach)</code></pre>
 <pre><code>##        ID           Acad           Teach_r         Non_agg           Agg       
@@ -794,9 +803,9 @@ Question A2
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-168" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-168&#39;, &#39;sol-start-168&#39;)"> Solution </span>
+<span id="sol-start-142" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-142&#39;, &#39;sol-start-142&#39;)"> Solution </span>
 </div>
-<div id="sol-body-168" class="solution-body" style="display: none;">
+<div id="sol-body-142" class="solution-body" style="display: none;">
 <pre class="r"><code># we can fit the model in lavaan as follows:
 # first we specify the model using lavaan syntax
 sr_lavaan&lt;-&#39;Acad~Non_agg+Agg&#39;
@@ -804,7 +813,7 @@ sr_lavaan&lt;-&#39;Acad~Non_agg+Agg&#39;
 sr_lavaan.est&lt;-sem(sr_lavaan, data=cp_teach)
 # we can inspect the results using the summary() function
 summary(sr_lavaan.est)</code></pre>
-<pre><code>## lavaan 0.6-12 ended normally after 1 iterations
+<pre><code>## lavaan 0.6.13 ended normally after 1 iteration
 ## 
 ##   Estimator                                         ML
 ##   Optimization method                           NLMINB
@@ -868,9 +877,9 @@ Question A3
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-169" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-169&#39;, &#39;sol-start-169&#39;)"> Solution </span>
+<span id="sol-start-143" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-143&#39;, &#39;sol-start-143&#39;)"> Solution </span>
 </div>
-<div id="sol-body-169" class="solution-body" style="display: none;">
+<div id="sol-body-143" class="solution-body" style="display: none;">
 <pre class="r"><code>model1&lt;-&#39;
     #we regress academic performance on non-aggressive conduct problems (the direct effect)
     Acad~Non_agg
@@ -894,9 +903,9 @@ Question A4
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-170" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-170&#39;, &#39;sol-start-170&#39;)"> Solution </span>
+<span id="sol-start-144" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-144&#39;, &#39;sol-start-144&#39;)"> Solution </span>
 </div>
-<div id="sol-body-170" class="solution-body" style="display: none;">
+<div id="sol-body-144" class="solution-body" style="display: none;">
 <pre class="r"><code>#model specification
 model1&lt;-&#39;
     Acad~Non_agg
@@ -913,7 +922,7 @@ model1.est&lt;-sem(model1, data=cp_teach, se=&#39;bootstrap&#39;)
 
 # we request bootstrapped standard errors to assess the signifance of the indirect effect
 summary(model1.est, ci=T)</code></pre>
-<pre><code>## lavaan 0.6-12 ended normally after 1 iterations
+<pre><code>## lavaan 0.6.13 ended normally after 1 iteration
 ## 
 ##   Estimator                                         ML
 ##   Optimization method                           NLMINB
@@ -935,19 +944,19 @@ summary(model1.est, ci=T)</code></pre>
 ## Regressions:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
 ##   Acad ~                                                                
-##     Non_agg           0.158    0.058    2.714    0.007    0.041    0.265
-##     Teach_r    (b)    0.328    0.051    6.487    0.000    0.230    0.430
+##     Non_agg           0.158    0.060    2.621    0.009    0.042    0.275
+##     Teach_r    (b)    0.328    0.049    6.685    0.000    0.231    0.421
 ##   Teach_r ~                                                             
-##     Non_agg    (c)    0.769    0.034   22.349    0.000    0.699    0.838
+##     Non_agg    (c)    0.769    0.035   21.801    0.000    0.702    0.838
 ## 
 ## Variances:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
-##    .Acad              0.919    0.056   16.538    0.000    0.810    1.031
-##    .Teach_r           0.713    0.043   16.428    0.000    0.631    0.800
+##    .Acad              0.919    0.057   16.041    0.000    0.815    1.048
+##    .Teach_r           0.713    0.042   16.948    0.000    0.631    0.797
 ## 
 ## Defined Parameters:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
-##     ind               0.252    0.040    6.352    0.000    0.176    0.334</code></pre>
+##     ind               0.252    0.038    6.588    0.000    0.179    0.329</code></pre>
 <p>We can see that the 95% bootstrapped confidence interval for the indirect effect of non-aggressive conduct problems on academic performance (‘ind’) does not include zero. We can conclude that the indirect effect is significant at <span class="math inline">\(p &lt;.05\)</span>. The direct effect is also statistically significant at <span class="math inline">\(p &lt; .05\)</span>.</p>
 </div>
 <p class="solution-end">
@@ -961,9 +970,9 @@ Question A5
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-171" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-171&#39;, &#39;sol-start-171&#39;)"> Solution </span>
+<span id="sol-start-145" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-145&#39;, &#39;sol-start-145&#39;)"> Solution </span>
 </div>
-<div id="sol-body-171" class="solution-body" style="display: none;">
+<div id="sol-body-145" class="solution-body" style="display: none;">
 <p>We can create a new parameter that is the sum of the direct and indirect effect to evaluate the total effect of non-aggressive conduct problems on academic performance.</p>
 <pre class="r"><code>#model specification
 
@@ -983,7 +992,7 @@ model1.est&lt;-sem(model1, data=cp_teach,se=&#39;bootstrap&#39;)
 
 # we request bootstrapped standard errors to assess the signifance of the indirect effect
 summary(model1.est, ci=T)</code></pre>
-<pre><code>## lavaan 0.6-12 ended normally after 1 iterations
+<pre><code>## lavaan 0.6.13 ended normally after 1 iteration
 ## 
 ##   Estimator                                         ML
 ##   Optimization method                           NLMINB
@@ -1005,20 +1014,20 @@ summary(model1.est, ci=T)</code></pre>
 ## Regressions:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
 ##   Acad ~                                                                
-##     Non_agg    (a)    0.158    0.058    2.731    0.006    0.044    0.275
-##     Teach_r    (b)    0.328    0.050    6.593    0.000    0.233    0.429
+##     Non_agg    (a)    0.158    0.059    2.681    0.007    0.045    0.273
+##     Teach_r    (b)    0.328    0.050    6.592    0.000    0.232    0.420
 ##   Teach_r ~                                                             
-##     Non_agg    (c)    0.769    0.032   23.934    0.000    0.706    0.833
+##     Non_agg    (c)    0.769    0.034   22.550    0.000    0.704    0.831
 ## 
 ## Variances:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
-##    .Acad              0.919    0.057   16.024    0.000    0.799    1.029
-##    .Teach_r           0.713    0.042   16.975    0.000    0.634    0.795
+##    .Acad              0.919    0.059   15.699    0.000    0.801    1.036
+##    .Teach_r           0.713    0.042   17.115    0.000    0.637    0.797
 ## 
 ## Defined Parameters:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
-##     ind               0.252    0.040    6.376    0.000    0.179    0.338
-##     total             0.410    0.043    9.594    0.000    0.329    0.494</code></pre>
+##     ind               0.252    0.039    6.399    0.000    0.172    0.326
+##     total             0.410    0.043    9.558    0.000    0.326    0.497</code></pre>
 </div>
 <p class="solution-end">
 </p>
@@ -1031,9 +1040,9 @@ Question A6
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-172" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-172&#39;, &#39;sol-start-172&#39;)"> Solution </span>
+<span id="sol-start-146" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-146&#39;, &#39;sol-start-146&#39;)"> Solution </span>
 </div>
-<div id="sol-body-172" class="solution-body" style="display: none;">
+<div id="sol-body-146" class="solution-body" style="display: none;">
 <pre class="r"><code>#to include the parameter estimates we set what=&#39;est&#39;
 semPaths(model1.est, what=&#39;est&#39;) </code></pre>
 <p><img src="08_path_files/figure-html/visualise%20the%20model-1.png" width="80%" style="display: block; margin: auto;" /></p>
@@ -1051,9 +1060,9 @@ Question B1
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-173" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-173&#39;, &#39;sol-start-173&#39;)"> Solution </span>
+<span id="sol-start-147" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-147&#39;, &#39;sol-start-147&#39;)"> Solution </span>
 </div>
-<div id="sol-body-173" class="solution-body" style="display: none;">
+<div id="sol-body-147" class="solution-body" style="display: none;">
 <pre class="r"><code>model2&lt;-
    &#39;Acad~Agg+Non_agg+b*Teach_r
     Teach_r~c1*Agg+c2*Non_agg
@@ -1074,12 +1083,12 @@ Question B2
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-174" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-174&#39;, &#39;sol-start-174&#39;)"> Solution </span>
+<span id="sol-start-148" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-148&#39;, &#39;sol-start-148&#39;)"> Solution </span>
 </div>
-<div id="sol-body-174" class="solution-body" style="display: none;">
+<div id="sol-body-148" class="solution-body" style="display: none;">
 <pre class="r"><code>model2.est&lt;-sem(model2,  data=cp_teach,se=&#39;bootstrap&#39;) 
 summary(model2.est, ci=T)</code></pre>
-<pre><code>## lavaan 0.6-12 ended normally after 1 iterations
+<pre><code>## lavaan 0.6.13 ended normally after 1 iteration
 ## 
 ##   Estimator                                         ML
 ##   Optimization method                           NLMINB
@@ -1101,22 +1110,22 @@ summary(model2.est, ci=T)</code></pre>
 ## Regressions:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
 ##   Acad ~                                                                
-##     Agg               0.171    0.060    2.866    0.004    0.058    0.289
-##     Non_agg           0.091    0.062    1.455    0.146   -0.026    0.216
-##     Teach_r    (b)    0.256    0.054    4.747    0.000    0.154    0.363
+##     Agg               0.171    0.061    2.811    0.005    0.050    0.290
+##     Non_agg           0.091    0.063    1.446    0.148   -0.034    0.213
+##     Teach_r    (b)    0.256    0.053    4.862    0.000    0.155    0.355
 ##   Teach_r ~                                                             
-##     Agg       (c1)    0.574    0.045   12.718    0.000    0.484    0.662
-##     Non_agg   (c2)    0.358    0.042    8.588    0.000    0.275    0.436
+##     Agg       (c1)    0.574    0.044   13.074    0.000    0.487    0.659
+##     Non_agg   (c2)    0.358    0.040    8.888    0.000    0.277    0.440
 ## 
 ## Variances:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
-##    .Acad              0.908    0.057   15.975    0.000    0.783    1.014
-##    .Teach_r           0.540    0.029   18.321    0.000    0.480    0.592
+##    .Acad              0.908    0.057   15.921    0.000    0.796    1.017
+##    .Teach_r           0.540    0.031   17.234    0.000    0.475    0.601
 ## 
 ## Defined Parameters:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
-##     ind1              0.147    0.033    4.405    0.000    0.087    0.214
-##     ind2              0.092    0.022    4.139    0.000    0.052    0.138</code></pre>
+##     ind1              0.147    0.033    4.475    0.000    0.087    0.213
+##     ind2              0.092    0.021    4.298    0.000    0.051    0.137</code></pre>
 <p>We can see that the 95% confidence intervals for both indirect effects do not include zero, therefore, we can conclude that they are significant at <span class="math inline">\(p &lt; .05\)</span>.</p>
 </div>
 <p class="solution-end">
@@ -1130,9 +1139,9 @@ Question B3
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-175" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-175&#39;, &#39;sol-start-175&#39;)"> Solution </span>
+<span id="sol-start-149" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-149&#39;, &#39;sol-start-149&#39;)"> Solution </span>
 </div>
-<div id="sol-body-175" class="solution-body" style="display: none;">
+<div id="sol-body-149" class="solution-body" style="display: none;">
 <div class="int">
 <p>A path mediation model was used to test the direct and indirect effects (via teacher relationship quality) of aggressive and non-aggressive conduct problems on academic performance. In the model, academic performance was regressed on teacher relationship quality, non-aggressive conduct problems and aggressive conduct problems while teacher relationship quality (the mediator) was regressed on aggressive and non-aggressive conduct problems. The indirect effects were tested using the product of the coefficient for the regression of outcome on mediator and the coefficient for the regression of mediator on predictor. The statistical significance of the indirect effects were evaluated using boostrapped 95% confidence intervals with 1000 draws.</p>
 <p>Unstandardised parameter estimates are provided in Figure <a href="#fig:pathcp">9</a>. Solid lines indicate that a parameter is significant at <span class="math inline">\(p &lt;. 05\)</span>, while dashed lines represent non-significant paths.The indirect effects of both non-aggressive (<span class="math inline">\(b = 0.09\)</span>, 95% CI=0.05-0.14) and aggressive (<span class="math inline">\(b = 0.15\)</span>, 95% CI=0.08-0.22) conduct problems on academic performance were statistcally significant.</p>
@@ -1147,9 +1156,9 @@ Figure 9: Effect of conduct problems on academic performance mediated by quality
 <p class="solution-end">
 </p>
 <div class="optional-begin">
-<span id="opt-start-176" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-176&#39;, &#39;opt-start-176&#39;)"> Optional: Mediation the more manual way: back to lm()</span>
+<span id="opt-start-150" class="fa fa-chevron-circle-right optional-icon clickable" onclick="toggle_visibility(&#39;opt-body-150&#39;, &#39;opt-start-150&#39;)"> Optional: Mediation the more manual way: back to lm()</span>
 </div>
-<div id="opt-body-176" class="optional-body" style="display: none;">
+<div id="opt-body-150" class="optional-body" style="display: none;">
 <p>Following <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.917.2326&amp;rep=rep1&amp;type=pdf">Baron &amp; Kenny 1986</a>, we can conduct mediation analysis by using three separate regression models.</p>
 <ol style="list-style-type: decimal">
 <li><span class="math inline">\(y \sim x\)</span></li>
@@ -1190,10 +1199,10 @@ summary(mediate(mod2, mod3, treat=&#39;religiosity&#39;, mediator=&#39;hlc&#39;,
 ## Nonparametric Bootstrap Confidence Intervals with the Percentile Method
 ## 
 ##                Estimate 95% CI Lower 95% CI Upper p-value    
-## ACME              3.033        1.881         4.42  &lt;2e-16 ***
-## ADE               0.270       -1.421         2.29    0.77    
-## Total Effect      3.303        1.567         5.32  &lt;2e-16 ***
-## Prop. Mediated    0.918        0.532         1.83  &lt;2e-16 ***
+## ACME              3.033        1.899         4.72  &lt;2e-16 ***
+## ADE               0.270       -1.884         2.36   0.832    
+## Total Effect      3.303        1.319         5.31   0.004 ** 
+## Prop. Mediated    0.918        0.516         2.13   0.004 ** 
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 

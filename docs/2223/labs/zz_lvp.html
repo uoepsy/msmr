@@ -15,7 +15,7 @@
 
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
@@ -348,13 +348,13 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="01_intromlm.html">1: Intro to Multi-Level Modelling</a>
+      <a href="01_intromlm.html">1: Introduction to Multilevel Models</a>
     </li>
     <li>
-      <a href="02_lmm_log.html">2: Logistic | Longitudinal (linear)</a>
+      <a href="02_lmm_log.html">2: Logistic Multilevel Models</a>
     </li>
     <li>
-      <a href="03_nonlin.html">3: Longitudinal (non-linear)</a>
+      <a href="03_nonlin.html">3: Longitudinal Nonlinear Models</a>
     </li>
     <li>
       <a href="04_ranef.html">4: Random Effect Structures</a>
@@ -401,7 +401,16 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="00_tidyverse_markdown.html">Recap - Tidyverse &amp; Markdown</a>
+      <a href="zz_tidyverse_markdown.html">Tidyverse &amp; Markdown Recap</a>
+    </li>
+    <li>
+      <a href="zz_binary_binomial.html">Binary vs Binomial Data</a>
+    </li>
+    <li>
+      <a href="zz_quickcontrasts.html">Contrasts: a Quick Overview</a>
+    </li>
+    <li>
+      <a href="zz_lvp.html">Likelihood vs Probability</a>
     </li>
   </ul>
 </li>
@@ -436,15 +445,15 @@ We can simulate the number of “heads” in a single fair coin toss with the fo
 <p>As the coin is fair, what number of heads would we expect to see out of 8 coin tosses? Answer: 4!
 Doing another 8 tosses:</p>
 <pre class="r"><code>rbinom(n = 1, size = 8, prob = 0.5)</code></pre>
-<pre><code>## [1] 6</code></pre>
+<pre><code>## [1] 4</code></pre>
 <p>and another 8:</p>
 <pre class="r"><code>rbinom(n = 1, size = 8, prob = 0.5)</code></pre>
-<pre><code>## [1] 3</code></pre>
+<pre><code>## [1] 4</code></pre>
 <p>We see that they tend to be around our intuition expected number of 4 heads. We can change <code>n = 1</code> to ask <code>rbinom()</code> to not just do 1 set of 8 coin tosses, but to do 1000 sets of 8 tosses:</p>
 <pre class="r"><code>table(rbinom(n = 1000, size = 8, prob = 0.5))</code></pre>
 <pre><code>## 
 ##   0   1   2   3   4   5   6   7   8 
-##   4  25 115 210 294 216  98  34   4</code></pre>
+##   4  26 116 215 292 214  96  33   4</code></pre>
 </div>
 <div id="probability" class="section level2">
 <h2>Probability</h2>
@@ -468,28 +477,34 @@ tosses</th>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">TTTTHHTT</td>
+<td align="center">HTHTTTTT</td>
 </tr>
 <tr class="even">
-<td align="center">HTTTTTTH</td>
+<td align="center">TTTHTTHT</td>
 </tr>
 <tr class="odd">
-<td align="center">TTTTHTHT</td>
+<td align="center">TTHTTTTH</td>
 </tr>
 <tr class="even">
-<td align="center">THHTTTTT</td>
+<td align="center">HTTHTTTT</td>
 </tr>
 <tr class="odd">
-<td align="center">TTHHTTTT</td>
-</tr>
-<tr class="even">
 <td align="center">TTTTTHHT</td>
 </tr>
+<tr class="even">
+<td align="center">TTTTHTHT</td>
+</tr>
 <tr class="odd">
-<td align="center">THTHTTTT</td>
+<td align="center">THTTTHTT</td>
 </tr>
 <tr class="even">
-<td align="center">THTTTHTT</td>
+<td align="center">TTTHTHTT</td>
+</tr>
+<tr class="odd">
+<td align="center">TTTTTHTH</td>
+</tr>
+<tr class="even">
+<td align="center">TTTTHHTT</td>
 </tr>
 <tr class="odd">
 <td align="center">…</td>
@@ -518,7 +533,7 @@ We can calculate this in R:</p>
 <p>We can then can compute the probabilities for observing various numbers of heads:</p>
 <pre class="r"><code>dbinom(0:8, 8, prob = 0.5)</code></pre>
 <pre><code>## [1] 0.00391 0.03125 0.10938 0.21875 0.27344 0.21875 0.10938 0.03125 0.00391</code></pre>
-<p><img src="lvp_files/figure-html/unnamed-chunk-12-1.png" width="80%" style="display: block; margin: auto;" />
+<p><img src="zz_lvp_files/figure-html/unnamed-chunk-12-1.png" width="80%" style="display: block; margin: auto;" />
 Note that the probability of observing 10 heads in 8 coin tosses is 0, as we would hope!</p>
 <pre class="r"><code>dbinom(10, 8, prob = 0.5)</code></pre>
 <pre><code>## [1] 0</code></pre>
@@ -536,7 +551,7 @@ dbinom(2, 8, poss_parameters)</code></pre>
 ##  [9] 2.09e-01 1.57e-01 1.09e-01 7.03e-02 4.13e-02 2.17e-02 1.00e-02 3.85e-03
 ## [17] 1.15e-03 2.30e-04 2.27e-05 3.95e-07 0.00e+00</code></pre>
 <p>So what we are doing here is considering the possible parameters that govern our coin. Given that we observed 2 heads in 8 coin tosses, it seems very unlikely that the coin weighted such that it lands on heads 80% of the time (e.g., the parameter of 0.8 is not likely). You can visualise this as below:</p>
-<p><img src="lvp_files/figure-html/unnamed-chunk-15-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="zz_lvp_files/figure-html/unnamed-chunk-15-1.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
 <div id="a-slightly-more-formal-approach" class="section level2">
 <h2>A slightly more formal approach</h2>

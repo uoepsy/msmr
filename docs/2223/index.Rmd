@@ -1,0 +1,105 @@
+---
+title: "MSMR"
+subtitle: "2022/23"
+date: ""
+output:
+  rmdformats::material:
+    highlight: kate
+    self_contained: true
+    # code_folding: show
+    thumbnails: true
+    gallery: true
+    fig_width: 4
+    fig_height: 4
+    df_print: kable
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+```
+
+
+```{css}
+.header-panel {
+    background-color: #a41ae4;
+}
+
+a {
+  color: #a41ae4;
+}
+```
+
+
+# Course materials
+
+_Please note: materials are added incrementally as this course progresses through the year._
+
+```{r echo=FALSE}
+library(tidyverse)
+library(kableExtra)
+
+course <- tribble(~a, ~b, ~c, ~d)
+
+course <- course %>%
+    bind_rows(
+        c(a = 'Week 1',
+          b = 'Introduction to MLM',
+          c = '[Slides](https://uoepsy.github.io/msmr/2223/lectures/msmr_lec01_IntroMLM.html#1)',
+          d = '[Lab](https://uoepsy.github.io/msmr/2223/labs/01_intromlm.html)')
+    ) %>%
+    bind_rows(
+        c(a = 'Week 2',
+          b = 'Longitudinal and Logistic MLM',
+          c = '[Slides A](https://uoepsy.github.io/msmr/2223/lectures/msmr_lec02_LogisticMLM.html#1)
+          <br>
+          [Slides B](https://uoepsy.github.io/msmr/2223/lectures/msmr_lec02-2_LinearLDA.html#1)',
+          d = '[Lab](https://uoepsy.github.io/msmr/2223/labs/02_lmm_log.html)')
+    ) %>%
+    bind_rows(
+        c(a = 'Week 3',
+          b = 'Nonlinear longitudinal MLM',
+          c = '[Slides](https://uoepsy.github.io/msmr/2223/lectures/msmr_lec03_NonLinearLDA.html#1)',
+          d = '[Lab](https://uoepsy.github.io/msmr/2223/labs/03_nonlin.html)')
+    ) %>%
+    bind_rows(
+        c(a = 'Week 4',
+          b = 'Other Random Effects',
+          c = '[Slides A](https://uoepsy.github.io/msmr/2223/lectures/msmr_lec04-1_RanEf_3lev.html#1)
+          <br>
+          [Slides B](https://uoepsy.github.io/msmr/2223/lectures/msmr_lec04-2_RanEf_Crossed.html#1)',
+          d = '[Lab](https://uoepsy.github.io/msmr/2223/labs/04_ranef.html)')
+    ) %>%
+    bind_rows(
+        c(a = 'Week 5',
+          b = 'Recap & Individual Differences',
+          c = '[Slides A](https://uoepsy.github.io/msmr/2223/lectures/msmr_lec05-1_IndivDiffs_Ext.html#1)
+          <br>
+          [Slides B](https://uoepsy.github.io/msmr/2223/lectures/msmr_lec05-2_IndivDiffs_Int.html#1)',
+          d = '[Lab](https://uoepsy.github.io/msmr/2223/labs/05_multilevel_recap.html)')
+    )
+
+names(course) <- c('Week', 'Topic', 'Lecture slides', 'Lab materials')
+
+course %>%
+    kable(format="html", escape=FALSE) %>%
+    kable_styling(full_width = FALSE)
+```
+
+
+
+# Course description
+
+Multivariate Statistics and Methodology using R (MSMR) is a semester long course providing an advanced level overview of statistical analysis techniques and methodology issues relevant to psychological research. The course builds on the concepts and skills developed in Univariate Statistics and Methodology using R.
+
+
+
+# Archive
+
+- [Year 2021/22](https://uoepsy.github.io/msmr/2122/index.html)
+- [Year 2020/21](https://uoepsy.github.io/msmr/2021/index.html)
+
+
+# Site map
+
+[Home](https://uoepsy.github.io/) > [MSMR](https://uoepsy.github.io/msmr/)
