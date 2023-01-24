@@ -61,11 +61,11 @@ __Novel Word Learning: Data Codebook__
 load(url("https://uoepsy.github.io/msmr/data/nwl.RData"))
 ```
 
-In the `nwl` data set (accessed using the code above), participants with aphasia are separated into two groups based on the general location of their brain lesion: anterior vs. posterior. There is data on the numbers of correct and incorrect responses participants gave in each of a series of experimental blocks. There were 7 learning blocks, immediately followed by a test. Finally, participants also completed a follow-up test.  
+In the `nwl` data set (accessed using the code above), participants with aphasia are separated into two groups based on the general location of their brain lesion: anterior vs. posterior. There is data on the numbers of correct and incorrect responses participants gave in each of a series of experimental blocks. There were 7 learning blocks, immediately followed by a test. Finally, participants also completed a follow-up test.
 <br>
 Data were also collect from healthy controls. 
 <br>
-Figure \@ref(fig:nwl-fig) shows the differences between groups in the average proportion of correct responses at each point in time (i.e., each block, test, and follow-up)
+Figure \@ref(fig:nwl-fig) shows the differences between lesion location groups in the average proportion of correct responses at each point in time (i.e., each block, test, and follow-up)
 
 ```{r nwl-fig, echo=FALSE, fig.cap="Differences between groups in the average proportion of correct responses at each block"}
 load(url("https://uoepsy.github.io/msmr/data/nwl.RData"))
@@ -114,7 +114,7 @@ The only missing vales are in the lesion location, and it's probably because the
 `r qbegin("A2")`
 Our broader research aim today is to compare two groups (those with anterior vs. posterior lesions) with respect to their accuracy of responses over the course of the study.  
 
-1. What is our outcome? 
+- What is our outcome? 
 
 *Hint:* Think carefully: there might be several variables which either fully or partly express the information we are considering the "outcome" here. 
 `r qend()`
@@ -132,7 +132,7 @@ Our broader research aim today is to compare two groups (those with anterior vs.
 
 - Do we want `cbind(num_successes, num_failures)`?
 
-- Make sure we're running models on only the data we are actually interested in.  
+- Make sure we're running models on only the data we are actually interested in. Are the healthy controls included in the research question under investigation?
 
 - We could use model comparison via likelihood ratio tests (using `anova(model1, model2, model3, ...)`. For this question, we could compare:
 
@@ -207,12 +207,13 @@ Let's try a different approach to this. Instead of fitting various models and co
 `r solbegin(show=params$SHOW, toggle=params$TOGGLE)`
 ```{r}
 nwl_test <- filter(nwl, block > 7, !is.na(lesion_location)) %>%
-  mutate(
-    Phase = fct_relevel(factor(Phase),"Immediate")
-  )
+    mutate(
+        Phase = factor(Phase), 
+        Phase = fct_relevel(Phase, "Immediate")
+    )
 
 m.recall.loc <- glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (Phase | ID), 
-                  nwl_test, family="binomial")
+                      nwl_test, family="binomial")
 
 summary(m.recall.loc)
 ```
@@ -376,12 +377,14 @@ This code is that we used to answer question A4 above, only we have edited it to
 ```{r echo=TRUE}
 nwl_test <- filter(nwl, block > 7, !is.na(lesion_location)) %>%
     mutate(
-        Phase = fct_relevel(factor(Phase),"Immediate")
+        Phase = factor(Phase),
+        Phase = fct_relevel(Phase, "Immediate")
     )
 
-m.recall.loc.effcoding <- glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (Phase | ID), 
-                                contrasts = list(lesion_location = "contr.sum"),
-                                data = nwl_test, family="binomial")
+m.recall.loc.effcoding <- 
+    glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (Phase | ID), 
+          contrasts = list(lesion_location = "contr.sum"),
+          data = nwl_test, family="binomial")
 ```
 
 
@@ -414,8 +417,9 @@ colnames(contrasts(nwl_test$lesion_location)) <- "PeppaPig"
 
 contrasts(nwl_test$lesion_location)
 
-modeltest <- glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (Phase | ID),
-                   nwl_test, family="binomial")
+modeltest <- 
+    glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (Phase | ID),
+          nwl_test, family="binomial")
 summary(modeltest)$coefficients
 ```
 `r optend()`
@@ -441,16 +445,42 @@ __A quick reminder:__ a p-value is the probability of observing results as or mo
 :::
 
 
-```{r lmcoeftab, echo=FALSE}
+```{r, echo=FALSE}
+#| tab.id: lmcoeftab
+#| tab.cap: t-tests for slope coefficients for predictors in a linear model
+library(rempsyc)
 mwdata = read_csv(file = "https://uoepsy.github.io/data/wellbeing.csv")
 model2 <- lm(wellbeing ~ 1 + outdoor_time + social_int, data = mwdata)
-summary(model2)$coefficients %>% knitr::kable(caption="t-tests for slope coefficients for predictors in a linear model")
+
+# summary(model2)$coefficients %>% 
+#     knitr::kable(caption="t-tests for slope coefficients for predictors in a linear model")
+
+tidy(model2) %>%
+    rename(Term = term,
+           Estimate = estimate,
+           "Std. Error" = std.error,
+           "t value" = statistic,
+           "Pr(>|t|)" = p.value) %>%
+    nice_table(col.format.p = ncol(.))
 ```
 
-```{r lmanovtab, echo=FALSE}
-anova(model2) %>% knitr::kable(caption="F-tests for predictors in a linear model")
+<br>
+
+```{r echo=FALSE}
+#| tab.id: lmanovtab
+#| tab.cap: F-tests for predictors in a linear model
+# anova(model2) %>% knitr::kable(caption="F-tests for predictors in a linear model")
+tidy(anova(model2)) %>%
+    rename(Term = term,
+           df = df,
+           "Sum Sq" = sumsq,
+           "Mean Sq" = meansq,
+           "F value" = statistic,
+           "Pr(>F)" = p.value) %>%
+    nice_table(., col.format.p = ncol(.))
 ```
 
+<br>
 
 We could get p-values for these models because we know what the distribution of test statistics of interest (e.g. $F$-statistics and $t$-statistics), will look like if the null hypothesis were true (i.e., we can describe what they look like in terms of $F$ and $t$ distributions with specific degrees of freedom (look back to the [USMR materials for a formula](https://uoepsy.github.io/usmr/2223/labs/07a_slr.html#the-f-statistic)).  
 
