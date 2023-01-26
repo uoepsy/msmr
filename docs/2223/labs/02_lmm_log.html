@@ -432,10 +432,10 @@ div.tocify {
 <div class="blue">
 <p><strong>Preliminaries</strong></p>
 <ol style="list-style-type: decimal">
-<li><p>Open Rstudio, create a new R Script or RMarkdown document (whichever you prefer working with) and give it a title for this week.</p></li>
+<li><p>Open Rstudio, create a new R script or RMarkdown document (whichever you prefer working with) and give it a title for this week.</p></li>
 <li><p>Load any of the packages you think you might be using today.<br />
 By now you may have started get into a sort of routine with R, and you might know what functions you like, and which you don’t. Because there are so many alternatives for doing the same thing, the packages and functions you use are very much up to you.<br />
-If I’m planning on doing some multi-level modelling, I will tend to load these by default at the top:</p>
+If I’m planning on doing some multilevel modelling, I will tend to load these by default at the top:</p>
 <pre class="r"><code>library(tidyverse) # for everything
 library(lme4) # for fitting models
 library(broom.mixed) # for tidying model output</code></pre></li>
@@ -552,7 +552,13 @@ summary(nwl)</code></pre>
 ##  3rd Qu.:14.000   control13:  9                     
 ##  Max.   :24.000   control14:  9                     
 ##                   (Other)  :189</code></pre>
-<p>The only missing vales are in the lesion location, and it’s probably because the healthy controls don’t have any lesions.</p>
+<p>The only missing vales are in the lesion location, and it’s probably because the healthy controls don’t have any lesions. There may also be a few patients for which the lesion_location is missing, but this should be comparatively fewer values compared to controls.</p>
+<p>The following command creates a two-way frequency table showing the number of controls or patients by lesion location, confirming that controls only have missing values (NAs) and only 9 patients have missing values:</p>
+<pre class="r"><code>table(nwl$group, nwl$lesion_location, useNA = &quot;ifany&quot;)</code></pre>
+<pre><code>##          
+##           anterior posterior &lt;NA&gt;
+##   control        0         0  126
+##   patient       45        63    9</code></pre>
 </div>
 <p class="solution-end">
 </p>
@@ -560,9 +566,9 @@ summary(nwl)</code></pre>
 Question A2
 </div>
 <div class="question-body">
-<p>Our broader research aim today is to compare two groups (those with anterior vs. posterior lesions) with respect to their accuracy of responses over the course of the study.</p>
+<p>Our broader research aim today is to compare the two lesion location groups (those with anterior vs. posterior lesions) with respect to their accuracy of responses over the course of the study.</p>
 <ul>
-<li>What is our outcome?</li>
+<li>What is the outcome variable?</li>
 </ul>
 <p><em>Hint:</em> Think carefully: there might be several variables which either fully or partly express the information we are considering the “outcome” here.</p>
 </div>
@@ -572,14 +578,891 @@ Question A2
 <span id="sol-start-2" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-2&#39;, &#39;sol-start-2&#39;)"> Solution </span>
 </div>
 <div id="sol-body-2" class="solution-body" style="display: none;">
-<ol style="list-style-type: decimal">
-<li>The outcome here is (in words) “the proportion of correct answers in each block”. This makes it tempting to look straight to the variable called <code>PropCorrect</code>. Unfortunately, this is encoded as a proportion (i.e., is bounded by 0 and 1), and of the models we have learned about so far, we don’t definitely have the necessary tools to model this.
+<p>The outcome here is (in words) the proportion of correct answers or, equivalently, the probability of answering correctly. A proportion/probability can only vary between 0 and 1 and, as such, we cannot use traditional linear regression or we could end up with predictions outside of the [0, 1] range.</p>
+<p>As said, the outcome is the proportion of correct answers in each block. This makes it tempting to look at the variable called <code>PropCorrect</code>, but this is encoded as a proportion. We have learned to use logistic models, but these require either:</p>
 <ul>
-<li>linear regression = continuous <em>unbounded</em> outcome variable<br />
-</li>
-<li>logistic regression = binomial, expressed as <code>0</code> or <code>1</code> if the number of trials per observation is 1, and expressed as <code>cbind(num_successes, num_failures)</code> if the number of trials per observation is &gt;1.</li>
-</ul></li>
-</ol>
+<li>a binary outcome variable, where the values are 0s or 1s</li>
+<li>a binomial outcome variable, where the values are aggregated counts of 1s and 0s</li>
+</ul>
+<p><strong>Binary data</strong>. In the case below you would use the specification <code>correct ~ ...</code>:</p>
+<div id="ntrjacodtn" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#ntrjacodtn .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#ntrjacodtn .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ntrjacodtn .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#ntrjacodtn .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#ntrjacodtn .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#ntrjacodtn .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ntrjacodtn .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ntrjacodtn .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#ntrjacodtn .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#ntrjacodtn .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#ntrjacodtn .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#ntrjacodtn .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#ntrjacodtn .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#ntrjacodtn .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ntrjacodtn .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#ntrjacodtn .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#ntrjacodtn .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#ntrjacodtn .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ntrjacodtn .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#ntrjacodtn .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#ntrjacodtn .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ntrjacodtn .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#ntrjacodtn .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#ntrjacodtn .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ntrjacodtn .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ntrjacodtn .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#ntrjacodtn .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#ntrjacodtn .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ntrjacodtn .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ntrjacodtn .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ntrjacodtn .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ntrjacodtn .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ntrjacodtn .gt_left {
+  text-align: left;
+}
+
+#ntrjacodtn .gt_center {
+  text-align: center;
+}
+
+#ntrjacodtn .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#ntrjacodtn .gt_font_normal {
+  font-weight: normal;
+}
+
+#ntrjacodtn .gt_font_bold {
+  font-weight: bold;
+}
+
+#ntrjacodtn .gt_font_italic {
+  font-style: italic;
+}
+
+#ntrjacodtn .gt_super {
+  font-size: 65%;
+}
+
+#ntrjacodtn .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 75%;
+  vertical-align: 0.4em;
+}
+
+#ntrjacodtn .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#ntrjacodtn .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#ntrjacodtn .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#ntrjacodtn .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#ntrjacodtn .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#ntrjacodtn .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="participant">participant</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="question">question</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="correct">correct</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="participant" class="gt_row gt_right">1</td>
+<td headers="question" class="gt_row gt_right">1</td>
+<td headers="correct" class="gt_row gt_right">1</td></tr>
+    <tr><td headers="participant" class="gt_row gt_right">1</td>
+<td headers="question" class="gt_row gt_right">2</td>
+<td headers="correct" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="participant" class="gt_row gt_right">1</td>
+<td headers="question" class="gt_row gt_right">3</td>
+<td headers="correct" class="gt_row gt_right">1</td></tr>
+    <tr><td headers="participant" class="gt_row gt_right">...</td>
+<td headers="question" class="gt_row gt_right">...</td>
+<td headers="correct" class="gt_row gt_right">...</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<p><strong>Binomial data</strong>. You would use the specification <code>cbind(num_successes, num_failures)</code> which, in the case below, would be:</p>
+<p><code>cbind(questions_correct, questions_incorrect) ~ ...</code></p>
+<div id="glrucffwwu" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#glrucffwwu .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#glrucffwwu .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#glrucffwwu .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#glrucffwwu .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#glrucffwwu .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#glrucffwwu .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#glrucffwwu .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#glrucffwwu .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#glrucffwwu .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#glrucffwwu .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#glrucffwwu .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#glrucffwwu .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#glrucffwwu .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#glrucffwwu .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#glrucffwwu .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#glrucffwwu .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#glrucffwwu .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#glrucffwwu .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#glrucffwwu .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#glrucffwwu .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#glrucffwwu .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#glrucffwwu .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#glrucffwwu .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#glrucffwwu .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#glrucffwwu .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#glrucffwwu .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#glrucffwwu .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#glrucffwwu .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#glrucffwwu .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#glrucffwwu .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#glrucffwwu .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#glrucffwwu .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#glrucffwwu .gt_left {
+  text-align: left;
+}
+
+#glrucffwwu .gt_center {
+  text-align: center;
+}
+
+#glrucffwwu .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#glrucffwwu .gt_font_normal {
+  font-weight: normal;
+}
+
+#glrucffwwu .gt_font_bold {
+  font-weight: bold;
+}
+
+#glrucffwwu .gt_font_italic {
+  font-style: italic;
+}
+
+#glrucffwwu .gt_super {
+  font-size: 65%;
+}
+
+#glrucffwwu .gt_footnote_marks {
+  font-style: italic;
+  font-weight: normal;
+  font-size: 75%;
+  vertical-align: 0.4em;
+}
+
+#glrucffwwu .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#glrucffwwu .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#glrucffwwu .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#glrucffwwu .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#glrucffwwu .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#glrucffwwu .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="participant">participant</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="questions_correct">questions_correct</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="questions_incorrect">questions_incorrect</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="participant" class="gt_row gt_right">1</td>
+<td headers="questions_correct" class="gt_row gt_right">2</td>
+<td headers="questions_incorrect" class="gt_row gt_right">1</td></tr>
+    <tr><td headers="participant" class="gt_row gt_right">2</td>
+<td headers="questions_correct" class="gt_row gt_right">1</td>
+<td headers="questions_incorrect" class="gt_row gt_right">2</td></tr>
+    <tr><td headers="participant" class="gt_row gt_right">3</td>
+<td headers="questions_correct" class="gt_row gt_right">3</td>
+<td headers="questions_incorrect" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="participant" class="gt_row gt_right">...</td>
+<td headers="questions_correct" class="gt_row gt_right">...</td>
+<td headers="questions_incorrect" class="gt_row gt_right">...</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
 </div>
 <p class="solution-end">
 </p>
@@ -594,7 +1477,11 @@ Is the learning rate (training blocks) different between the two lesion location
 <p><strong>Hints</strong>:</p>
 <ul>
 <li><p>Do we want <code>cbind(num_successes, num_failures)</code>?</p></li>
-<li><p>Make sure we’re running models on only the data we are actually interested in. Are the healthy controls included in the research question under investigation?</p></li>
+<li><p>Ensure you are running models on only the data we are actually interested in.</p>
+<ul>
+<li>Are the healthy controls included in the research question under investigation?</li>
+<li>Are the testing blocks included in the research question, or only the learning blocks?</li>
+</ul></li>
 <li><p>We could use model comparison via likelihood ratio tests (using <code>anova(model1, model2, model3, ...)</code>. For this question, we could compare:</p>
 <ul>
 <li>A model with just the change over the sequence of blocks</li>
@@ -616,28 +1503,33 @@ Is the learning rate (training blocks) different between the two lesion location
 </div>
 <div id="opt-body-3" class="optional-body" style="display: none;">
 <ul>
-<li>Make sure we’re running models on only the data we are actually interested in.
+<li><p>Do we want <code>cbind(num_successes, num_failures)</code>?</p>
 <ul>
-<li>We want only the learning blocks, and none of the healthy controls.</li>
-<li>You might want to store this data in a separate object, but in the code for the solutio we will just use <code>filter()</code> <em>inside</em> the <code>glmer()</code>.</li>
+<li>Yes, we don’t a binary variable with correct/incorrect questions but the binomial variables NumCorrect and NumError representing, respectively, the aggregated count (out of 30) of correct and incorrect questions. As such, we will need the following: <code>cbind(NumCorrect, NumError)</code></li>
 </ul></li>
-<li>A model with just the change over the sequence of blocks:
+<li><p>Ensure you are running models on only the data we are actually interested in.</p>
+<ul>
+<li>The healthy controls are not included in the research question under investigation, so we will exclude them.</li>
+<li>We are only interested in the learning blocks, and we will exclude the testing blocks (block &gt; 7)</li>
+<li>You might want to store this data in a separate object, but in the code for the solution we will just use <code>filter()</code> <em>inside</em> the <code>glmer()</code>.</li>
+</ul></li>
+<li><p>A model with just the change over the sequence of blocks:</p>
 <ul>
 <li><strong>outcome ~ block</strong></li>
 </ul></li>
-<li>A model with the change over the sequence of blocks <em>and</em> an overall difference between groups:
+<li><p>A model with the change over the sequence of blocks <em>and</em> an overall difference between groups:</p>
 <ul>
 <li><strong>outcome ~ block + lesion_location</strong></li>
 </ul></li>
-<li>A model with groups differing with respect to their change *over the sequence of blocks:
+<li><p>A model with groups differing with respect to their change *over the sequence of blocks:</p>
 <ul>
 <li><strong>outcome ~ block * lesion_location</strong></li>
 </ul></li>
-<li>What are our observations grouped by?
+<li><p>What are our observations grouped by?</p>
 <ul>
 <li>repeated measures by-participant. i.e., the <code>ID</code> variable</li>
 </ul></li>
-<li>What variables can vary within these groups?
+<li><p>What variables can vary within these groups?</p>
 <ul>
 <li><code>Block</code> and <code>Phase</code>. Be careful though - you can create the <code>Phase</code> variable out of the <code>Block</code> variable, so really this is just one piece of information, encoded differently in two variables.</li>
 <li>The other variables (<code>lesion_location</code> and <code>group</code>) do <strong>not</strong> vary for each ID. Lesions don’t suddenly change where they are located, nor do participants swap between being a patient vs a control (we don’t need the group variable anyway as we are excluding the controls).<br />
@@ -684,13 +1576,12 @@ Question A4
 <div class="question-body">
 <blockquote>
 <p><strong>Research Question 2</strong><br />
-In the testing phase, does performance on the immediate test differ between lesion location groups, and does their retention from immediate to follow-up test differ?</p>
+In the testing phase, does performance on the immediate test differ between lesion location groups, and does the retention from immediate to follow-up test differ between the two lesion location groups?</p>
 </blockquote>
 <p>Let’s try a different approach to this. Instead of fitting various models and comparing them via likelihood ratio tests, just fit the one model which could answer both parts of the question above.</p>
 <p><strong>Hints:</strong></p>
 <ul>
-<li>This might required a bit more data-wrangling before hand. Think about the order of your factor levels
-(alphabetically speaking, “Follow-up” comes before “Immediate”)!</li>
+<li>This might required a bit more data-wrangling before hand. Think about the order of your factor levels (alphabetically speaking, “Follow-up” comes before “Immediate”)!</li>
 </ul>
 </div>
 <p class="question-end">
@@ -705,46 +1596,55 @@ In the testing phase, does performance on the immediate test differ between lesi
         Phase = fct_relevel(Phase, &quot;Immediate&quot;)
     )
 
-m.recall.loc &lt;- glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (Phase | ID), 
+m.recall.loc &lt;- glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (1 | ID), 
                       nwl_test, family=&quot;binomial&quot;)
 
 summary(m.recall.loc)</code></pre>
 <pre><code>## Generalized linear mixed model fit by maximum likelihood (Laplace
 ##   Approximation) [glmerMod]
 ##  Family: binomial  ( logit )
-## Formula: cbind(NumCorrect, NumError) ~ Phase * lesion_location + (Phase |  
-##     ID)
+## Formula: cbind(NumCorrect, NumError) ~ Phase * lesion_location + (1 |      ID)
 ##    Data: nwl_test
 ## 
 ##      AIC      BIC   logLik deviance df.resid 
-##    142.6    150.9    -64.3    128.6       17 
+##    139.3    145.2    -64.6    129.3       19 
 ## 
 ## Scaled residuals: 
-##      Min       1Q   Median       3Q      Max 
-## -1.31708 -0.45014  0.03291  0.46924  1.09355 
+##     Min      1Q  Median      3Q     Max 
+## -1.1556 -0.3352  0.0039  0.4963  1.3506 
 ## 
 ## Random effects:
-##  Groups Name           Variance Std.Dev. Corr 
-##  ID     (Intercept)    0.47660  0.6904        
-##         PhaseFollow-up 0.02539  0.1593   -1.00
+##  Groups Name        Variance Std.Dev.
+##  ID     (Intercept) 0.3626   0.6021  
 ## Number of obs: 24, groups:  ID, 12
 ## 
 ## Fixed effects:
 ##                                         Estimate Std. Error z value Pr(&gt;|z|)  
-## (Intercept)                             -0.11375    0.35128  -0.324    0.746  
-## PhaseFollow-up                          -0.02452    0.24634  -0.100    0.921  
-## lesion_locationposterior                 0.99918    0.46868   2.132    0.033 *
-## PhaseFollow-up:lesion_locationposterior -0.25437    0.33904  -0.750    0.453  
+## (Intercept)                              -0.1124     0.3167  -0.355   0.7226  
+## PhaseFollow-up                           -0.0278     0.2357  -0.118   0.9061  
+## lesion_locationposterior                  0.9672     0.4211   2.297   0.0216 *
+## PhaseFollow-up:lesion_locationposterior  -0.2035     0.3191  -0.638   0.5236  
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## Correlation of Fixed Effects:
 ##             (Intr) PhsFl- lsn_lc
-## PhaseFllw-p -0.578              
-## lsn_lctnpst -0.750  0.435       
-## PhsFllw-p:_  0.421 -0.729 -0.589
-## optimizer (Nelder_Mead) convergence code: 0 (OK)
-## boundary (singular) fit: see help(&#39;isSingular&#39;)</code></pre>
+## PhaseFllw-p -0.372              
+## lsn_lctnpst -0.752  0.280       
+## PhsFllw-p:_  0.275 -0.739 -0.385</code></pre>
+<p><strong>Note 1</strong>:</p>
+<p>In the above, we have made sure to select the patients by specifying <code>!is.na(lesion_location)</code>, meaning that we want those rows where the lesion location is not missing. As a reminder <code>!</code> is the negation function (not). As we saw in Question A1, this excludes the 126 healthy controls, as well as the 9 patients for which we have missing values (NAs).</p>
+<p><strong>Note 2</strong>:</p>
+<p>We didn’t specify <code>(Phase | ID)</code> as the random effect because each participant only has 1 data point for both Immediate and Follow-up. For example, for patient15, we have:</p>
+<pre class="r"><code>subset(nwl_test, ID == &#39;patient15&#39;)</code></pre>
+<pre><code>##      group lesion_location block PropCorrect NumCorrect NumError        ID
+## 1  patient        anterior     8   0.5333333         16       14 patient15
+## 13 patient        anterior     9   0.5333333         16       14 patient15
+##        Phase
+## 1  Immediate
+## 13 Follow-up</code></pre>
+<p>You couldn’t compute an estimate of the standard deviation based on so few data points, remember the denominator of the standard deviation is <span class="math inline">\(n - 1\)</span>! If you try using <code>(Phase | ID)</code> as random effect, you will see the following message:</p>
+<p><code>boundary (singular) fit: see help('isSingular')</code></p>
 </div>
 <p class="solution-end">
 </p>
@@ -828,9 +1728,9 @@ These can be difficult, especially when it’s logistic, and especially when the
 <li><code>PhaseFollow-up:lesion_locationposterior</code> ==&gt; Change in performance from immediate to follow-up test, posterior lesion group relative to anterior lesion group</li>
 </ul>
 <pre><code>## lesion_locationposterior 
-##                 2.716057</code></pre>
+##                 2.630634</code></pre>
 <div class="int">
-<p>Those with posterior lesions have 2.72 times the odds of answering correctly in the immediate test compared to someone with an anterior lesion.</p>
+<p>Those with posterior lesions have 2.63 times the odds of answering correctly in the immediate test compared to someone with an anterior lesion.</p>
 </div>
 </div>
 <p class="solution-end">
@@ -867,7 +1767,7 @@ Figure 2: Differences between groups in the average proportion of correct respon
     theme_bw(base_size=10) + 
     labs(x=&quot;Block&quot;, y=&quot;Proportion Correct&quot;, 
          shape=&quot;Lesion\nLocation&quot;, color=&quot;Lesion\nLocation&quot;)</code></pre>
-<p><img src="02_lmm_log_files/figure-html/unnamed-chunk-8-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="02_lmm_log_files/figure-html/unnamed-chunk-12-1.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
 <p class="solution-end">
 </p>
@@ -876,7 +1776,7 @@ Figure 2: Differences between groups in the average proportion of correct respon
 <p>Remember that categorical predictors get inputted into our model as a series of variables which are 0s and 1s? Previously the variable in our model for lesion location was actually being coded with 0 representing one level, and 1 representing the other. This is known as “treatment coding”.</p>
 <p>There are lots of other ways we might encode our categorical predictors. One common approach is to use “effects coding”. In the case where we have a binary predictor, this makes zero the mid-point between the two - i.e., the overall mean (this is a bit like mean-centering a continuous predictor).</p>
 <p>If we recall that the intercept is “when all predictors are zero”, and that when we have an interaction <code>Y~A+B+A*B</code> in our model, the individual coefficients for <code>A</code> and <code>B</code> are estimated “when the other variable is zero”, then we can start to understand how these different ways of encoding our categorical predictors can change what we are getting out of our model. (Note, they don’t actually change anything about the model fit, but they change what information we are estimating from the model).</p>
-<p><img src="02_lmm_log_files/figure-html/unnamed-chunk-9-1.png" width="80%" style="display: block; margin: auto;" /></p>
+<p><img src="02_lmm_log_files/figure-html/unnamed-chunk-13-1.png" width="80%" style="display: block; margin: auto;" /></p>
 <p>If you want to understand this a little more, take a look at this <a href="zz_quickcontrasts.html">in depth section</a>.</p>
 </div>
 <div class="question-begin">
@@ -891,7 +1791,7 @@ Question A8
     )
 
 m.recall.loc.effcoding &lt;- 
-    glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (Phase | ID), 
+    glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (1 | ID), 
           contrasts = list(lesion_location = &quot;contr.sum&quot;),
           data = nwl_test, family=&quot;binomial&quot;)</code></pre>
 <p>The interpretation of this is going to get pretty tricky - we have a logistic regression, and we have different coding scheme for our categorical predictor, and we have an interaction.. 🤯</p>
@@ -929,19 +1829,19 @@ contrasts(nwl_test$lesion_location)</code></pre>
 ## anterior         1
 ## posterior       -1</code></pre>
 <pre class="r"><code>modeltest &lt;- 
-    glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (Phase | ID),
+    glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (1 | ID),
           nwl_test, family=&quot;binomial&quot;)
 summary(modeltest)$coefficients</code></pre>
 <pre><code>##                                          Estimate Std. Error    z value
-## (Intercept)                             0.3858449  0.2341574  1.6478019
-## PhaseFollow-up                         -0.1517019  0.1688879 -0.8982400
-## lesion_locationPeppaPig                -0.4995882  0.2343374 -2.1319180
-## PhaseFollow-up:lesion_locationPeppaPig  0.1271798  0.1695166  0.7502495
+## (Intercept)                             0.3711859  0.2105010  1.7633455
+## PhaseFollow-up                         -0.1295472  0.1595315 -0.8120479
+## lesion_locationPeppaPig                -0.4836152  0.2105572 -2.2968351
+## PhaseFollow-up:lesion_locationPeppaPig  0.1017455  0.1595298  0.6377840
 ##                                          Pr(&gt;|z|)
-## (Intercept)                            0.09939333
-## PhaseFollow-up                         0.36905762
-## lesion_locationPeppaPig                0.03301359
-## PhaseFollow-up:lesion_locationPeppaPig 0.45310448</code></pre>
+## (Intercept)                            0.07784223
+## PhaseFollow-up                         0.41676413
+## lesion_locationPeppaPig                0.02162818
+## PhaseFollow-up:lesion_locationPeppaPig 0.52361429</code></pre>
 </div>
 <p class="optional-end">
 </p>
@@ -960,7 +1860,7 @@ summary(modeltest)$coefficients</code></pre>
 <div class="statbox">
 <p><strong>A quick reminder:</strong> a p-value is the probability of observing results as or more extreme than the obtained ones, <em>if the data were really generated by the hypothesised model or process</em>).</p>
 </div>
-<template id="7220d8c0-a95e-4f32-a15b-254d1450050c"><style>
+<template id="2b6c63ba-b337-4f75-ad35-261e0b3ad72c"><style>
 .tabwid table{
   border-spacing:0px !important;
   border-collapse:collapse;
@@ -998,24 +1898,24 @@ background-color: transparent;
 .katex-display {
     margin: 0 0 !important;
 }
-</style><div class="tabwid"><style>.cl-95a32ec8{table-layout:auto;}.cl-9595d30e{font-family:'Times New Roman';font-size:12pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-959c61c4{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 2;background-color:transparent;}.cl-959c913a{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0.5pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-959c914e{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-959c914f{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing='true' class='cl-95a32ec8'>
+</style><div class="tabwid"><style>.cl-332be4b4{table-layout:auto;}.cl-3315aa3c{font-family:'Times New Roman';font-size:12pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-331b7502{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 2;background-color:transparent;}.cl-331ba9be{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0.5pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-331ba9d2{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-331ba9d3{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing='true' class='cl-332be4b4'>
 
 <caption>
 <span id="tab:lmcoeftab">Table 1: </span><span>t-tests for slope coefficients for predictors in a linear model</span>
 </caption>
 
-<thead><tr style="overflow-wrap:break-word;"><th class="cl-959c913a"><p class="cl-959c61c4"><span class="cl-9595d30e">Term</span></p></th><th class="cl-959c913a"><p class="cl-959c61c4"><span class="cl-9595d30e">Estimate</span></p></th><th class="cl-959c913a"><p class="cl-959c61c4"><span class="cl-9595d30e">Std. Error</span></p></th><th class="cl-959c913a"><p class="cl-959c61c4"><span class="cl-9595d30e">t value</span></p></th><th class="cl-959c913a"><p class="cl-959c61c4"><span class="cl-9595d30e">Pr(&gt;|t|)</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-959c914e"><p class="cl-959c61c4"><span class="cl-9595d30e">(Intercept)</span></p></td><td class="cl-959c914e"><p class="cl-959c61c4"><span class="cl-9595d30e">5.37</span></p></td><td class="cl-959c914e"><p class="cl-959c61c4"><span class="cl-9595d30e">4.32</span></p></td><td class="cl-959c914e"><p class="cl-959c61c4"><span class="cl-9595d30e">1.24</span></p></td><td class="cl-959c914e"><p class="cl-959c61c4"><span class="cl-9595d30e">.224</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-959c914e"><p class="cl-959c61c4"><span class="cl-9595d30e">outdoor_time</span></p></td><td class="cl-959c914e"><p class="cl-959c61c4"><span class="cl-9595d30e">0.59</span></p></td><td class="cl-959c914e"><p class="cl-959c61c4"><span class="cl-9595d30e">0.17</span></p></td><td class="cl-959c914e"><p class="cl-959c61c4"><span class="cl-9595d30e">3.51</span></p></td><td class="cl-959c914e"><p class="cl-959c61c4"><span class="cl-9595d30e">.001</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-959c914f"><p class="cl-959c61c4"><span class="cl-9595d30e">social_int</span></p></td><td class="cl-959c914f"><p class="cl-959c61c4"><span class="cl-9595d30e">1.80</span></p></td><td class="cl-959c914f"><p class="cl-959c61c4"><span class="cl-9595d30e">0.27</span></p></td><td class="cl-959c914f"><p class="cl-959c61c4"><span class="cl-9595d30e">6.70</span></p></td><td class="cl-959c914f"><p class="cl-959c61c4"><span class="cl-9595d30e">&lt; .001</span></p></td></tr></tbody></table></div></template>
-<div class="flextable-shadow-host" id="bda4e88b-8016-447b-921e-3d6bf3005cb2"></div>
+<thead><tr style="overflow-wrap:break-word;"><th class="cl-331ba9be"><p class="cl-331b7502"><span class="cl-3315aa3c">Term</span></p></th><th class="cl-331ba9be"><p class="cl-331b7502"><span class="cl-3315aa3c">Estimate</span></p></th><th class="cl-331ba9be"><p class="cl-331b7502"><span class="cl-3315aa3c">Std. Error</span></p></th><th class="cl-331ba9be"><p class="cl-331b7502"><span class="cl-3315aa3c">t value</span></p></th><th class="cl-331ba9be"><p class="cl-331b7502"><span class="cl-3315aa3c">Pr(&gt;|t|)</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-331ba9d2"><p class="cl-331b7502"><span class="cl-3315aa3c">(Intercept)</span></p></td><td class="cl-331ba9d2"><p class="cl-331b7502"><span class="cl-3315aa3c">5.37</span></p></td><td class="cl-331ba9d2"><p class="cl-331b7502"><span class="cl-3315aa3c">4.32</span></p></td><td class="cl-331ba9d2"><p class="cl-331b7502"><span class="cl-3315aa3c">1.24</span></p></td><td class="cl-331ba9d2"><p class="cl-331b7502"><span class="cl-3315aa3c">.224</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-331ba9d2"><p class="cl-331b7502"><span class="cl-3315aa3c">outdoor_time</span></p></td><td class="cl-331ba9d2"><p class="cl-331b7502"><span class="cl-3315aa3c">0.59</span></p></td><td class="cl-331ba9d2"><p class="cl-331b7502"><span class="cl-3315aa3c">0.17</span></p></td><td class="cl-331ba9d2"><p class="cl-331b7502"><span class="cl-3315aa3c">3.51</span></p></td><td class="cl-331ba9d2"><p class="cl-331b7502"><span class="cl-3315aa3c">.001</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-331ba9d3"><p class="cl-331b7502"><span class="cl-3315aa3c">social_int</span></p></td><td class="cl-331ba9d3"><p class="cl-331b7502"><span class="cl-3315aa3c">1.80</span></p></td><td class="cl-331ba9d3"><p class="cl-331b7502"><span class="cl-3315aa3c">0.27</span></p></td><td class="cl-331ba9d3"><p class="cl-331b7502"><span class="cl-3315aa3c">6.70</span></p></td><td class="cl-331ba9d3"><p class="cl-331b7502"><span class="cl-3315aa3c">&lt; .001</span></p></td></tr></tbody></table></div></template>
+<div class="flextable-shadow-host" id="dc521341-4220-4261-90df-46dc41043cc0"></div>
 <script>
-var dest = document.getElementById("bda4e88b-8016-447b-921e-3d6bf3005cb2");
-var template = document.getElementById("7220d8c0-a95e-4f32-a15b-254d1450050c");
+var dest = document.getElementById("dc521341-4220-4261-90df-46dc41043cc0");
+var template = document.getElementById("2b6c63ba-b337-4f75-ad35-261e0b3ad72c");
 var fantome = dest.attachShadow({mode: 'open'});
 var templateContent = template.content;
 fantome.appendChild(templateContent);
 </script>
 
 <p><br></p>
-<template id="95885cd5-28cb-4a26-8e0c-8dab44514ed5"><style>
+<template id="3cb9e864-9b57-413f-b8e1-d4279079ad36"><style>
 .tabwid table{
   border-spacing:0px !important;
   border-collapse:collapse;
@@ -1053,17 +1953,17 @@ background-color: transparent;
 .katex-display {
     margin: 0 0 !important;
 }
-</style><div class="tabwid"><style>.cl-95c0661e{table-layout:auto;}.cl-95b919b8{font-family:'Times New Roman';font-size:12pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-95b919c2{font-family:'Times New Roman';font-size:12pt;font-weight:normal;font-style:italic;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-95bc2f7c{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 2;background-color:transparent;}.cl-95bc40f2{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0.5pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-95bc4106{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-95bc4107{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing='true' class='cl-95c0661e'>
+</style><div class="tabwid"><style>.cl-3378bdc0{table-layout:auto;}.cl-3368896e{font-family:'Times New Roman';font-size:12pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-33688978{font-family:'Times New Roman';font-size:12pt;font-weight:normal;font-style:italic;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-33701652{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 2;background-color:transparent;}.cl-33702b24{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0.5pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-33702b2e{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-33702b38{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing='true' class='cl-3378bdc0'>
 
 <caption>
 <span id="tab:lmanovtab">Table 2: </span><span>F-tests for predictors in a linear model</span>
 </caption>
 
-<thead><tr style="overflow-wrap:break-word;"><th class="cl-95bc40f2"><p class="cl-95bc2f7c"><span class="cl-95b919b8">Term</span></p></th><th class="cl-95bc40f2"><p class="cl-95bc2f7c"><span class="cl-95b919c2">df</span></p></th><th class="cl-95bc40f2"><p class="cl-95bc2f7c"><span class="cl-95b919b8">Sum Sq</span></p></th><th class="cl-95bc40f2"><p class="cl-95bc2f7c"><span class="cl-95b919b8">Mean Sq</span></p></th><th class="cl-95bc40f2"><p class="cl-95bc2f7c"><span class="cl-95b919b8">F value</span></p></th><th class="cl-95bc40f2"><p class="cl-95bc2f7c"><span class="cl-95b919b8">Pr(&gt;F)</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-95bc4106"><p class="cl-95bc2f7c"><span class="cl-95b919b8">outdoor_time</span></p></td><td class="cl-95bc4106"><p class="cl-95bc2f7c"><span class="cl-95b919b8">1</span></p></td><td class="cl-95bc4106"><p class="cl-95bc2f7c"><span class="cl-95b919b8">1,427.94</span></p></td><td class="cl-95bc4106"><p class="cl-95bc2f7c"><span class="cl-95b919b8">1,427.94</span></p></td><td class="cl-95bc4106"><p class="cl-95bc2f7c"><span class="cl-95b919b8">37.77</span></p></td><td class="cl-95bc4106"><p class="cl-95bc2f7c"><span class="cl-95b919b8">&lt; .001</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-95bc4106"><p class="cl-95bc2f7c"><span class="cl-95b919b8">social_int</span></p></td><td class="cl-95bc4106"><p class="cl-95bc2f7c"><span class="cl-95b919b8">1</span></p></td><td class="cl-95bc4106"><p class="cl-95bc2f7c"><span class="cl-95b919b8">1,697.82</span></p></td><td class="cl-95bc4106"><p class="cl-95bc2f7c"><span class="cl-95b919b8">1,697.82</span></p></td><td class="cl-95bc4106"><p class="cl-95bc2f7c"><span class="cl-95b919b8">44.91</span></p></td><td class="cl-95bc4106"><p class="cl-95bc2f7c"><span class="cl-95b919b8">&lt; .001</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-95bc4107"><p class="cl-95bc2f7c"><span class="cl-95b919b8">Residuals</span></p></td><td class="cl-95bc4107"><p class="cl-95bc2f7c"><span class="cl-95b919b8">29</span></p></td><td class="cl-95bc4107"><p class="cl-95bc2f7c"><span class="cl-95b919b8">1,096.24</span></p></td><td class="cl-95bc4107"><p class="cl-95bc2f7c"><span class="cl-95b919b8">37.80</span></p></td><td class="cl-95bc4107"><p class="cl-95bc2f7c"><span class="cl-95b919b8"></span></p></td><td class="cl-95bc4107"><p class="cl-95bc2f7c"><span class="cl-95b919b8"></span></p></td></tr></tbody></table></div></template>
-<div class="flextable-shadow-host" id="de837f3c-4dac-43b5-885b-8bf806dd8aef"></div>
+<thead><tr style="overflow-wrap:break-word;"><th class="cl-33702b24"><p class="cl-33701652"><span class="cl-3368896e">Term</span></p></th><th class="cl-33702b24"><p class="cl-33701652"><span class="cl-33688978">df</span></p></th><th class="cl-33702b24"><p class="cl-33701652"><span class="cl-3368896e">Sum Sq</span></p></th><th class="cl-33702b24"><p class="cl-33701652"><span class="cl-3368896e">Mean Sq</span></p></th><th class="cl-33702b24"><p class="cl-33701652"><span class="cl-3368896e">F value</span></p></th><th class="cl-33702b24"><p class="cl-33701652"><span class="cl-3368896e">Pr(&gt;F)</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-33702b2e"><p class="cl-33701652"><span class="cl-3368896e">outdoor_time</span></p></td><td class="cl-33702b2e"><p class="cl-33701652"><span class="cl-3368896e">1</span></p></td><td class="cl-33702b2e"><p class="cl-33701652"><span class="cl-3368896e">1,427.94</span></p></td><td class="cl-33702b2e"><p class="cl-33701652"><span class="cl-3368896e">1,427.94</span></p></td><td class="cl-33702b2e"><p class="cl-33701652"><span class="cl-3368896e">37.77</span></p></td><td class="cl-33702b2e"><p class="cl-33701652"><span class="cl-3368896e">&lt; .001</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-33702b2e"><p class="cl-33701652"><span class="cl-3368896e">social_int</span></p></td><td class="cl-33702b2e"><p class="cl-33701652"><span class="cl-3368896e">1</span></p></td><td class="cl-33702b2e"><p class="cl-33701652"><span class="cl-3368896e">1,697.82</span></p></td><td class="cl-33702b2e"><p class="cl-33701652"><span class="cl-3368896e">1,697.82</span></p></td><td class="cl-33702b2e"><p class="cl-33701652"><span class="cl-3368896e">44.91</span></p></td><td class="cl-33702b2e"><p class="cl-33701652"><span class="cl-3368896e">&lt; .001</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-33702b38"><p class="cl-33701652"><span class="cl-3368896e">Residuals</span></p></td><td class="cl-33702b38"><p class="cl-33701652"><span class="cl-3368896e">29</span></p></td><td class="cl-33702b38"><p class="cl-33701652"><span class="cl-3368896e">1,096.24</span></p></td><td class="cl-33702b38"><p class="cl-33701652"><span class="cl-3368896e">37.80</span></p></td><td class="cl-33702b38"><p class="cl-33701652"><span class="cl-3368896e"></span></p></td><td class="cl-33702b38"><p class="cl-33701652"><span class="cl-3368896e"></span></p></td></tr></tbody></table></div></template>
+<div class="flextable-shadow-host" id="b1ddca37-5e13-48d5-a992-d4f08964e075"></div>
 <script>
-var dest = document.getElementById("de837f3c-4dac-43b5-885b-8bf806dd8aef");
-var template = document.getElementById("95885cd5-28cb-4a26-8e0c-8dab44514ed5");
+var dest = document.getElementById("b1ddca37-5e13-48d5-a992-d4f08964e075");
+var template = document.getElementById("3cb9e864-9b57-413f-b8e1-d4279079ad36");
 var fantome = dest.attachShadow({mode: 'open'});
 var templateContent = template.content;
 fantome.appendChild(templateContent);

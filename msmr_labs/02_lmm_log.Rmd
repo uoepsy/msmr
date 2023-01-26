@@ -22,11 +22,11 @@ library(effects)
 :::blue
 **Preliminaries**  
  
-1. Open Rstudio, create a new R Script or RMarkdown document (whichever you prefer working with) and give it a title for this week. 
+1. Open Rstudio, create a new R script or RMarkdown document (whichever you prefer working with) and give it a title for this week. 
 
 2. Load any of the packages you think you might be using today.  
 By now you may have started get into a sort of routine with R, and you might know what functions you like, and which you don't. Because there are so many alternatives for doing the same thing, the packages and functions you use are very much up to you.   
-If I'm planning on doing some multi-level modelling, I will tend to load these by default at the top: 
+If I'm planning on doing some multilevel modelling, I will tend to load these by default at the top: 
     ```{r}
     library(tidyverse) # for everything
     library(lme4) # for fitting models
@@ -106,22 +106,56 @@ Load the data. Take a look around. Any missing values? Can you think of why?
 load(url("https://uoepsy.github.io/msmr/data/nwl.RData"))
 summary(nwl)
 ```
-The only missing vales are in the lesion location, and it's probably because the healthy controls don't have any lesions. 
+
+The only missing vales are in the lesion location, and it's probably because the healthy controls don't have any lesions. There may also be a few patients for which the lesion_location is missing, but this should be comparatively fewer values compared to controls.
+
+The following command creates a two-way frequency table showing the number of controls or patients by lesion location, confirming that controls only have missing values (NAs) and only 9 patients have missing values:
+
+```{r}
+table(nwl$group, nwl$lesion_location, useNA = "ifany")
+```
+
 
 `r solend()`
 
 
 `r qbegin("A2")`
-Our broader research aim today is to compare two groups (those with anterior vs. posterior lesions) with respect to their accuracy of responses over the course of the study.  
+Our broader research aim today is to compare the two lesion location groups (those with anterior vs. posterior lesions) with respect to their accuracy of responses over the course of the study.  
 
-- What is our outcome? 
+- What is the outcome variable? 
 
 *Hint:* Think carefully: there might be several variables which either fully or partly express the information we are considering the "outcome" here. 
 `r qend()`
 `r solbegin(show=TRUE, toggle=params$TOGGLE)`
-1. The outcome here is (in words) "the proportion of correct answers in each block". This makes it tempting to look straight to the variable called `PropCorrect`. Unfortunately, this is encoded as a proportion (i.e., is bounded by 0 and 1), and of the models we have learned about so far, we don't definitely have the necessary tools to model this.  
-    - linear regression = continuous *unbounded* outcome variable  
-    - logistic regression = binomial, expressed as `0` or `1` if the number of trials per observation is 1, and expressed as `cbind(num_successes, num_failures)` if the number of trials per observation is >1. 
+The outcome here is (in words) the proportion of correct answers or, equivalently, the probability of answering correctly. A proportion/probability can only vary between 0 and 1 and, as such, we cannot use traditional linear regression or we could end up with predictions outside of the [0, 1] range.
+
+As said, the outcome is the proportion of correct answers in each block. This makes it tempting to look at the variable called `PropCorrect`, but this is encoded as a proportion. We have learned to use logistic models, but these require either:
+
+- a binary outcome variable, where the values are 0s or 1s
+- a binomial outcome variable, where the values are aggregated counts of 1s and 0s 
+
+__Binary data__. In the case below you would use the specification `correct ~ ...`:
+
+```{r echo=FALSE}
+tibble(participant = c(1,1,1),
+       question=c(1,2,3),
+       correct=c(1,0,1)) %>%
+    rbind(rep("...",3)) %>%
+    gt::gt()
+```
+
+__Binomial data__. You would use the specification `cbind(num_successes, num_failures)` which, in the case below, would be:
+
+`cbind(questions_correct, questions_incorrect) ~ ...`
+
+```{r echo=FALSE}
+tibble(participant = c(1,2,3),
+       questions_correct=c(2,1,3),
+       questions_incorrect=c(1,2,0)) %>% 
+    rbind(rep("...",3)) %>% 
+    gt::gt()
+```
+
 `r solend()`
 
 `r qbegin("A3")`
@@ -132,13 +166,16 @@ Our broader research aim today is to compare two groups (those with anterior vs.
 
 - Do we want `cbind(num_successes, num_failures)`?
 
-- Make sure we're running models on only the data we are actually interested in. Are the healthy controls included in the research question under investigation?
+- Ensure you are running models on only the data we are actually interested in. 
+
+    + Are the healthy controls included in the research question under investigation?
+    + Are the testing blocks included in the research question, or only the learning blocks?
 
 - We could use model comparison via likelihood ratio tests (using `anova(model1, model2, model3, ...)`. For this question, we could compare:
 
-    - A model with just the change over the sequence of blocks
-    - A model with the change over the sequence of blocks *and* an overall difference between groups
-    - A model with groups differing with respect to their change over the sequence of blocks  
+    + A model with just the change over the sequence of blocks
+    + A model with the change over the sequence of blocks *and* an overall difference between groups
+    + A model with groups differing with respect to their change over the sequence of blocks
 
 - What about the random effects part?  
     
@@ -149,10 +186,15 @@ Our broader research aim today is to compare two groups (those with anterior vs.
 `r qend()`
 
 `r optbegin("Suggested answers to the hints if you don't know where to start", olabel=FALSE, toggle=params$TOGGLE)`
+- Do we want `cbind(num_successes, num_failures)`?
 
-- Make sure we're running models on only the data we are actually interested in. 
-    - We want only the learning blocks, and none of the healthy controls.
-    - You might want to store this data in a separate object, but in the code for the solutio we will just use `filter()` *inside* the `glmer()`.   
+    + Yes, we don't a binary variable with correct/incorrect questions but the binomial variables NumCorrect and NumError representing, respectively, the aggregated count (out of 30) of correct and incorrect questions. As such, we will need the following: `cbind(NumCorrect, NumError)`
+
+- Ensure you are running models on only the data we are actually interested in. 
+
+    + The healthy controls are not included in the research question under investigation, so we will exclude them.
+    + We are only interested in the learning blocks, and we will exclude the testing blocks (block > 7) 
+    + You might want to store this data in a separate object, but in the code for the solution we will just use `filter()` *inside* the `glmer()`.   
   
 - A model with just the change over the sequence of blocks:
     - **outcome ~ block**
@@ -194,14 +236,13 @@ No significant difference in learning rate between groups ($\chi^2(1)=2.2, p = 0
 
 `r qbegin("A4")`
 > **Research Question 2**  
-> In the testing phase, does performance on the immediate test differ between lesion location groups, and does their retention from immediate to follow-up test differ?
+> In the testing phase, does performance on the immediate test differ between lesion location groups, and does the retention from immediate to follow-up test differ between the two lesion location groups?
 
 Let's try a different approach to this. Instead of fitting various models and comparing them via likelihood ratio tests, just fit the one model which could answer both parts of the question above.  
 
 **Hints:**
     
-- This might required a bit more data-wrangling before hand. Think about the order of your factor levels
-(alphabetically speaking, "Follow-up" comes before "Immediate")!
+- This might required a bit more data-wrangling before hand. Think about the order of your factor levels (alphabetically speaking, "Follow-up" comes before "Immediate")!
 
 `r qend()`
 `r solbegin(show=params$SHOW, toggle=params$TOGGLE)`
@@ -212,11 +253,29 @@ nwl_test <- filter(nwl, block > 7, !is.na(lesion_location)) %>%
         Phase = fct_relevel(Phase, "Immediate")
     )
 
-m.recall.loc <- glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (Phase | ID), 
+m.recall.loc <- glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (1 | ID), 
                       nwl_test, family="binomial")
 
 summary(m.recall.loc)
 ```
+
+
+__Note 1__: 
+
+In the above, we have made sure to select the patients by specifying `!is.na(lesion_location)`, meaning that we want those rows where the lesion location is not missing. As a reminder `!` is the negation function (not). As we saw in Question A1, this excludes the 126 healthy controls, as well as the 9 patients for which we have missing values (NAs).
+
+__Note 2__:  
+
+We didn't specify `(Phase | ID)` as the random effect because each participant only has 1 data point for both Immediate and Follow-up. For example, for patient15, we have:
+
+```{r}
+subset(nwl_test, ID == 'patient15')
+```
+
+You couldn't compute an estimate of the standard deviation based on so few data points, remember the denominator of the standard deviation is $n - 1$! If you try using `(Phase | ID)` as random effect, you will see the following message:
+
+`boundary (singular) fit: see help('isSingular')`
+
 `r solend()`
 
 :::frame
@@ -382,7 +441,7 @@ nwl_test <- filter(nwl, block > 7, !is.na(lesion_location)) %>%
     )
 
 m.recall.loc.effcoding <- 
-    glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (Phase | ID), 
+    glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (1 | ID), 
           contrasts = list(lesion_location = "contr.sum"),
           data = nwl_test, family="binomial")
 ```
@@ -418,7 +477,7 @@ colnames(contrasts(nwl_test$lesion_location)) <- "PeppaPig"
 contrasts(nwl_test$lesion_location)
 
 modeltest <- 
-    glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (Phase | ID),
+    glmer(cbind(NumCorrect, NumError) ~ Phase * lesion_location + (1 | ID),
           nwl_test, family="binomial")
 summary(modeltest)$coefficients
 ```
