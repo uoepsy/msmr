@@ -10,7 +10,7 @@ library(effects)
 # after initially studying some material, is it better to do another round of study or to do a test? does this depend on the delay before the final test?
 # 2 groups: study-study, study-test
 # each participant tested 2 times: after 1 minute, after 1 week
-load("./data/TestEnhancedLearning.RData")
+load(url("https://uoepsy.github.io/msmr/data/TestEnhancedLearning.RData"))
 summary(tel)
 
 tel %>% group_by(Subject_ID, Group, Delay) %>% 
