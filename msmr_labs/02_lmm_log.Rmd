@@ -266,13 +266,13 @@ In the above, we have made sure to select the patients by specifying `!is.na(les
 
 __Note 2__:  
 
-We didn't specify `(Phase | ID)` as the random effect because each participant only has 1 data point for both Immediate and Follow-up. For example, for patient15, we have:
+We didn't specify `(Phase | ID)` as the random effect because each participant only has 2 data points for Phase, and there is only one line that fits two data points. In other words, there is only one possible way to fit those two data points.
 
 ```{r}
 subset(nwl_test, ID == 'patient15')
 ```
 
-You couldn't compute an estimate of the standard deviation based on so few data points, remember the denominator of the standard deviation is $n - 1$! If you try using `(Phase | ID)` as random effect, you will see the following message:
+If you try using `(Phase | ID)` as random effect, you will see the following message:
 
 `boundary (singular) fit: see help('isSingular')`
 
