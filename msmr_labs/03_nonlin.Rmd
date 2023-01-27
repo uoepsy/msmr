@@ -29,11 +29,7 @@ Create a new R Script or RMarkdown document (whichever you prefer working with) 
 
 :::
 
-We have already seen in the last couple of weeks that we can use MLM to study something 'over the course of X'. Last week's weight change data was measured over the course of several assessments (Figure \@ref(fig:weightlin), and in the novel word learning experiment from our analysis was interested in change over the course of the experimental blocks. 
- 
-```{r weightlin, echo=FALSE,out.width="300px", fig.cap="Weight Maintain Model fitted values, from [Week 2 exercises](https://uoepsy.github.io/msmr/labs/02_lmm_log.html)"}
-knitr::include_graphics("images/gca/weightchangelin.png")
-```
+We have already seen in the last couple of weeks that we can use MLM to study something 'over the course of X'. In the novel word learning experiment from last week's lab, we investigated the change in the probability of answering correctly over the course of the experimental blocks. 
 
 We've talked about how **"longitudinal"** is the term commonly used to refer to any data in which repeated measurements are taken over a continuous domain. This opens up the potential for observations to be unevenly spaced, or missing at certain points. It also, as will be the focus of this week, opens the door to thinking about how many effects of interest are likely to display **non-linear patterns**. These exercises focus on including higher-order polynomials in the multi-level model to capture non-linearity. 
   
@@ -47,7 +43,7 @@ res <- MASS::mcycle %>%
 <div style="display:inline-block;width:45%;margin:5px;vertical-align:middle">
 Suppose we had collected the data in Figure \@ref(fig:mcycle), and we wanted to fit a model to predict $y$ based on the values of $x$.  
 
-A model? [Easy, peasy, lemon squeezy!](https://youtu.be/7mAFiPVs3tM) Let's use our old friend linear regression, $y = \beta_0 + \beta_1(x) + \varepsilon$.  
+Let's use our old friend linear regression, $y = \beta_0 + \beta_1(x) + \varepsilon$.  
 
 We'll get out some estimated coefficients, some standard errors, and some p-values:  
 
@@ -81,7 +77,7 @@ p0$x
 All our work here is in aim of making models of the world.  
 
 1. Models are just models. They are simplifications, and so they don't perfectly fit to the observed world (indeed, how well a model fits to the world is often our metric for comparing models).  
-2. $y - \hat y$. Our observed data minus our model predicted values (i.e. in linear regression our "residuals") reflect everything that we don't account for in our model
+2. $y - \widehat{y}$. Our observed data minus our model predicted values (i.e. in linear regression our "residuals") reflect everything that we don't account for in our model
 3. In an ideal world, our model accounts for all the systematic relationships, and what is left over (our residuals) is just randomness. If our model is mis-specified, or misses out something systematic, then our residuals will reflect this. 
 4. We check for this by examining how much like randomness the residuals appear to be (zero mean, normally distributed, constant variance, i.i.d ("independent and identically distributed") - i.e., what gets referred to as the "assumptions"). 
 5. We will **never** know whether our residuals contain only randomness, because we can never observe *everything*. 
@@ -89,7 +85,7 @@ All our work here is in aim of making models of the world.
 <h/>
 
 Let's just do a quick `plot(model)` for some diagnostic plots of my linear model:
-```{r echo=FALSE}
+```{r echo=FALSE, out.width = "100%"}
 par(mfrow=c(2,2))
 MASS::mcycle %>%
   rename(y=accel,x=times) %>% filter(x>20) %>%
@@ -108,15 +104,15 @@ We need to find some way of incorporating the non-linear relationship between y 
 :::statbox
 Polynomials are mathematical expressions which involve a sum of powers. For instance:
 
-$y = x^2 + 4$  
-$y = 4x^3 + 2x^2 + 9x$  
-$y = x^6$  
+- $y = 4 + x + x^2$ is a second-order polynomial as the highest power of $x$ that appears is $x^2$  
+- $y = 9x + 2x^2 + 4x^3$ is a third-order polynomial as the highest power of $x$ that appears is $x^3$  
+- $y = x^6$ is a sixth-order polynomial as the highest power of $x$ that appears is $x^6$  
 
 :::
 
-For our purposes, extending our model to include higher-order terms can fit non-linear relationships between two variables, for instance, fitting models with linear and quadratic terms ($\color{red}{y_i} = \color{blue}{\beta_0 + \beta_1 x_{i} \ + \beta_2 x^2_i} + \varepsilon_i$) and extending these to cubic ($\color{red}{y_i} = \color{blue}{\beta_0 + \beta_1 x_{i} \ + \beta_2 x^2_i + \beta_3 x^3_i} + \varepsilon_i$) and beyond.  
+For our purposes, extending our model to include higher-order terms can fit non-linear relationships between two variables. For instance, fitting models with linear and quadratic terms ($y_i$ = $\beta_0 + \beta_1 x_{i} \ + \beta_2 x^2_i + \varepsilon_i$) and extending these to cubic ($y_i$ = $\beta_0 + \beta_1 x_{i} \ + \beta_2 x^2_i + \beta_3 x^3_i + \varepsilon_i$) (or beyond), may aid in modelling nonlinear patterns.
 
-```{r echo=FALSE}
+```{r echo=FALSE, out.width = "100%", fig.heigth = 4}
 MASS::mcycle %>%
   rename(y=accel,x=times) %>% filter(x>20) %>% 
   lm(y~x+I(x^2),.) %>%
@@ -188,14 +184,18 @@ There are two types of polynomial we can construct. "Raw" (or "Natural") polynom
 
 These are simply the original values of the x variable to the power of 2, 3 and so on.  
   
-We can quickly get these in R using the `poly()` function, with `raw = TRUE`. 
+We can quickly get these in R using the `poly()` function, with `raw = TRUE`.  
+
+If you want to create "raw" polynomials, make sure to specify `raw = TRUE` or you will not get what you want because the default behaviour is `raw = FALSE`.
 </div>
 <div style="display:inline-block; width: 30%;">
 <center>
 ```{r echo=FALSE}
 MASS::mcycle %>%
-  rename(y=accel,x=times) %>% filter(x>20) -> df
-cbind(x=1:5,`x^2`=rep("?",5),`x^3`=rep("?",5)) %>% rbind("...") %>% pander::pander()
+    rename(y=accel,x=times) %>% filter(x>20) -> df
+cbind(x=1:5,`x^2`=rep("?",5),`x^3`=rep("?",5)) %>% rbind("...") %>% 
+    kableExtra::kable() %>%
+    kableExtra::kable_styling(full_width = FALSE)
 ```
 </center>
 </div>
@@ -222,30 +222,32 @@ cor(poly(1:10, 3, raw=T)) %>% round(2)
 Why might this be a problem?  
 Well, this multicollinearity can lead to estimation problems, and means that our parameter estimates may change considerably depending upon what terms we include in our model, and it becomes more difficult to determine which ones are important, and what the effect sizes are.  
 Table \@ref(tab:rawpolytab) below shows the coefficients for models fitted to a randomly generated dataset, with `poly1`, `poly1+poly2`, and `poly1+poly2+poly3` as predictors (where `poly1`-`poly3` are **natural** polynomials). Notice that they change with the addition of each term.
-```{r echo=FALSE}
+```{r rawpolytab, echo=FALSE}
 set.seed(754)
 df<-tibble(
-  x = 1:10,
-  y = x + 
-  rnorm(1, mean = 100) * (x) +
-  rnorm(1, mean = 0, sd = .01) * (x) ^ 2 +
-  rnorm(1, mean = -1) * (x) ^ 3 + 
-  rnorm(10)
+    x = 1:10,
+    y = x + 
+        rnorm(1, mean = 100) * (x) +
+        rnorm(1, mean = 0, sd = .01) * (x) ^ 2 +
+        rnorm(1, mean = -1) * (x) ^ 3 + 
+        rnorm(10)
 )
 df <- code_poly(df = df, predictor = 'x', poly.order = 3, orthogonal = FALSE, draw.poly = FALSE)
 full_join(
-  broom::tidy(lm(y~poly1, df))[,1:2] %>% 
-    #mutate(estimate = paste(round(estimate,2), c("*","**"))) %>% 
-    rename(`y~poly1` = estimate),
-  broom::tidy(lm(y~poly1+poly2, df))[,1:2] %>% 
-    #mutate(estimate = paste(round(estimate,2), c("*","***","***"))) %>% 
-    rename(`y~poly1+poly2` = estimate)
+    broom::tidy(lm(y~poly1, df))[,1:2] %>% 
+        #mutate(estimate = paste(round(estimate,2), c("*","**"))) %>% 
+        rename(`y~poly1` = estimate),
+    broom::tidy(lm(y~poly1+poly2, df))[,1:2] %>% 
+        #mutate(estimate = paste(round(estimate,2), c("*","***","***"))) %>% 
+        rename(`y~poly1+poly2` = estimate)
 ) %>% full_join(.,
-  broom::tidy(lm(y~poly1+poly2+poly3, df))[,1:2] %>% 
-    #mutate(estimate = paste(round(estimate,2), c("","***","","***"))) %>% 
-    rename(`y~poly1+poly2+poly3` = estimate)
+                broom::tidy(lm(y~poly1+poly2+poly3, df))[,1:2] %>% 
+                    #mutate(estimate = paste(round(estimate,2), c("","***","","***"))) %>% 
+                    rename(`y~poly1+poly2+poly3` = estimate)
 ) %>% mutate_if(is.numeric,~round(.,2)) %>% 
-  mutate_all(~ifelse(is.na(.), "-", .)) %>% pander::pander(.,caption="(\\#tab:rawpolytab) Incremental addition of raw polynomial terms")
+    mutate_all(~ifelse(is.na(.), "-", .)) %>% 
+    kableExtra::kable(caption = "Incremental addition of raw polynomial terms") %>%
+    kableExtra::kable_styling(full_width = FALSE)
 
 ```
 
@@ -256,9 +258,17 @@ full_join(
 "Orthogonal" polynomials are uncorrelated (hence the name). 
 We can get these for $x = 1,2,...,9,10$ using the following code:
 ```{r}
-poly(1:10, 3, raw = FALSE)
+poly(1:10, degree = 3, raw = FALSE)
 ```
 Notice that the first order term has been scaled, so instead of the values 1 to 10, we have values ranging from -0.5 to +0.5, centered on 0. 
+
+```{r}
+colMeans(poly(1:10, degree = 3, raw = FALSE)) %>%
+    round(2)
+```
+
+As you can see from the output above, which computes the mean of each column, each predictor has mean 0, so they are mean-centred. __This is a key fact and will affect the interpretation of our predictors later on__.
+
 Think about what this means for $x^2$. It will be uncorrelated with $x$ (because $-0.5^2 = 0.5^2$)!  
 ```{r}
 matplot(poly(1:10, 3, raw=F), type="l")
@@ -269,28 +279,31 @@ cor(poly(1:10, 3, raw=F)) %>% round(2)
 ```
 
 We can then fit the same models `y~poly1`, `y~poly1+poly2`, and `y~poly1+poly2+poly3` as predictors (where `poly1`-`poly3` are now **orthogonal** polynomials), and see that estimated coefficients do not change between models: 
-```{r echo=FALSE}
+```{r orthpolytab, echo=FALSE}
 df <- code_poly(df = df, predictor = 'x', poly.order = 3, orthogonal = TRUE, draw.poly = FALSE)
 full_join(
-  broom::tidy(lm(y~poly1, df))[,1:2] %>% 
-    #mutate(estimate = paste(round(estimate,2), c("","**"))) %>% 
-    rename(`y~poly1` = estimate),
-  broom::tidy(lm(y~poly1+poly2, df))[,1:2] %>% 
-    #mutate(estimate = paste(round(estimate,2), c("***","***","***"))) %>% 
-    rename(`y~poly1+poly2` = estimate)
+    broom::tidy(lm(y~poly1, df))[,1:2] %>% 
+        #mutate(estimate = paste(round(estimate,2), c("","**"))) %>% 
+        rename(`y~poly1` = estimate),
+    broom::tidy(lm(y~poly1+poly2, df))[,1:2] %>% 
+        #mutate(estimate = paste(round(estimate,2), c("***","***","***"))) %>% 
+        rename(`y~poly1+poly2` = estimate)
 ) %>% full_join(.,
-  broom::tidy(lm(y~poly1+poly2+poly3, df))[,1:2] %>% 
-    #mutate(estimate = paste(round(estimate,2), c("***","***","***","***"))) %>% 
-    rename(`y~poly1+poly2+poly3` = estimate)
+                broom::tidy(lm(y~poly1+poly2+poly3, df))[,1:2] %>% 
+                    #mutate(estimate = paste(round(estimate,2), c("***","***","***","***"))) %>% 
+                    rename(`y~poly1+poly2+poly3` = estimate)
 ) %>% mutate_if(is.numeric,~round(.,2)) %>% 
-  mutate_all(~ifelse(is.na(.), "-", .)) %>% pander::pander(.,caption="(\\#tab:orthpolytab) Incremental addition of orthogonal polynomial terms")
+    mutate_all(~ifelse(is.na(.), "-", .)) %>% 
+    kableExtra::kable(caption = "Incremental addition of orthogonal polynomial terms") %>%
+    kableExtra::kable_styling(full_width = FALSE)
+
 ```
 
 
 :::statbox
 **Remember what zero is!** 
 
-With orthogonal polynomials, you need to be careful about interpreting coefficients. For raw polynomials the intercept remains the y-intercept (i.e., where the line hits the y-axis). The higher order terms can then be thought of from that starting point - e.g., "where $x$ is 2, $\hat y$ is $\beta_0 + \beta_1 \cdot 2 + \beta_2 \cdot 2^2 + \beta_3 \cdot 2^3 ...$".  
+With orthogonal polynomials, you need to be careful about interpreting coefficients. For raw polynomials the intercept remains the y-intercept (i.e., where the line hits the y-axis). The higher order terms can then be thought of from that starting point - e.g., "where $x$ is 2, $\widehat{y}$ is $\beta_0 + \beta_1 \cdot 2 + \beta_2 \cdot 2^2 + \beta_3 \cdot 2^3 ...$".  
 <br>
 For orthogonal polynomials, the interpretation becomes more tricky. The intercept is the overall average of y, the linear predictor is the linear change pivoting around the mean of $x$ (rather than $x = 0$), the quadratic term corresponds to the steepness of the quadratic curvature ("how curvy is it?"), the cubic term to the steepness at the inflection points ("how wiggly is it?"), and so on. 
 
@@ -319,10 +332,14 @@ mydata<-tibble(
   rnorm(10)
 ) %>% rename(time=x)
 ```
+
 ```{r}
-# source Dan's code
+# import Dan's code and make it available in our own R session
+# you must do this in every script you want to use this function
 source("https://uoepsy.github.io/msmr/functions/code_poly.R")
-mydata <- code_poly(df = mydata, predictor = 'time', poly.order = 3, orthogonal = FALSE, draw.poly = FALSE)
+
+mydata <- code_poly(df = mydata, predictor = 'time', poly.order = 3, 
+                    orthogonal = FALSE, draw.poly = FALSE)
 head(mydata)
 ```
 
@@ -349,18 +366,31 @@ A messy model:
 ```{r}
 m.messy <- lm(y ~ poly(x, 3, raw=T), data = df)
 ```
+
 ```{r echo=FALSE}
-broom::tidy(m.messy) %>% pander::pander()
+# broom::tidy(m.messy) %>% pander::pander()
+```
+
+```{r echo=FALSE}
+broom::tidy(m.messy) %>% rempsyc::nice_table(col.format.p = 5)
 ```
 
 Dan's code, and a neat model:  
+
 ```{r}
-df <- code_poly(df = df, predictor = 'x', poly.order = 3, orthogonal = FALSE, draw.poly = FALSE)
+df <- code_poly(df = df, predictor = 'x', poly.order = 3, 
+                orthogonal = FALSE, draw.poly = FALSE)
 mDan <- lm(y ~ poly1 + poly2 + poly3, data = df)
 ```
-```{r}
-broom::tidy(mDan) %>% pander::pander()
+
+```{r echo=FALSE}
+# broom::tidy(mDan) %>% pander::pander()
 ```
+
+```{r echo=FALSE}
+broom::tidy(mDan) %>% rempsyc::nice_table(col.format.p = 5)
+```
+
 `r optend()`
 :::
 
@@ -407,10 +437,13 @@ The data is available at [https://uoepsy.github.io/data/Az.rda](https://uoepsy.g
 
 ```{r echo=FALSE}
 load(url("https://uoepsy.github.io/data/Az.rda"))
+
 tibble(
-  variable = names(Az),
-  description = c("Unique Subject Identifier","Time point of the study (0 to 10)","Task type (Memory, cADL, sADL)","Score on test")
-) %>% pander::pander()
+    variable = names(Az),
+    description = c("Unique Subject Identifier","Time point of the study (0 to 10)","Task type (Memory, cADL, sADL)","Score on test")
+) %>% 
+    kableExtra::kable() %>%
+    kableExtra::kable_styling(full_width = FALSE)
 ```
 :::
 
@@ -426,6 +459,7 @@ summary(Az)
 
 `r qbegin("A2")`
 No modelling just yet.  
+
 Plot the performance over time for each type of task.  
 
 Try using `stat_summary` so that you are plotting the means (and standard errors) of each task, rather than every single data point. Why? Because this way you can get a shape of the overall trajectories of performance over time in each task.  
@@ -530,7 +564,7 @@ I would be inclined to remove the `poly2` term from either subjects, or tasks wi
 - Removing `poly2 | Subject:Task` will mean that within each subject, the linear trend will still vary by task, but quadratic trend will not. For a given subject, the model will think that the performance might go up on some tasks and down on others, but the curvature will be the same.  
 - Removing `poly2 | Subject` will mean that the linear trend will still vary by subjects, but the quadratic trend will not. The model will assume all Subjects have the same curvature to their trajectories. 
 
-```{r echo=FALSE, fig.cap="Model fits for 6 subjects when excluding different random effect terms"}
+```{r echo=FALSE, out.width = "100%", fig.cap="Model fits for 6 subjects when excluding different random effect terms"}
 m.base1 <- lmer(Performance ~ (poly1 + poly2) + 
                  (1 + poly1 | Subject) + (1 + poly1 + poly2 | Subject:Task),
                data=Az, REML=F, control=lmerControl(optimizer="bobyqa"))
@@ -604,10 +638,13 @@ By using `lmerTest::lmer()` we don't have to load the package `library(lmerTest)
 :::
 
 ```{r}
-m.full_satter <- lmerTest::lmer(Performance ~ (poly1 + poly2) * Task +
-              (1 + poly1 | Subject) + (1 + poly1 + poly2 | Subject:Task),
-            data=Az, REML=F, control=lmerControl(optimizer="bobyqa"))
-tidy(m.full_satter) %>% filter(effect=="fixed")
+m.full_satter <- 
+    lmerTest::lmer(Performance ~ (poly1 + poly2) * Task +
+                       (1 + poly1 | Subject) + (1 + poly1 + poly2 | Subject:Task),
+                   data=Az, REML=F, control=lmerControl(optimizer="bobyqa"))
+
+tidy(m.full_satter) %>% 
+    filter(effect=="fixed")
 ```
 
 `r optbegin("Optional: Quick refresher of scientific notation", olabel=F,toggle=params$TOGGLE)`
@@ -623,10 +660,13 @@ tidy(m.full_satter) %>% filter(effect=="fixed")
 
 `r qbegin("A7")`
 ```{r echo=FALSE}
-tidy(m.full_satter) %>% filter(effect=="fixed") %>% mutate_if(is.numeric,~round(.,3)) %>%
-  mutate(p.value = ifelse(p.value == 0, "<.001 ***", as.character(gsub("0","",p.value)))) %>%
-  mutate_if(is.numeric,~round(.,2)) %>% select(-effect,-group) %>% 
-  knitr::kable()
+tidy(m.full_satter) %>% 
+    filter(effect=="fixed") %>% 
+    mutate_if(is.numeric,~round(.,3)) %>%
+    mutate(p.value = ifelse(p.value == 0, "<.001 ***", as.character(gsub("0","",p.value)))) %>%
+    mutate_if(is.numeric,~round(.,2)) %>% select(-effect,-group) %>% 
+    kableExtra::kable() %>%
+    kableExtra::kable_styling(full_width = FALSE)
 ```
 
 
@@ -646,7 +686,7 @@ f) For the Memory Task, how is the change in performance over time different fro
 a) For the cADL Task, what is the estimated average performance where x = 0?  
     - __`r fixef(m.Az.full)[1] %>% round(.,2)`__
 b) For the sADL and Memory Tasks, is the estimated average where x = 0 different to the cADL Task? 
-    - __Nope. Neither of the intercept differences are significant.__  
+    - __No. Neither of the intercept differences are significant.__  
 c) For the cADL Task, how does performance change for every increasing time point? (what is the estimated linear slope?)
     - __Note, the quadratic term `poly2` is non-significant, so we'll ignore it here__  
     - __For every increase in one timepoint, cADL performance changes by `r fixef(m.Az.full)[2] %>% round(.,2)`.__ 
@@ -673,7 +713,7 @@ Then provide a written description.
 Performance in all tasks starts out the same [thanks, natural polynomials!]. Linear change over time is different depending on task type: compared to complex ADL tasks, decline in simple ADL tasks is slower and decline in Memory is faster. Decline in cADL and sADL tasks is approximately linear, whereas decline in Memory has more curvature (reaching floor?)
 :::
 
-<center><video width="320" height="240" controls>
+<center><video width="480" height="360" controls>
   <source src="images/msmrcogsketch.mp4" type="video/mp4">
 </video></center>
 
@@ -686,8 +726,8 @@ To what extent do model comparisons (Question A6) and the parameter-specific p-v
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 Model comparisons suggest:  
 
-+ Linear slopes are different: $\chi^2(2)=30.41, p < .0001$ (comparison `m.0` and `m.1` above).  
-+ Quadratic term is different: $\chi^2(2)=171.53, p < .0001$ (comparison `m.1` and `m.Az.full` above).  
++ Linear slopes are different: $\chi^2(2)=30.41, p < .001$ (comparison `m.0` and `m.1` above).  
++ Quadratic term is different: $\chi^2(2)=171.53, p < .001$ (comparison `m.1` and `m.Az.full` above).  
 
 *Note:* We can't investigate the intercept difference via the model comparisons above. Comparison between `m.base` and `m.0` indicates difference holding polynomial terms constant (not the conditional effect where poly1 and poly2 are 0).
 
@@ -745,7 +785,7 @@ df %>% mutate(
   geom_point(aes(y=y))+labs(y="y",title="Predicted values of y", subtitle="y ~ x*(x < 33) + x*(x > 33)")
 ```
 
-**Piecewise polynomial** fit the model $y ~ x + x^2 + x^3$ to equal chunks of x.  
+**Piecewise polynomial** fit the model $y \sim x + x^2 + x^3$ to equal chunks of x.  
 
 ```{r echo=FALSE, out.width="350px"}
 mod<-function(ddf){lm(y~poly(x,3), data=ddf)}
