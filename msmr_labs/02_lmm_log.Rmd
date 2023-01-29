@@ -664,7 +664,8 @@ Instead of assuming that the likelihood ratio test statistics are $\chi^2$-distr
 ```{r echo=F}
 set.seed(993)
 ```
-```{r eval=FALSE}
+
+```{r eval=TRUE}
 library(pbkrtest)
 PBmodcomp(full_model, restricted_model, nsim=1000)
 ```
@@ -672,13 +673,13 @@ PBmodcomp(full_model, restricted_model, nsim=1000)
 :::int
 __Reporting__  
 
-A parametric bootstrap likelihood ratio test (R = 1000) indicated that the inclusion of weekly hours of reading practice as a predictor was associated with an improvement in model fit ($LRT = 11.79, p = .004$).
+A parametric bootstrap likelihood ratio test (R = 1000) indicated that the inclusion of weekly hours of reading practice as a predictor was associated with an improvement in model fit ($LRT = 11.81, p = .003$).
 :::
 
 `r optend()`
 `r optbegin("Optional: Parametric Bootstrap Confidence Intervals",olabel=F,toggle=params$TOGGLE)`  
 Much the same as above, but with just one model we simulate data many times and refit the model, so that we get an empirical distribution that we can use to construct confidence intervals for our effects. 
-```{r eval=FALSE}
+```{r eval=TRUE}
 confint(full_model, method="boot")  
 ```
 
@@ -688,9 +689,12 @@ __Reporting__
 95% Confidence Intervals were obtained via parametric bootstrapping with 1000 iterations.  
 ...  
 ...   
-Weekly hours of reading practice was associated increased reading age ($\beta = 1.14,\ 95%\ CI\ [0.58 -- 1.73]$).
+Weekly hours of reading practice was associated increased reading age 
+$(\beta = 1.14,\ 95\%\ CI\ [0.58, 1.73])$.
 
 :::
+
+__Note.__ You may get slightly different numbers as bootstrap methods use random numbers, so if you results are slightly (just slightly) different, that's normal.
 
 `r optend()` 
 `r optbegin("Optional: Case-based Bootstrap Confidence Intervals",olabel=F,toggle=params$TOGGLE)`
