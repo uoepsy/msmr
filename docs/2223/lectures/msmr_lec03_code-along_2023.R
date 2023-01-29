@@ -3,8 +3,8 @@
 
 library(tidyverse)
 library(lme4)
-source("code_poly.R")
-load("https://uoepsy.github.io/msmr/data/TargetFix.rda")
+source("https://uoepsy.github.io/msmr/functions/code_poly.R")
+load(url("https://uoepsy.github.io/msmr/data/TargetFix.rda"))
 summary(TargetFix)
 
 #make 3rd-order orth poly
