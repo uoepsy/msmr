@@ -266,7 +266,7 @@ In the above, we have made sure to select the patients by specifying `!is.na(les
 
 __Note 2__:  
 
-We didn't specify `(Phase | ID)` as the random effect because each participant only has 2 data points for Phase, and there is only one line that fits two data points. In other words, there is only one possible way to fit those two data points.
+We didn't specify `(Phase | ID)` as the random effect because each participant only has 2 data points for Phase, and there is only one line that fits two data points. In other words, there is only one possible way to fit those two data points. As such, as each group of 2 points will have a perfect line fit, and the residuals $\varepsilon_{ij}$ will all be 0. As a consequence of this, the residuals will have no variability as they are all 0, so $\sigma_{\epsilon}$ is 0 which in turn leads to problem with estimating the model coefficients.
 
 ```{r}
 subset(nwl_test, ID == 'patient15')
