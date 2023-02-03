@@ -7,7 +7,7 @@ params:
     SHOW_SOLS: TRUE
     TOGGLE: TRUE
 editor_options: 
-  chunk_output_type: inline
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -35,9 +35,10 @@ Create a new R Script or RMarkdown document (whichever you prefer working with) 
 
 :::
 
-:::imp
-Now that we've had a few weeks to get used to the syntax of __lme4__, we're going to hide the solutions again until the end of the week. 
-:::
+
+<!-- :::imp -->
+<!-- Now that we've had a few weeks to get used to the syntax of __lme4__, we're going to hide the solutions again until the end of the week.  -->
+<!-- ::: -->
 
 
 # Random effects
@@ -173,12 +174,12 @@ Below are a selection of different formulas for specifying different random effe
 
 |  Formula|  Alternative|  Meaning|
 |--------:|------------:|--------:|
-|  $\text{(1 | g)}$|  $\text{1 + (1 | g)}$|  Random intercept with fixed mean|
-|  $\text{0 + offset(o) + (1 | g)}$|  $\text{-1 + offset(o) + (1 | g)}$|  Random intercept with *a priori* means|
-|  $\text{(1 | g1/g2)}$|  $\text{(1 | g1) + (1 | g1:g2)}$|  Intercept varying among $g1$ and $g2$ within $g1$|
-|  $\text{(1 | g1) + (1 | g2)}$|  $\text{1 + (1 | g1) + (1 | g2)}$|  Intercept varying among $g1$ and $g2$|
-|  $\text{x + (x | g)}$|  $\text{1 + x + (1 + x | g)}$|  Correlated random intercept and slope|
-|  $\text{x + (x || g)}$|  $\text{1 + x + (x | g) + (0 + x | g)}$|  Uncorrelated random intercept and slope|
+|  $\text{y ~ (1 | g)}$|  $\text{y ~ 1 + (1 | g)}$|  Random intercept with fixed mean|
+|  $\text{y ~ 0 + offset}(o)\text{ + (1 | g)}$|  $\text{y ~ -1 + offset}(o)\text{ + (1 | g)}$|  Random intercept with *a priori* means|
+|  $\text{y ~ (1 | g1/g2)}$|  $\text{y ~ (1 | g1) + (1 | g1:g2)}$|  Intercept varying among $g1$ and $g2$ within $g1$|
+|  $\text{y ~ (1 | g1) + (1 | g2)}$|  $\text{y ~ 1 + (1 | g1) + (1 | g2)}$|  Intercept varying among $g1$ and $g2$|
+|  $\text{y ~ x + (x | g)}$|  $\text{y ~ 1 + x + (1 + x | g)}$|  Correlated random intercept and slope|
+|  $\text{y ~ x + (x || g)}$|  $\text{y ~ 1 + x + (x | g) + (0 + x | g)}$|  Uncorrelated random intercept and slope|
 **Table 1:** Examples of the right-hand-sides of mixed effects model formulas. $g$, $g1$, $g2$ are grouping factors, covariates and *a priori* known offsets are $x$ and $o$.
 
 :::
@@ -188,13 +189,13 @@ __Extracting random effects with lme4__
 
 In models fitted with __lme4__, there are some key functions to keep in mind for extracting different parts of the model.  
 
-- `fixef()` gives us the fixed effects (in Figure \@ref(fig:mlmfrc) this is the intercept and slope of the blue line).  
-- `ranef()` gives us the group-level deviations from the fixed effects (in Figure \@ref(fig:mlmfrc), this is the differences from each of the green lines to the blue line, and these are denoted by $\zeta_{0i}$ and $\zeta_{1i}$).  
-- `coef()` gives us the intercepts and slopes of the group-level effects (in Figure \@ref(fig:mlmfrc), these are the intercepts and slopes of the green lines). We can also get to these because `fixef() + ranef() = coef()`.  
+- `fixef()` gives us the fixed effects (in Figure \@ref(fig:mlmfrc) this is the intercept and slope of the blue line: $\color{blue}{\gamma_{00}}$ and $\color{blue}{\gamma_{10}}$, respectively).  
+- `ranef()` gives us the group-level deviations from the fixed effects (in Figure \@ref(fig:mlmfrc), this is the differences from each of the green lines to the blue line, and these are denoted by $\color{red}{\zeta_{0i}}$ and $\color{red}{\zeta_{1i}}$).  
+- `coef()` gives us the intercepts and slopes of the group-level effects (in Figure \@ref(fig:mlmfrc), these are the intercepts and slopes of the green lines, $\color{green}{\beta_{0i}$ and $\color{green}{\beta_{1i}$). We can also get to these because `fixef() + ranef() = coef()`.  
 - `VarCorr()` will give us the estimated variance and standard deviation of the random effects (what we get from `ranef()`). 
 
 
-```{r mlmfrc, echo=FALSE,fig.cap="multilevel model with group i highlighted"}
+```{r mlmfrc, echo=FALSE, out.width = "95%", fig.cap="multilevel model with group $i$ highlighted"}
 knitr::include_graphics("images/lmmwodot.png")
 ```
 
@@ -218,7 +219,7 @@ __Q:__ What is the estimated reading age for sock puppets with zero hours of pra
 ```{r}
 coef(rs_model)
 ```
-__A:__ Sock puppets with zero practice are estimated to have a reading age of 1.2, which increases by 0.81 for every hour of practice per week. 
+__A:__ Sock puppets with zero practice are estimated to have a reading age of 1.23, which increases by 0.81 for every hour of practice per week. 
 ```{r echo=FALSE, out.width="100px",fig.align="center"}
 knitr::include_graphics("images/sockpuppet.gif")
 ```
@@ -233,7 +234,7 @@ knitr::include_graphics("images/sockpuppet.gif")
 When we start to move to more complex random effect structures, issues of "singular fits" and "non-convergence" become ever more relevant. We've already talked about singular fits (see the [Week 2 exercises](02_lmm_log.html)), but we haven't said much about how to deal with non-convergence.  
 It may help to look back on [Week 1's section on estimation](01_intromlm.html#estimation).  
 
-Issues of non-convergence can be caused by many things. If you're model doesn't converge, it does *not necessarily* mean the fit is incorrect, however it is **is cause for concern**, and should be addressed, else you may end up reporting inferences which do not hold.
+Issues of non-convergence can be caused by many things. If you're model doesn't converge, it does *not necessarily* mean the fit is incorrect, however **it is cause for concern**, and should be addressed, else you may end up reporting inferences which do not hold.
 
 There are lots of different things which you could do which *might* help your model to converge. A select few are detailed below:  
 
@@ -252,8 +253,10 @@ There are lots of different things which you could do which *might* help your mo
     `glmer(..., control = glmerControl(optimizer="bobyqa"))`  
 
 - Increase the number of optimization steps:
-    `lmer(..., control = lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=50000))`  
-    `glmer(..., control = glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=50000))`  
+    ```
+    lmer(..., control = lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=50000))
+    glmer(..., control = glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=50000))
+    ```
 
 - Use `allFit()` to try the fit with all available optimizers. This will of course be slow, but is considered 'the gold standard'; *"if all optimizers converge to values that are practically equivalent, then we would consider the convergence warnings to be false positives."*  
 
@@ -268,9 +271,9 @@ There are lots of different things which you could do which *might* help your mo
 
 Hopefully by now you are getting comfortable with the idea that all our models are simplifications, and so there is always going to be some difference between a model and real-life. This difference - the _residual_ - will hopefully just be randomness, and we assess this by checking for systematic patterns in the residual term.  
 
-Not much is different in the multilevel model - we simply now have "residuals" on multiple levels. We are assuming that our group-level differences represent one level of randomness, and that our observations represent another level. We can see these two levels in Figure \@ref(fig:lmmfigres), with the group-level deviations from the fixed effects ($\zeta_{0i}$ and $\zeta_{1i}$) along with the observation-level deviations from that groups line ($\varepsilon_{ij}$).  
+Not much is different in the multilevel model - we simply now have "residuals" on multiple levels. We are assuming that our group-level differences represent one level of randomness, and that our observations represent another level. We can see these two levels in Figure \@ref(fig:lmmfigres), with the group-level deviations from the fixed effects ($\color{red}{\zeta_{0i}}$ and $\color{red}{\zeta_{1i}}$) along with the observation-level deviations from that groups line ($\color{red}{\varepsilon_{ij}}$).  
 
-```{r lmmfigres, echo=FALSE, fig.cap="Multilevel model with group i highlighted"}
+```{r lmmfigres, echo=FALSE, out.width = "95%", fig.cap="Multilevel model with group $i$ highlighted"}
 knitr::include_graphics("images/lmmwdot.png")
 ```
 
@@ -292,6 +295,7 @@ _(we want the blue smoothed line to be fairly close to zero across the plot)_
 - We can construct a scale-location plot. This is where the square-root of the absolute value of the standardised residuals is plotted against the fitted values, and allows you to more easily assess the assumption of constant variance.  
 _(we want the blue smoothed line to be close to horizontal across the plot)_  
     ```{r}
+    # "p" below is for points and "smooth" for the smoothed line
     plot(rs_model,
          form = sqrt(abs(resid(.))) ~ fitted(.),
          type = c("p","smooth"))
@@ -403,7 +407,8 @@ Which toy in the dataset has the greatest influence on our model?
 **Hint:** as well as `hlm_influence()` in the __HLMdiag__ package there is another nice function, `hlm_augment()`
 
 :::imp
-We can often end up in confusion because the $i^{th}$ observation inputted to our model (and therefore the $i^{th}$ observation of `hlm_influence()` output) **might not be** the $i^{th}$ observation in our original dataset - there may be missing data! 
+We can often end up in confusion because the $i$th observation inputted to our model (and therefore the $i$th observation of `hlm_influence()` output) **might not be** the $i$th observation in our original dataset - there may be missing data! 
+To ensure they match, you can clean the data before doing the modelling, by dropping the rows where you have NAs in the variables you will use in the model.
 :::
 
 (Luckily, we have no missing data in the Toy dataset). 
@@ -423,9 +428,11 @@ knitr::include_graphics("images/ace.png")
 For which toy is the model fit the worst (i.e., who has the highest residual?)
 
 ```{r}
-hlm_augment(rs_model, level=1) %>% arrange(desc(abs(.resid)))
+hlm_augment(rs_model, level=1) %>% 
+    arrange(desc(abs(.resid)))
 toys_read[93, ]
 ```
+
 ```{r echo=FALSE, out.width="100px",fig.align="center"}
 knitr::include_graphics("images/coldfront.png")
 ```
@@ -436,7 +443,8 @@ Which _type_ of toy has the greatest influence on our model?
 
 Either this way:
 ```{r}
-hlm_augment(rs_model, level="toy_type") %>% arrange(desc(cooksd))
+hlm_augment(rs_model, level="toy_type") %>% 
+    arrange(desc(cooksd))
 ```
 Or the plot. Note, the __only__ reason we using the `cutoff = .15` is to make the labels appear.
 ```{r}
@@ -463,9 +471,11 @@ load(url("https://uoepsy.github.io/msmr/data/tx.Rdata"))
 You can find a data dictionary below:
 ```{r, echo=FALSE}
 tibble(
-  variable = names(tx),
-  description = c("Whether the participant is in the Treatment or Control group","Session number (1-7)","Therapist Identifier (A, B, C, D or E", "Score on test (Mean = 0.63, SD = 0.15)","Participant Identifier. Labels take the form <Therapist>_<Group>_<Participant number>. For instance, if Therapist A's 6th Participant is in the Treatment group, then their label is A_treatment_6")
-) %>% knitr::kable()
+    variable = names(tx),
+    description = c("Whether the participant is in the Treatment or Control group","Session number (1-7)","Therapist Identifier (A, B, C, D or E", "Score on test (Mean = 0.63, SD = 0.15)","Participant Identifier. Labels take the form <Therapist>_<Group>_<Participant number>. For instance, if Therapist A's 6th Participant is in the Treatment group, then their label is A_treatment_6")
+) %>% 
+    kableExtra::kbl() %>%
+    kableExtra::kable_styling(full_width = FALSE)
 ```
 
 :::
@@ -622,7 +632,9 @@ load(url("https://uoepsy.github.io/data/testenhancedlearning.RData"))
 tibble(
   variable=names(tel),
   description=c("Unique Participant Identifier", "Group denoting whether the participant studied the material twice (StudyStudy), or studied it once then did a test (StudyTest)","Time of recall test ('min' = Immediate, 'week' = One week later)","Word being recalled (175 different test words)","Whether or not the word was correctly recalled","Time to recall word (milliseconds)")
-) %>% knitr::kable()
+) %>% 
+    kableExtra::kbl() %>%
+    kableExtra::kable_styling(full_width = FALSE)
 ```
 
 :::
@@ -635,7 +647,7 @@ Load and plot the data. Does it look like the effect was replicated?
 We have a choice to make - whether we focus on recall time or on the correct responses. The choice is yours to make! 
 
 You can make use of `stat_summary()` again! 
-```{r, eval=FALSE}
+```{r, eval=T}
 ggplot(tel, aes(Delay, Rtime, col=Group)) + 
   stat_summary(fun.data=mean_se, geom="pointrange")+
   theme_light()
@@ -657,7 +669,7 @@ That looks like test-enhanced learning to me!
 
 
 Let's also do it quickly for the proportion of correct responses:
-```{r, eval=FALSE}
+```{r, eval=T}
 ggplot(tel, aes(Delay, Correct, col=Group)) + 
   stat_summary(fun.data=mean_se, geom="pointrange")+
   theme_light()
@@ -706,7 +718,7 @@ What we're aiming to do here is to follow [Barr et al.'s](https://doi.org/10.101
 *Tip:* you can look at the variance estimates and correlations easily by using the `VarCorr()` function. What jumps out?  
 `r qend()` 
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-There's a correlation of .999 for some of the random effects by-item!
+There's a correlation of 0.972 for the by-word interaction random effect:
 ```{r}
 VarCorr(m)
 ```
@@ -720,7 +732,7 @@ m1 <- lmer(Rtime ~ Delay*Group +
 VarCorr(m1)
 isSingular(m1)
 ```
-We still have a singular fit here, and the correlation is just slightly different (0.998). Thinking about the study, if we are going to remove __one__ of the by-testword random effects (`Delay` or `Group`), which one do we consider to be more theoretically justified? Is the effect of Delay likely to vary by test-words? More so than the effect of group is likely to vary by test-words? Quite possibly - there's no obvious reason for _certain_ words to be more memorable for people in one group vs another. But there is reason for words to vary in the effect that delay of one week has - how familiar a word is will likely influence the amount to which a week's delay has on recall.   
+We still have a singular fit here. Thinking about the study, if we are going to remove __one__ of the by-testword random effects (`Delay` or `Group`), which one do we consider to be more theoretically justified? Is the effect of Delay likely to vary by test-words? More so than the effect of group is likely to vary by test-words? Quite possibly - there's no obvious reason for _certain_ words to be more memorable for people in one group vs another. But there is reason for words to vary in the effect that delay of one week has - how familiar a word is will likely influence the amount to which a week's delay has on recall.   
 
 Let's remove the by-testword random effect of group. 
 ```{r}
@@ -802,7 +814,7 @@ tibble(variable = names(bnt),
 
 `r qbegin("C1")`
 Fit a model examining the interaction between the effects of school year and mono/bilingual teaching on word retrieval, with random intercepts only for children and schools.  
-**tip:** make sure your variables are of the right type first - e.g. numeric, factor etc  
+**Tip:** make sure your variables are of the right type first - e.g. numeric, factor etc  
 <br>
 Examine the fit and consider your model assumptions, and assess what might be done to improve the model in order to make better statistical inferences. 
 `r qend()`

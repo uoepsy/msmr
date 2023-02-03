@@ -677,6 +677,7 @@ c) For the cADL Task, how does performance change for every increasing time poin
 d) For the sADL Task, how is the change in performance over time different from the cADL Task? 
 e) The answer to c) + the answer to d) will give you the estimated slope for the sADL Task.
 f) For the Memory Task, how is the change in performance over time different from the cADL Task? 
+g) For the Memory task, how does performance change for every increasing time point? In other words, what is the slope for the Memory task and what effect does time have?
     - This is more difficult. The quadratic term is significant. 
     - Recall the direction of the quadratic term (positive/negative) and how this relates to the visual curvature (see back in ["What's a polynomial?"](#whats-a-polynomial)). 
     
@@ -696,7 +697,10 @@ e) The answer to c) + the answer to d) will give you the estimated slope for the
     - __`r fixef(m.Az.full)[2] %>% round(.,2)` + `r fixef(m.Az.full)[6] %>% round(.,2)` = `r fixef(m.Az.full)[2] + fixef(m.Az.full)[6] %>% round(.,2)`__
     - __For every increase in one timepoint, sADL performance changes by `r (fixef(m.Az.full)[2] + fixef(m.Az.full)[6]) %>% round(.,2)`__
 f) For the Memory Task, how is the change in performance over time different from the cADL Task? 
-    - __Memory performance declines even more steeply than cADL, with linear change of `r fixef(m.Az.full)[2] %>% round(.,2)` + `r fixef(m.Az.full)[7] %>% round(.,2)` = `r fixef(m.Az.full)[2] + fixef(m.Az.full)[7] %>% round(.,2)`, but it also has a quadratic effect of `r fixef(m.Az.full)[9] %>% round(.,2)`. This is positive, which means it is $\cup$-shaped (rather than $\cap$-shaped).___ 
+    - __1.24__. 
+    - __This is the coefficient fir `TaskMemory`__
+g) For the Memory task, how does performance change for every increasing time point? In other words, what is the slope for the Memory task and what effect does time have?
+    - __Memory performance declines even more steeply than cADL, with linear change of `r fixef(m.Az.full)[2] %>% round(.,2)` + `r fixef(m.Az.full)[7] %>% round(.,2)` = `r (fixef(m.Az.full)[2] + fixef(m.Az.full)[7]) %>% round(.,2)`, but it also has a quadratic effect of `r fixef(m.Az.full)[9] %>% round(.,2)`. This is positive, which means it is $\cup$-shaped (rather than $\cap$-shaped).___ 
     
 `r solend()`
 
