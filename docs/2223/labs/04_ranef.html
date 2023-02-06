@@ -34,6 +34,8 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 <script>
@@ -440,9 +442,9 @@ div.tocify {
 <li><a href="https://doi.org/10.1016/j.jml.2017.01.001">Matuschek et al., 2017</a></li>
 </ul>
 </div>
-<div class="imp">
-<p>Now that we’ve had a few weeks to get used to the syntax of <strong>lme4</strong>, we’re going to hide the solutions again until the end of the week.</p>
-</div>
+<!-- :::imp -->
+<!-- Now that we've had a few weeks to get used to the syntax of __lme4__, we're going to hide the solutions again until the end of the week.  -->
+<!-- ::: -->
 <div id="random-effects" class="section level1">
 <h1>Random effects</h1>
 <div id="what-are-random-effects" class="section level2">
@@ -588,33 +590,33 @@ Tasks are seen by multiple participants (and participants see multiple tasks).</
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right"><span class="math inline">\(\text{(1 | g)}\)</span></td>
-<td align="right"><span class="math inline">\(\text{1 + (1 | g)}\)</span></td>
+<td align="right"><span class="math inline">\(\text{y ~ (1 | g)}\)</span></td>
+<td align="right"><span class="math inline">\(\text{y ~ 1 + (1 | g)}\)</span></td>
 <td align="right">Random intercept with fixed mean</td>
 </tr>
 <tr class="even">
-<td align="right"><span class="math inline">\(\text{0 + offset(o) + (1 | g)}\)</span></td>
-<td align="right"><span class="math inline">\(\text{-1 + offset(o) + (1 | g)}\)</span></td>
+<td align="right"><span class="math inline">\(\text{y ~ 0 + offset}(o)\text{ + (1 | g)}\)</span></td>
+<td align="right"><span class="math inline">\(\text{y ~ -1 + offset}(o)\text{ + (1 | g)}\)</span></td>
 <td align="right">Random intercept with <em>a priori</em> means</td>
 </tr>
 <tr class="odd">
-<td align="right"><span class="math inline">\(\text{(1 | g1/g2)}\)</span></td>
-<td align="right"><span class="math inline">\(\text{(1 | g1) + (1 | g1:g2)}\)</span></td>
+<td align="right"><span class="math inline">\(\text{y ~ (1 | g1/g2)}\)</span></td>
+<td align="right"><span class="math inline">\(\text{y ~ (1 | g1) + (1 | g1:g2)}\)</span></td>
 <td align="right">Intercept varying among <span class="math inline">\(g1\)</span> and <span class="math inline">\(g2\)</span> within <span class="math inline">\(g1\)</span></td>
 </tr>
 <tr class="even">
-<td align="right"><span class="math inline">\(\text{(1 | g1) + (1 | g2)}\)</span></td>
-<td align="right"><span class="math inline">\(\text{1 + (1 | g1) + (1 | g2)}\)</span></td>
+<td align="right"><span class="math inline">\(\text{y ~ (1 | g1) + (1 | g2)}\)</span></td>
+<td align="right"><span class="math inline">\(\text{y ~ 1 + (1 | g1) + (1 | g2)}\)</span></td>
 <td align="right">Intercept varying among <span class="math inline">\(g1\)</span> and <span class="math inline">\(g2\)</span></td>
 </tr>
 <tr class="odd">
-<td align="right"><span class="math inline">\(\text{x + (x | g)}\)</span></td>
-<td align="right"><span class="math inline">\(\text{1 + x + (1 + x | g)}\)</span></td>
+<td align="right"><span class="math inline">\(\text{y ~ x + (x | g)}\)</span></td>
+<td align="right"><span class="math inline">\(\text{y ~ 1 + x + (1 + x | g)}\)</span></td>
 <td align="right">Correlated random intercept and slope</td>
 </tr>
 <tr class="even">
-<td align="right"><span class="math inline">\(\text{x + (x || g)}\)</span></td>
-<td align="right"><span class="math inline">\(\text{1 + x + (x | g) + (0 + x | g)}\)</span></td>
+<td align="right"><span class="math inline">\(\text{y ~ x + (x || g)}\)</span></td>
+<td align="right"><span class="math inline">\(\text{y ~ 1 + x + (x | g) + (0 + x | g)}\)</span></td>
 <td align="right">Uncorrelated random intercept and slope</td>
 </tr>
 </tbody>
@@ -625,18 +627,18 @@ Tasks are seen by multiple participants (and participants see multiple tasks).</
 <p><strong>Extracting random effects with lme4</strong></p>
 <p>In models fitted with <strong>lme4</strong>, there are some key functions to keep in mind for extracting different parts of the model.</p>
 <ul>
-<li><code>fixef()</code> gives us the fixed effects (in Figure <a href="#fig:mlmfrc">1</a> this is the intercept and slope of the blue line).<br />
+<li><code>fixef()</code> gives us the fixed effects (in Figure <a href="#fig:mlmfrc">1</a> this is the intercept and slope of the blue line: <span class="math inline">\(\color{blue}{\gamma_{00}}\)</span> and <span class="math inline">\(\color{blue}{\gamma_{10}}\)</span>, respectively).<br />
 </li>
-<li><code>ranef()</code> gives us the group-level deviations from the fixed effects (in Figure <a href="#fig:mlmfrc">1</a>, this is the differences from each of the green lines to the blue line, and these are denoted by <span class="math inline">\(\zeta_{0i}\)</span> and <span class="math inline">\(\zeta_{1i}\)</span>).<br />
+<li><code>ranef()</code> gives us the group-level deviations from the fixed effects (in Figure <a href="#fig:mlmfrc">1</a>, this is the differences from each of the green lines to the blue line, and these are denoted by <span class="math inline">\(\color{red}{\zeta_{0i}}\)</span> and <span class="math inline">\(\color{red}{\zeta_{1i}}\)</span>).<br />
 </li>
-<li><code>coef()</code> gives us the intercepts and slopes of the group-level effects (in Figure <a href="#fig:mlmfrc">1</a>, these are the intercepts and slopes of the green lines). We can also get to these because <code>fixef() + ranef() = coef()</code>.<br />
+<li><code>coef()</code> gives us the intercepts and slopes of the group-level effects (in Figure <a href="#fig:mlmfrc">1</a>, these are the intercepts and slopes of the green lines, <span class="math inline">\(\color{green}{\beta_{0i}\)</span> and <span class="math inline">\(\color{green}{\beta_{1i}\)</span>). We can also get to these because <code>fixef() + ranef() = coef()</code>.<br />
 </li>
 <li><code>VarCorr()</code> will give us the estimated variance and standard deviation of the random effects (what we get from <code>ranef()</code>).</li>
 </ul>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:mlmfrc"></span>
-<img src="images/lmmwodot.png" alt="multilevel model with group i highlighted" width="80%" />
+<img src="images/lmmwodot.png" alt="multilevel model with group $i$ highlighted" width="95%" />
 <p class="caption">
-Figure 1: multilevel model with group i highlighted
+Figure 1: multilevel model with group <span class="math inline">\(i\)</span> highlighted
 </p>
 </div>
 </div>
@@ -704,7 +706,7 @@ rs_model &lt;- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toy
 ## 
 ## attr(,&quot;class&quot;)
 ## [1] &quot;coef.mer&quot;</code></pre>
-<p><strong>A:</strong> Sock puppets with zero practice are estimated to have a reading age of 1.2, which increases by 0.81 for every hour of practice per week.
+<p><strong>A:</strong> Sock puppets with zero practice are estimated to have a reading age of 1.23, which increases by 0.81 for every hour of practice per week.
 <img src="images/sockpuppet.gif" width="100px" style="display: block; margin: auto;" /></p>
 </div>
 <p class="optional-end">
@@ -718,7 +720,7 @@ rs_model &lt;- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toy
 <div class="rtip">
 <p>When we start to move to more complex random effect structures, issues of “singular fits” and “non-convergence” become ever more relevant. We’ve already talked about singular fits (see the <a href="02_lmm_log.html">Week 2 exercises</a>), but we haven’t said much about how to deal with non-convergence.<br />
 It may help to look back on <a href="01_intromlm.html#estimation">Week 1’s section on estimation</a>.</p>
-<p>Issues of non-convergence can be caused by many things. If you’re model doesn’t converge, it does <em>not necessarily</em> mean the fit is incorrect, however it is <strong>is cause for concern</strong>, and should be addressed, else you may end up reporting inferences which do not hold.</p>
+<p>Issues of non-convergence can be caused by many things. If you’re model doesn’t converge, it does <em>not necessarily</em> mean the fit is incorrect, however <strong>it is cause for concern</strong>, and should be addressed, else you may end up reporting inferences which do not hold.</p>
 <p>There are lots of different things which you could do which <em>might</em> help your model to converge. A select few are detailed below:</p>
 <ul>
 <li><p>double-check the model specification and the data</p></li>
@@ -737,8 +739,7 @@ Figure 2: An optimizer will stop after a certain number of iterations, or when i
 <code>lmer(..., control = lmerControl(optimizer="bobyqa"))</code><br />
 <code>glmer(..., control = glmerControl(optimizer="bobyqa"))</code></p></li>
 <li><p>Increase the number of optimization steps:
-<code>lmer(..., control = lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=50000))</code><br />
-<code>glmer(..., control = glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=50000))</code></p></li>
+<code>lmer(..., control = lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=50000))     glmer(..., control = glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=50000))</code></p></li>
 <li><p>Use <code>allFit()</code> to try the fit with all available optimizers. This will of course be slow, but is considered ‘the gold standard’; <em>“if all optimizers converge to values that are practically equivalent, then we would consider the convergence warnings to be false positives.”</em></p></li>
 <li><p>Consider simplifying your model, for example by removing random effects with the smallest variance (but be careful to not simplify more than necessary, and ensure that your write up details these changes)</p></li>
 </ul>
@@ -748,11 +749,11 @@ Figure 2: An optimizer will stop after a certain number of iterations, or when i
 <h2>Assumptions</h2>
 <div class="statbox">
 <p>Hopefully by now you are getting comfortable with the idea that all our models are simplifications, and so there is always going to be some difference between a model and real-life. This difference - the <em>residual</em> - will hopefully just be randomness, and we assess this by checking for systematic patterns in the residual term.</p>
-<p>Not much is different in the multilevel model - we simply now have “residuals” on multiple levels. We are assuming that our group-level differences represent one level of randomness, and that our observations represent another level. We can see these two levels in Figure <a href="#fig:lmmfigres">3</a>, with the group-level deviations from the fixed effects (<span class="math inline">\(\zeta_{0i}\)</span> and <span class="math inline">\(\zeta_{1i}\)</span>) along with the observation-level deviations from that groups line (<span class="math inline">\(\varepsilon_{ij}\)</span>).</p>
+<p>Not much is different in the multilevel model - we simply now have “residuals” on multiple levels. We are assuming that our group-level differences represent one level of randomness, and that our observations represent another level. We can see these two levels in Figure <a href="#fig:lmmfigres">3</a>, with the group-level deviations from the fixed effects (<span class="math inline">\(\color{red}{\zeta_{0i}}\)</span> and <span class="math inline">\(\color{red}{\zeta_{1i}}\)</span>) along with the observation-level deviations from that groups line (<span class="math inline">\(\color{red}{\varepsilon_{ij}}\)</span>).</p>
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:lmmfigres"></span>
-<img src="images/lmmwdot.png" alt="Multilevel model with group i highlighted" width="80%" />
+<img src="images/lmmwdot.png" alt="Multilevel model with group $i$ highlighted" width="95%" />
 <p class="caption">
-Figure 3: Multilevel model with group i highlighted
+Figure 3: Multilevel model with group <span class="math inline">\(i\)</span> highlighted
 </p>
 </div>
 </div>
@@ -770,7 +771,8 @@ rs_model &lt;- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week | toy_type), data = toy
 <p><img src="04_ranef_files/figure-html/unnamed-chunk-10-1.png" width="80%" style="display: block; margin: auto;" /></p></li>
 <li><p>We can construct a scale-location plot. This is where the square-root of the absolute value of the standardised residuals is plotted against the fitted values, and allows you to more easily assess the assumption of constant variance.<br />
 <em>(we want the blue smoothed line to be close to horizontal across the plot)</em></p>
-<pre class="r"><code>plot(rs_model,
+<pre class="r"><code># &quot;p&quot; below is for points and &quot;smooth&quot; for the smoothed line
+plot(rs_model,
      form = sqrt(abs(resid(.))) ~ fitted(.),
      type = c(&quot;p&quot;,&quot;smooth&quot;))</code></pre>
 <p><img src="04_ranef_files/figure-html/unnamed-chunk-11-1.png" width="80%" style="display: block; margin: auto;" /></p></li>
@@ -842,7 +844,8 @@ Figure 4: Influence in MLM
 <p>Which toy in the dataset has the greatest influence on our model?</p>
 <p><strong>Hint:</strong> as well as <code>hlm_influence()</code> in the <strong>HLMdiag</strong> package there is another nice function, <code>hlm_augment()</code></p>
 <div class="imp">
-<p>We can often end up in confusion because the <span class="math inline">\(i^{th}\)</span> observation inputted to our model (and therefore the <span class="math inline">\(i^{th}\)</span> observation of <code>hlm_influence()</code> output) <strong>might not be</strong> the <span class="math inline">\(i^{th}\)</span> observation in our original dataset - there may be missing data!</p>
+<p>We can often end up in confusion because the <span class="math inline">\(i\)</span>th observation inputted to our model (and therefore the <span class="math inline">\(i\)</span>th observation of <code>hlm_influence()</code> output) <strong>might not be</strong> the <span class="math inline">\(i\)</span>th observation in our original dataset - there may be missing data!
+To ensure they match, you can clean the data before doing the modelling, by dropping the rows where you have NAs in the variables you will use in the model.</p>
 </div>
 <p>(Luckily, we have no missing data in the Toy dataset).</p>
 <pre class="r"><code>library(HLMdiag)
@@ -870,7 +873,8 @@ dotplot_diag(l1_inf$cooksd, cutoff=&quot;internal&quot;)+
 <p>Greatest influence:
 <img src="images/ace.png" width="100px" style="display: block; margin: auto;" /></p>
 <p>For which toy is the model fit the worst (i.e., who has the highest residual?)</p>
-<pre class="r"><code>hlm_augment(rs_model, level=1) %&gt;% arrange(desc(abs(.resid)))</code></pre>
+<pre class="r"><code>hlm_augment(rs_model, level=1) %&gt;% 
+    arrange(desc(abs(.resid)))</code></pre>
 <pre><code>## # A tibble: 132 × 15
 ##       id  R_AGE hrs_week toy_type .resid .fitted .ls.r…¹ .ls.f…² .mar.…³ .mar.…⁴
 ##    &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;     &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
@@ -902,7 +906,8 @@ dotplot_diag(l1_inf$cooksd, cutoff=&quot;internal&quot;)+
 <div id="opt-body-60" class="optional-body" style="display: none;">
 <p>Which <em>type</em> of toy has the greatest influence on our model?</p>
 <p>Either this way:</p>
-<pre class="r"><code>hlm_augment(rs_model, level=&quot;toy_type&quot;) %&gt;% arrange(desc(cooksd))</code></pre>
+<pre class="r"><code>hlm_augment(rs_model, level=&quot;toy_type&quot;) %&gt;% 
+    arrange(desc(cooksd))</code></pre>
 <pre><code>## # A tibble: 20 × 10
 ##    toy_type      .rane…¹ .rane…² .ls.i…³ .ls.h…⁴  cooksd mdffits covtr…⁵ covra…⁶
 ##    &lt;chr&gt;           &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
@@ -947,7 +952,7 @@ dotplot_diag(inftoytype$cooksd, index=inftoytype$toy_type, cutoff=.15) +
 <p>The following code will load in your R session an object already called <code>tx</code> with the data:</p>
 <pre class="r"><code>load(url(&quot;https://uoepsy.github.io/msmr/data/tx.Rdata&quot;))</code></pre>
 You can find a data dictionary below:
-<table>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
 <th style="text-align:left;">
@@ -1219,7 +1224,7 @@ summary(sumfits)</code></pre>
 <p>The critical (replication) prediction is that the <code>StudyStudy</code> group should perform somewhat better on the immediate recall test, but the <code>StudyTest</code> group will retain the material better and thus perform better on the 1-week follow-up test.</p>
 <p>The following code loads the data into your R environment by creating a variable called <code>tel</code>:</p>
 <pre class="r"><code>load(url(&quot;https://uoepsy.github.io/data/testenhancedlearning.RData&quot;))</code></pre>
-<table>
+<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
 <th style="text-align:left;">
@@ -1299,7 +1304,8 @@ Question B1
 <pre class="r"><code>ggplot(tel, aes(Delay, Rtime, col=Group)) + 
   stat_summary(fun.data=mean_se, geom=&quot;pointrange&quot;)+
   theme_light()</code></pre>
-<p>It’s more work, but some people might rather calculate the numbers and then plot them directly. It does just the same thing:</p>
+<p><img src="04_ranef_files/figure-html/unnamed-chunk-35-1.png" width="80%" style="display: block; margin: auto;" />
+It’s more work, but some people might rather calculate the numbers and then plot them directly. It does just the same thing:</p>
 <pre class="r"><code>tel %&gt;% 
   group_by(Delay, Group) %&gt;%
   summarise(
@@ -1316,6 +1322,7 @@ That looks like test-enhanced learning to me!</p>
 <pre class="r"><code>ggplot(tel, aes(Delay, Correct, col=Group)) + 
   stat_summary(fun.data=mean_se, geom=&quot;pointrange&quot;)+
   theme_light()</code></pre>
+<p><img src="04_ranef_files/figure-html/unnamed-chunk-37-1.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
 <p class="solution-end">
 </p>
@@ -1370,7 +1377,7 @@ What we’re aiming to do here is to follow <a href="https://doi.org/10.1016/j.j
 <span id="sol-start-66" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-66&#39;, &#39;sol-start-66&#39;)"> Solution </span>
 </div>
 <div id="sol-body-66" class="solution-body" style="display: none;">
-<p>There’s a correlation of .999 for some of the random effects by-item!</p>
+<p>There’s a correlation of 0.972 for the by-word interaction random effect:</p>
 <pre class="r"><code>VarCorr(m)</code></pre>
 <pre><code>##  Groups     Name                     Std.Dev. Corr                
 ##  Test_word  (Intercept)               17.8642                     
@@ -1395,7 +1402,7 @@ VarCorr(m1)</code></pre>
 ##  Residual                  240.3436</code></pre>
 <pre class="r"><code>isSingular(m1)</code></pre>
 <pre><code>## [1] TRUE</code></pre>
-<p>We still have a singular fit here, and the correlation is just slightly different (0.998). Thinking about the study, if we are going to remove <strong>one</strong> of the by-testword random effects (<code>Delay</code> or <code>Group</code>), which one do we consider to be more theoretically justified? Is the effect of Delay likely to vary by test-words? More so than the effect of group is likely to vary by test-words? Quite possibly - there’s no obvious reason for <em>certain</em> words to be more memorable for people in one group vs another. But there is reason for words to vary in the effect that delay of one week has - how familiar a word is will likely influence the amount to which a week’s delay has on recall.</p>
+<p>We still have a singular fit here. Thinking about the study, if we are going to remove <strong>one</strong> of the by-testword random effects (<code>Delay</code> or <code>Group</code>), which one do we consider to be more theoretically justified? Is the effect of Delay likely to vary by test-words? More so than the effect of group is likely to vary by test-words? Quite possibly - there’s no obvious reason for <em>certain</em> words to be more memorable for people in one group vs another. But there is reason for words to vary in the effect that delay of one week has - how familiar a word is will likely influence the amount to which a week’s delay has on recall.</p>
 <p>Let’s remove the by-testword random effect of group.</p>
 <pre class="r"><code>m2 &lt;- lmer(Rtime ~ Delay*Group +
              (1 + Delay | Subject_ID) +
@@ -1554,7 +1561,7 @@ Question C1
 </div>
 <div class="question-body">
 <p>Fit a model examining the interaction between the effects of school year and mono/bilingual teaching on word retrieval, with random intercepts only for children and schools.<br />
-<strong>tip:</strong> make sure your variables are of the right type first - e.g. numeric, factor etc<br />
+<strong>Tip:</strong> make sure your variables are of the right type first - e.g. numeric, factor etc<br />
 <br>
 Examine the fit and consider your model assumptions, and assess what might be done to improve the model in order to make better statistical inferences.</p>
 </div>
@@ -1917,7 +1924,7 @@ $(document).ready(function ()  {
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "site_libs/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>

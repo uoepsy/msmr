@@ -204,8 +204,9 @@ cbind(x=1:5,`x^2`=rep("?",5),`x^3`=rep("?",5)) %>% rbind("...") %>%
 poly(1:10, degree = 3, raw=TRUE)
 ```
 
-:::statbox
-__Raw polynomials are correlated__  
+
+<div style="background-color: #eafaff; border-radius: 5px; padding: 20px 20px 10px 20px; margin-top: 20px; margin-bottom: 20px;">
+**Raw polynomials are correlated**  
 
 With raw (or "natural") polynomials, the terms `poly1`, `poly2` and `poly3` are correlated.  
 Think think about why this might be - by definition, as $x^1$ increases, so will $x^2$, and so will $x^3$ and so on.  
@@ -246,12 +247,11 @@ full_join(
                     rename(`y~poly1+poly2+poly3` = estimate)
 ) %>% mutate_if(is.numeric,~round(.,2)) %>% 
     mutate_all(~ifelse(is.na(.), "-", .)) %>% 
-    kableExtra::kable(caption = "Incremental addition of raw polynomial terms") %>%
+    kableExtra::kbl(caption = "Incremental addition of raw polynomial terms") %>%
     kableExtra::kable_styling(full_width = FALSE)
-
 ```
 
-:::
+</div>
 
 ## Orthogonal Polynomials  
 
@@ -440,7 +440,7 @@ load(url("https://uoepsy.github.io/data/Az.rda"))
 
 tibble(
     variable = names(Az),
-    description = c("Unique Subject Identifier","Time point of the study (0 to 10)","Task type (Memory, cADL, sADL)","Score on test")
+    description = c("Unique Subject Identifier","Time point of the study (1 to 10)","Task type (Memory, cADL, sADL)","Score on test")
 ) %>% 
     kableExtra::kable() %>%
     kableExtra::kable_styling(full_width = FALSE)
@@ -556,7 +556,7 @@ m.base <- lmer(Performance ~ (poly1 + poly2) +
 
 Remember what we learned last week about "singular fits"? It looks like this model might be a too complex for the data to sustain. 
 
-What random effect term might we consider removing? (there isn't necessarily a "right" answer here - many may be defensible, so we've made the solutions available immediately).  
+What random effect term might we consider removing? (there isn't necessarily a "right" answer here - many may be defensible, but your decision should be based on multiple considerations/evidence).  
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 I would be inclined to remove the `poly2` term from either subjects, or tasks within subjects. I probably wouldn't try removing it from both straight away, so we'll need to split the random effect terms from `(1 + poly1 + poly2| Subject/Task)` to `(1 + poly1 | Subject) + (1 + poly1 + poly2 | Subject:Task)`.  
@@ -663,7 +663,7 @@ tidy(m.full_satter) %>%
 tidy(m.full_satter) %>% 
     filter(effect=="fixed") %>% 
     mutate_if(is.numeric,~round(.,3)) %>%
-    mutate(p.value = ifelse(p.value == 0, "<.001 ***", as.character(gsub("0","",p.value)))) %>%
+    mutate(p.value = ifelse(p.value == 0, "<.001 ***", as.character(str_replace(p.value, "0.",".")))) %>%
     mutate_if(is.numeric,~round(.,2)) %>% select(-effect,-group) %>% 
     kableExtra::kable() %>%
     kableExtra::kable_styling(full_width = FALSE)
@@ -677,6 +677,7 @@ c) For the cADL Task, how does performance change for every increasing time poin
 d) For the sADL Task, how is the change in performance over time different from the cADL Task? 
 e) The answer to c) + the answer to d) will give you the estimated slope for the sADL Task.
 f) For the Memory Task, how is the change in performance over time different from the cADL Task? 
+g) For the Memory task, how does performance change for every increasing time point? In other words, what is the slope for the Memory task and what effect does time have?
     - This is more difficult. The quadratic term is significant. 
     - Recall the direction of the quadratic term (positive/negative) and how this relates to the visual curvature (see back in ["What's a polynomial?"](#whats-a-polynomial)). 
     
@@ -696,7 +697,10 @@ e) The answer to c) + the answer to d) will give you the estimated slope for the
     - __`r fixef(m.Az.full)[2] %>% round(.,2)` + `r fixef(m.Az.full)[6] %>% round(.,2)` = `r fixef(m.Az.full)[2] + fixef(m.Az.full)[6] %>% round(.,2)`__
     - __For every increase in one timepoint, sADL performance changes by `r (fixef(m.Az.full)[2] + fixef(m.Az.full)[6]) %>% round(.,2)`__
 f) For the Memory Task, how is the change in performance over time different from the cADL Task? 
-    - __Memory performance declines even more steeply than cADL, with linear change of `r fixef(m.Az.full)[2] %>% round(.,2)` + `r fixef(m.Az.full)[7] %>% round(.,2)` = `r fixef(m.Az.full)[2] + fixef(m.Az.full)[7] %>% round(.,2)`, but it also has a quadratic effect of `r fixef(m.Az.full)[9] %>% round(.,2)`. This is positive, which means it is $\cup$-shaped (rather than $\cap$-shaped).___ 
+    - __1.24__. 
+    - __This is the coefficient fir `TaskMemory`__
+g) For the Memory task, how does performance change for every increasing time point? In other words, what is the slope for the Memory task and what effect does time have?
+    - __Memory performance declines even more steeply than cADL, with linear change of `r fixef(m.Az.full)[2] %>% round(.,2)` + `r fixef(m.Az.full)[7] %>% round(.,2)` = `r (fixef(m.Az.full)[2] + fixef(m.Az.full)[7]) %>% round(.,2)`, but it also has a quadratic effect of `r fixef(m.Az.full)[9] %>% round(.,2)`. This is positive, which means it is $\cup$-shaped (rather than $\cap$-shaped).___ 
     
 `r solend()`
 
