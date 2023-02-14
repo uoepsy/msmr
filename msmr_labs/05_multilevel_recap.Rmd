@@ -687,8 +687,20 @@ Use a mixed-effects model to test the difference.
 `r solbegin(show=params$SHOW, toggle=params$TOGGLE)`
 We're interested in the amount to which Groups vary in their overall performance, so we want a fixed effect of Group. Subjects and Domains are not nested - each subject sees different domains, and each domain is seen by multiple subjects.  
 
+
+The maximal model, shown below, will not converge.
+
 ```{r}
-# maximal model doesn't converge, removed random Group slopes for Domain
+mod_grp <- lmer(Score ~ Group + 
+                   (1 | Anonymous_Subject_ID) + 
+                   (1 + Group | Domain), 
+                 data=dat5, REML=FALSE)
+VarCorr(mod_grp)
+```
+
+As the maximal model doesn't converge, we remove the random Group slopes for Domain, representing the higher complexity.
+
+```{r}
 mod_grp <- lmer(Score ~ Group + 
                    (1 | Anonymous_Subject_ID) + 
                    (1 | Domain), 
@@ -885,7 +897,7 @@ Instead of step-by-step questions, this exercise is designed to get you thinking
 :::frame
 __Data: Aggressive Behaviour in Adolescence__
 
-Data was collected from 30 secondary schools across Scotland. A cohort of students were followed up every year from the age of 12 to 19. Each year, they completed the Aggressive Behaviour Scale (ABS). Data was also captured on the number of siblings each child had.  
+Data was collected from 30 secondary schools across Scotland. A cohort of students were followed up every year from the age of 12 to 19. Each year, they completed the Aggressive Behaviour Scale (ABS). Data was also captured on whether each child had siblings or not.  
 The data can be accessed from [https://uoepsy.github.io/data/schoolsabs.csv](https://uoepsy.github.io/data/schoolsabs.csv) . A description of the variables can be found in the table below.  
 
 ```{r echo=FALSE}
@@ -906,9 +918,9 @@ tibble(
 absdat <- read_csv("https://uoepsy.github.io/data/schoolsabs.csv")
 ```
 
-Let's start by just exploring the data a bit more. 
+Let's start by just exploring the data a bit more. This computes the number of distinct schools and distinct children within each school:
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 absdat %>% select(schoolid) %>% n_distinct()
 absdat %>% select(schoolid,childid) %>% n_distinct()
 ```
@@ -958,21 +970,20 @@ Now let's think a bit about the various considerations that go into fitting a mu
 - Along with being interested in differences between having/not-having siblings, we're also interested in change over time. From our initial plotting, we see there is some curvature present, and this is most apparent in the group of children with siblings. Are we interested in differences between sibling groups at the first timepoint (age 12?). Possibly? This depends a lot on the research field.    
 - We know that effects of time can vary by child, and so also by school. Children don't change in whether or not they have siblings (well, they might, not often), so we can't really think of "the effect of having siblings on aggressive behaviours for child $i$" because child $i$ always has the same number of siblings.  However, within a school, some children have siblings, some don't, so it might be that this effect can vary by-school.  
 
-
-
 ```{r}
 source("https://uoepsy.github.io/msmr/functions/code_poly.R")
 absdat <- code_poly(absdat, "year", poly.order = 2, orthogonal = T, draw.poly = F)
 
 basemod <- 
   lmer(ABS ~ poly1 + poly2 + (1 + poly1 + poly2 | schoolid/childid), 
-     data = absdat,
+     data = absdat, REML=FALSE,
      control = lmerControl(optimizer = "bobyqa"))
 isSingular(basemod)
+
 basemod <- 
   lmer(ABS ~ poly1 + poly2 + (1 + poly1 | schoolid) +
          (1 + poly1 + poly2 | childid:schoolid), 
-     data = absdat,
+     data = absdat, REML=FALSE,
      control = lmerControl(optimizer = "bobyqa"))
 ```
 
@@ -988,12 +999,13 @@ contrasts(absdat$siblings)
 linmod <- 
   lmer(ABS ~ siblings*poly1 + poly2 + (1 + poly1 | schoolid) +
          (1 + poly1 + poly2 | childid:schoolid), 
-     data = absdat,
+     data = absdat, REML=FALSE,
      control = lmerControl(optimizer = "bobyqa"))
+
 quadmod <- 
   lmer(ABS ~ siblings*(poly1 + poly2) + (1 + poly1 | schoolid) +
          (1 + poly1 + poly2 | childid:schoolid), 
-     data = absdat,
+     data = absdat, REML=FALSE,
      control = lmerControl(optimizer = "bobyqa"))
 
 anova(basemod,linmod,quadmod)
