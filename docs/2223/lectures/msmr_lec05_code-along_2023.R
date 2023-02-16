@@ -19,7 +19,7 @@ library(effects)
 library(tidyverse)
 library(lme4)
 library(lmerTest)
-load(url("https://uoepsy.github.io/data/SNARC.RData"))
+load(url("https://uoepsy.github.io/msmr/data/SNARC.RData"))
 summary(dat_snarc)
 dat_snarc$math <- as.numeric(dat_snarc$math)
 ggplot(dat_snarc, aes(stimulus_mag, dRT)) +
