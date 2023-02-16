@@ -76,7 +76,7 @@ When our data is clustered (or 'grouped') such that datapoints are no longer ind
 
 If we separate out our data to show an individual plot for each subject, we can see how the fitted regression line from `lm()` is assumed to be the same for each subject.  
   
-```{r echo=FALSE, fig.height=10}
+```{r echo=FALSE, fig.height=10, out.width = "100%"}
 plot_lm_fac
 ```
 
@@ -96,7 +96,7 @@ Level 2:
   
 + $\beta_{0i} = \gamma_{00} + \zeta_{0i}$   
 
-Where the expected values of $\zeta_{0}$, and $\epsilon$ are 0, and their variances are $\sigma_{0}^2$ and $\sigma_\epsilon^2$ respectively. We will further assume that these are normally distributed.
+Where the expected values of $\zeta_{0}$, and $\epsilon$ are 0, and their variances are $\sigma_{\zeta_{0}}^2$ and $\sigma_\epsilon^2$ respectively. We will further assume that these are normally distributed.
 
 We can now see that the intercept estimate $\beta_{0i}$ for a particular group $i$ is represented by the combination of a mean estimate for the parameter ($\gamma_{00}$) and a random effect for that group ($\zeta_{0i}$).
 
@@ -109,7 +109,7 @@ We can now see that the intercept estimate $\beta_{0i}$ for a particular group $
 Notice how the fitted line of the random intercept model has an adjustment for each subject.  
 Each subject's line has been moved up or down accordingly. 
 
-```{r echo=FALSE, fig.height=8, fig.width=12}
+```{r echo=FALSE, fig.height=8, fig.width=12, out.width = "100%"}
 plot_lm_fac + plot_ri_fac
 ```
 
@@ -126,7 +126,10 @@ However, the estimate of these models will be slightly different:
 plot_shrinkage
 ```
 
-**Why?** One of the benefits of multi-level models is that our cluster-level estimates are shrunk towards the average depending on a) the level of across-cluster variation and b) the number of datapoints in clusters. 
+**Why?** One of the benefits of multi-level models is that our cluster-level estimates are shrunk towards the average depending on 
+
+a) the level of across-cluster variation and  
+b) the number of datapoints in clusters. 
 
 `r optend()`
 
@@ -144,7 +147,7 @@ Level 2:
 + $\beta_{0i} = \gamma_{00} + \zeta_{0i}$  
 + $\beta_{1i} = \gamma_{10} + \zeta_{1i}$  
 
-Where the expected values of $\zeta_0$, $\zeta_1$, and $\epsilon$ are 0, and their variances are $\sigma_{0}^2$, $\sigma_{1}^2$, $\sigma_\epsilon^2$ respectively. We will further assume that these are normally distributed.
+Where the expected values of $\zeta_0$, $\zeta_1$, and $\epsilon$ are 0, and their variances are $\sigma_{\zeta_{0}}^2$, $\sigma_{\zeta_{1}}^2$, $\sigma_\epsilon^2$ respectively. We will further assume that these are normally distributed.
 
 As with the intercept $\beta_{0i}$, the slope of the predictor $\beta_{1i}$ is now modelled by a mean $\gamma_{10}$ and a random effect for each group ($\zeta_{1i}$). 
 
@@ -157,7 +160,7 @@ As with the intercept $\beta_{0i}$, the slope of the predictor $\beta_{1i}$ is n
 
 :::
 
-```{r echo=FALSE, fig.height=8, fig.width=12}
+```{r echo=FALSE, fig.height=8, fig.width=12, out.width = "100%"}
 plot_ri_fac + plot_rs_fac
 ```
 
@@ -168,7 +171,7 @@ plot_ri_fac + plot_rs_fac
 `r optbegin("Fixed effects", olabel=FALSE, toggle=TRUE)`
 We can extract the *fixed effects* using the `fixef()` function:
 
-These are the overall intercept and slope. 
+These are the overall intercept and slope, $\gamma_{00}$ and $\gamma_{10}$. 
 ```{r}
 fixef(random_slopes_model)
 ```
@@ -177,7 +180,7 @@ fixef(random_slopes_model)
 `r optbegin("Random effects", olabel=FALSE, toggle=TRUE)`  
 The plots below show the fitted values for each subject from each model that we have gone through in these expandable boxes (simple linear regression, random intercept, and random intercept & slope): 
 
-```{r echo=FALSE, fig.width=12}
+```{r echo=FALSE, fig.width=12, out.width = "100%"}
 plotdata2<-
   ggplot(dat, aes(x=x1,y=outcome, col=subject))+
   geom_point(alpha=0.5)+geom_path(alpha=0.5)+
@@ -191,7 +194,7 @@ plotdata2<-
 plot_lm2 + plot_ri + plot_rs
 ```
 
-In the random-intercept model (center panel), the differences from each of the subjects' intercepts to the fixed intercept (thick green line) have mean 0 and standard deviation $\sigma_0$.  The standard deviation (and variance, which is $\sigma_0^2$) is what we see in the random effects part of our model summary (or using the `VarCorr()` function).  
+In the random-intercept model (center panel), the differences from each of the subjects' intercepts to the fixed intercept (thick green line) have mean 0 and standard deviation $\sigma_{\zeta_0}$.  The standard deviation (and variance, which is $\sigma_{\zeta_0}^2$) is what we see in the random effects part of our model summary (or using the `VarCorr()` function).  
 
 ```{r echo=FALSE, out.width="400px"}
 knitr::include_graphics("images/varcors.PNG")
@@ -626,7 +629,9 @@ load(url("https://uoepsy.github.io/data/msmr_lab5.RData"))
 tibble(
   variable = names(dat5),
   description = c("Participant Identifier", "?? (not sure but it's not relevant for these questions!)","Study wave (timepoint), ranging from 1 to 5","Domain tested (one of 11 domains studied, including things such as animals (ANI), objects (OBJ), toys (TOY), vehicles (VEH)","Number of questions answered correctly","Number of questions answered incorrectly","Group (between-participants), A, B, C, or W","Score")
-) %>% knitr::kable()
+) %>% 
+    kableExtra::kable() %>%
+    kableExtra::kable_styling(full_width = FALSE)
 ```
 
 
@@ -682,8 +687,20 @@ Use a mixed-effects model to test the difference.
 `r solbegin(show=params$SHOW, toggle=params$TOGGLE)`
 We're interested in the amount to which Groups vary in their overall performance, so we want a fixed effect of Group. Subjects and Domains are not nested - each subject sees different domains, and each domain is seen by multiple subjects.  
 
+
+The maximal model, shown below, will not converge.
+
 ```{r}
-# maximal model doesn't converge, removed random Group slopes for Domain
+mod_grp <- lmer(Score ~ Group + 
+                   (1 | Anonymous_Subject_ID) + 
+                   (1 + Group | Domain), 
+                 data=dat5, REML=FALSE)
+VarCorr(mod_grp)
+```
+
+As the maximal model doesn't converge, we remove the random Group slopes for Domain, representing the higher complexity.
+
+```{r}
 mod_grp <- lmer(Score ~ Group + 
                    (1 | Anonymous_Subject_ID) + 
                    (1 | Domain), 
@@ -769,7 +786,7 @@ Create individual subject plots for the data and the model's fitted values. Will
 *Hint:* make use of `facet_wrap()` to create a different panel for each level of a grouping variable.  
 `r qend()` 
 `r solbegin(show=params$SHOW, toggle=params$TOGGLE)`
-```{r}
+```{r, out.width = "100%", fig.height=10}
 broom.mixed::augment(mod_wv_x_grp) %>%
   ggplot(., aes(Wave, Score, color=Group)) +
   facet_wrap(~ Anonymous_Subject_ID) +
@@ -880,7 +897,7 @@ Instead of step-by-step questions, this exercise is designed to get you thinking
 :::frame
 __Data: Aggressive Behaviour in Adolescence__
 
-Data was collected from 30 secondary schools across Scotland. A cohort of students were followed up every year from the age of 12 to 19. Each year, they completed the Aggressive Behaviour Scale (ABS). Data was also captured on the number of siblings each child had.  
+Data was collected from 30 secondary schools across Scotland. A cohort of students were followed up every year from the age of 12 to 19. Each year, they completed the Aggressive Behaviour Scale (ABS). Data was also captured on whether each child had siblings or not.  
 The data can be accessed from [https://uoepsy.github.io/data/schoolsabs.csv](https://uoepsy.github.io/data/schoolsabs.csv) . A description of the variables can be found in the table below.  
 
 ```{r echo=FALSE}
@@ -888,7 +905,9 @@ absdat <- read_csv("../../data/schoolsabs.csv")
 tibble(
   variable = names(absdat),
   description = c("School Identifier","Score on the Aggressive Behaviour Scale (Z-scored)","Age (in years) of child at observation","Within-School Child Identifier","Sibling status (No/Yes)")
-) %>% knitr::kable()
+) %>% 
+    kableExtra::kable() %>%
+    kableExtra::kable_styling(full_width = FALSE)
 ```
 :::
 
@@ -899,9 +918,9 @@ tibble(
 absdat <- read_csv("https://uoepsy.github.io/data/schoolsabs.csv")
 ```
 
-Let's start by just exploring the data a bit more. 
+Let's start by just exploring the data a bit more. This computes the number of distinct schools and distinct children within each school:
 
-```{r echo=FALSE}
+```{r echo=TRUE}
 absdat %>% select(schoolid) %>% n_distinct()
 absdat %>% select(schoolid,childid) %>% n_distinct()
 ```
@@ -951,21 +970,20 @@ Now let's think a bit about the various considerations that go into fitting a mu
 - Along with being interested in differences between having/not-having siblings, we're also interested in change over time. From our initial plotting, we see there is some curvature present, and this is most apparent in the group of children with siblings. Are we interested in differences between sibling groups at the first timepoint (age 12?). Possibly? This depends a lot on the research field.    
 - We know that effects of time can vary by child, and so also by school. Children don't change in whether or not they have siblings (well, they might, not often), so we can't really think of "the effect of having siblings on aggressive behaviours for child $i$" because child $i$ always has the same number of siblings.  However, within a school, some children have siblings, some don't, so it might be that this effect can vary by-school.  
 
-
-
 ```{r}
 source("https://uoepsy.github.io/msmr/functions/code_poly.R")
 absdat <- code_poly(absdat, "year", poly.order = 2, orthogonal = T, draw.poly = F)
 
 basemod <- 
   lmer(ABS ~ poly1 + poly2 + (1 + poly1 + poly2 | schoolid/childid), 
-     data = absdat,
+     data = absdat, REML=FALSE,
      control = lmerControl(optimizer = "bobyqa"))
 isSingular(basemod)
+
 basemod <- 
   lmer(ABS ~ poly1 + poly2 + (1 + poly1 | schoolid) +
          (1 + poly1 + poly2 | childid:schoolid), 
-     data = absdat,
+     data = absdat, REML=FALSE,
      control = lmerControl(optimizer = "bobyqa"))
 ```
 
@@ -981,12 +999,13 @@ contrasts(absdat$siblings)
 linmod <- 
   lmer(ABS ~ siblings*poly1 + poly2 + (1 + poly1 | schoolid) +
          (1 + poly1 + poly2 | childid:schoolid), 
-     data = absdat,
+     data = absdat, REML=FALSE,
      control = lmerControl(optimizer = "bobyqa"))
+
 quadmod <- 
   lmer(ABS ~ siblings*(poly1 + poly2) + (1 + poly1 | schoolid) +
          (1 + poly1 + poly2 | childid:schoolid), 
-     data = absdat,
+     data = absdat, REML=FALSE,
      control = lmerControl(optimizer = "bobyqa"))
 
 anova(basemod,linmod,quadmod)
