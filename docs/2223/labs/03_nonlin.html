@@ -36,7 +36,8 @@
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
-<link href="site_libs/tabwid-1.1.2/tabwid.css" rel="stylesheet" />
+<link href="site_libs/tabwid-1.1.3/tabwid.css" rel="stylesheet" />
+<script src="site_libs/tabwid-1.1.3/tabwid.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 <script>
@@ -925,106 +926,12 @@ head(mydata)</code></pre>
 ## 6     6  585.</code></pre>
 <p>A messy model:</p>
 <pre class="r"><code>m.messy &lt;- lm(y ~ poly(x, 3, raw=T), data = df)</code></pre>
-<template id="5a4b4a23-22de-4b7b-93dc-8ce1a0a25408"><style>
-.tabwid table{
-  border-spacing:0px !important;
-  border-collapse:collapse;
-  line-height:1;
-  margin-left:auto;
-  margin-right:auto;
-  border-width: 0;
-  border-color: transparent;
-  caption-side: top;
-}
-.tabwid-caption-bottom table{
-  caption-side: bottom;
-}
-.tabwid_left table{
-  margin-left:0;
-}
-.tabwid_right table{
-  margin-right:0;
-}
-.tabwid td, .tabwid th {
-    padding: 0;
-}
-.tabwid a {
-  text-decoration: none;
-}
-.tabwid thead {
-    background-color: transparent;
-}
-.tabwid tfoot {
-    background-color: transparent;
-}
-.tabwid table tr {
-background-color: transparent;
-}
-.katex-display {
-    margin: 0 0 !important;
-}
-</style><div class="tabwid"><style>.cl-b90c3b2e{table-layout:auto;}.cl-b901a984{font-family:'Times New Roman';font-size:12pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-b906e854{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 2;background-color:transparent;}.cl-b9070640{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0.5pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-b907064a{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-b9070654{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing='true' class='cl-b90c3b2e'><thead><tr style="overflow-wrap:break-word;"><th class="cl-b9070640"><p class="cl-b906e854"><span class="cl-b901a984">term</span></p></th><th class="cl-b9070640"><p class="cl-b906e854"><span class="cl-b901a984">estimate</span></p></th><th class="cl-b9070640"><p class="cl-b906e854"><span class="cl-b901a984">std.error</span></p></th><th class="cl-b9070640"><p class="cl-b906e854"><span class="cl-b901a984">statistic</span></p></th><th class="cl-b9070640"><p class="cl-b906e854"><span class="cl-b901a984">p.value</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-b907064a"><p class="cl-b906e854"><span class="cl-b901a984">(Intercept)</span></p></td><td class="cl-b907064a"><p class="cl-b906e854"><span class="cl-b901a984">2.37</span></p></td><td class="cl-b907064a"><p class="cl-b906e854"><span class="cl-b901a984">2.17</span></p></td><td class="cl-b907064a"><p class="cl-b906e854"><span class="cl-b901a984">1.09</span></p></td><td class="cl-b907064a"><p class="cl-b906e854"><span class="cl-b901a984">.317</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-b907064a"><p class="cl-b906e854"><span class="cl-b901a984">poly(x, 3, raw = T)1</span></p></td><td class="cl-b907064a"><p class="cl-b906e854"><span class="cl-b901a984">99.70</span></p></td><td class="cl-b907064a"><p class="cl-b906e854"><span class="cl-b901a984">1.63</span></p></td><td class="cl-b907064a"><p class="cl-b906e854"><span class="cl-b901a984">61.30</span></p></td><td class="cl-b907064a"><p class="cl-b906e854"><span class="cl-b901a984">&lt; .001</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-b907064a"><p class="cl-b906e854"><span class="cl-b901a984">poly(x, 3, raw = T)2</span></p></td><td class="cl-b907064a"><p class="cl-b906e854"><span class="cl-b901a984">0.32</span></p></td><td class="cl-b907064a"><p class="cl-b906e854"><span class="cl-b901a984">0.34</span></p></td><td class="cl-b907064a"><p class="cl-b906e854"><span class="cl-b901a984">0.96</span></p></td><td class="cl-b907064a"><p class="cl-b906e854"><span class="cl-b901a984">.376</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-b9070654"><p class="cl-b906e854"><span class="cl-b901a984">poly(x, 3, raw = T)3</span></p></td><td class="cl-b9070654"><p class="cl-b906e854"><span class="cl-b901a984">-0.13</span></p></td><td class="cl-b9070654"><p class="cl-b906e854"><span class="cl-b901a984">0.02</span></p></td><td class="cl-b9070654"><p class="cl-b906e854"><span class="cl-b901a984">-6.40</span></p></td><td class="cl-b9070654"><p class="cl-b906e854"><span class="cl-b901a984">.001</span></p></td></tr></tbody></table></div></template>
-<div class="flextable-shadow-host" id="94e8b803-5610-476d-9562-118a04632896"></div>
-<script>
-var dest = document.getElementById("94e8b803-5610-476d-9562-118a04632896");
-var template = document.getElementById("5a4b4a23-22de-4b7b-93dc-8ce1a0a25408");
-var fantome = dest.attachShadow({mode: 'open'});
-var templateContent = template.content;
-fantome.appendChild(templateContent);
-</script>
-
+<div class="tabwid"><style>.cl-f9108f2a{table-layout:auto;}.cl-f9036160{font-family:'Times New Roman';font-size:12pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-f9089dce{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 2;background-color:transparent;}.cl-f908bd04{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0.5pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f908bd0e{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f908bd18{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing='true' class='cl-f9108f2a'><thead><tr style="overflow-wrap:break-word;"><th class="cl-f908bd04"><p class="cl-f9089dce"><span class="cl-f9036160">term</span></p></th><th class="cl-f908bd04"><p class="cl-f9089dce"><span class="cl-f9036160">estimate</span></p></th><th class="cl-f908bd04"><p class="cl-f9089dce"><span class="cl-f9036160">std.error</span></p></th><th class="cl-f908bd04"><p class="cl-f9089dce"><span class="cl-f9036160">statistic</span></p></th><th class="cl-f908bd04"><p class="cl-f9089dce"><span class="cl-f9036160">p.value</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-f908bd0e"><p class="cl-f9089dce"><span class="cl-f9036160">(Intercept)</span></p></td><td class="cl-f908bd0e"><p class="cl-f9089dce"><span class="cl-f9036160">2.37</span></p></td><td class="cl-f908bd0e"><p class="cl-f9089dce"><span class="cl-f9036160">2.17</span></p></td><td class="cl-f908bd0e"><p class="cl-f9089dce"><span class="cl-f9036160">1.09</span></p></td><td class="cl-f908bd0e"><p class="cl-f9089dce"><span class="cl-f9036160">.317</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f908bd0e"><p class="cl-f9089dce"><span class="cl-f9036160">poly(x, 3, raw = T)1</span></p></td><td class="cl-f908bd0e"><p class="cl-f9089dce"><span class="cl-f9036160">99.70</span></p></td><td class="cl-f908bd0e"><p class="cl-f9089dce"><span class="cl-f9036160">1.63</span></p></td><td class="cl-f908bd0e"><p class="cl-f9089dce"><span class="cl-f9036160">61.30</span></p></td><td class="cl-f908bd0e"><p class="cl-f9089dce"><span class="cl-f9036160">&lt; .001</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f908bd0e"><p class="cl-f9089dce"><span class="cl-f9036160">poly(x, 3, raw = T)2</span></p></td><td class="cl-f908bd0e"><p class="cl-f9089dce"><span class="cl-f9036160">0.32</span></p></td><td class="cl-f908bd0e"><p class="cl-f9089dce"><span class="cl-f9036160">0.34</span></p></td><td class="cl-f908bd0e"><p class="cl-f9089dce"><span class="cl-f9036160">0.96</span></p></td><td class="cl-f908bd0e"><p class="cl-f9089dce"><span class="cl-f9036160">.376</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f908bd18"><p class="cl-f9089dce"><span class="cl-f9036160">poly(x, 3, raw = T)3</span></p></td><td class="cl-f908bd18"><p class="cl-f9089dce"><span class="cl-f9036160">-0.13</span></p></td><td class="cl-f908bd18"><p class="cl-f9089dce"><span class="cl-f9036160">0.02</span></p></td><td class="cl-f908bd18"><p class="cl-f9089dce"><span class="cl-f9036160">-6.40</span></p></td><td class="cl-f908bd18"><p class="cl-f9089dce"><span class="cl-f9036160">.001</span></p></td></tr></tbody></table></div>
 <p>Dan’s code, and a neat model:</p>
 <pre class="r"><code>df &lt;- code_poly(df = df, predictor = &#39;x&#39;, poly.order = 3, 
                 orthogonal = FALSE, draw.poly = FALSE)
 mDan &lt;- lm(y ~ poly1 + poly2 + poly3, data = df)</code></pre>
-<template id="7834c639-88f5-4673-b344-5fab9b7eb3b9"><style>
-.tabwid table{
-  border-spacing:0px !important;
-  border-collapse:collapse;
-  line-height:1;
-  margin-left:auto;
-  margin-right:auto;
-  border-width: 0;
-  border-color: transparent;
-  caption-side: top;
-}
-.tabwid-caption-bottom table{
-  caption-side: bottom;
-}
-.tabwid_left table{
-  margin-left:0;
-}
-.tabwid_right table{
-  margin-right:0;
-}
-.tabwid td, .tabwid th {
-    padding: 0;
-}
-.tabwid a {
-  text-decoration: none;
-}
-.tabwid thead {
-    background-color: transparent;
-}
-.tabwid tfoot {
-    background-color: transparent;
-}
-.tabwid table tr {
-background-color: transparent;
-}
-.katex-display {
-    margin: 0 0 !important;
-}
-</style><div class="tabwid"><style>.cl-b9533e3e{table-layout:auto;}.cl-b93eefa6{font-family:'Times New Roman';font-size:12pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-b9470c4a{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 2;background-color:transparent;}.cl-b9473a94{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0.5pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-b9473a9e{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-b9473aa8{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing='true' class='cl-b9533e3e'><thead><tr style="overflow-wrap:break-word;"><th class="cl-b9473a94"><p class="cl-b9470c4a"><span class="cl-b93eefa6">term</span></p></th><th class="cl-b9473a94"><p class="cl-b9470c4a"><span class="cl-b93eefa6">estimate</span></p></th><th class="cl-b9473a94"><p class="cl-b9470c4a"><span class="cl-b93eefa6">std.error</span></p></th><th class="cl-b9473a94"><p class="cl-b9470c4a"><span class="cl-b93eefa6">statistic</span></p></th><th class="cl-b9473a94"><p class="cl-b9470c4a"><span class="cl-b93eefa6">p.value</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-b9473a9e"><p class="cl-b9470c4a"><span class="cl-b93eefa6">(Intercept)</span></p></td><td class="cl-b9473a9e"><p class="cl-b9470c4a"><span class="cl-b93eefa6">2.37</span></p></td><td class="cl-b9473a9e"><p class="cl-b9470c4a"><span class="cl-b93eefa6">2.17</span></p></td><td class="cl-b9473a9e"><p class="cl-b9470c4a"><span class="cl-b93eefa6">1.09</span></p></td><td class="cl-b9473a9e"><p class="cl-b9470c4a"><span class="cl-b93eefa6">.317</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-b9473a9e"><p class="cl-b9470c4a"><span class="cl-b93eefa6">poly1</span></p></td><td class="cl-b9473a9e"><p class="cl-b9470c4a"><span class="cl-b93eefa6">99.70</span></p></td><td class="cl-b9473a9e"><p class="cl-b9470c4a"><span class="cl-b93eefa6">1.63</span></p></td><td class="cl-b9473a9e"><p class="cl-b9470c4a"><span class="cl-b93eefa6">61.30</span></p></td><td class="cl-b9473a9e"><p class="cl-b9470c4a"><span class="cl-b93eefa6">&lt; .001</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-b9473a9e"><p class="cl-b9470c4a"><span class="cl-b93eefa6">poly2</span></p></td><td class="cl-b9473a9e"><p class="cl-b9470c4a"><span class="cl-b93eefa6">0.32</span></p></td><td class="cl-b9473a9e"><p class="cl-b9470c4a"><span class="cl-b93eefa6">0.34</span></p></td><td class="cl-b9473a9e"><p class="cl-b9470c4a"><span class="cl-b93eefa6">0.96</span></p></td><td class="cl-b9473a9e"><p class="cl-b9470c4a"><span class="cl-b93eefa6">.376</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-b9473aa8"><p class="cl-b9470c4a"><span class="cl-b93eefa6">poly3</span></p></td><td class="cl-b9473aa8"><p class="cl-b9470c4a"><span class="cl-b93eefa6">-0.13</span></p></td><td class="cl-b9473aa8"><p class="cl-b9470c4a"><span class="cl-b93eefa6">0.02</span></p></td><td class="cl-b9473aa8"><p class="cl-b9470c4a"><span class="cl-b93eefa6">-6.40</span></p></td><td class="cl-b9473aa8"><p class="cl-b9470c4a"><span class="cl-b93eefa6">.001</span></p></td></tr></tbody></table></div></template>
-<div class="flextable-shadow-host" id="af333890-83a8-4b87-b39a-904e0aa9ca5a"></div>
-<script>
-var dest = document.getElementById("af333890-83a8-4b87-b39a-904e0aa9ca5a");
-var template = document.getElementById("7834c639-88f5-4673-b344-5fab9b7eb3b9");
-var fantome = dest.attachShadow({mode: 'open'});
-var templateContent = template.content;
-fantome.appendChild(templateContent);
-</script>
-
+<div class="tabwid"><style>.cl-f934e3d4{table-layout:auto;}.cl-f92b05a8{font-family:'Times New Roman';font-size:12pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-f92ece5e{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 2;background-color:transparent;}.cl-f92ee36c{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0.5pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f92ee376{background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-f92ee380{background-color:transparent;vertical-align: middle;border-bottom: 0.5pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing='true' class='cl-f934e3d4'><thead><tr style="overflow-wrap:break-word;"><th class="cl-f92ee36c"><p class="cl-f92ece5e"><span class="cl-f92b05a8">term</span></p></th><th class="cl-f92ee36c"><p class="cl-f92ece5e"><span class="cl-f92b05a8">estimate</span></p></th><th class="cl-f92ee36c"><p class="cl-f92ece5e"><span class="cl-f92b05a8">std.error</span></p></th><th class="cl-f92ee36c"><p class="cl-f92ece5e"><span class="cl-f92b05a8">statistic</span></p></th><th class="cl-f92ee36c"><p class="cl-f92ece5e"><span class="cl-f92b05a8">p.value</span></p></th></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-f92ee376"><p class="cl-f92ece5e"><span class="cl-f92b05a8">(Intercept)</span></p></td><td class="cl-f92ee376"><p class="cl-f92ece5e"><span class="cl-f92b05a8">2.37</span></p></td><td class="cl-f92ee376"><p class="cl-f92ece5e"><span class="cl-f92b05a8">2.17</span></p></td><td class="cl-f92ee376"><p class="cl-f92ece5e"><span class="cl-f92b05a8">1.09</span></p></td><td class="cl-f92ee376"><p class="cl-f92ece5e"><span class="cl-f92b05a8">.317</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f92ee376"><p class="cl-f92ece5e"><span class="cl-f92b05a8">poly1</span></p></td><td class="cl-f92ee376"><p class="cl-f92ece5e"><span class="cl-f92b05a8">99.70</span></p></td><td class="cl-f92ee376"><p class="cl-f92ece5e"><span class="cl-f92b05a8">1.63</span></p></td><td class="cl-f92ee376"><p class="cl-f92ece5e"><span class="cl-f92b05a8">61.30</span></p></td><td class="cl-f92ee376"><p class="cl-f92ece5e"><span class="cl-f92b05a8">&lt; .001</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f92ee376"><p class="cl-f92ece5e"><span class="cl-f92b05a8">poly2</span></p></td><td class="cl-f92ee376"><p class="cl-f92ece5e"><span class="cl-f92b05a8">0.32</span></p></td><td class="cl-f92ee376"><p class="cl-f92ece5e"><span class="cl-f92b05a8">0.34</span></p></td><td class="cl-f92ee376"><p class="cl-f92ece5e"><span class="cl-f92b05a8">0.96</span></p></td><td class="cl-f92ee376"><p class="cl-f92ece5e"><span class="cl-f92b05a8">.376</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-f92ee380"><p class="cl-f92ece5e"><span class="cl-f92b05a8">poly3</span></p></td><td class="cl-f92ee380"><p class="cl-f92ece5e"><span class="cl-f92b05a8">-0.13</span></p></td><td class="cl-f92ee380"><p class="cl-f92ece5e"><span class="cl-f92b05a8">0.02</span></p></td><td class="cl-f92ee380"><p class="cl-f92ece5e"><span class="cl-f92b05a8">-6.40</span></p></td><td class="cl-f92ee380"><p class="cl-f92ece5e"><span class="cl-f92b05a8">.001</span></p></td></tr></tbody></table></div>
 </div>
 <p class="optional-end">
 </p>
