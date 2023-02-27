@@ -19,9 +19,9 @@ panderOptions('keep.trailing.zeros', TRUE)
 :::frame
 **Thinking about measurement**  
 
-In the second block of the Multivariate Stats course, we're going to look at "latent variable modeling". 
+In the second block of the MSMR course, we're going to look at "latent variable modeling". 
 
-Take a moment to think about the various constructs that you are interested in as a researcher. This might be anything from personality traits, to language proficiency, social identity, anxiety etc. 
+Take a moment to think about the various constructs that you are interested in as a researcher. This might be anything from personality traits, to language proficiency, social identity, anxiety, etc. 
 How we measure such constructs is a very important consideration for research. The things we're interested in are very rarely the things we are *directly* measuring. 
 
 The most common way to start thinking about latent variables is to consider how we might assess levels of anxiety or depression. More often than not, we measure these using questionnaire based methods. Can we ever directly measure anxiety?  ^[Even if we cut open someone's brain, it's unclear what we would be looking for in order to 'measure' it. It is unclear whether anxiety even exists as a physical thing, or rather if it is simply the overarching concept we apply to a set of behaviours and feelings]. This inherently leads to the notion of measurement error - two people both scoring 11 on the Generalised Anxiety Disorder 7 (GAD-7) scale will not have identical levels of anxiety.  
@@ -100,24 +100,36 @@ summary(job)
 __OPTIONAL__
 
 If you wish to create a nice looking table for a report, you could try the following code. 
-However, I should warn you: this code is quite difficult to understand so, if you are interested, attend a lab!
 
 ```{r}
-library(gt)
+library(kableExtra)
 
-# Mean and SD of each variable
 job %>% 
-  summarise(across(everything(), list(M = mean, SD = sd))) %>%
-  pivot_longer(everything()) %>% 
-  mutate(
-    value = round(value, 2),
-    name = str_replace(name, '_M', '.M'),
-    name = str_replace(name, '_SD', '.SD')
-  ) %>%
-  separate(name, into = c('variable', 'summary'), sep = '\\.') %>%
-  pivot_wider(names_from = summary, values_from = value) %>% 
-  gt()
+    psych::describe(skew = FALSE) %>%
+    kable(digits = 2) %>%
+    kable_styling(full_width = FALSE)
 ```
+
+<!-- __Option 2.__ Lots of tidyverse code: -->
+
+<!-- Warning: this code is quite difficult to understand. If you are interested, attend a lab! -->
+
+<!-- ```{r} -->
+<!-- library(gt) -->
+
+<!-- # Mean and SD of each variable -->
+<!-- job %>%  -->
+<!--   summarise(across(everything(), list(M = mean, SD = sd))) %>% -->
+<!--   pivot_longer(everything()) %>%  -->
+<!--   mutate( -->
+<!--     value = round(value, 2), -->
+<!--     name = str_replace(name, '_M', '.M'), -->
+<!--     name = str_replace(name, '_SD', '.SD') -->
+<!--   ) %>% -->
+<!--   separate(name, into = c('variable', 'summary'), sep = '\\.') %>% -->
+<!--   pivot_wider(names_from = summary, values_from = value) %>%  -->
+<!--   gt() -->
+<!-- ``` -->
 `r solend()`
 
 ## Preliminaries 
@@ -498,8 +510,8 @@ where the argument `type = 'b'` tells R that the plot should have _both_ points 
 A typical scree plot features higher variances for the initial components and quickly drops to small variances where the curve is almost flat.
 The flat part of the curve represents the noise components, which are not able to capture the main sources of variability in the system. 
 
-According to the scree plot criterion, we should **keep as many principal components as where the "elbow" in the plot occurs.** By elbow we mean the variance before the curve looks almost flat.
-
+The "elbow" in a scree plot is where the eigenvalues seem almost flat. According to the scree plot criterion, we should retain the components to the left of the "elbow" point.
+ 
 Alternatively, some people prefer to use the function `scree()` from the `psych` package:
 
 ```{r}
@@ -989,7 +1001,8 @@ loadings = unclass(conduct_efa$loadings)
 loadings = round(loadings, 3)
 loadings[abs(loadings) < 0.3] = NA
 options(knitr.kable.NA = '')
-knitr::kable(loadings, digits = 2, caption = "Factor loadings.")
+knitr::kable(loadings, digits = 2, caption = "Factor loadings.") %>%
+    kable_styling(full_width = FALSE)
 ```
 
 :::
