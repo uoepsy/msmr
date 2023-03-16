@@ -32,11 +32,11 @@ Next week, we bring this technique together with what we have learned about late
 
 # Motivating Path Analysis
 
-:::frame
+<!-- :::frame -->
 
-**Mountains cannot be surmounted except by winding paths**
+<!-- **Mountains cannot be surmounted except by winding paths** -->
 
-:::
+<!-- ::: -->
 
 Over the course of USMR and the first block of this course, you have hopefully become pretty comfortable with the regression world, and can see how it is extended to lots of different types of outcome and data structures. So far in MSMR our discussion of regressions have all focused on how this can be extended to multiple levels. This has brought so many more potential study designs that we can now consider modelling - pretty much any study where we are interested in explaining some outcome variable, and where we have sampled clusters of observations (or clusters of clusters of clusters of ... etc.).  
 
@@ -112,7 +112,8 @@ As it happens, we have already seen the conventions for how to depict variables 
 We _could_ try to fit some of these more complex models by just using `lm()` many times over and fitting various regression models. Path analysis is a bit like this, but all in one. It involves fitting a set of regression equations simultaneously. One obvious benefit of this is that it can allow us to talk about "model fit" (in the way we discussed in last week's lab) in relation to our entire _theory_, rather than to individual regressions that make up only part of the theoretical model.  
 
 
-`r optbegin("Refresher on path diagrams",olabel=F,toggle=params$TOGGLE)`
+:::lo
+__Refresher on path diagrams__  
 
 - **Observed variables** are represented by squares or rectangles. These are the named variables of interest which exist in our dataset - i.e. the ones which we have measured directly.  
 - **Latent variables** are represented as ovals/ellipses or circles.    
@@ -123,119 +124,118 @@ Recall that specifying a factor structure is simply to say that some measured va
 ```{r echo=FALSE, out.width = "95%"}
 knitr::include_graphics("images/semplotsmsmr.png")
 ```
-
-`r optend()`
-
-
-
-## How does it work?
-
-For Path Diagrams that meet a certain set of pre-requisites, we can use a cool technique called Path Tracing to estimate the different paths (i.e., the coefficients) from just the covariance matrix of the dataset. 
-For us to be able to do this, a Path Diagram must meet these criteria:
-
-- All our exogenous variables are correlated (unless we specifically assume that their correlation is zero)
-- All models are 'recursive' (no two-way causal relations, no feedback loops)
-- Residuals are uncorrelated with exogenous variables
-- Endogenous variables are not connected by correlations (we would use correlations between residuals here, because the residuals are not endogenous)
-- All 'causal' relations are linear and additive
-- 'causes' are unitary (if A -> B and A -> C, then it is presumed that this is the same aspect of A resulting in a change in both B and C, and not two distinct aspects of A, which would be better represented by two correlated variables A1 and A2). 
-
-:::statbox
-**Causal??**
-
-It is a slippery slope to start using the word 'cause', and personally I am not that comfortable using it here. However, you will likely hear it a lot in resources about path analysis, so it is best to be warned.  
-
-Please keep in mind that we are using a very broad definition of 'causal', simply to reflect the one way nature of the relationship we are modeling. In Figure \@ref(fig:causes), a change in the variable **X1** is associated with a change in **Y**, but not vice versa.  
-__These are still just *associations*.__  
-
-```{r causes, echo=FALSE, fig.cap="Paths are still just regressions."}
-knitr::include_graphics("images/path/causes.png")
-```
 :::
 
-__Tracing Rules__  
 
-Thanks to [Sewal Wright](https://www.jstor.org/stable/pdf/2527551.pdf?casa_token=3QF0ad2ZoBcAAAAA:MbEkDNNdoLZr1SXE4LrnK--qrhhsTXLgsRtcWre1UvWxiQiGNUl5vWytGp34XIxhAYMZJe-MbIcBnEwXSfX6MAONevz04-sMXpEDI3IaYKk6mMX46QvX), we can express the correlation between any two variables in the system as the sum of all *compound paths* between the two variables. 
 
-*compound paths* are any paths you can trace between A and B for which there are: 
+<!-- ## How does it work? -->
 
-- no loops
-- no going forward then backward
-- maximum of one curved arrow per path
+<!-- For Path Diagrams that meet a certain set of pre-requisites, we can use a cool technique called Path Tracing to estimate the different paths (i.e., the coefficients) from just the covariance matrix of the dataset.  -->
+<!-- For us to be able to do this, a Path Diagram must meet these criteria: -->
 
-:::frame
-__An example__  
+<!-- - All our exogenous variables are correlated (unless we specifically assume that their correlation is zero) -->
+<!-- - All models are 'recursive' (no two-way causal relations, no feedback loops) -->
+<!-- - Residuals are uncorrelated with exogenous variables -->
+<!-- - Endogenous variables are not connected by correlations (we would use correlations between residuals here, because the residuals are not endogenous) -->
+<!-- - All 'causal' relations are linear and additive -->
+<!-- - 'causes' are unitary (if A -> B and A -> C, then it is presumed that this is the same aspect of A resulting in a change in both B and C, and not two distinct aspects of A, which would be better represented by two correlated variables A1 and A2).  -->
 
-Let's consider the example below, for which the paths are all labelled with lower case letters $a, b, c, \text{and } d$. 
+<!-- :::statbox -->
+<!-- **Causal??** -->
 
-```{r patheq1, echo=FALSE, fig.cap="A multiple regression model as a path diagram"}
-knitr::include_graphics("images/path/patheq1.png")
-```
+<!-- It is a slippery slope to start using the word 'cause', and personally I am not that comfortable using it here. However, you will likely hear it a lot in resources about path analysis, so it is best to be warned.   -->
 
-According to Wright's tracing rules above, write out the equations corresponding to the 3 correlations between our observed variables (remember that $r_{a,b} = r_{b,a}$, so it doesn't matter at which variable we start the paths). 
+<!-- Please keep in mind that we are using a very broad definition of 'causal', simply to reflect the one way nature of the relationship we are modeling. In Figure \@ref(fig:causes), a change in the variable **X1** is associated with a change in **Y**, but not vice versa.   -->
+<!-- __These are still just *associations*.__   -->
 
-- $r_{x1,x2} =  c$  
-- $r_{x1,y} = a + bc$  
-- $r_{x2,y} =  b + ac$  
+<!-- ```{r causes, echo=FALSE, fig.cap="Paths are still just regressions."} -->
+<!-- knitr::include_graphics("images/path/causes.png") -->
+<!-- ``` -->
+<!-- ::: -->
 
-```{r echo=F}
-egdat <- read_csv("../../data/patheg.csv")
-```
+<!-- __Tracing Rules__   -->
 
-Now let's suppose we observed the following correlation matrix:
-```{r}
-egdat <- read_csv("https://uoepsy.github.io/data/patheg.csv")
-round(cor(egdat),2)
-```
-We can plug these into our system of equations:
+<!-- Thanks to [Sewal Wright](https://www.jstor.org/stable/pdf/2527551.pdf?casa_token=3QF0ad2ZoBcAAAAA:MbEkDNNdoLZr1SXE4LrnK--qrhhsTXLgsRtcWre1UvWxiQiGNUl5vWytGp34XIxhAYMZJe-MbIcBnEwXSfX6MAONevz04-sMXpEDI3IaYKk6mMX46QvX), we can express the correlation between any two variables in the system as the sum of all *compound paths* between the two variables.  -->
 
-- $r_{x1,x2} = c = 0.36$  
-- $r_{x1,y} = a + bc = 0.75$   
-- $r_{x2,y} = b + ac = 0.60$
+<!-- *compound paths* are any paths you can trace between A and B for which there are:  -->
 
-And with some substituting and rearranging, we can work out the values of $a$, $b$ and $c$. 
+<!-- - no loops -->
+<!-- - no going forward then backward -->
+<!-- - maximum of one curved arrow per path -->
 
-`r optbegin("Click for answers", olabel=FALSE, toggle=params$TOGGLE)`
-This is what I get:
+<!-- :::frame -->
+<!-- __An example__   -->
 
-a = 0.61  
-b = 0.38  
-c = 0.36  
+<!-- Let's consider the example below, for which the paths are all labelled with lower case letters $a, b, c, \text{and } d$.  -->
 
-`r optend()`
-<br>
-We can even work out what the path labeled $d$ (the residual variance) is.  
-First we sum up all the equations for the paths from Y to Y itself.  
-These are:
+<!-- ```{r patheq1, echo=FALSE, fig.cap="A multiple regression model as a path diagram"} -->
+<!-- knitr::include_graphics("images/path/patheq1.png") -->
+<!-- ``` -->
 
-- $a^2$ (from Y to X1 and back)  
-- $b^2$ (from Y to X2 and back)  
-- $acb$ (from Y to X1 to X2 to Y)
-- $bca$ (from Y to X2 to X1 to Y)
-  
-Summing them all up and solving gives us:  
-$$
-\begin{align}
- r_{y \cdot x1, x2} & = a^2 + b^2 + acb + bca\\
- & = 0.61^2 + 0.38^2 + 2 \times(0.61 \times 0.38 \times 0.36)\\
- & = 0.68 \\
-\end{align}
-$$
-We can think of this as the portion of the correlation of Y with itself that occurs *via the predictors*. Put another way, this is the amount of variance in Y explained jointly by X1 and X2, which sounds an awful lot like an $R^2$!  
-The path labelled $d$ is simply all that is left in Y after taking out the variance explained by X1 and X2, meaning that the path $d = \sqrt{1 - R^2}$ (i.e., the residual variance!).  
+<!-- According to Wright's tracing rules above, write out the equations corresponding to the 3 correlations between our observed variables (remember that $r_{a,b} = r_{b,a}$, so it doesn't matter at which variable we start the paths).  -->
 
-Hooray! We've just worked out regression coefficients when all we had was the correlation matrix of the variables! It's important to note that we have been using the correlation matrix, so, somewhat unsurprisingly, our estimates are *standardised* coefficients. 
+<!-- - $r_{x1,x2} =  c$   -->
+<!-- - $r_{x1,y} = a + bc$   -->
+<!-- - $r_{x2,y} =  b + ac$   -->
 
-Because we have the data itself, let's quickly find them with `lm()`
-```{r}
-# quickly scale all the columns in the data
-egdat <- egdat %>% mutate_all(~scale(.)[,1])
-# extract the coefs
-coef(lm(y~x1+x2, egdat)) %>% round(.,2)
-# extract the r^2
-summary(lm(y~x1+x2, egdat))$r.squared
-```
-:::
+<!-- ```{r echo=F} -->
+<!-- egdat <- read_csv("../../data/patheg.csv") -->
+<!-- ``` -->
+
+<!-- Now let's suppose we observed the following correlation matrix: -->
+<!-- ```{r} -->
+<!-- egdat <- read_csv("https://uoepsy.github.io/data/patheg.csv") -->
+<!-- round(cor(egdat),2) -->
+<!-- ``` -->
+<!-- We can plug these into our system of equations: -->
+
+<!-- - $r_{x1,x2} = c = 0.36$   -->
+<!-- - $r_{x1,y} = a + bc = 0.75$    -->
+<!-- - $r_{x2,y} = b + ac = 0.60$ -->
+
+<!-- And with some substituting and rearranging, we can work out the values of $a$, $b$ and $c$.  -->
+
+<!-- `r optbegin("Click for answers", olabel=FALSE, toggle=params$TOGGLE)` -->
+<!-- This is what I get: -->
+
+<!-- a = 0.61   -->
+<!-- b = 0.38   -->
+<!-- c = 0.36   -->
+
+<!-- `r optend()` -->
+<!-- <br> -->
+<!-- We can even work out what the path labeled $d$ (the residual variance) is.   -->
+<!-- First we sum up all the equations for the paths from Y to Y itself.   -->
+<!-- These are: -->
+
+<!-- - $a^2$ (from Y to X1 and back)   -->
+<!-- - $b^2$ (from Y to X2 and back)   -->
+<!-- - $acb$ (from Y to X1 to X2 to Y) -->
+<!-- - $bca$ (from Y to X2 to X1 to Y) -->
+
+<!-- Summing them all up and solving gives us:   -->
+<!-- $$ -->
+<!-- \begin{align} -->
+<!--  r_{y \cdot x1, x2} & = a^2 + b^2 + acb + bca\\ -->
+<!--  & = 0.61^2 + 0.38^2 + 2 \times(0.61 \times 0.38 \times 0.36)\\ -->
+<!--  & = 0.68 \\ -->
+<!-- \end{align} -->
+<!-- $$ -->
+<!-- We can think of this as the portion of the correlation of Y with itself that occurs *via the predictors*. Put another way, this is the amount of variance in Y explained jointly by X1 and X2, which sounds an awful lot like an $R^2$!   -->
+<!-- The path labelled $d$ is simply all that is left in Y after taking out the variance explained by X1 and X2, meaning that the path $d = \sqrt{1 - R^2}$ (i.e., the residual variance!).   -->
+
+<!-- Hooray! We've just worked out regression coefficients when all we had was the correlation matrix of the variables! It's important to note that we have been using the correlation matrix, so, somewhat unsurprisingly, our estimates are *standardised* coefficients.  -->
+
+<!-- Because we have the data itself, let's quickly find them with `lm()` -->
+<!-- ```{r} -->
+<!-- # quickly scale all the columns in the data -->
+<!-- egdat <- egdat %>% mutate_all(~scale(.)[,1]) -->
+<!-- # extract the coefs -->
+<!-- coef(lm(y~x1+x2, egdat)) %>% round(.,2) -->
+<!-- # extract the r^2 -->
+<!-- summary(lm(y~x1+x2, egdat))$r.squared -->
+<!-- ``` -->
+<!-- ::: -->
 
 # Mediation
 
