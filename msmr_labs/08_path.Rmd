@@ -438,11 +438,11 @@ Fit the model and examine the 95% CI.
 #model specification
 model1 <- '
     Acad ~ Non_agg
-    #we label the two parameters that comprise the indirect effect b and c
+    #we label the two parameters that comprise the indirect effect b and a
     Acad ~ b*Teach_r    
     Teach_r ~ a*Non_agg  
     
-    # the indirect effect is the product of b and a. We create a new parameter (ind) to estimate the indirect effect
+    # the indirect effect is the product of a and b. We create a new parameter (ind) to estimate the indirect effect
     ind := a*b   
 '
 
@@ -471,7 +471,7 @@ We can create a new parameter that is the sum of the direct and indirect effect 
 ```{r path analyis total}
 #model specification
 model1 <- '
-    # we now also label the indirect effect of non-aggressive conduct problems on academic performance
+    # we now also label the direct effect of non-aggressive conduct problems on academic performance
     Acad ~ c*Non_agg    
     Acad ~ b*Teach_r    
     Teach_r ~ a*Non_agg  
