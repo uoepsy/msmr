@@ -49,7 +49,7 @@ knitr::include_graphics("images/path/path2.png")
 
 In doing so, we make the assumption that these variables provide measurements of the underlying latent construct **without error**. Furthermore, when taking the *average* score, we also make the assumption that each item is equally representative of our construct. 
 
-If you think about it, taking the mean of a set of items still has the sense of being a 'factor structure' in that we think of the items as being , but it constrains all our item variances to be equal, and all our factor loadings to be equal. So it doesn't really have the benefits of a factor model. 
+If you think about it, using a scale score (e.g. just calculating the mean, or sum of a set of items) still has the sense of being a 'factor structure' in that we think of the items as being manifestations of some underlying latent construct. However, it is a very restricted model, in which all the factor loadings are equal, and there is no residual variance. So it doesn't really have the benefits of a factor model (it assumes all items are equally reflective or the construct, and it doesn't separate out measurement error).
 
 Let's demonstrate this, using a dataset from the CFA week exercises. 
 It doesn't matter what it is for this example, so I'm just going to keep the first 4 items (it will save me typing out all the others!)  
@@ -409,33 +409,37 @@ Test the indirect effect of attitudes, subjective norms, and perceived behaviour
 Remember, when you fit the model with `sem()`, use `se='bootstrap'` to get boostrapped standard errors (it may take a few minutes). When you inspect the model using `summary()`, get the 95% confidence intervals for parameters with `ci = TRUE`. 
 `r qend()` 
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+First, let's name the paths in the structural equation model:
+
+```{r echo=FALSE, out.width="85%"}
+knitr::include_graphics("images/sem/msmr-w9.png")
+```
+
 To test these indirect effects we create new a parameter for each indirect effect:
 
 ```{r indirect effects}
-TPB_model2<-'
-#measurement models for attitudes, subjective norms and perceived behavioural control
-  
+TPB_model2 <- '
+  #measurement models for attitudes, subjective norms and perceived behavioural control
   att =~ attitude1 + attitude2 + attitude3 + attitude4
   SN =~ SN1 + SN2 + SN3 + SN4
   PBC =~ PBC1 + PBC2 + PBC3 + PBC4
   intent =~ int1 + int2 + int3 + int4
   beh =~ beh1 + beh2 + beh3 + beh4
 
-#regressions  
+  #regressions  
 
   beh ~ b*intent + PBC
   intent ~ a1*att + a2*SN + a3*PBC
 
-##covariances between attitudes, subjective norms and perceived behavioural control
+  ##covariances between attitudes, subjective norms and perceived behavioural control
   att ~~ SN    
   att ~~ PBC
   SN ~~ PBC
 
-ind1:= a1*b  #indirect effect of attitudes via intentions
-ind2:= a2*b  #indirect effect of subjective norms via intentions
-ind3:= a3*b  #indirect effect of perceived behavioural control via intentions
+  ind1 := a1*b  #indirect effect of attitudes via intentions
+  ind2 := a2*b  #indirect effect of subjective norms via intentions
+  ind3 := a3*b  #indirect effect of perceived behavioural control via intentions
 '
-
 ```
 
 When we estimate the model, we request boostrapped standard errors: 

@@ -447,7 +447,7 @@ This is what we did in the example in last week’s exercises, e.g.:</p>
 <p><img src="images/path/path2.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
 <p>In doing so, we make the assumption that these variables provide measurements of the underlying latent construct <strong>without error</strong>. Furthermore, when taking the <em>average</em> score, we also make the assumption that each item is equally representative of our construct.</p>
-<p>If you think about it, taking the mean of a set of items still has the sense of being a ‘factor structure’ in that we think of the items as being , but it constrains all our item variances to be equal, and all our factor loadings to be equal. So it doesn’t really have the benefits of a factor model.</p>
+<p>If you think about it, using a scale score (e.g. just calculating the mean, or sum of a set of items) still has the sense of being a ‘factor structure’ in that we think of the items as being manifestations of some underlying latent construct. However, it is a very restricted model, in which all the factor loadings are equal, and there is no residual variance. So it doesn’t really have the benefits of a factor model (it assumes all items are equally reflective or the construct, and it doesn’t separate out measurement error).</p>
 <p>Let’s demonstrate this, using a dataset from the CFA week exercises.
 It doesn’t matter what it is for this example, so I’m just going to keep the first 4 items (it will save me typing out all the others!)</p>
 <pre class="r"><code>df &lt;- read_csv(&quot;https://uoepsy.github.io/data/conduct_problems_2.csv&quot;)[,1:4]
@@ -1267,29 +1267,30 @@ Question A6
 <span id="sol-start-6" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-6&#39;, &#39;sol-start-6&#39;)"> Solution </span>
 </div>
 <div id="sol-body-6" class="solution-body" style="display: none;">
+<p>First, let’s name the paths in the structural equation model:</p>
+<p><img src="images/sem/msmr-w9.png" width="85%" style="display: block; margin: auto;" /></p>
 <p>To test these indirect effects we create new a parameter for each indirect effect:</p>
-<pre class="r"><code>TPB_model2&lt;-&#39;
-#measurement models for attitudes, subjective norms and perceived behavioural control
-  
+<pre class="r"><code>TPB_model2 &lt;- &#39;
+  #measurement models for attitudes, subjective norms and perceived behavioural control
   att =~ attitude1 + attitude2 + attitude3 + attitude4
   SN =~ SN1 + SN2 + SN3 + SN4
   PBC =~ PBC1 + PBC2 + PBC3 + PBC4
   intent =~ int1 + int2 + int3 + int4
   beh =~ beh1 + beh2 + beh3 + beh4
 
-#regressions  
+  #regressions  
 
   beh ~ b*intent + PBC
   intent ~ a1*att + a2*SN + a3*PBC
 
-##covariances between attitudes, subjective norms and perceived behavioural control
+  ##covariances between attitudes, subjective norms and perceived behavioural control
   att ~~ SN    
   att ~~ PBC
   SN ~~ PBC
 
-ind1:= a1*b  #indirect effect of attitudes via intentions
-ind2:= a2*b  #indirect effect of subjective norms via intentions
-ind3:= a3*b  #indirect effect of perceived behavioural control via intentions
+  ind1 := a1*b  #indirect effect of attitudes via intentions
+  ind2 := a2*b  #indirect effect of subjective norms via intentions
+  ind3 := a3*b  #indirect effect of perceived behavioural control via intentions
 &#39;</code></pre>
 <p>When we estimate the model, we request boostrapped standard errors:</p>
 <pre class="r"><code>TPB_model2.est&lt;-sem(TPB_model2, se=&#39;bootstrap&#39;, data=TPB_data)</code></pre>
@@ -1351,29 +1352,29 @@ ind3:= a3*b  #indirect effect of perceived behavioural control via intentions
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
 ##   att =~                                                                
 ##     attitude1         1.000                               1.000    1.000
-##     attitude2         1.051    0.060   17.420    0.000    0.944    1.180
-##     attitude3         0.995    0.061   16.292    0.000    0.880    1.113
-##     attitude4         1.029    0.057   18.174    0.000    0.923    1.143
+##     attitude2         1.051    0.059   17.727    0.000    0.937    1.171
+##     attitude3         0.995    0.058   17.180    0.000    0.891    1.118
+##     attitude4         1.029    0.058   17.848    0.000    0.925    1.148
 ##   SN =~                                                                 
 ##     SN1               1.000                               1.000    1.000
-##     SN2               0.982    0.075   13.181    0.000    0.848    1.129
-##     SN3               0.944    0.067   14.182    0.000    0.823    1.080
-##     SN4               0.995    0.071   14.053    0.000    0.862    1.148
+##     SN2               0.982    0.075   13.028    0.000    0.845    1.140
+##     SN3               0.944    0.066   14.378    0.000    0.825    1.086
+##     SN4               0.995    0.070   14.219    0.000    0.867    1.136
 ##   PBC =~                                                                
 ##     PBC1              1.000                               1.000    1.000
-##     PBC2              0.938    0.041   22.904    0.000    0.856    1.021
-##     PBC3              0.914    0.040   22.988    0.000    0.833    0.993
-##     PBC4              0.963    0.040   24.132    0.000    0.888    1.051
+##     PBC2              0.938    0.040   23.515    0.000    0.865    1.017
+##     PBC3              0.914    0.038   24.362    0.000    0.848    0.992
+##     PBC4              0.963    0.039   24.501    0.000    0.890    1.050
 ##   intent =~                                                             
 ##     int1              1.000                               1.000    1.000
-##     int2              1.164    0.087   13.324    0.000    0.998    1.346
-##     int3              1.116    0.086   12.971    0.000    0.955    1.299
-##     int4              1.072    0.081   13.218    0.000    0.919    1.247
+##     int2              1.164    0.087   13.436    0.000    1.005    1.341
+##     int3              1.116    0.079   14.084    0.000    0.968    1.277
+##     int4              1.072    0.081   13.298    0.000    0.917    1.238
 ##   beh =~                                                                
 ##     beh1              1.000                               1.000    1.000
-##     beh2              0.937    0.070   13.482    0.000    0.807    1.077
-##     beh3              0.925    0.073   12.661    0.000    0.792    1.076
-##     beh4              0.961    0.068   14.137    0.000    0.833    1.101
+##     beh2              0.937    0.072   13.020    0.000    0.810    1.096
+##     beh3              0.925    0.072   12.871    0.000    0.789    1.074
+##     beh4              0.961    0.071   13.539    0.000    0.835    1.109
 ##    Std.lv  Std.all
 ##                   
 ##     0.710    0.689
@@ -1404,12 +1405,12 @@ ind3:= a3*b  #indirect effect of perceived behavioural control via intentions
 ## Regressions:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
 ##   beh ~                                                                 
-##     intent     (b)    0.578    0.078    7.443    0.000    0.438    0.747
-##     PBC               0.193    0.058    3.340    0.001    0.081    0.303
+##     intent     (b)    0.578    0.079    7.351    0.000    0.434    0.738
+##     PBC               0.193    0.058    3.336    0.001    0.076    0.308
 ##   intent ~                                                              
-##     att       (a1)    0.358    0.045    8.021    0.000    0.275    0.453
-##     SN        (a2)    0.203    0.045    4.530    0.000    0.113    0.288
-##     PBC       (a3)    0.447    0.042   10.643    0.000    0.365    0.533
+##     att       (a1)    0.358    0.043    8.313    0.000    0.278    0.446
+##     SN        (a2)    0.203    0.043    4.692    0.000    0.112    0.287
+##     PBC       (a3)    0.447    0.042   10.670    0.000    0.373    0.529
 ##    Std.lv  Std.all
 ##                   
 ##     0.506    0.506
@@ -1422,10 +1423,10 @@ ind3:= a3*b  #indirect effect of perceived behavioural control via intentions
 ## Covariances:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
 ##   att ~~                                                                
-##     SN                0.156    0.025    6.345    0.000    0.109    0.207
-##     PBC               0.140    0.023    5.949    0.000    0.095    0.187
+##     SN                0.156    0.023    6.684    0.000    0.108    0.199
+##     PBC               0.140    0.024    5.868    0.000    0.096    0.185
 ##   SN ~~                                                                 
-##     PBC               0.104    0.022    4.717    0.000    0.062    0.150
+##     PBC               0.104    0.023    4.616    0.000    0.061    0.150
 ##    Std.lv  Std.all
 ##                   
 ##     0.320    0.320
@@ -1435,31 +1436,31 @@ ind3:= a3*b  #indirect effect of perceived behavioural control via intentions
 ## 
 ## Variances:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
-##    .attitude1         0.556    0.035   15.696    0.000    0.486    0.623
-##    .attitude2         0.498    0.032   15.751    0.000    0.433    0.559
-##    .attitude3         0.551    0.035   15.892    0.000    0.481    0.618
-##    .attitude4         0.498    0.030   16.363    0.000    0.441    0.563
-##    .SN1               0.605    0.041   14.598    0.000    0.522    0.687
-##    .SN2               0.616    0.041   14.950    0.000    0.535    0.695
-##    .SN3               0.681    0.038   17.710    0.000    0.602    0.757
-##    .SN4               0.676    0.046   14.712    0.000    0.587    0.771
-##    .PBC1              0.341    0.023   14.818    0.000    0.295    0.384
-##    .PBC2              0.359    0.022   15.981    0.000    0.315    0.404
-##    .PBC3              0.377    0.020   18.651    0.000    0.339    0.416
-##    .PBC4              0.376    0.023   16.116    0.000    0.331    0.425
-##    .int1              0.969    0.051   19.175    0.000    0.869    1.068
-##    .int2              0.949    0.057   16.771    0.000    0.843    1.060
-##    .int3              0.976    0.059   16.415    0.000    0.857    1.100
-##    .int4              1.042    0.055   19.092    0.000    0.937    1.151
-##    .beh1              0.900    0.059   15.154    0.000    0.779    1.018
-##    .beh2              1.026    0.058   17.661    0.000    0.913    1.136
-##    .beh3              1.057    0.059   18.023    0.000    0.931    1.171
-##    .beh4              1.045    0.061   17.074    0.000    0.932    1.170
-##     att               0.504    0.047   10.670    0.000    0.423    0.604
-##     SN                0.469    0.050    9.431    0.000    0.375    0.571
-##     PBC               0.603    0.046   13.197    0.000    0.518    0.699
-##    .intent            0.211    0.030    7.038    0.000    0.153    0.275
-##    .beh               0.388    0.046    8.483    0.000    0.303    0.480
+##    .attitude1         0.556    0.035   15.809    0.000    0.486    0.623
+##    .attitude2         0.498    0.033   15.079    0.000    0.430    0.560
+##    .attitude3         0.551    0.033   16.459    0.000    0.485    0.616
+##    .attitude4         0.498    0.030   16.368    0.000    0.439    0.561
+##    .SN1               0.605    0.041   14.612    0.000    0.528    0.686
+##    .SN2               0.616    0.041   15.204    0.000    0.533    0.692
+##    .SN3               0.681    0.041   16.485    0.000    0.598    0.760
+##    .SN4               0.676    0.043   15.686    0.000    0.589    0.760
+##    .PBC1              0.341    0.022   15.311    0.000    0.299    0.387
+##    .PBC2              0.359    0.023   15.797    0.000    0.316    0.402
+##    .PBC3              0.377    0.020   18.828    0.000    0.336    0.415
+##    .PBC4              0.376    0.024   15.600    0.000    0.328    0.425
+##    .int1              0.969    0.050   19.510    0.000    0.868    1.063
+##    .int2              0.949    0.057   16.711    0.000    0.833    1.061
+##    .int3              0.976    0.058   16.967    0.000    0.858    1.087
+##    .int4              1.042    0.055   18.834    0.000    0.935    1.149
+##    .beh1              0.900    0.060   15.105    0.000    0.786    1.011
+##    .beh2              1.026    0.059   17.497    0.000    0.905    1.134
+##    .beh3              1.057    0.060   17.626    0.000    0.940    1.176
+##    .beh4              1.045    0.063   16.497    0.000    0.921    1.171
+##     att               0.504    0.047   10.748    0.000    0.412    0.601
+##     SN                0.469    0.049    9.476    0.000    0.377    0.568
+##     PBC               0.603    0.043   13.884    0.000    0.522    0.689
+##    .intent            0.211    0.029    7.346    0.000    0.157    0.272
+##    .beh               0.388    0.048    8.074    0.000    0.300    0.486
 ##    Std.lv  Std.all
 ##     0.556    0.525
 ##     0.498    0.472
@@ -1489,9 +1490,9 @@ ind3:= a3*b  #indirect effect of perceived behavioural control via intentions
 ## 
 ## Defined Parameters:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
-##     ind1              0.207    0.033    6.253    0.000    0.146    0.272
-##     ind2              0.117    0.029    4.030    0.000    0.064    0.177
-##     ind3              0.258    0.039    6.676    0.000    0.189    0.343
+##     ind1              0.207    0.034    6.136    0.000    0.144    0.278
+##     ind2              0.117    0.028    4.113    0.000    0.063    0.177
+##     ind3              0.258    0.039    6.555    0.000    0.187    0.344
 ##    Std.lv  Std.all
 ##     0.182    0.182
 ##     0.099    0.099
