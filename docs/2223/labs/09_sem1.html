@@ -430,10 +430,9 @@ div.tocify {
 
 <div id="measurement-error-and-the-need-for-sem" class="section level1">
 <h1>Measurement Error and the need for SEM</h1>
-<p>We’ve been mentioning Structural Equation Modelling (SEM) for a few weeks now, but we haven’t been very clear on what exactly it is. Is it CFA? Is it Path Analysis? In fact it is both - it is the overarching framework of which CFA and Path Analysis are just parts.</p>
-<p>The beauty comes in when we put these two approaches together.<br />
-Path analysis, as we saw last week, offers a way of specifying and evaluating a <em>structural</em> model, in which variables relate to one another in various ways, via different (sometimes indirect) paths. Common models like our old friend multiple regression can be expressed in a Path Analysis framework.<br />
-Factor Analysis, on the other hand, brings something absolutely crucial to the table - it allows us to mitigate some of the problems which are associated with measurement error by specifying the existence of some latent variable.</p>
+<p>We have been mentioning Structural Equation Modelling (SEM) for a few weeks now, but we haven’t been very clear on what exactly it is. Is it CFA? Is it Path Analysis? In fact it is both - it is the overarching framework of which CFA and Path Analysis are just particular cases. The beauty comes in when we put the CFA and Path Analysis approaches together.</p>
+<p>Path analysis, as we saw last week, offers a way of specifying and evaluating a <em>structural</em> model, in which variables relate to one another in various ways, via different (sometimes indirect) paths. Common models like our old friend multiple regression can be expressed in a Path Analysis framework.</p>
+<p>Factor Analysis, on the other hand, brings something absolutely crucial to the table - it allows us to mitigate some of the problems which are associated with measurement error by specifying the existence of some latent variable which is measured via some observed variables.</p>
 <p>Combine them and we can reap the rewards of having both a <em>structural model</em> and a <em>measurement model</em>. The measurement model is our specification between the items we directly observed, and the latent variables of which we consider these items to be manifestations. The structural model is our specified model of the relationships between the latent variables.</p>
 <div id="scale-scores" class="section level2">
 <h2>Scale Scores</h2>
@@ -441,7 +440,7 @@ Factor Analysis, on the other hand, brings something absolutely crucial to the t
 This is what we did in the example in last week’s exercises, e.g.:</p>
 <div style="border-left: 4px solid #a41ae4;font-size: 1em;">
 <ul>
-<li>Intention to vaccinate (scored on a range of 0-100.</li>
+<li>Intention to vaccinate (scored on a range of 0-100).</li>
 <li>Health Locus of Control (HLC) score (<strong>average score on a set of items</strong> relating to perceived control over ones own health).</li>
 <li>Religiosity (<strong>average score on a set of items</strong> relating to an individual’s religiosity).</li>
 </ul>
@@ -501,12 +500,12 @@ cbind(factor_scores, rowmeans) %&gt;% head</code></pre>
 <p>The accuracy and inconsistency with which an observed variable reflects the underlying construct that we consider it to be measuring is termed the <em>reliability</em>.</p>
 <div class="frame">
 <p><strong>A silly example</strong></p>
-<p>Suppose I’m trying to weigh <a href="images/dug.jpg">my dog</a>. I have a set of scales, and I put him on the scales. He weighs in at 13.53kg.
-I immediately do it again, and the scales this time say 13.41kg. I do it again. 13.51kg, and again, 13.60kg.
-What is happening? Is Dougal’s weight (Dougal is the dog, by the way) randomly fluctuating by 100g? Or are my scales just a bit inconsistent, and my observations contain measurement error?</p>
+<p>Suppose we are trying to weigh <a href="images/dug.jpg">a dog</a>. We have a set of scales, and we put him on the scales. He weighs in at 13.53kg.
+We immediately do it again, and the scales this time say 13.41kg. We do it again, 13.51kg. Once more, 13.60kg.</p>
+<p>What is happening? Is Dougal’s weight (Dougal is the dog, by the way) randomly fluctuating by 100g? Or are my scales just a bit inconsistent, and my observations contain measurement error?</p>
 <p><img src="09_sem1_files/figure-html/unnamed-chunk-6-1.png" width="80%" style="display: block; margin: auto;" /></p>
-<p>I take him to the vets, where they have a much better set of weighing scales, and I do the same thing (measure him 4 times). The weights are 13.47, 13.49, 13.48, 13.48.<br />
-The scales at the vets are clearly <em>more <strong>reliable</strong></em>. We still don’t know Dougal’s <em>true</em> weight, but we are better informed to estimate it if we go on the measurements from the scales at the vet.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<p>We take him to the vets, where they have a much better set of weighing scales, and we do the same thing (measure him 4 times). The weights are 13.47, 13.49, 13.48, 13.48.</p>
+<p>The scales at the vets are clearly <em>more <strong>reliable</strong></em>. We still don’t know Dougal’s <em>true</em> weight, but we are better informed to estimate it if we go on the measurements from the scales at the vet.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
 <p><img src="09_sem1_files/figure-html/unnamed-chunk-7-1.png" width="80%" style="display: block; margin: auto;" /></p>
 </div>
 <p>Another way to think about reliability is to take the view that <span class="math inline">\(\text{&quot;observations = truth + error&quot;}\)</span>, and more error = less reliable.</p>
@@ -521,11 +520,11 @@ The scales at the vets are clearly <em>more <strong>reliable</strong></em>. We s
 <p><strong>alpha and omega</strong></p>
 <p><span class="math display">\[
 \begin{align}
-&amp; \text{Cronbach&#39;s }\alpha = \frac{n \cdot \overline{cov(ij)}}{\overline{\sigma^2_i} + (n-1) \cdot \overline{cov(ij)}} &amp; \\
-&amp; \text{Where:}  \\
-&amp; n = \text{number of items} \\
-&amp; \overline{cov(ij)} = \text{average covariance between item-pairs}  \\
-&amp; \overline{\sigma^2_i} = \text{average item variance}  \\
+&amp; \text{Cronbach&#39;s }\alpha = \frac{ n \cdot \overline{cov(ij)} }{\overline{\sigma^2_i} + (n-1) \cdot \overline{cov(ij)}} &amp; \\
+\text{where} &amp;:  \\
+    n &amp;= \text{number of items} \\
+    \overline{cov(ij)} &amp;= \text{average covariance between item-pairs}  \\
+    \overline{\sigma^2_i} &amp;= \text{average item variance}  \\
 \end{align}
 \]</span>
 Ranges from 0 to 1 (higher is better).<br />
@@ -538,7 +537,7 @@ You can get this using the <code>alpha()</code> function from the <strong>psych<
 <h1>(Re)introducing SEM</h1>
 <p>After spending much of our time in the regression framework, the move to SEM can feel mind-boggling.
 Give two researchers the same whiteboard on which your variables are drawn, and they may connect them in completely different ways. This flexibility can at first make SEM feel like a free-for-all (i.e., just do whatever you like, get a p-value out of it, and off we go!). However, to some people this is one of the main benefits: it forces you to be explicit in specifying your theory, and allows you to test your theory and examine how well it fits with the data you observed.</p>
-<p>We have actually already go to grips with the starting point of how structural equation models work in the previous weeks.</p>
+<p>We have actually already got to grips with the starting point of how structural equation models work in the previous weeks.</p>
 <ol style="list-style-type: decimal">
 <li>begin with an <strong>observed covariance matrix</strong></li>
 <li>specify our our theoretical model</li>
@@ -644,24 +643,15 @@ Figure 2: Theory of planned behaviour (latent variables only)
 Question A1
 </div>
 <div class="question-body">
-<p>Did you do the final exercise (writing up your results) from last week? Our example write-up is now visible (see <a href="https://uoepsy.github.io/msmr/labs/08_path.html#A_more_complex_model">last week</a>) against which you can compare yours.</p>
-<p><strong>Please note:</strong> Writing-up is an important skill, and attempting these questions yourself (rather than simply reading through the example write-ups) will help <em>a lot</em> when it comes to writing your assessment.</p>
-</div>
-<p class="question-end">
-</p>
-<div class="question-begin">
-Question A2
-</div>
-<div class="question-body">
 <p>Read in the data using the appropriate function. We’ve given you <strong>.csv</strong> files for a long time now, but it’s good to be prepared to encounter all sorts of weird filetypes.</p>
 <p>Can you successfully read in from both types of data?</p>
 </div>
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-151" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-151&#39;, &#39;sol-start-151&#39;)"> Solution </span>
+<span id="sol-start-1" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-1&#39;, &#39;sol-start-1&#39;)"> Solution </span>
 </div>
-<div id="sol-body-151" class="solution-body" style="display: none;">
+<div id="sol-body-1" class="solution-body" style="display: none;">
 <p>Either one or the other of:</p>
 <pre class="r"><code>load(url(&quot;https://uoepsy.github.io/data/TPB_data.Rdata&quot;))
 
@@ -670,7 +660,7 @@ TPB_data &lt;- read.table(&quot;https://uoepsy.github.io/data/TPB_data.txt&quot;
 <p class="solution-end">
 </p>
 <div class="question-begin">
-Question A3
+Question A2
 </div>
 <div class="question-body">
 <p>Test separate one-factor models for each construct.<br />
@@ -679,9 +669,9 @@ Are the measurement models satisfactory? <em>(check their fit measures)</em>.</p
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-152" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-152&#39;, &#39;sol-start-152&#39;)"> Solution </span>
+<span id="sol-start-2" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-2&#39;, &#39;sol-start-2&#39;)"> Solution </span>
 </div>
-<div id="sol-body-152" class="solution-body" style="display: none;">
+<div id="sol-body-2" class="solution-body" style="display: none;">
 <pre class="r"><code># specify one factor CFA model for attitudes
 attitude_model &lt;- &#39;att =~ attitude1 + attitude2 + attitude3 + attitude4&#39;
 # estimate the model
@@ -781,7 +771,7 @@ modificationindices(attitude_model.est)</code></pre>
 <p class="solution-end">
 </p>
 <div class="question-begin">
-Question A4
+Question A3
 </div>
 <div class="question-body">
 <p>Using lavaan syntax, specify a structural equation model that corresponds to the model in Figure <a href="#fig:tpb">2</a>. For each construct use a latent variable measured by the corresponding items in the dataset.</p>
@@ -789,9 +779,9 @@ Question A4
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-153" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-153&#39;, &#39;sol-start-153&#39;)"> Solution </span>
+<span id="sol-start-3" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-3&#39;, &#39;sol-start-3&#39;)"> Solution </span>
 </div>
-<div id="sol-body-153" class="solution-body" style="display: none;">
+<div id="sol-body-3" class="solution-body" style="display: none;">
 <pre class="r"><code>TPB_model&lt;-&#39;
 #measurement models for attitudes, subjective norms and perceived behavioural control
   
@@ -816,7 +806,7 @@ Question A4
 <p class="solution-end">
 </p>
 <div class="question-begin">
-Question A5
+Question A4
 </div>
 <div class="question-body">
 <p>Estimate the model from Question A4 and evaluate the model</p>
@@ -829,9 +819,9 @@ Question A5
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-154" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-154&#39;, &#39;sol-start-154&#39;)"> Solution </span>
+<span id="sol-start-4" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-4&#39;, &#39;sol-start-4&#39;)"> Solution </span>
 </div>
-<div id="sol-body-154" class="solution-body" style="display: none;">
+<div id="sol-body-4" class="solution-body" style="display: none;">
 <p>We can estimate the model using the <code>sem()</code> function.<br />
 By default the <code>sem()</code> function will scale the latent variables by fixing the loading of the first item for each latent variable to 1 but we can override this by setting <code>std.lv=T</code> if we wanted to. By default, maximum likelihood estimation will be used.</p>
 <pre class="r"><code>TPB_model.est&lt;-sem(TPB_model, data=TPB_data, std.lv=T)
@@ -967,7 +957,7 @@ summary(TPB_model.est, fit.measures=T, standardized=T)</code></pre>
 <p class="solution-end">
 </p>
 <div class="question-begin">
-Question A6
+Question A5
 </div>
 <div class="question-body">
 <p>Examine the modification indices and expected parameter changes - are there any additional parameters you would consider including?</p>
@@ -975,9 +965,9 @@ Question A6
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-155" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-155&#39;, &#39;sol-start-155&#39;)"> Solution </span>
+<span id="sol-start-5" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-5&#39;, &#39;sol-start-5&#39;)"> Solution </span>
 </div>
-<div id="sol-body-155" class="solution-body" style="display: none;">
+<div id="sol-body-5" class="solution-body" style="display: none;">
 <pre class="r"><code>modindices(TPB_model.est)</code></pre>
 <pre><code>##           lhs op       rhs     mi    epc sepc.lv sepc.all sepc.nox
 ## 54        att =~       SN1  1.663  0.049   0.049    0.047    0.047
@@ -1265,7 +1255,7 @@ Question A6
 <p class="solution-end">
 </p>
 <div class="question-begin">
-Question A7
+Question A6
 </div>
 <div class="question-body">
 <p>Test the indirect effect of attitudes, subjective norms, and perceived behavioural control on behaviour via intentions.</p>
@@ -1274,9 +1264,9 @@ Question A7
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-156" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-156&#39;, &#39;sol-start-156&#39;)"> Solution </span>
+<span id="sol-start-6" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-6&#39;, &#39;sol-start-6&#39;)"> Solution </span>
 </div>
-<div id="sol-body-156" class="solution-body" style="display: none;">
+<div id="sol-body-6" class="solution-body" style="display: none;">
 <p>To test these indirect effects we create new a parameter for each indirect effect:</p>
 <pre class="r"><code>TPB_model2&lt;-&#39;
 #measurement models for attitudes, subjective norms and perceived behavioural control
@@ -1361,29 +1351,29 @@ ind3:= a3*b  #indirect effect of perceived behavioural control via intentions
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
 ##   att =~                                                                
 ##     attitude1         1.000                               1.000    1.000
-##     attitude2         1.051    0.060   17.667    0.000    0.936    1.169
-##     attitude3         0.995    0.060   16.682    0.000    0.884    1.121
-##     attitude4         1.029    0.058   17.822    0.000    0.920    1.148
+##     attitude2         1.051    0.060   17.420    0.000    0.944    1.180
+##     attitude3         0.995    0.061   16.292    0.000    0.880    1.113
+##     attitude4         1.029    0.057   18.174    0.000    0.923    1.143
 ##   SN =~                                                                 
 ##     SN1               1.000                               1.000    1.000
-##     SN2               0.982    0.075   13.059    0.000    0.841    1.144
-##     SN3               0.944    0.069   13.607    0.000    0.819    1.095
-##     SN4               0.995    0.069   14.333    0.000    0.870    1.140
+##     SN2               0.982    0.075   13.181    0.000    0.848    1.129
+##     SN3               0.944    0.067   14.182    0.000    0.823    1.080
+##     SN4               0.995    0.071   14.053    0.000    0.862    1.148
 ##   PBC =~                                                                
 ##     PBC1              1.000                               1.000    1.000
-##     PBC2              0.938    0.041   23.065    0.000    0.862    1.022
-##     PBC3              0.914    0.039   23.215    0.000    0.837    0.992
-##     PBC4              0.963    0.040   24.031    0.000    0.886    1.044
+##     PBC2              0.938    0.041   22.904    0.000    0.856    1.021
+##     PBC3              0.914    0.040   22.988    0.000    0.833    0.993
+##     PBC4              0.963    0.040   24.132    0.000    0.888    1.051
 ##   intent =~                                                             
 ##     int1              1.000                               1.000    1.000
-##     int2              1.164    0.084   13.862    0.000    1.015    1.346
-##     int3              1.116    0.080   13.873    0.000    0.977    1.294
-##     int4              1.072    0.080   13.376    0.000    0.921    1.245
+##     int2              1.164    0.087   13.324    0.000    0.998    1.346
+##     int3              1.116    0.086   12.971    0.000    0.955    1.299
+##     int4              1.072    0.081   13.218    0.000    0.919    1.247
 ##   beh =~                                                                
 ##     beh1              1.000                               1.000    1.000
-##     beh2              0.937    0.069   13.583    0.000    0.809    1.083
-##     beh3              0.925    0.074   12.563    0.000    0.798    1.085
-##     beh4              0.961    0.071   13.472    0.000    0.829    1.101
+##     beh2              0.937    0.070   13.482    0.000    0.807    1.077
+##     beh3              0.925    0.073   12.661    0.000    0.792    1.076
+##     beh4              0.961    0.068   14.137    0.000    0.833    1.101
 ##    Std.lv  Std.all
 ##                   
 ##     0.710    0.689
@@ -1414,12 +1404,12 @@ ind3:= a3*b  #indirect effect of perceived behavioural control via intentions
 ## Regressions:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
 ##   beh ~                                                                 
-##     intent     (b)    0.578    0.077    7.486    0.000    0.431    0.737
-##     PBC               0.193    0.056    3.474    0.001    0.085    0.299
+##     intent     (b)    0.578    0.078    7.443    0.000    0.438    0.747
+##     PBC               0.193    0.058    3.340    0.001    0.081    0.303
 ##   intent ~                                                              
-##     att       (a1)    0.358    0.043    8.275    0.000    0.274    0.446
-##     SN        (a2)    0.203    0.044    4.654    0.000    0.114    0.282
-##     PBC       (a3)    0.447    0.040   11.121    0.000    0.377    0.528
+##     att       (a1)    0.358    0.045    8.021    0.000    0.275    0.453
+##     SN        (a2)    0.203    0.045    4.530    0.000    0.113    0.288
+##     PBC       (a3)    0.447    0.042   10.643    0.000    0.365    0.533
 ##    Std.lv  Std.all
 ##                   
 ##     0.506    0.506
@@ -1432,10 +1422,10 @@ ind3:= a3*b  #indirect effect of perceived behavioural control via intentions
 ## Covariances:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
 ##   att ~~                                                                
-##     SN                0.156    0.024    6.505    0.000    0.108    0.204
-##     PBC               0.140    0.024    5.889    0.000    0.093    0.186
+##     SN                0.156    0.025    6.345    0.000    0.109    0.207
+##     PBC               0.140    0.023    5.949    0.000    0.095    0.187
 ##   SN ~~                                                                 
-##     PBC               0.104    0.023    4.538    0.000    0.059    0.150
+##     PBC               0.104    0.022    4.717    0.000    0.062    0.150
 ##    Std.lv  Std.all
 ##                   
 ##     0.320    0.320
@@ -1445,31 +1435,31 @@ ind3:= a3*b  #indirect effect of perceived behavioural control via intentions
 ## 
 ## Variances:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
-##    .attitude1         0.556    0.036   15.526    0.000    0.487    0.630
-##    .attitude2         0.498    0.033   14.887    0.000    0.432    0.563
-##    .attitude3         0.551    0.034   16.403    0.000    0.481    0.617
-##    .attitude4         0.498    0.030   16.644    0.000    0.438    0.558
-##    .SN1               0.605    0.040   15.119    0.000    0.523    0.684
-##    .SN2               0.616    0.040   15.511    0.000    0.540    0.697
-##    .SN3               0.681    0.040   17.095    0.000    0.604    0.761
-##    .SN4               0.676    0.045   15.079    0.000    0.589    0.762
-##    .PBC1              0.341    0.024   14.325    0.000    0.295    0.390
-##    .PBC2              0.359    0.023   15.931    0.000    0.316    0.405
-##    .PBC3              0.377    0.022   17.488    0.000    0.336    0.420
-##    .PBC4              0.376    0.024   15.996    0.000    0.331    0.426
-##    .int1              0.969    0.049   19.814    0.000    0.868    1.063
-##    .int2              0.949    0.060   15.876    0.000    0.825    1.070
-##    .int3              0.976    0.057   17.255    0.000    0.866    1.087
-##    .int4              1.042    0.054   19.223    0.000    0.938    1.147
-##    .beh1              0.900    0.055   16.283    0.000    0.783    1.007
-##    .beh2              1.026    0.060   16.987    0.000    0.908    1.142
-##    .beh3              1.057    0.058   18.323    0.000    0.946    1.169
-##    .beh4              1.045    0.061   17.079    0.000    0.922    1.163
-##     att               0.504    0.044   11.378    0.000    0.420    0.597
-##     SN                0.469    0.048    9.668    0.000    0.372    0.568
-##     PBC               0.603    0.043   13.875    0.000    0.521    0.691
-##    .intent            0.211    0.030    7.113    0.000    0.154    0.275
-##    .beh               0.388    0.048    8.129    0.000    0.300    0.485
+##    .attitude1         0.556    0.035   15.696    0.000    0.486    0.623
+##    .attitude2         0.498    0.032   15.751    0.000    0.433    0.559
+##    .attitude3         0.551    0.035   15.892    0.000    0.481    0.618
+##    .attitude4         0.498    0.030   16.363    0.000    0.441    0.563
+##    .SN1               0.605    0.041   14.598    0.000    0.522    0.687
+##    .SN2               0.616    0.041   14.950    0.000    0.535    0.695
+##    .SN3               0.681    0.038   17.710    0.000    0.602    0.757
+##    .SN4               0.676    0.046   14.712    0.000    0.587    0.771
+##    .PBC1              0.341    0.023   14.818    0.000    0.295    0.384
+##    .PBC2              0.359    0.022   15.981    0.000    0.315    0.404
+##    .PBC3              0.377    0.020   18.651    0.000    0.339    0.416
+##    .PBC4              0.376    0.023   16.116    0.000    0.331    0.425
+##    .int1              0.969    0.051   19.175    0.000    0.869    1.068
+##    .int2              0.949    0.057   16.771    0.000    0.843    1.060
+##    .int3              0.976    0.059   16.415    0.000    0.857    1.100
+##    .int4              1.042    0.055   19.092    0.000    0.937    1.151
+##    .beh1              0.900    0.059   15.154    0.000    0.779    1.018
+##    .beh2              1.026    0.058   17.661    0.000    0.913    1.136
+##    .beh3              1.057    0.059   18.023    0.000    0.931    1.171
+##    .beh4              1.045    0.061   17.074    0.000    0.932    1.170
+##     att               0.504    0.047   10.670    0.000    0.423    0.604
+##     SN                0.469    0.050    9.431    0.000    0.375    0.571
+##     PBC               0.603    0.046   13.197    0.000    0.518    0.699
+##    .intent            0.211    0.030    7.038    0.000    0.153    0.275
+##    .beh               0.388    0.046    8.483    0.000    0.303    0.480
 ##    Std.lv  Std.all
 ##     0.556    0.525
 ##     0.498    0.472
@@ -1499,9 +1489,9 @@ ind3:= a3*b  #indirect effect of perceived behavioural control via intentions
 ## 
 ## Defined Parameters:
 ##                    Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
-##     ind1              0.207    0.032    6.393    0.000    0.146    0.268
-##     ind2              0.117    0.028    4.123    0.000    0.062    0.175
-##     ind3              0.258    0.038    6.868    0.000    0.190    0.337
+##     ind1              0.207    0.033    6.253    0.000    0.146    0.272
+##     ind2              0.117    0.029    4.030    0.000    0.064    0.177
+##     ind3              0.258    0.039    6.676    0.000    0.189    0.343
 ##    Std.lv  Std.all
 ##     0.182    0.182
 ##     0.099    0.099
@@ -1511,7 +1501,7 @@ ind3:= a3*b  #indirect effect of perceived behavioural control via intentions
 <p class="solution-end">
 </p>
 <div class="question-begin">
-Question A8
+Question A7
 </div>
 <div class="question-body">
 <p>Write up your analysis as if you were presenting the work in academic paper, with brief separate ‘Method’ and ‘Results’ sections</p>
@@ -1519,9 +1509,9 @@ Question A8
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<span id="sol-start-157" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-157&#39;, &#39;sol-start-157&#39;)"> Solution </span>
+<span id="sol-start-7" class="fa fa-chevron-circle-right solution-icon clickable" onclick="toggle_visibility(&#39;sol-body-7&#39;, &#39;sol-start-7&#39;)"> Solution </span>
 </div>
-<div id="sol-body-157" class="solution-body" style="display: none;">
+<div id="sol-body-7" class="solution-body" style="display: none;">
 <p>An example write up would be as follows:</p>
 <div class="int">
 <p><strong>Method</strong></p>

@@ -21,13 +21,14 @@ panderOptions('keep.trailing.zeros', TRUE)
 
 # Measurement Error and the need for SEM
 
-We've been mentioning Structural Equation Modelling (SEM) for a few weeks now, but we haven't been very clear on what exactly it is. Is it CFA? Is it Path Analysis? In fact it is both - it is the overarching framework of which CFA and Path Analysis are just parts. 
+We have been mentioning Structural Equation Modelling (SEM) for a few weeks now, but we haven't been very clear on what exactly it is. Is it CFA? Is it Path Analysis? In fact it is both - it is the overarching framework of which CFA and Path Analysis are just particular cases. The beauty comes in when we put the CFA and Path Analysis approaches together.
 
-The beauty comes in when we put these two approaches together.  
-Path analysis, as we saw last week, offers a way of specifying and evaluating a *structural* model, in which variables relate to one another in various ways, via different (sometimes indirect) paths. Common models like our old friend multiple regression can be expressed in a Path Analysis framework.  
-Factor Analysis, on the other hand, brings something absolutely crucial to the table - it allows us to mitigate some of the problems which are associated with measurement error by specifying the existence of some latent variable. 
+Path analysis, as we saw last week, offers a way of specifying and evaluating a *structural* model, in which variables relate to one another in various ways, via different (sometimes indirect) paths. Common models like our old friend multiple regression can be expressed in a Path Analysis framework.
+
+Factor Analysis, on the other hand, brings something absolutely crucial to the table - it allows us to mitigate some of the problems which are associated with measurement error by specifying the existence of some latent variable which is measured via some observed variables.
 
 Combine them and we can reap the rewards of having both a *structural model* and a *measurement model*. The measurement model is our specification between the items we directly observed, and the latent variables of which we consider these items to be manifestations. The structural model is our specified model of the relationships between the latent variables.  
+
 
 ## Scale Scores
 
@@ -36,7 +37,7 @@ This is what we did in the example in last week's exercises, e.g.:
 
 <div style="border-left: 4px solid #a41ae4;font-size: 1em;">
   
-- Intention to vaccinate (scored on a range of 0-100.
+- Intention to vaccinate (scored on a range of 0-100).
 - Health Locus of Control (HLC) score (**average score on a set of items** relating to perceived control over ones own health).
 - Religiosity (**average score on a set of items** relating to an individual's religiosity). 
   
@@ -90,8 +91,9 @@ The accuracy and inconsistency with which an observed variable reflects the unde
 :::frame
 **A silly example** 
 
-Suppose I'm trying to weigh [my dog](images/dug.jpg). I have a set of scales, and I put him on the scales. He weighs in at 13.53kg. 
-I immediately do it again, and the scales this time say 13.41kg. I do it again. 13.51kg, and again, 13.60kg. 
+Suppose we are trying to weigh [a dog](images/dug.jpg). We have a set of scales, and we put him on the scales. He weighs in at 13.53kg. 
+We immediately do it again, and the scales this time say 13.41kg. We do it again, 13.51kg. Once more, 13.60kg. 
+
 What is happening? Is Dougal's weight (Dougal is the dog, by the way) randomly fluctuating by 100g? Or are my scales just a bit inconsistent, and my observations contain measurement error?  
 
 ```{r echo=FALSE}
@@ -107,7 +109,8 @@ tibble(
     labs(y="Dougal's Weight")
 ```
 
-I take him to the vets, where they have a much better set of weighing scales, and I do the same thing (measure him 4 times). The weights are 13.47, 13.49, 13.48, 13.48.  
+We take him to the vets, where they have a much better set of weighing scales, and we do the same thing (measure him 4 times). The weights are 13.47, 13.49, 13.48, 13.48.  
+
 The scales at the vets are clearly *more __reliable__*. We still don't know Dougal's *true* weight, but we are better informed to estimate it if we go on the measurements from the scales at the vet.^[Of course this all assuming that the scales aren't completely miscalibrated] 
 
 ```{r echo=FALSE}
@@ -140,11 +143,11 @@ The form of reliability we are going to be most concerned with here is known as 
 
 $$
 \begin{align}
-& \text{Cronbach's }\alpha = \frac{n \cdot \overline{cov(ij)}}{\overline{\sigma^2_i} + (n-1) \cdot \overline{cov(ij)}} & \\
-& \text{Where:}  \\
-& n = \text{number of items} \\
-& \overline{cov(ij)} = \text{average covariance between item-pairs}  \\
-& \overline{\sigma^2_i} = \text{average item variance}  \\
+& \text{Cronbach's }\alpha = \frac{ n \cdot \overline{cov(ij)} }{\overline{\sigma^2_i} + (n-1) \cdot \overline{cov(ij)}} & \\
+\text{where} &:  \\
+    n &= \text{number of items} \\
+    \overline{cov(ij)} &= \text{average covariance between item-pairs}  \\
+    \overline{\sigma^2_i} &= \text{average item variance}  \\
 \end{align}
 $$
 Ranges from 0 to 1 (higher is better).  
@@ -162,7 +165,7 @@ You can get this using the `alpha()` function from the **psych** package. You ju
 After spending much of our time in the regression framework, the move to SEM can feel mind-boggling. 
 Give two researchers the same whiteboard on which your variables are drawn, and they may connect them in completely different ways. This flexibility can at first make SEM feel like a free-for-all (i.e., just do whatever you like, get a p-value out of it, and off we go!). However, to some people this is one of the main benefits: it forces you to be explicit in specifying your theory, and allows you to test your theory and examine how well it fits with the data you observed.  
   
-We have actually already go to grips with the starting point of how structural equation models work in the previous weeks.  
+We have actually already got to grips with the starting point of how structural equation models work in the previous weeks.  
 
 1. begin with an **observed covariance matrix**
 2. specify our our theoretical model
@@ -298,13 +301,6 @@ The data is available either:
 
 
 `r qbegin("A1")`
-Did you do the final exercise (writing up your results) from last week? Our example write-up is now visible (see [last week](https://uoepsy.github.io/msmr/labs/08_path.html#A_more_complex_model)) against which you can compare yours.
-
-__Please note:__ Writing-up is an important skill, and attempting these questions yourself (rather than simply reading through the example write-ups) will help _a lot_ when it comes to writing your assessment.
-
-`r qend()` 
-
-`r qbegin("A2")`
 Read in the data using the appropriate function. We've given you **.csv** files for a long time now, but it's good to be prepared to encounter all sorts of weird filetypes. 
 
 Can you successfully read in from both types of data?  
@@ -318,7 +314,7 @@ TPB_data <- read.table("https://uoepsy.github.io/data/TPB_data.txt", header = TR
 ```
 `r solend()`
 
-`r qbegin("A3")`
+`r qbegin("A2")`
 Test separate one-factor models for each construct.  
 Are the measurement models satisfactory? *(check their fit measures)*. 
 `r qend()` 
@@ -345,7 +341,7 @@ The above code shows you the steps you should run through for the attitudes cons
 
 `r solend()`
 
-`r qbegin("A4")`
+`r qbegin("A3")`
 Using lavaan syntax, specify a structural equation model that corresponds to the model in Figure \@ref(fig:tpb). For each construct use a latent variable measured by the corresponding items in the dataset. 
 `r qend()` 
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
@@ -374,7 +370,7 @@ TPB_model<-'
 ```
 `r solend()`
 
-`r qbegin("A5")`
+`r qbegin("A4")`
 Estimate the model from Question A4 and evaluate the model  
 
 + Does the model fit well?  
@@ -395,7 +391,7 @@ summary(TPB_model.est, fit.measures=T, standardized=T)
 We can see that the model fits well according to RMSEA, SRMR, TLI and CFI. All of the hypothesised paths in the theory of planned behaviour are statistically significant.
 `r solend()`
 
-`r qbegin("A6")`
+`r qbegin("A5")`
 Examine the modification indices and expected parameter changes - are there any additional parameters you would consider including?  
 `r qend()` 
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
@@ -407,7 +403,7 @@ modindices(TPB_model.est)
 In this case, none of the expected parameter changes are large enough that we would consider including any additional parameters
 `r solend()`
 
-`r qbegin("A7")`
+`r qbegin("A6")`
 Test the indirect effect of attitudes, subjective norms, and perceived behavioural control on behaviour via intentions.  
 
 Remember, when you fit the model with `sem()`, use `se='bootstrap'` to get boostrapped standard errors (it may take a few minutes). When you inspect the model using `summary()`, get the 95% confidence intervals for parameters with `ci = TRUE`. 
@@ -458,7 +454,7 @@ summary(TPB_model2.est, fit.measures=T, standardized=T, ci=T)
 We can see that all of the indirect effects are statistically significant at p<.05 as none of the 95% confidence intervals for the coefficients include zero.
 `r solend()`
 
-`r qbegin("A8")`
+`r qbegin("A7")`
 Write up your analysis as if you were presenting the work in academic paper, with brief separate 'Method' and 'Results' sections
 `r qend()` 
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
