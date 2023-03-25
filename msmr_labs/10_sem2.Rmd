@@ -18,7 +18,7 @@ panderOptions('round', 3)
 panderOptions('keep.trailing.zeros', TRUE)
 ```
 
-In this final week we are going to address some practical issues that commonly arise in Structural Equation Modeling: Non-normality, ordinal-categorical endogeneous variables, and missingness. After that, we're going to look briefly into how to simulate data based on a structural equation model. TODO
+In this final week we are going to address some practical issues that commonly arise in Structural Equation Modeling: Non-normality, ordinal-categorical endogenous variables, and missingness. After that, we're going to look briefly into how to simulate data based on a structural equation model.
 
 # Practical issues in SEM
 
@@ -30,7 +30,7 @@ Unfortunately, this is true if we have a "multivariate normal distribution", but
 :::frame
 **Multivariate Normal Distribution (MVN)**
 
-The multivariate normal distribution is fundamentally just the extension of our univariate normal (the bell-shaped curve we are used to seeing) to more dimensions. The condition which needs to be met is that every linear combination of the $k$ variables has a univariate normal distribution. It is denoted by $N \sim(\mathbf{\mu}, \mathbf{\Sigma})$ (note that the bold font indicates that $\mathbf{\mu}$ and $\mathbf{\Sigma}$ are, respectively, a vector of means and a matrix of covariances).  
+The multivariate normal distribution is fundamentally just the extension of our univariate normal (the bell-shaped curve we are used to seeing) to more dimensions. The condition which needs to be met is that every linear combination of the $k$ variables has a univariate normal distribution. It is denoted by $N(\boldsymbol{\mu}, \boldsymbol{\Sigma})$ (note that the bold font indicates that $\boldsymbol{\mu}$ and $\boldsymbol{\Sigma}$ are, respectively, a vector of means and a matrix of covariances).  
 The idea of the multivariate normal can be a bit difficult to get to grips with in part because there's not an intuitive way to visualise it once we move beyond 2 or [3 variables](https://demonstrations.wolfram.com/JointDensityOfTrivariateGaussianRandomVariables/).  
 
 ```{r echo=FALSE, fig.cap="bivariate normal"}
@@ -139,8 +139,10 @@ library(psych)
 stress_IQ_data <- read_csv("https://uoepsy.github.io/data/stressIQ.csv")
 
 describe(stress_IQ_data) # from psych package
-multi.hist(stress_IQ_data) # from psych package
+multi.hist(stress_IQ_data, global = FALSE) # from psych package
 ```
+
+The argument global = TRUE would use the same x-axis for all histograms, and FALSE otherwise.
 `r solend()`
 
 :::frame
@@ -235,14 +237,17 @@ __Tip:__ the `describe()` function from the __psych__ package will give you meas
 We should check the item distributions for evidence of non-normality (skewness and kurtosis). We can use the `describe()` function from psych and plot the data using histograms or density curves.
 
 ```{r CFA for IQ items}
+library(kableExtra)
+
 # this is just describe() but dressed up to make a nice table output (the one we see below)
-stress_IQ_data %>% select(contains("IQ")) %>% 
-  describe %>% 
-  as.data.frame() %>%
-  rownames_to_column(., var = "variable") %>% 
-  select(variable,mean,sd,skew,kurtosis) %>%
-  mutate_if(is.numeric, ~round(.,2)) %>%
-  knitr::kable()
+stress_IQ_data %>% 
+    select(contains("IQ")) %>% 
+    describe %>% 
+    as.data.frame() %>%
+    rownames_to_column(., var = "variable") %>% 
+    select(variable,mean,sd,skew,kurtosis) %>%
+    kable(digits = 2) %>%
+    kable_styling(full_width = FALSE)
 ```
 
 It looks like some of our IQ items are pretty skewed. Let's plot them. 
@@ -268,7 +273,7 @@ stress_IQ_data %>%
 Because our variables seem to be non-normal, therefore, we should use a robust estimator such as MLR for our CFA
 
 ```{r robust estimator}
-model_IQ <- 'IQ=~IQ1+IQ2+IQ3+IQ4+IQ5'
+model_IQ <- 'IQ =~ IQ1 + IQ2 + IQ3 + IQ4 + IQ5'
 
 model_IQ.est <- cfa(model_IQ, data=stress_IQ_data, estimator='MLR')
 ```
@@ -293,9 +298,11 @@ modindices(model_IQ.est, sort=T)
 It looks like we might need to include residual covariances between subtests 1 and 2 and between subtests 4 and 5, though if this were a real analysis we would want to double check this makes substantive sense (for example, do subtests 1 and 2 both measure memory while subtests 4 and 5 both test spatial ability?)
 
 ```{r make modifications}
-model2_IQ <- 'IQ=~IQ1+IQ2+IQ3+IQ4+IQ5
-IQ1~~IQ2
-IQ4~~IQ5'
+model2_IQ <- '
+    IQ=~IQ1+IQ2+IQ3+IQ4+IQ5
+    IQ1~~IQ2
+    IQ4~~IQ5
+'
 model2_IQ.est <- cfa(model2_IQ, data=stress_IQ_data, estimator='MLR')
 ```
 
@@ -319,16 +326,17 @@ Specify and estimate your SEM model.
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 ```{r full SEM}
 SEM_model <- '
-#IQ measurement model
-IQ=~IQ1+IQ2+IQ3+IQ4+IQ5 
-IQ1~~IQ2
-IQ4~~IQ5
+    #IQ measurement model
+    IQ =~ IQ1 + IQ2 + IQ3 + IQ4 + IQ5 
+    IQ1 ~~ IQ2
+    IQ4 ~~ IQ5
 
-#stress measurement model 
-Stress=~stress1+stress2+stress3+stress4+stress5 
+    #stress measurement model 
+    Stress =~ stress1 + stress2 + stress3 + stress4 + stress5 
 
-#structural part of model
-IQ~Stress'
+    #structural part of model
+    IQ ~ Stress
+'
 ```
 
 
@@ -356,7 +364,7 @@ We can see that the effect of prenatal stress on offspring IQ is $\beta$ = `r ro
 :::yellow
 **Missingness**
 
-It is very common to have missing data. Participants may not stop halfway through the study, may decline to be followed up (if it is longitudinal) or may simply decline to answer certain sections. In addition, missing data can occur for all sorts of technical reasons (e.g, website crash and auto-submit a questionnaire, etc.). 
+It is very common to have missing data. Participants may stop halfway through the study, may decline to be followed up (if it is longitudinal) or may simply decline to answer certain sections. In addition, missing data can occur for all sorts of technical reasons (e.g, website crash and auto-submit a questionnaire, etc.). 
 
 It is important to understand the possible reasons for missing data in order to appropriately consider what data you *do* have. If missing data are missing completely random, then the data you do have should still be representative of the population. But suppose you are studying cognitive decline in an aging population, and people who are suffering from cognitive impairment are less likely to attend the follow-up assessments. Is this missingness random? No. Does it affect how you should consider your available data to represent the population of interest? Yes. 
 
@@ -407,14 +415,15 @@ We can fit the model setting `missing='FIML'`. If data are missing at random (MA
 
 ```{r message=FALSE}
 IQ_data_new <- read_csv("https://uoepsy.github.io/data/IQdatam.csv")
-multi.hist(IQ_data_new)
+multi.hist(IQ_data_new, global = FALSE)
+
 IQ_data_new %>% select(contains("IQ")) %>% 
-  describe %>% 
-  as.data.frame() %>%
-  rownames_to_column(., var = "variable") %>% 
-  select(variable,mean,sd,skew,kurtosis) %>%
-  mutate_if(is.numeric, ~round(.,2)) %>%
-  knitr::kable()
+    describe %>% 
+    as.data.frame() %>%
+    rownames_to_column(., var = "variable") %>% 
+    select(variable,mean,sd,skew,kurtosis) %>%
+    kable(digits = 2) %>%
+    kable_styling(full_width = FALSE)
 ```
 
 ```{r missingness}
@@ -457,7 +466,7 @@ We're going to simulate some data for which the follow model structure holds wel
 ```
 likes_tea =~ rate_breakfast + rate_darjeeling + rate_mint + rate_chamomile
 likes_biscuits =~ rate_oreo + rate_digestive + rate_custardcream + rate_bourbon + rate_crackers
-rate_breakfast ~~ rate_digestive
+rate_bourbon ~~ rate_oreo
 
 likes_biscuits ~ likes_tea
 ```
@@ -467,7 +476,9 @@ We've then regressed liking biscuits onto liking tea (e.g. do people who like te
 
 You can find the data at [https://uoepsy.github.io/data/teabiscuit.csv](https://uoepsy.github.io/data/teabiscuit.csv), or run the code below to simulate it yourself.  
 
-the __lavaan__ package makes it really easy to simulate data, we just need to specify the magnitude of the paths, and give it to the `simulateData()` function.  
+The __lavaan__ package makes it really easy to simulate data, we just need to specify the magnitude of the paths, and give it to the `simulateData()` function.  
+
+Before simulating random data, however, it is good practice to set the random seed to ensure you will be able to reproduce your results. If you place the line `set.seed(<any whole number>)` at the start of your R code, every time you will run your file line by line and in order, you will get the same results.
 
 ```{r echo=TRUE}
 set.seed(987)
