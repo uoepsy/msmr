@@ -318,7 +318,7 @@ summary(model2_IQ.est, fit.measures=T, standardized=T)
 Now its time to build a full SEM. 
 Estimate the effect of prenatal stress on IQ.  
 
-*Remember:* We know that IQ is non-normal, so we would like to use a robust estimator (e.g. MLR). However, as lavaan will tell you if you try using `estimator="MLR"`, this is not supported for ordered data (i.e., the Stress items). It suggests instead using the WLSMV (weighted least square mean and variance adjusted) estimator.  
+**Remember:** We know that IQ is non-normal, so we would like to use a robust estimator (e.g. MLR). However, as lavaan will tell you if you try using `estimator="MLR"`, this is not supported for ordered data (i.e., the Stress items). It suggests instead using the WLSMV (weighted least square mean and variance adjusted) estimator. The WLSMV estimator **is the default estimator** in lavaan when ordered categorical variables are present. The WLSMV estimator is DWLS with a correction to return robust standard errors. In fact, if you notice in the output, you have a "robust" column too. Hence, you're all good for non-normality as you have robust standard errors!
 
 Specify and estimate your SEM model. 
 
