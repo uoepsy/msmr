@@ -1,0 +1,89 @@
+---
+title: "Inference for LMM"
+params: 
+    SHOW_SOLS: FALSE
+    TOGGLE: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+source('assets/setup.R')
+library(xaringanExtra)
+library(tidyverse)
+library(patchwork)
+xaringanExtra::use_panelset()
+```
+
+
+# Inference
+
+SE, p-vals/confints
+
+
+# Inference in LM
+
+SE calc
+F/t distribution ddf
+
+test of coefficient vs model comparison 
+
+
+# Inference in LMM
+
+ddf
+
+perfectly balanced, then we can calculate ddf for F
+
+mi = nr of groups at level i
+mim1 = nr of groups as level i-1 (**higher** level)
+pi = df for terms at level i
+ddf_i = mi - (mim1 + pi)
+
+
+SE = derived via ML/REML (not SS resid)
+
+
+
+## wald t (balanced only)
+
+
+## df approximations
+
+satterthwaite
+
+kr 
+```{r}
+#| eval: false
+# ddf ----
+SATmodcomp(m1,m0) # refits with REML
+KRmodcomp(m1,m0) # refits with REML
+
+parameters::model_parameters(m1, ci_method="kr", ci_random=FALSE)
+# CIs computed via REML, estimates, t, p not unless initial model fitted with REML
+parameters::model_parameters(m1,ci_method="sat", ci_random=FALSE)
+# CIs computed via REML, estimates, t, p not unless initial model fitted with REML
+```
+
+## likelihood based
+
+profile likelihood
+
+lrt
+
+
+## parametric bootstrap
+
+
+
+
+
+
+
+
+
+
+
+

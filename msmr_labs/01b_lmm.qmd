@@ -1,0 +1,100 @@
+---
+title: "1B: The Multilevel Model"
+params: 
+    SHOW_SOLS: FALSE
+    TOGGLE: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+source('assets/setup.R')
+library(xaringanExtra)
+library(tidyverse)
+library(patchwork)
+xaringanExtra::use_panelset()
+```
+
+
+# LMM
+
+intercepts vary
+slopes vary
+
+how is it different to fixed eff?
+"partial pooling" (link back to above)
+shrinkage
+- socialist vs liberal analogy?  
+
+how does it do this?
+by modelling a distribution of lines  
+
+
+$$
+\begin{align}\\
+& \color{red}{y} = \color{blue}{b_0 + b_1x_1 \ + \ ... \ + \ b_px_p} \color{black}{+ \varepsilon}\\ 
+& \text{Where:} \\
+& \epsilon \sim N(0, \sigma) \text{ independently}
+\end{align}
+$$
+
+# fitting LMM in R
+
+lme4
+lmer
+
+# model parameters
+
+_what_ are the model parameters? 
+i.e. variance components. 
+
+eq with model params coloured
+$$
+
+$$
+
+
+we _can_ get out estimates of the specific group-lines if we want, but really the model is estimating the variances. 
+
+# terminology: fixed effects, random effects, variance components
+
+we often use "random effects" to just mean the distribution of random deviations. i.e. 
+
+sometimes you might hear 
+"random effect of group"
+"random effect for group"
+"random effect [of x] by group"
+
+generally, people are referring to the `(1 + ... | cluster)` bit. 
+
+graphic on how to read it.
+
+intercept >> 1
+slope of x >> x
+| >> varies by
+these groups >> cluster
+
+a common stumbling block. 
+"effect of x varies by cluster" is not the same as "x varies by cluster".  
+
+
+
+
+
+# estimation
+
+## ML and REML
+
+max likelihood, REML
+
+## fitting issues
+
+convergence warnings, singular fits 
+
+
+
+
+
+
