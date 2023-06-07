@@ -25,7 +25,7 @@
     "href": "00_lm_assumpt.html#boostrapped-coefficients",
     "title": "LM Troubleshooting",
     "section": "Boostrapped Coefficients",
-    "text": "Boostrapped Coefficients\n\nlibrary(car)\n# bootstrap our model coefficients\nboot_mod &lt;- Boot(mod)\n# compute confidence intervals\nConfint(boot_mod)\n\nBootstrap bca confidence intervals\n\n              Estimate        2.5 %    97.5 %\n(Intercept)  1.5156272  0.269082523 3.0150279\nx            0.3769504  0.005839124 0.7201455\nx2b          0.2497345 -0.718176725 1.3009887\nx2c         -0.1305828 -1.015342466 0.6681926\nx2d          1.1534433  0.031319608 2.4027965"
+    "text": "Boostrapped Coefficients\nWe can get out some bootstrapped confidence intervals for our coefficients using the car package:\n\nlibrary(car)\n# bootstrap our model coefficients\nboot_mod &lt;- Boot(mod)\n# compute confidence intervals\nConfint(boot_mod)\n\nBootstrap bca confidence intervals\n\n              Estimate        2.5 %    97.5 %\n(Intercept)  1.5156272  0.269082523 3.0150279\nx            0.3769504  0.005839124 0.7201455\nx2b          0.2497345 -0.718176725 1.3009887\nx2c         -0.1305828 -1.015342466 0.6681926\nx2d          1.1534433  0.031319608 2.4027965"
   },
   {
     "objectID": "00_lm_assumpt.html#bootstrapped-anova",
@@ -60,7 +60,7 @@
     "href": "01a_clustered.html#clusters-clusters-everywhere",
     "title": "1A: Clustered Data | LMM",
     "section": "Clusters clusters everywhere",
-    "text": "Clusters clusters everywhere\nThe idea of observing “children in schools” is just one such example of clustering that we might come across. This same hierarchical data structure can be found in patients within medical practices, employees within departments, people within towns etc. These sort of groups exist ‘in the wild’ (i.e. the schools, departments and towns are all just occurrences of groups that we have observed). However, there are also lots of cases where clustered data might arise as the result of our study design. For instance, in a Repeated Measures study we have individual experimental trials clustered within participants. Longitudinal studies exhibit the same data structure but have time-ordered observations clustered within people.\nIn addition, we can extend this logic to think about having clusters of clusters, and clusters of cluster of clusters3. Table 1 shows just a few examples of different levels of clustering that may arise from different types of study.\n\n\n\n\n\n\n\n\n\nTable 1: Various different study designs will give rise to clustered data.\n\n\n\nCross Sectional\nRepeated Measures\nLongitudinal\n\n\n\n\nLevel n\n...\n...\n...\n\n\n...\n...\n...\n...\n\n\nLevel 3\nSchool\n...\nFamilies\n\n\nLevel 2\nClassroom\nParticipants\nPeople\n\n\nLevel 1 (Observations)\nChildren\nExperimental Stimuli\nTime"
+    "text": "Clusters clusters everywhere\nThe idea of observing “children in schools” is just one such example of clustering that we might come across. This same hierarchical data structure can be found in patients within medical practices, employees within departments, people within towns etc. These sort of groups exist ‘in the wild’ (i.e. the schools, departments and towns are all just occurrences of groups that we have observed). However, there are also lots of cases where clustered data might arise as the result of our study design. For instance, in a Repeated Measures study we have individual experimental trials clustered within participants. Longitudinal studies exhibit the same data structure but have time-ordered observations clustered within people.\nIn addition, we can extend this logic to think about having clusters of clusters, and clusters of cluster of clusters3. Table 1 shows just a few examples of different levels of clustering that may arise from different types of study.\n\n\n\n\n\n\n\nTable 1:  Various different study designs will give rise to clustered data. \n  \n    \n    \n       \n      Cross Sectional\n      Repeated Measures\n      Longitudinal\n    \n  \n  \n    Level n\n...\n...\n...\n    ...\n...\n...\n...\n    Level 3\nSchool\n...\nFamilies\n    Level 2\nClassroom\nParticipants\nPeople\n    Level 1 (Observations)\nChildren\nExperimental Stimuli\nTime"
   },
   {
     "objectID": "01a_clustered.html#what-are-clusters",
@@ -74,7 +74,7 @@
     "href": "01a_clustered.html#determining-sample-sizes",
     "title": "1A: Clustered Data | LMM",
     "section": "Determining Sample Sizes",
-    "text": "Determining Sample Sizes\nOne thing we are going to want to know is our sample size. Only we now have a few more questions to keep on top of. We need to know the different sample sizes at different levels.\nIn the description of the SchoolMot data above we are told the relevant numbers:\n\n\n\n\n\n\n\n\n\n\nUnit\nSample Size\n\n\n\n\nLevel 2\nSchool\n30\n\n\nLevel 1 (Observations)\nChildren\n900\n\n\n\n\n\n\n\nWe can check this in our data:\n\n# TODO\n# schoolmot &lt;- read_csv(\"https://uoepsy.github.io/data/schoolmot.csv\")\n# how many children? (how many rows in the data?)\nnrow(schoolmot)\n\n[1] 900\n\n# how many schools? (how many distinct values in the schoolid column?)\nn_distinct(schoolmot$schoolid)\n\n[1] 30\n\n\nAnother important thing to examine when you first get hierarchical data is the number of level 1 units that belong to each level 2 unit - i.e., do we have 100 children from Balfron High School and only 10 from Wallace Hall Academy, or do we have the same number in each?\nWe can easily count how many children are in each school by counting the number of rows for each distinct value in the school identifier column. We could then pass this to the summary() function to see the minimum, median, mean, maximum etc. As we can see below, in this dataset every school has data from exactly 30 children (min is the same as max):\n\nschoolmot %&gt;%\n  count(schoolid) %&gt;%\n  summary()\n\n                    schoolid        n     \n Alness Academy         : 1   Min.   :30  \n Balfron High School    : 1   1st Qu.:30  \n Banff Academy          : 1   Median :30  \n Boroughmuir High School: 1   Mean   :30  \n Braes High School      : 1   3rd Qu.:30  \n Calderglen High School : 1   Max.   :30  \n (Other)                :24"
+    "text": "Determining Sample Sizes\nOne thing we are going to want to know is our sample size. Only we now have a few more questions to keep on top of. We need to know the different sample sizes at different levels.\nIn the description of the SchoolMot data above we are told the relevant numbers:\n\n\n\n\n\n\n  \n    \n    \n       \n      Unit\n      Sample Size\n    \n  \n  \n    Level 2\nSchool\n30\n    Level 1 (Observations)\nChildren\n900\n  \n  \n  \n\n\n\n\nWe can check this in our data:\n\n# TODO\n# schoolmot &lt;- read_csv(\"https://uoepsy.github.io/data/schoolmot.csv\")\n# how many children? (how many rows in the data?)\nnrow(schoolmot)\n\n[1] 900\n\n# how many schools? (how many distinct values in the schoolid column?)\nn_distinct(schoolmot$schoolid)\n\n[1] 30\n\n\nAnother important thing to examine when you first get hierarchical data is the number of level 1 units that belong to each level 2 unit - i.e., do we have 100 children from Balfron High School and only 10 from Wallace Hall Academy, or do we have the same number in each?\nWe can easily count how many children are in each school by counting the number of rows for each distinct value in the school identifier column. We could then pass this to the summary() function to see the minimum, median, mean, maximum etc. As we can see below, in this dataset every school has data from exactly 30 children (min is the same as max):\n\nschoolmot %&gt;%\n  count(schoolid) %&gt;%\n  summary()\n\n                    schoolid        n     \n Alness Academy         : 1   Min.   :30  \n Balfron High School    : 1   1st Qu.:30  \n Banff Academy          : 1   Median :30  \n Boroughmuir High School: 1   Mean   :30  \n Braes High School      : 1   3rd Qu.:30  \n Calderglen High School : 1   Max.   :30  \n (Other)                :24"
   },
   {
     "objectID": "01a_clustered.html#icc",
@@ -88,7 +88,7 @@
     "href": "01a_clustered.html#visualisations",
     "title": "1A: Clustered Data | LMM",
     "section": "Visualisations",
-    "text": "Visualisations\nWhen we’re visualising data that has a hierarchical structure such as this (i.e. observations grouped into clusters), we need to be careful to think about what exactly we want to show. For instance, as we are interested in how motivation is associated with grades, we might make a little plot of the two variables, but this could hide the association that happens within a given school (see e.g. Figure 5 from earlier).\nSome useful ggplot tools here are:\n\nfacet_wrap() - make a separate little plot for each level of a grouping variable\nthe group aesthetic - add separate geoms (shapes) for each level of a grouping variable\n\n\n\nfacets\n\nggplot(schoolmot, aes(x=motiv,y=grade,col))+\n  geom_point() +\n  facet_wrap(~schoolid)\n\n\n\n\n\n\n\n\n\n\ngroup\n\nggplot(schoolmot, aes(x=motiv,y=grade,group=schoolid))+\n  geom_point(alpha=.2) +\n  geom_smooth(method=lm, se=FALSE)"
+    "text": "Visualisations\nWhen we’re visualising data that has a hierarchical structure such as this (i.e. observations grouped into clusters), we need to be careful to think about what exactly we want to show. For instance, as we are interested in how motivation is associated with grades, we might make a little plot of the two variables, but this could hide the association that happens within a given school (see e.g. Figure 5 from earlier).\nSome useful ggplot tools here are:\n\nfacet_wrap() - make a separate little plot for each level of a grouping variable\nthe group aesthetic - add separate geoms (shapes) for each level of a grouping variable\n\n\n\nfacets\n\nggplot(schoolmot, aes(x=motiv,y=grade))+\n  geom_point() +\n  facet_wrap(~schoolid)\n\n\n\n\n\n\n\n\n\n\ngroup\n\nggplot(schoolmot, aes(x=motiv,y=grade,group=schoolid))+\n  geom_point(alpha=.2) +\n  geom_smooth(method=lm, se=FALSE)"
   },
   {
     "objectID": "01a_clustered.html#footnotes",
@@ -100,21 +100,21 @@
   {
     "objectID": "01b_lmm.html",
     "href": "01b_lmm.html",
-    "title": "1B: The Multilevel Model",
+    "title": "1B: Linear Mixed Models/Multi-level Models",
     "section": "",
-    "text": "intercepts vary slopes vary\nhow is it different to fixed eff? “partial pooling” (link back to above) shrinkage - socialist vs liberal analogy?\nhow does it do this? by modelling a distribution of lines\n\\[\n\\begin{align}\\\\\n& \\color{red}{y} = \\color{blue}{b_0 + b_1x_1 \\ + \\ ... \\ + \\ b_px_p} \\color{black}{+ \\varepsilon}\\\\\n& \\text{Where:} \\\\\n& \\epsilon \\sim N(0, \\sigma) \\text{ independently}\n\\end{align}\n\\]"
+    "text": "A Note on terminology\n\n\n\n\n\nThe methods we’re going to start to look at are known by lots of different names (see Figure 1). The core idea is that model parameters vary at more than one level..\n\n\n\n\n\nFigure 1: size weighted by hits on google scholar search (sept 2020)"
   },
   {
     "objectID": "01b_lmm.html#ml-and-reml",
     "href": "01b_lmm.html#ml-and-reml",
-    "title": "1B: The Multilevel Model",
+    "title": "1B: Linear Mixed Models/Multi-level Models",
     "section": "ML and REML",
-    "text": "ML and REML\nmax likelihood, REML"
+    "text": "ML and REML\nMLE explainer\n\nproblem for lmm est fix &gt; est varcorr &gt; est fix &gt; est varcorr est of varcorr assumes fixed effects are known. this biases var ests to be slightly smaller\na bit like n-1 in formula for sd\n\nREML - OLS to partial out fixef &gt; est varcorr &gt; est varcorr &gt; est varcorr &gt; use GLS to est fixef - in the estimation of varcorr, the fixed effects are 0 by definition"
   },
   {
     "objectID": "01b_lmm.html#fitting-issues",
     "href": "01b_lmm.html#fitting-issues",
-    "title": "1B: The Multilevel Model",
+    "title": "1B: Linear Mixed Models/Multi-level Models",
     "section": "fitting issues",
     "text": "fitting issues\nconvergence warnings, singular fits"
   },
@@ -165,6 +165,6 @@
     "href": "csstests.html",
     "title": "Tests",
     "section": "",
-    "text": "learning obj\n\n\nimportant\n\n\nsticky\n\n\n\n\n\nr tips\n\n\nstatbox\n\n\ninterprtation interprtation interprtation\n\n\nQuestion\n\n\nquestion\n\n\n\n\n Solution \n\n\nsolution\n\n\n\n\n Optional hello my optional friend\n\n\nit’s nice to see you again\n\n\n\n\n\nthis is not a panel\n\n\nthis is a panel\n\n\nthis is a panel"
+    "text": "learning obj\n\n\nimportant\n\n\nsticky\n\n\n\n\n\nr tips\n\n\nstatbox\n\n\ninterprtation interprtation interprtation\n\n\nQuestion\n\n\nquestion\n\n\n\n\n\nSolution\n\n\n\nsolution\n\n\n\n\n\nOptional hello my optional friend\n\n\n\nit’s nice to see you again\n\n\n\n\n\nthis is not a panel\n\n\nthis is a panel\n\n\nthis is a panel"
   }
 ]

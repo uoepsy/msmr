@@ -254,7 +254,7 @@ df = data.frame(x = xm+xd, b, g=factor(g), y, y_bin)
 
 schoolmot = df |>
   transmute(
-    motiv = round(x,2),
+    motiv = round(x,2)+5,
     funding = b,
     schoolid = sample(schoolids,n_groups)[as.numeric(g)],
     grade = round(50.356 + scale(y)[,1]*14.53,2)
@@ -301,7 +301,7 @@ re_x  = rex[g]
 lp = (0 + re) + 2*xm + (0 + re_x)*xd
 y = rnorm(N, mean = lp, sd = 1)*9
 y_bin = rbinom(N, size = 1, prob = plogis(lp))
-df = data.frame(x=scale(xm+xd)[,1], g=factor(g), y, y_bin)
+df = data.frame(x=6+scale(xm+xd)[,1]*1.8, g=factor(g), y, y_bin)
 
 p1 = ggplot(df,aes(x=x,y=y))+
   geom_point(size=3) +
@@ -455,7 +455,7 @@ It is available at [https://uoepsy.github.io/data/schoolmot.csv](https://uoepsy.
 #| tbl-cap: "SchoolMot Data Dictionary. Children are clustered in Schools, with this group-identifier visible in the schoolid column"
 tibble(variable=names(schoolmot),
        description = c(
-         "Child's Education Motivation Score (Z-scored)",
+         "Child's Education Motivation Score (range 0 - 10)",
          "Annual School Funding (in 1000s of £)",
          "Name of School that the child attends",
          "Child's end-of-year grade average (0-100)")
@@ -761,7 +761,7 @@ Some useful __ggplot__ tools here are:
 :::panel
 ##### facets
 ```{r}
-ggplot(schoolmot, aes(x=motiv,y=grade,col))+
+ggplot(schoolmot, aes(x=motiv,y=grade))+
   geom_point() +
   facet_wrap(~schoolid)
 ```
@@ -784,7 +784,7 @@ With our current toolset (linear regression), there are two avenues for us with 
 :::sticky
 __Complete Pooling__  
 
-All information from different clusters is pooled together to estimate the relevant association.  
+All information from different clusters is pooled together estimate the relevant association (make one big line).  
 
 ```{r}
 #| eval: false
@@ -797,11 +797,10 @@ Take all the children, fit a regression line for `grade ~ motivation`.
 :::sticky
 __No Pooling__  
 
-Information from each cluster contributes **only** to that specific cluster's estimate.  
-
+Information from each cluster contributes **only** to an estimate for that specific cluster.  
 ```{r}
 #| eval: false
-lm(grade ~ motiv*schoolid, data = schoolmot)
+lm(grade ~ motiv * schoolid, data = schoolmot)
 ```
 Estimate school-specific differences in grades, and school-specific differences in the effect of motivation on grades. Get _loads_ of coefficients that aren't really of interest.   
 
@@ -810,8 +809,10 @@ Estimate school-specific differences in grades, and school-specific differences 
 :::
 
 
-Estimating the school-specific differences in our model (the no-pooling approach) is clearly better than simply ignoring them, but it does mean that we are treating the schools as if they are completely independent entities.  
-Suppose we had another school - School X - for which we had only _three_ children's data (@fig-borrowstrength). Intuitively, we don't want to trust the line for School X as much as we trust the others (where we have 30 children's data). 
+Estimating the school-specific differences in our model (the no-pooling approach) is clearly better than simply ignoring them, but it does mean that we are treating the schools as if they are completely _independent_ entities.  
+Suppose we had another school - School X - for which we had only _three_ children's data (@fig-borrowstrength). Intuitively, we don't want to trust the line for School X as much as we trust the others (where we have 30 children's data). In the no-pooling approach, it is only those three children from School X that contribute to the School X line.  Take this further, and imagine we have only one child's data from some School Y. In the no-pooling method, the model doesn't learn _anything_ from the other schools and cannot estimate a line for School Y.  
+
+What would be great is if we could _somehow_ use the information from the other schools to inform our estimation of what is going on in Schools X and Y. This is what multi-level modelling achieves, _partially_ pooling information across the groups, and this is where we'll turn to next.    
 
 ```{r}
 #| echo: false
@@ -819,13 +820,15 @@ Suppose we had another school - School X - for which we had only _three_ childre
 #| fig-cap: "Blue lines show the estimated fitted values from the no-pooling approach lm(grade ~ motiv * schoolid). School X's estimate is based on just the 3 datapoints from that school, and does not take into account any of the other schools in anyway."
 set.seed(123)
 bind_rows(
-  schoolmot |> filter(schoolid %in% sort(unique(schoolmot$schoolid))[c(1:4,6)]),
+  schoolmot |> filter(schoolid %in% sort(unique(schoolmot$schoolid))[c(1:4)]),
   tibble(
     schoolid = "Hypothetical School X",
-    motiv = c(-1,0.1,1.4),
-    grade = 50 + 10*motiv + rnorm(3,0,10)
+    motiv = c(-1,0.1,1.4)+5,
+    grade = 10*motiv + rnorm(3,0,10)
   )
-) -> tdf 
+) |> bind_rows(x=_, 
+               tibble(schoolid="Hypothetical School Y",motiv = -2+5, grade = 65)
+               ) -> tdf 
 
 tdf |> 
   ggplot(aes(x=motiv,y=grade))+
@@ -836,7 +839,7 @@ tdf |>
  
 ```
 
-In the no-pooling approach, it is only those three children from School X that contribute to the School X line. What would be great is if we could _somehow_ use the information from the other schools to inform our estimation of what is going on in School X. This is what multi-level modelling achieves, _partially_ pooling information across the groups, and this is where we'll turn to next.    
+
 
 
 
