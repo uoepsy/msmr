@@ -72,6 +72,50 @@ In the simple linear regression model was written as $\color{red}{y} = \color{bl
 
 In the example where we model School children's grades as a function of their motivation score, we can fit a simple regression model, and the estimated parameters are two values that define the intercept and the slope of the line in @fig-schoolplot1.  
  
+```{r}
+#| echo: false
+#| label: fig-schoolplot1
+#| fig-cap: "Grade predicted by motivation. The simple linear regression model defines the height and slope of the black line."
+library(lme4)
+library(ggdist)
+library(distributional)
+fmod = lm(grade~motiv,schoolmot)
+rimod = lmer(grade~motiv+(1|schoolid),schoolmot)
+rsmod = lmer(grade~motiv+(1+motiv|schoolid),schoolmot)
+basep = ggplot(schoolmot, aes(x=motiv,y=grade))+
+  geom_point(alpha=.1) + 
+  geom_vline(xintercept=0,lty="dashed")+
+  scale_x_continuous(limits=c(0,10),breaks=0:10)
+
+basep + geom_abline(intercept=coef(fmod)[1],slope=coef(fmod)[2], lwd=1) +
+  geom_point(x=0,y=coef(fmod)[1],size=3,col="blue") +
+  geom_segment(x=0,xend=1,
+               y=(coef(fmod) %*% c(1,0))[1],
+               yend=(coef(fmod) %*% c(1,0))[1]) +
+  geom_segment(x=1,xend=2,
+               y=(coef(fmod) %*% c(1,1))[1],
+               yend=(coef(fmod) %*% c(1,1))[1]) +
+  geom_segment(x=2,xend=3,
+               y=(coef(fmod) %*% c(1,2))[1],
+               yend=(coef(fmod) %*% c(1,2))[1]) + 
+  geom_segment(x=3,xend=4,
+               y=(coef(fmod) %*% c(1,3))[1],
+               yend=(coef(fmod) %*% c(1,3))[1]) + 
+  geom_segment(x=1,xend=1,
+               y=(coef(fmod) %*% c(1,0))[1],
+               yend=(coef(fmod) %*% c(1,1))[1],col="blue",lwd=2) +
+  geom_segment(x=2,xend=2,
+               y=(coef(fmod) %*% c(1,1))[1],
+               yend=(coef(fmod) %*% c(1,2))[1],col="blue",lwd=2) +
+  geom_segment(x=3,xend=3,
+               y=(coef(fmod) %*% c(1,2))[1],
+               yend=(coef(fmod) %*% c(1,3))[1],col="blue",lwd=2) +
+  geom_segment(x=4,xend=4,
+               y=(coef(fmod) %*% c(1,3))[1],
+               yend=(coef(fmod) %*% c(1,4))[1],col="blue",lwd=2) 
+  
+  
+```
 These two values are fixed. It does not matter what school a child is from, if they score 0 on the motivation scale, then our model predicts that they will get a grade of `r round(coef(srmod)[1],1)` (the intercept). 
 
 ```{r}
@@ -94,25 +138,7 @@ a center ( a single value and a spread)
 so for a given school, the intercept is b0 + z0i  
 a fixed number plus some random deviation
 
-```{r}
-#| echo: false
-#| label: fig-schoolplot1
-#| fig-cap: "Grade predicted by motivation. The simple linear regression model defines the height and slope of the black line."
-library(lme4)
-library(ggdist)
-library(distributional)
-fmod = lm(grade~motiv,schoolmot)
-rimod = lmer(grade~motiv+(1|schoolid),schoolmot)
-rsmod = lmer(grade~motiv+(1+motiv|schoolid),schoolmot)
-basep = ggplot(schoolmot, aes(x=motiv,y=grade))+
-  geom_point(alpha=.1) + 
-  geom_vline(xintercept=0,lty="dashed")+
-  scale_x_continuous(limits=c(0,10),breaks=0:10)
 
-basep + geom_abline(intercept=coef(fmod)[1],slope=coef(fmod)[2], lwd=1) +
-  geom_point(x=0,y=coef(fmod)[1],size=3)
-  
-```
 
 ```{r}
 #| eval: false

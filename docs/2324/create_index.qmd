@@ -9,7 +9,7 @@ library(kableExtra)
 options(knitr.kable.NA = '')
 course = "msmr"
 year = "2324"
-archives = c("2021","2122","2021","2223")
+archives = c("2223","2122","2021")
 
 cmaterials <- read.csv("course_materials.csv")
 cmaterials <- cmaterials %>% transmute(
@@ -17,7 +17,7 @@ cmaterials <- cmaterials %>% transmute(
   Week = ifelse(nchar(week)==0,NA,week),
   Slides = case_when(
     !is.na(lec) & nchar(leclink)>0 ~ paste0('<a href="',leclink,'">',lec,'</a>'),
-    !is.na(lec) ~ lec,
+    !is.na(lec) ~ paste0('<span style="opacity:.6">',lec,'</span>'),
     TRUE ~ ""
   ),
   Workbook = case_when(
