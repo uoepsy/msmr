@@ -52,7 +52,10 @@ In R, we fit these models using:
 lm(y ~ x1 + x2 + .... xp, data = mydata)  
 ```
 
-`r optbegin("Optional: a general notation", olabel=FALSE)`
+
+
+::: {.callout-caution collapse="true"}
+#### optional: a general notation
 
 If we wanted to write this more simply, we can express $x_1$ to $x_p$ as an $n \times p$ matrix (sample size $\times$ parameters), and $b_0$ to $b_p$ as a vector of coefficients:
 $$
@@ -67,7 +70,7 @@ $$
 \begin{align} \color{red}{y_i} \;\;\;\; & = \;\;\;\;\; \color{blue}{b_0 \cdot{} 1 + b_1 \cdot{} x_{1i} + ... + b_p \cdot x_{pi}} & + & \;\;\;\varepsilon_i \\ \qquad \\ \color{red}{\begin{bmatrix}y_1 \\ y_2 \\ y_3 \\ y_4 \\ y_5 \\ \vdots \\ y_n \end{bmatrix}} & = \color{blue}{\begin{bmatrix} 1 & x_{11} & x_{21} & \dots & x_{p1} \\ 1 & x_{12} & x_{22} &  & x_{p2} \\ 1 & x_{13} & x_{23} &  & x_{p3} \\ 1 & x_{14} & x_{24} &  & x_{p4} \\ 1 & x_{15} & x_{25} &  & x_{p5} \\ \vdots & \vdots & \vdots & \ddots & \vdots \\ 1 & x_{1n} & x_{2n} & \dots & x_{pn} \end{bmatrix} \begin{bmatrix} b_0 \\ b_1 \\ b_2 \\ \vdots \\ b_p \end{bmatrix}} & + & \begin{bmatrix} \varepsilon_1 \\ \varepsilon_2 \\ \varepsilon_3 \\ \varepsilon_4 \\ \varepsilon_5 \\ \vdots \\ \varepsilon_n \end{bmatrix} \\ \qquad \\ \color{red}{\boldsymbol y} \;\;\;\;\; & = \qquad \qquad \;\;\; \mathbf{\color{blue}{X \qquad \qquad \qquad \;\;\;\: b}} & + & \;\;\; \boldsymbol \varepsilon \\ \end{align}
 $$
 
-`r optend()`
+:::
 
 <!-- We have seen various ways we can extend this model to capture different processes - predictors can be continuous or categorical; we can include _interactions_ (where the effect of $x_1$ on $y$ _depends_ on the level of $x_2$); and we can even extend the same model structure to model discrete outcomes (with a little trickery of using a function to link the expected value of $\color{red}{y}$ to the linear prediction $\color{blue}{b_0 + b_1(x_1) + ... + b_p(x_p)}$).  -->
 
@@ -107,8 +110,8 @@ dfd<-tibble(
   s = sigma(model1)
 )
 
-broom::augment(model1) %>%
-ggplot(., aes(x = x, y = y)) +
+broom::augment(model1) |>
+ggplot(aes(x = x, y = y)) +
   stat_dist_halfeye(inherit.aes=F,data=dfd, aes(x=x,dist="norm",arg1=m,arg2=s),alpha=.15, fill="orange") + 
   geom_point(size=3,alpha=.5)+
   geom_abline(intercept = intercept, slope = slope, 
@@ -185,8 +188,8 @@ g <- ggplot(data=tibble(samplemeans),aes(x=samplemeans))+
   #geom_histogram(alpha=.3)+
   stat_function(geom="line",fun=~dnorm(.x, mean=0,sd=sd(samplemeans)),lwd=1)
 
-ld <- layer_data(g) %>% filter(x <= (11/sqrt(10)) & x >= (-11/sqrt(10)))
-ld2 <- layer_data(g) %>% filter(x <= 2*(11/sqrt(10)) & x >= 2*(-11/sqrt(10)))
+ld <- layer_data(g) |> filter(x <= (11/sqrt(10)) & x >= (-11/sqrt(10)))
+ld2 <- layer_data(g) |> filter(x <= 2*(11/sqrt(10)) & x >= 2*(-11/sqrt(10)))
 g + geom_area(data=ld,aes(x=x,y=y),fill="grey30",alpha=.3) + 
   geom_area(data=ld2,aes(x=x,y=y),fill="grey30",alpha=.1) +
   geom_vline(xintercept = 0, col="red",lty="dashed", lwd=1) +
@@ -211,9 +214,9 @@ g + geom_area(data=ld,aes(x=x,y=y),fill="grey30",alpha=.3) +
 :::
 
 
-In the face of plots (or tests) that appear to show violations of the distributional assumptions (i.e. our residuals appear non-normal, or variance changes across the range of the fitted model), we should always take care to ensure our model is correctly specified (interactions or other non-linear effects, if present in the data but omitted from our model, can result in assumption violations). Following this, if we continue to have problems satisfying our assumptions, there are various options that give us more flexibility. If you're interested, you can read brief explanations about some of these methods [here](00_lm_assumpt.html){target="_blank"}. 
+In the face of plots (or tests) that appear to show violations of the distributional assumptions (i.e. our residuals appear non-normal, or variance changes across the range of the fitted model), we should always take care to ensure our model is correctly specified (interactions or other non-linear effects, if present in the data but omitted from our model, can result in assumption violations). Following this, if we continue to have problems satisfying our assumptions, there are various options that give us more flexibility when we are faced with non-normality or non-constant variance of our residuals. If you're interested, you can read brief explanations about some of these methods [here](00_lm_assumpt.html){target="_blank"}.  
 
-One assumption that none of the above approaches address is our assumption of __"independence"__.^[With the exception of Generalized Least Squares (an extension of Weighted Least Squares), for which we _can_ actually specify a correlational structure of the residuals. As this course focuses on multilevel models, we will not cover GLS here. However, it can often be a useful method if our the nature of the dependency in our residuals is simply a nuisance thing (i.e. not something that has any properties which are of interest to us).] Thinking broadly, if our observations are not independent from one another, this means that there are systematic differences in our outcome variable that our model is not capturing. 
+However, there is one assumption that we are unable to identify through examining diagnostic plots for patterns, and that is our assumption of __"independence"__. Thinking broadly, if our observations are not independent from one another, this means that there are systematic differences in our outcome variable that our model is not capturing. This is not something that is easily 'corrected'^[With the exception of Generalized Least Squares (an extension of Weighted Least Squares), for which we _can_ actually specify a correlational structure of the residuals. As this course focuses on multilevel models, we will not cover GLS here. However, it can often be a useful method if our the nature of the dependency in our residuals is simply a nuisance thing (i.e. not something that has any properties which are of interest to us).] - it is something that we want to incorporate into our model structure. 
 
 :::sticky
 __Independence of observations__  
@@ -285,7 +288,7 @@ This can be seen in @fig-egschool - in which each datapoint is a single child. I
 ```{r}
 #| label: fig-egschool
 #| echo: false
-#| fig-cap: "Observations (children) are clustered (into schools), and their grades are dependent upon which cluster they are in. Ignoring the clustering may lead to erroneous conclusions"  
+#| fig-cap: "Observations (children) are clustered (into schools), and their outcome (grades) are dependent upon which cluster they are in. Ignoring the clustering may lead to erroneous conclusions"  
 set.seed(46)
 n_groups = 5
 npgroup = round(runif(5,5,10))
@@ -340,7 +343,7 @@ p3
 
 ## Clusters clusters everywhere
 
-The idea of observing "children in schools" is just one such example of clustering that we might come across. This same _hierarchical data structure_ can be found in patients within medical practices, employees within departments, people within towns etc. These sort of groups exist 'in the wild' (i.e. the schools, departments and towns are all just occurrences of groups that we have observed). However, there are also lots of cases where clustered data might arise as the result of our study design. For instance, in a __Repeated Measures__ study we have individual experimental trials clustered within participants. __Longitudinal__ studies exhibit the same data structure but have _time-ordered_ observations clustered within people.  
+The idea of observing "children in schools" is just one such example of clustering that we might come across. This same _hierarchical data structure_ can be found in other settings, such as patients within medical practices, employees within departments, people within towns etc. These sort of groups are higher level observations that we might sample (i.e. I randomly sample 20 schools, and then from each school randomly sample 30 children). However, there are also lots of cases where clustered data might arise as the result of our study design. For instance, in a __Repeated Measures__ study we have individual experimental trials clustered within participants. __Longitudinal__ studies exhibit the same data structure but have _time-ordered_ observations clustered within people.  
 
 In addition, we can extend this logic to think about having clusters of clusters, and clusters of cluster of clusters^[It's ["turtles all the way down"](https://en.wikipedia.org/wiki/Turtles_all_the_way_down){target="_blank"}]. @tbl-design shows just a few examples of different levels of clustering that may arise from different types of study.  
 
@@ -360,6 +363,10 @@ tribble(
 ) |> gt::gt()
 ```
 
+The common thread throughout all these designs is the hierarchy. At the lowest level of our hierarchy is the individual observed thing. For some designs, individual people might be the lowest observation level, for others, people might be the clusters (i.e. we have multiple data points per person).  
+
+
+
 ## What are 'clusters'?  
 
 At the fundamental level, we are using the term 'cluster' here to refer to __a grouping of observations.__ In fact, we will probably start using the terms "clusters" and "groups" interchangeably, so it's worth taking a bit of time to try and understand the _kind_ of groupings that we're talking about (and how we think about them).  
@@ -374,7 +381,7 @@ At the fundamental level, we are using the term 'cluster' here to refer to __a g
 
 Contrast the idea of 'clusters' with how we think about other sorts of groupings. In a study that looks at "how do drugs placebo/aspirin/beta-blockers influence people's heart rate?" (@fig-clgroup LH plot), we can group participants into which drug they have received. But these groupings are the very groups of interest to us, and we are interested in comparing placebo with aspirin with beta-blockers. If we were to run the study again, we'll use the same drugs (they're not just a random sample of drugs - the x-axis of our LH plot in @fig-clgroup will be the same).  
 
-If we are interested in "what is the average grade at GCSE?", and we have children grouped into different schools (@fig-clgroup RH plot), we are probably not interested in all the specific differences between grades in `r levels(schoolmot$schoolid)[6]` vs `r levels(schoolmot$schoolid)[13]` etc. If we were to run our study again, we might not collect data from the same set of schools. We can view these schools as 'clusters' - they are another source of random variation (i.e. not systematic variation such as the effect of a drug, but variation we see just because schools are different from one another).  
+If we are interested in "what is the average grade at GCSE?", and we have children grouped into different schools (@fig-clgroup RH plot), we are probably not interested in all the specific differences between grades in `r levels(schoolmot$schoolid)[6]` vs `r levels(schoolmot$schoolid)[13]` etc. If we were to run our study again, we don't collect data from the same set of schools. We can view these schools as 'clusters' - they are another source of random variation (i.e. not systematic variation such as the effect of a drug, but variation we see just because schools are different from one another).  
 
 ```{r}
 #| label: fig-clgroup
@@ -411,16 +418,16 @@ Often, while the specific clusters are not of interest, we may have research que
 
 
 
-::: {.callout-note collapse="true"}
-#### Optional "univariate"and "multivariate"
+::: {.callout-caution collapse="true"}
+#### optional "univariate"and "multivariate"
 
 In "univariate" statistics there is just one source of variation we are looking at explaining, which is the observation level. In psychology, our observations are often individual people, and we have variation because people are different from one another. Our studies are looking to explain this variation.  
 
 In "multivariate" statistics, there are more sources of variation. For the "children in schools" example: individual children are different from another, and schools are also different from one another. We also have multiple sources of variation from questionnaire scales (e.g. 9 survey questions about anxiety), because both there is variation in scores due to both a) people varying from one another and b) the 9 questions tending to illicit different responses from one another. 
 
 :::
-::: {.callout-note collapse="true"}
-#### Optional: "Panel data"
+::: {.callout-caution collapse="true"}
+#### optional: "Panel data"
 
 In some fields (e.g. economics), clustering sometimes gets referred to as 'panel data'. This can be a nice intuitive way of thinking about it, because we think of a plot of our data being split into different panels for each cluster:    
 
@@ -459,7 +466,7 @@ tibble(variable=names(schoolmot),
          "Annual School Funding (in 1000s of £)",
          "Name of School that the child attends",
          "Child's end-of-year grade average (0-100)")
-) %>% gt::gt()
+) |> gt::gt()
 ```
 
 :::
@@ -470,8 +477,78 @@ In terms of the dataframes we are going to be working with, clusters are simply 
 #| echo: false
 schoolmot |> slice(1,46,105,2,4,50,80) |> 
   rbind("...") |> mutate(schoolid=ifelse(is.na(schoolid),"...",
-                                         as.character(schoolid)))
+                                         as.character(schoolid))) |> as.data.frame()
 ```
+
+
+Data in the way it is shaped just above is referred to as being in **long format** - we have one row for every individual lowest observation. In this example our individual observations are children, and they are clustered into schools. So our data in this long format has one row for every child. However, our data needn't be shaped like this. We could contain the same information in a **wide** format. 
+
+::::panelset
+:::panel
+#### Long
+
+In long format, the individual observations are separate rows in the data. We need to have a column identifying which cluster each observation belongs to. In the example below, the individual observations are *people*, but this is not always the case. For instance, we might have multiple trials clustered within participants (in which case each individual observation is a single trial).  
+
+Below, we have one row per person (we can see that Aja, Dan, Josiah, Emma, Umberto are all on different rows), and we have a column `schoolid` that identifies what cluster they belong to (what school they attend).  
+```{r}
+#| echo: false
+tribble(
+  ~schoolid,~grade,
+  "North West Community Campus","50",
+  "North West Community Campus","65",
+  "North West Community Campus","40",
+  "...","...",
+  "Paisley Grammar School","75",
+  "Paisley Grammar School","80",
+  "...","...",
+) |> as.data.frame() -> dd
+row.names(dd) <- c("Aja","Dan","Josiah","..","Emma","Umberto","...")
+dd
+
+```
+
+:::
+:::panel
+#### Wide
+
+We can express the same information in a different way. Instead of having one row per person, we could have one row per cluster, and have a column for each of the people. We can see this below - Aja Dan and Josiah have moved to now be all in the 1st row (for North West Community Campus) - we can see their grades (50, 65 and 40) in that row, and Emma and Umberto are in the row for Paisley Grammar School:  
+
+```{r}
+#| echo: false
+tribble(
+  ~"child 1",~"child 2",~"child 3",~"child 4",
+  "50","65","40","...",
+  "...","...","...","...",
+  "75","80","...","...",
+  "...","...","...","...",
+) |> as.data.frame() -> dd
+row.names(dd)<-c("North West Community Campus","..","Paisley Grammar School","...")
+dd
+
+```
+
+:::
+::::
+
+::: {.callout-note collapse="true"}
+#### moving between wide and long data  
+
+One of the more confusing things to get to grips with is the idea of reshaping a dataframe.  
+For different reasons, you might sometimes want to have data in wide, or in long format. 
+
+```{r echo=FALSE, fig.cap="Source: https://fromthebottomoftheheap.net/2019/10/25/pivoting-tidily/"}
+knitr::include_graphics("https://www.fromthebottomoftheheap.net/assets/img/posts/tidyr-longer-wider.gif")
+```
+
+When the data is wide, we can make it long using `pivot_longer()`. When we make data longer, we're essentially making lots of columns into 2 longer columns. Above, in the animation, the wide variable **x**, **y** and **z** go into a new longer column called **name** that specifies which (x/y/z) it came from, and the values get put into the **val** column.  
+
+The animation takes a shortcut in the code it displays above, but you could also use `pivot_longer(c(x,y,z), names_to = "name", values_to = "val")`. To reverse this, and put it back to being wide, we tell R which columns to take the names and values *from*: `pivot_wider(names_from = name, values_from = val)`.  
+
+
+:::
+
+
+
 
 ## Determining Sample Sizes
 
@@ -502,14 +579,14 @@ Another important thing to examine when you first get hierarchical data is the n
 We can easily count how many children are in each school by counting the number of rows for each distinct value in the school identifier column. We could then pass this to the `summary()` function to see the minimum, median, mean, maximum etc. As we can see below, in this dataset every school has data from exactly 30 children (min is the same as max):  
 
 ```{r}
-schoolmot %>%
-  count(schoolid) %>%
+schoolmot |>
+  count(schoolid) |>
   summary()
 ```
 
-## ICC
+## ICC - Quantifying clustering in an outcome variable
 
-The __IntraClass Correlation Coefficient (ICC)__ is a descriptive measure of how much variation in a variable is explained by the clustering. It is the ratio of the variance between the clusters/groups to the total variance in the variable, and is often denoted by the symbol $\rho$:^[although this symbol get used for lots of other correlation-y things too!]  
+The __IntraClass Correlation Coefficient (ICC)__ is a measure of how much variation in a variable is attributable to the clustering. It is the ratio of the variance between the clusters/groups to the total variance in the variable, and is often denoted by the symbol $\rho$:^[although this symbol get used for lots of other correlation-y things too!]  
 
 $$
 \begin{align}
@@ -536,7 +613,7 @@ ggplot(schoolmot, aes(x=schoolid, y=grade))+
 ```
 
 
-There are various packages that allow us to calculate the ICC, and when we get to fitting multilevel models we will see how we can estimate from a fitted model.  
+There are various packages that allow us to calculate the ICC, and when we get to fitting multilevel models we will see how we can extract it from a fitted model.  
 In the data (visualised above), it's estimated that `r round(suppressWarnings(ICC::ICCbare(schoolid, grade, data = schoolmot)),2)*100`% of the variance in grades is due to school-related differences:  
 ```{r}
 library(ICC)
@@ -544,8 +621,8 @@ ICCbare(schoolid, grade, data = schoolmot)
 ```
 
 
-::: {.callout-note collapse="true"}
-### Optional: Calculating ICC manually  
+::: {.callout-caution collapse="true"}
+### optional: calculating ICC manually  
 
 We have equal group sizes here (there are 30 schools, each with 30 observations), which makes calculating ICC by hand a lot easier, but it's still a bit tricky.  
 
@@ -579,21 +656,21 @@ The code below will give us a couple of new columns. The first is the overall me
 
 ```{r}
 schoolmot <- 
-  schoolmot %>% 
+  schoolmot |> 
   mutate(
     grand_mean = mean(grade)
-  ) %>%
-  group_by(schoolid) %>%
+  ) |>
+  group_by(schoolid) |>
   mutate(
     group_mean = mean(grade)
-  ) %>%
+  ) |>
   ungroup()
 ```
 
 Now we need to create a column which is the squared differences between the observations $y_{ij}$ and the group means $\bar{y_i}$.  
 We also want a column which is the squared differences between the group means $\bar{y_i}$ and the overall mean $\bar{y}$.  
 ```{r}
-schoolmot <- schoolmot %>% 
+schoolmot <- schoolmot |> 
   mutate(
     within = (grade-group_mean)^2,
     between = (group_mean-grand_mean)^2
@@ -647,8 +724,8 @@ plot(sims, xlab="Child 1",ylab="Child 2",main="15 randomly drawn pairs of childr
 ```
 
 
-::: {.callout-note collapse="true"}
-### Optional: A Little Simulation
+::: {.callout-caution collapse="true"}
+### optional: a little simulation
 
 We can actually do the "randomly drawn pair of observations from the same group" via simulation.  
 The code below creates a function for us to use. Can you figure out how it works?
@@ -675,13 +752,13 @@ cor(sims[,1], sims[,2])
 
 :::
 
-::: {.callout-note collapse="true"}
-### Optional: correlations from group-structured data
+::: {.callout-caution collapse="true"}
+### optional: correlations from group-structured data
 
 Let's suppose we had only 2 observations in each group.  
 ```{r echo=FALSE}
-tempdat <- read.csv("https://uoepsy.github.io/data/iccexplainer.csv")
-head(tempdat) %>% rbind(.,rep("...", 3))
+tempdat <- read_csv("../../data/iccexplainer.csv")
+head(tempdat) |> rbind(x=_,rep("...", 3))
 ```
 
 ```{r include=F}
@@ -694,11 +771,11 @@ __The ICC for this data is `r round(ic,2)`.__
 
 Now suppose we *reshape* our data so that we have one row per group, and one column for each observation to look like this:
 ```{r echo=F}
-tempdat_wide <- tempdat %>% 
+tempdat_wide <- tempdat |> 
   pivot_wider(names_from=observation, values_from=y, names_prefix = "obs") 
-tempdat_wide %>% head %>% rbind(.,rep("...", 3))
+tempdat_wide |> head() |> rbind(x=_,rep("...", 3))
 ```
-Calculating Pearson's correlation on those two columns yields `r cor(tempdat_wide$obs1, tempdat_wide$obs2) %>% round(.,2)`, which isn't quite right. It's close, but not quite.. 
+Calculating Pearson's correlation on those two columns yields `r cor(tempdat_wide$obs1, tempdat_wide$obs2) |> round(2)`, which isn't quite right. It's close, but not quite.. 
 
 :::imp 
 The crucial thing here is that it is completely arbitrary which observations get called "obs1" and which get called "obs2".  
@@ -708,7 +785,7 @@ The data aren't paired, they're just random draws from a __group.__
 Essentially, there are lots of different combinations of "pairs" here. 
 There are the ones we have shown above:
 ```{r echo=F}
-head(tempdat_wide) %>% rbind(., rep("...",3))
+head(tempdat_wide) |> rbind(x=_, rep("...",3))
 ```
 But we might have equally chosen any of these:  
 
@@ -717,25 +794,25 @@ But we might have equally chosen any of these:
 #### ...
 ```{r echo=F}
 set.seed(12)
-sample_n(tempdat, n()) %>% arrange(cluster) %>% group_by(cluster) %>% 
-  mutate(observation = 1:n()) %>% ungroup %>%
-  pivot_wider(names_from=observation, values_from=y, names_prefix = "obs") %>% head() %>% rbind(., rep("...",3))
+sample_n(tempdat, n()) |> arrange(cluster) |> group_by(cluster) |> 
+  mutate(observation = 1:n()) |> ungroup() |>
+  pivot_wider(names_from=observation, values_from=y, names_prefix = "obs") |> head() |> rbind(x=_, rep("...",3))
 ```
 :::
 :::panel
 #### ...
 ```{r echo=F}
-sample_n(tempdat, n()) %>% arrange(cluster) %>% group_by(cluster) %>% 
-  mutate(observation = 1:n()) %>% ungroup %>%
-  pivot_wider(names_from=observation, values_from=y, names_prefix = "obs") %>% head() %>% rbind(., rep("...",3))
+sample_n(tempdat, n()) |> arrange(cluster) |> group_by(cluster) |> 
+  mutate(observation = 1:n()) |> ungroup() |>
+  pivot_wider(names_from=observation, values_from=y, names_prefix = "obs") |> head() |> rbind(x=_, rep("...",3))
 ```
 :::
 :::panel
 #### ...
 ```{r echo=F}
-sample_n(tempdat, n()) %>% arrange(cluster) %>% group_by(cluster) %>% 
-  mutate(observation = 1:n()) %>% ungroup %>%
-  pivot_wider(names_from=observation, values_from=y, names_prefix = "obs") %>% head() %>% rbind(., rep("...",3))
+sample_n(tempdat, n()) |> arrange(cluster) |> group_by(cluster) |> 
+  mutate(observation = 1:n()) |> ungroup() |>
+  pivot_wider(names_from=observation, values_from=y, names_prefix = "obs") |> head() |> rbind(x=_, rep("...",3))
 ```
 :::
 :::
@@ -800,6 +877,12 @@ __No Pooling__
 Information from each cluster contributes **only** to an estimate for that specific cluster.  
 ```{r}
 #| eval: false
+lm(grade ~ motiv + schoolid, data = schoolmot)
+```
+Estimate effect of motivation on grades will accounting for school-specific differences in grades.  
+
+```{r}
+#| eval: false
 lm(grade ~ motiv * schoolid, data = schoolmot)
 ```
 Estimate school-specific differences in grades, and school-specific differences in the effect of motivation on grades. Get _loads_ of coefficients that aren't really of interest.   
@@ -810,6 +893,7 @@ Estimate school-specific differences in grades, and school-specific differences 
 
 
 Estimating the school-specific differences in our model (the no-pooling approach) is clearly better than simply ignoring them, but it does mean that we are treating the schools as if they are completely _independent_ entities.  
+
 Suppose we had another school - School X - for which we had only _three_ children's data (@fig-borrowstrength). Intuitively, we don't want to trust the line for School X as much as we trust the others (where we have 30 children's data). In the no-pooling approach, it is only those three children from School X that contribute to the School X line.  Take this further, and imagine we have only one child's data from some School Y. In the no-pooling method, the model doesn't learn _anything_ from the other schools and cannot estimate a line for School Y.  
 
 What would be great is if we could _somehow_ use the information from the other schools to inform our estimation of what is going on in Schools X and Y. This is what multi-level modelling achieves, _partially_ pooling information across the groups, and this is where we'll turn to next.    
@@ -830,11 +914,18 @@ bind_rows(
                tibble(schoolid="Hypothetical School Y",motiv = -2+5, grade = 65)
                ) -> tdf 
 
+txt = tibble(
+  schoolid = "Hypothetical School Y",
+  motiv = 5, grade=50,text = "?"
+)
+
+
 tdf |> 
   ggplot(aes(x=motiv,y=grade))+
   geom_point()+
   geom_line(data=broom::augment(lm(grade~motiv*schoolid,tdf)),aes(y=.fitted),
             col="blue",lwd=.5)+
+  geom_text(data=txt,aes(label=text),size=20,col="blue")+
   facet_wrap(~schoolid)
  
 ```

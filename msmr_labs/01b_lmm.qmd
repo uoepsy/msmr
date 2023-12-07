@@ -21,7 +21,7 @@ schoolmot <- read_csv("data/schoolmot.csv") |>
 srmod <- lm(grade ~ motiv, data = schoolmot)
 ```
 
-:::{.callout-caution collapse="true"}
+:::{.callout-note collapse="true"}
 ## A Note on terminology
 
 The methods we're going to start to look at are known by lots of different names (see @fig-wordcloud). The core idea is that **model parameters vary at more than one level.**. 
@@ -70,7 +70,7 @@ wordcloud(words = mlmname$word, freq = mlmname$freq, random.order=FALSE,
 
 In the simple linear regression model was written as $\color{red}{y} = \color{blue}{b_0 + b_1x_1 \ + \ ... \ + \ b_px_p} \color{black}{\ + \ \varepsilon}$, the estimated coefficients $\color{blue}{b_0}$, $\color{blue}{b_1}$ etc., are estimated as a fixed value.  
 
-In the example where we model School children's grades as a function of their motivation score, we can fit a simple regression model, and the estimated parameters are two values that define the intercept and the slope of the line in @fig-schoolplot1.  
+In the example where we model School children's grades as a function of their motivation score, we can fit a simple regression model, and the estimated parameters are two values that define line - the intercept and the slope (as in @fig-schoolplot1).  
  
 ```{r}
 #| echo: false
@@ -85,7 +85,7 @@ rsmod = lmer(grade~motiv+(1+motiv|schoolid),schoolmot)
 basep = ggplot(schoolmot, aes(x=motiv,y=grade))+
   geom_point(alpha=.1) + 
   geom_vline(xintercept=0,lty="dashed")+
-  scale_x_continuous(limits=c(0,10),breaks=0:10)
+  scale_x_continuous(limits=c(-1,10),breaks=0:10)
 
 basep + geom_abline(intercept=coef(fmod)[1],slope=coef(fmod)[2], lwd=1) +
   geom_point(x=0,y=coef(fmod)[1],size=3,col="blue") +
@@ -127,22 +127,65 @@ srmod <- lm(grade ~ motiv, data = schoolmot)
 .pp(summary(srmod),l=list(0,9:13))
 ```
 
+To make it clear why this is, we can write our model equation with the addition of a suffix $i$ to indicate that the equation for the $i^{th}$ child is: 
+
+$$
+\begin{align}
+&\text{For child }i \\
+&\text{grade}_i = b_0 + b_1 \cdot \text{motiv}_i + \epsilon_i 
+\end{align}
+$$
+i.e. For any child $i$ that we choose, that child's grade ($\text{grade}_i$) is some fixed number ($b_0$) plus some fixed amount ($b_1$) times that child's motivation ($\text{motiv}_i$). 
+The issue, as we saw in [1A #clustered-data](01a_clustered.html#clustered-data), is that the children we are looking at can be grouped into the different schools we sampled them from, and those school-level differences might actually account for quite a lot of the variation in grades (in [1A #ICC](01a_clustered.html#icc---quantifying-clustering-in-an-outcome-variable) we actually estimated this to account for c40% of the variation in grades).  
+
+We saw how we might add in `school` as a predictor to our linear model to estimate all these school-level differences. This is a good start, and may oftentimes be perfectly acceptable if our clustering is simply a nuisance thing we want to account for. However, more frequently these clusters are themselves additional units of observation that have features of interest to us. For instance, we may be interested in how the funding that a school receives moderates the association between childrens motivation and grades - i.e. we're interested in things that happen both at the child-level (motivation, grades), and at the school-level (funding). For this, we really need a multilevel model.  
 
 
+::: {.callout-note collapse="true"}
+#### clusters as fixed effects
 
-the linear mixed model (LMM) 
+We have already seen that we can include fixed effects for cluster differences (we referred to this as "no pooling").  
 
-fits a distribution of intercepts.
-a center ( a single value and a spread)
+e.g. to fit school-level differences in grades, we could use:
+```{r}
+#| eval: false
+lm(grade ~ motiv + school, data = schoolmot)
+```
 
-so for a given school, the intercept is b0 + z0i  
-a fixed number plus some random deviation
+The model equation for this would look something like:
+$$
+\begin{align}
+\text{For child }i& \\
+\text{grade}_i =\, &b_0 + b_1 \cdot \text{motiv}_i + b_2 \cdot \text{isSchool2}_i + b_3 \cdot \text{isSchool3}_i\,\, + \,\, ... \,\, + \\
+& ... + \,\, ... \,\, + \,\, ... \,\, + \\
+& b_p \cdot \text{isSchoolP}_i\,\, + \epsilon_i 
+\end{align}
+$$
+
+The school coefficients are a series of dummy variables that essentially toggle on or off depending on which school child $i$ is from. 
+
+
+:::
+
+
+## diff intercept each g
+
+$$
+\begin{align}
+\text{For observation }j&\text{ in cluster }i \\
+\text{Level 1:}& \\
+y_{ij} &= b_{0i} + b_1 \cdot x_{ij} + \epsilon_{ij} \\
+\text{Level 2:}& \\
+b_{0i} &= \gamma_{00} + \zeta_{0i} \\
+\end{align}
+$$
 
 
 
 ```{r}
-#| eval: false
 #| echo: false
+library(ggforce)
+library(ggfx)
 plotlines = 
   as.data.frame(coef(rimod)$schoolid) |> 
   mutate(
@@ -150,17 +193,134 @@ plotlines =
     data = map2(`(Intercept)`,motiv, ~tibble(x = 0:10, .fitted = ..1 + ..2*(0:10)))
   ) |> unnest(data)
 
+specg = plotlines |> filter(g==10) |>
+  mutate(f = fixef(rimod)[1])
+
 basep + 
-  geom_line(data = plotlines, aes(x=x,y=.fitted,group=g),alpha=.5) + 
-  stat_eye(side="left", aes(x=0,ydist=dist_normal(fixef(rimod)[1],sqrt(VarCorr(rimod)[[1]][1]))), 
-           alpha=.3, fill="#a41ae4") + 
-  geom_abline(intercept=fixef(rimod)[1],slope=fixef(rimod)[2], lwd=1) 
+  with_blur(geom_line(data = plotlines, aes(x=x,y=.fitted,group=g),alpha=.3),sigma=2) + 
+  geom_line(data = specg,lwd=1,
+            aes(x=x,y=.fitted,group=g),alpha=1,col="orange") +
+  geom_abline(intercept=fixef(rimod)[1],slope=fixef(rimod)[2], lwd=1,col="#a41ae4") +
+  geom_curve(
+    data=specg[1,],
+    aes(x=0,xend=0,y=.fitted,yend=f,col="orange"),
+    curvature=.2,lwd=1
+  ) +
+  annotate("text",x=-.1,y=fixef(rimod)[1],
+           label=expression(gamma*"00"),size=5,
+           hjust=1,vjust=1.3,col="#a41ae4",parse=TRUE) +
+  annotate("text",x=-.1,y=mean(unlist(specg[1,5:6])),
+           label=expression(zeta*"0i"),size=5,
+           hjust=1.2,col="orange")+
+  guides(col="none")
 ```
 
+# how is this diff from fixed effect g?  
+
+the model doesn't actually estimate each difference. 
+it estimates a distribution!!
+
+emphasise the parameters of the model are not those differences (although we can estimate them).  
+the parameters are the variance estimates
 
 ```{r}
 #| echo: false
-#| eval: false
+basep + 
+  geom_line(data = plotlines, aes(x=x,y=.fitted,group=g),alpha=.5) + 
+  stat_eye(side="left",
+           data=tibble(motiv=-1,grade=50),
+           aes(x=0,ydist=dist_normal(fixef(rimod)[1],sqrt(VarCorr(rimod)[[1]][1]))), 
+           alpha=.3, fill="#a41ae4")  +
+
+  geom_abline(intercept=fixef(rimod)[1],slope=fixef(rimod)[2], lwd=1,col="#a41ae4") 
+```
+
+## cluster contributions
+
+TODO - what defines the amount to which a cluster contributes to the fixed estimate? 
+how do far away/few n clusters influence the estimate?  
+
+
+## borrowing strength
+
+```{r}
+#| echo: false
+
+expand_grid(
+  schoolid=unique(schoolmot$schoolid),
+  motiv=0:10
+) |> broom::augment(
+  lm(grade~motiv+schoolid,schoolmot),
+  newdata=_, interval="confidence"
+) -> plotlinesfix
+
+basep + 
+  with_blur(geom_line(data = plotlines,
+                      aes(x=x,y=.fitted,group=g),
+                      alpha=.4,col="orange"),sigma=2) +
+  with_blur(geom_line(data = plotlinesfix,
+                      aes(x=motiv,y=.fitted,group=schoolid),
+                      alpha=.4,col="blue"),sigma=2) +
+  geom_line(data = plotlinesfix[grepl("Calderglen",plotlinesfix$schoolid), ], 
+            aes(x=motiv,y=.fitted,group=schoolid),col="blue")+
+  geom_line(data = plotlines[plotlines$g==6,], 
+            aes(x=x,y=.fitted,group=g),col="orange")
+
+
+```
+
+in the multilevel modelling approach, each school gets its own intercept and slope, but these 'borrow strength' from the others.   
+
+The borrowing of strength is more apparent for the (what would be) more extreme clusters, as well as those that have fewer datapoints. What happens to these cluster estimates is that they are shrunk towards the population average. 
+
+$\frac{\sigma^2_{b} }{\sigma^2_b + \frac{\sigma^2_e }{n_i}}$
+
+more shrinkage when:
+  - smaller n_j
+  - when within var is large relative to between var
+  - both of these are basically 'when we have less information about that group'  
+
+
+- socialist vs liberal analogy?  
+
+how/why does it do this?
+by modelling a distribution of lines  
+
+
+
+## fitting lmm in R
+
+
+lme4 lmer
+
+_what_ are the model parameters? 
+i.e. variance components. 
+
+eq with model params coloured
+
+
+
+we _can_ get out estimates of the specific group-lines if we want, but really the model is estimating the variances. 
+
+
+
+
+
+## diff slopes too!  
+
+$$
+\begin{align}
+\text{For observation }j&\text{ in cluster }i \\
+\text{Level 1:}& \\
+y_{ij} &= b_{0i} + b_{1i} \cdot x_{ij} + \epsilon_{ij} \\
+\text{Level 2:}& \\
+b_{0i} &= \gamma_{00} + \zeta_{0i} \\
+b_{1i} &= \gamma_{10} + \zeta_{1i} \\
+\end{align}
+$$
+
+```{r}
+#| echo: false
 plotlines = 
   as.data.frame(coef(rsmod)$schoolid) |> 
   mutate(
@@ -170,9 +330,13 @@ plotlines =
 
 basep + 
   geom_line(data = plotlines, aes(x=x,y=.fitted,group=g),alpha=.5) + 
-  stat_eye(side="left", aes(x=0,ydist=dist_normal(fixef(rsmod)[1],sqrt(VarCorr(rsmod)[[1]][1]))), 
+  stat_eye(side="left", 
+           data=tibble(motiv=-1,grade=50),
+           aes(x=0,ydist=dist_normal(fixef(rsmod)[1],sqrt(VarCorr(rsmod)[[1]][1]))), 
            alpha=.3, fill="#a41ae4") + 
-  geom_abline(intercept=fixef(rsmod)[1],slope=fixef(rsmod)[2], lwd=1) 
+  geom_abline(intercept=fixef(rsmod)[1],slope=fixef(rsmod)[2], lwd=1, col="#a41ae4") 
+
+# TODO add separate curve for slope dist, with rug (coloured)
 
 ```
 
@@ -184,7 +348,6 @@ no pooling vs partial pooling:
 
 ```{r}
 #| echo: false
-#| eval: false
 set.seed(123)
 # sort(unique(schoolmot$schoolid))[c(1:4)]
 bind_rows(
@@ -230,14 +393,6 @@ tdf |>
 
 ```
 
-
-how is it different to fixed eff?
-"partial pooling" (link back to above)
-shrinkage
-- socialist vs liberal analogy?  
-
-how/why does it do this?
-by modelling a distribution of lines  
 
 
 $$
