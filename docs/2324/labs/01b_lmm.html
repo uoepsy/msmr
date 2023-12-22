@@ -200,14 +200,22 @@ if(f.classList.contains('fa-circle-right')) {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#lmm" id="toc-lmm" class="nav-link active" data-scroll-target="#lmm">LMM</a></li>
-  <li><a href="#fitting-lmm-in-r" id="toc-fitting-lmm-in-r" class="nav-link" data-scroll-target="#fitting-lmm-in-r">fitting LMM in R</a></li>
+  <li><a href="#fixed-effects" id="toc-fixed-effects" class="nav-link active" data-scroll-target="#fixed-effects">Fixed effects</a></li>
+  <li><a href="#the-multi-level-model" id="toc-the-multi-level-model" class="nav-link" data-scroll-target="#the-multi-level-model">The multi-level model</a>
+  <ul class="collapse">
+  <li><a href="#random-intercept" id="toc-random-intercept" class="nav-link" data-scroll-target="#random-intercept">random intercept</a></li>
+  <li><a href="#random-slopes" id="toc-random-slopes" class="nav-link" data-scroll-target="#random-slopes">random slopes</a></li>
+  <li><a href="#partial-pooling" id="toc-partial-pooling" class="nav-link" data-scroll-target="#partial-pooling">partial pooling</a></li>
+  </ul></li>
+  <li><a href="#fitting-multilevel-models-in-r" id="toc-fitting-multilevel-models-in-r" class="nav-link" data-scroll-target="#fitting-multilevel-models-in-r">fitting multilevel models in R</a>
+  <ul class="collapse">
   <li><a href="#model-parameters" id="toc-model-parameters" class="nav-link" data-scroll-target="#model-parameters">model parameters</a></li>
-  <li><a href="#terminology-fixed-effects-random-effects-variance-components" id="toc-terminology-fixed-effects-random-effects-variance-components" class="nav-link" data-scroll-target="#terminology-fixed-effects-random-effects-variance-components">terminology: fixed effects, random effects, variance components</a></li>
-  <li><a href="#estimation" id="toc-estimation" class="nav-link" data-scroll-target="#estimation">estimation</a>
+  <li><a href="#cluster-predictions" id="toc-cluster-predictions" class="nav-link" data-scroll-target="#cluster-predictions">cluster predictions</a></li>
+  </ul></li>
+  <li><a href="#model-estimation" id="toc-model-estimation" class="nav-link" data-scroll-target="#model-estimation">model estimation</a>
   <ul class="collapse">
   <li><a href="#ml-and-reml" id="toc-ml-and-reml" class="nav-link" data-scroll-target="#ml-and-reml">ML and REML</a></li>
-  <li><a href="#fitting-issues" id="toc-fitting-issues" class="nav-link" data-scroll-target="#fitting-issues">fitting issues</a></li>
+  <li><a href="#convergence-issues" id="toc-convergence-issues" class="nav-link" data-scroll-target="#convergence-issues">convergence issues</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -232,18 +240,6 @@ if(f.classList.contains('fa-circle-right')) {
 
 </header>
 
-<div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-A Note on terminology
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
 <p>The methods we’re going to start to look at are known by lots of different names (see <a href="#fig-wordcloud">Figure&nbsp;1</a>). The core idea is that <strong>model parameters vary at more than one level.</strong>.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -255,13 +251,13 @@ A Note on terminology
 </div>
 </div>
 </div>
+<div class="divider div-transparent div-dot">
+
 </div>
-</div>
-</div>
-<section id="lmm" class="level1">
-<h1>LMM</h1>
-<p>In the simple linear regression model was written as <span class="math inline">\(\color{red}{y} = \color{blue}{b_0 + b_1x_1 \ + \ ... \ + \ b_px_p} \color{black}{\ + \ \varepsilon}\)</span>, the estimated coefficients <span class="math inline">\(\color{blue}{b_0}\)</span>, <span class="math inline">\(\color{blue}{b_1}\)</span> etc., are estimated as a fixed value.</p>
-<p>In the example where we model School children’s grades as a function of their motivation score, we can fit a simple regression model, and the estimated parameters are two values that define the intercept and the slope of the line in <a href="#fig-schoolplot1">Figure&nbsp;2</a>.</p>
+<section id="fixed-effects" class="level1">
+<h1>Fixed effects</h1>
+<p>In the simple linear regression model was written as <span class="math inline">\(\color{red}{y} = \color{blue}{b_0 + b_1x_1 \ + \ ... \ + \ b_px_p} \color{black}{\ + \ \varepsilon}\)</span>, the estimated coefficients <span class="math inline">\(\color{blue}{b_0}\)</span>, <span class="math inline">\(\color{blue}{b_1}\)</span> etc., are estimated as <strong>fixed</strong> values - i.e.&nbsp;we estimate just one number for <span class="math inline">\(b_0\)</span>, and one number for <span class="math inline">\(b_1\)</span>, for <span class="math inline">\(b_2\)</span> and so on, and that’s it.</p>
+<p>In the example where we model School children’s grades as a function of their motivation score, when we fit a simple regression model of <code>lm(grade ~ motiv)</code>, the estimated parameters are two values that define a line - an intercept and a slope (as in <a href="#fig-schoolplot1">Figure&nbsp;2</a>).</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div id="fig-schoolplot1" class="quarto-figure quarto-figure-center anchored">
@@ -272,7 +268,7 @@ A Note on terminology
 </div>
 </div>
 </div>
-<p>These two values are fixed. It does not matter what school a child is from, if they score 0 on the motivation scale, then our model predicts that they will get a grade of 40.3 (the intercept).</p>
+<p>The intercept and slope here are ‘fixed’ in the sense that it does not matter what school a child is from, if they score 0 on the motivation scale, then our model predicts that they will get a grade of 40.3 (the intercept).</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>schoolmot <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/schoolmot.csv"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>srmod <span class="ot">&lt;-</span> <span class="fu">lm</span>(grade <span class="sc">~</span> motiv, <span class="at">data =</span> schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -287,44 +283,280 @@ motiv         1.9551     0.3422   5.714  1.5e-08 ***
 ---</code></pre>
 </div>
 </div>
-<p>the linear mixed model (LMM)</p>
-<p>fits a distribution of intercepts. a center ( a single value and a spread)</p>
-<p>so for a given school, the intercept is b0 + z0i<br>
-a fixed number plus some random deviation</p>
-<p>intercepts vary slopes vary</p>
-<p>no pooling vs partial pooling:</p>
-<p>how is it different to fixed eff? “partial pooling” (link back to above) shrinkage - socialist vs liberal analogy?</p>
-<p>how/why does it do this? by modelling a distribution of lines</p>
+<p>To make this point really clear, we can write our model equation with the addition of a suffix <span class="math inline">\(i\)</span> to indicate that the equation for the <span class="math inline">\(i^{th}\)</span> child is:</p>
 <p><span class="math display">\[
-\begin{align}\\
-&amp; \color{red}{y} = \color{blue}{b_0 + b_1x_1 \ + \ ... \ + \ b_px_p} \color{black}{+ \varepsilon}\\
-&amp; \text{Where:} \\
-&amp; \epsilon \sim N(0, \sigma) \text{ independently}
+\begin{align}
+&amp;\text{For child }i \\
+&amp;\text{grade}_i = b_0 + b_1 \cdot \text{motiv}_i + \epsilon_i
+\end{align}
+\]</span> i.e.&nbsp;For any child <span class="math inline">\(i\)</span> that we choose, that child’s grade (<span class="math inline">\(\text{grade}_i\)</span>) is some fixed number (<span class="math inline">\(b_0\)</span>) plus some fixed amount (<span class="math inline">\(b_1\)</span>) times that child’s motivation (<span class="math inline">\(\text{motiv}_i\)</span>).</p>
+<p>The issue, as we saw in <a href="01a_clustered.html#clustered-data">1A #clustered-data</a>, is that the children in our study are actually related to one another in that they can be grouped into the schools that we sampled them from. It’s entirely possible (and likely) that there are school-level differences might actually account for quite a lot of the variation in grades (in <a href="01a_clustered.html#icc---quantifying-clustering-in-an-outcome-variable">1A #ICC</a> we actually estimated this to account for approx 40% of the variation in grades).</p>
+<p>TODO CHECK below</p>
+<p>We saw how we might add in <code>school</code> as a predictor to our linear model to estimate all these school-level differences (<code>lm(grade ~ schoolid + motiv)</code>). This is a good start, and may oftentimes be perfectly acceptable if our clustering is simply a nuisance thing that we want to account for - adding in the clustering as another predictor will completely account for <em>all</em> cluster-level variability in our outcome variable.</p>
+<p>However, more frequently these clusters are themselves additional units of observation that have features of interest to us. For instance, we may be interested in how the funding that a school receives moderates the association between childrens motivation and grades - i.e.&nbsp;we’re interested in things that happen both at the child-level (motivation, grades), and at the school-level (funding). For these scenarios, we really need a multilevel model.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+clusters as fixed effects
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We have already seen that we can include fixed effects for cluster differences (we referred to this as “no pooling”).</p>
+<p>e.g.&nbsp;to fit school-level differences in grades, we could use:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>femod <span class="ot">&lt;-</span> <span class="fu">lm</span>(grade <span class="sc">~</span> motiv <span class="sc">+</span> schoolid, <span class="at">data =</span> schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The model equation for this would look something like: <span class="math display">\[
+\begin{align}
+\text{For child }i&amp; \\
+\text{grade}_i =\, &amp;b_0 + b_1 \cdot \text{motiv}_i + b_2 \cdot \text{isSchool2}_i + b_3 \cdot \text{isSchool3}_i\,\, + \,\, ... \,\, + \\
+&amp; ... + \,\, ... \,\, + \,\, ... \,\, + \\
+&amp; b_p \cdot \text{isSchoolP}_i\,\, + \epsilon_i
 \end{align}
 \]</span></p>
+<p>The school coefficients are a series of dummy variables that essentially toggle on or off depending on which school child <span class="math inline">\(i\)</span> is from.</p>
+<p>Because these set of coefficients accoutn for <strong>all</strong> of the school-level differences in grades, it means we are then unable to consider other school-level variables like <code>funding</code> (how much govt funding the school receives). If we try, we can see that a coefficient for <code>funding</code> is not able to be estimated because <code>schoolid</code> is explaining everything school-related:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>femod2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(grade <span class="sc">~</span> motiv <span class="sc">+</span> schoolid <span class="sc">+</span> funding, <span class="at">data =</span> schoolmot)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(femod2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<pre><code>Coefficients: (1 not defined because of singularities)
+                                   Estimate  Std. Error  t value  Pr(&gt;|t|)    
+(Intercept)                        36.2655      2.5667    14.129   &lt; 2e-16 ***
+motiv                              1.5723       0.3673    4.281   2.07e-05 ***
+schoolidBalfron High School        1.0683       2.8923    0.369   0.711946 
+schoolidBanff Academy             -3.3253       2.9142   -1.141   0.254163 
+...                                ...          ...       ...     ... 
+...                                ...          ...       ...     ... 
+funding                            NA           NA        NA      NA  </code></pre>
+</div>
+</div>
+</div>
+<div class="divider div-transparent div-dot">
+
+</div>
 </section>
-<section id="fitting-lmm-in-r" class="level1">
-<h1>fitting LMM in R</h1>
+<section id="the-multi-level-model" class="level1">
+<h1>The multi-level model</h1>
+<p>The multi-level model is an alternative model structure that accounts for cluster-level differences in a more flexible and parsimonious way. It achieves this by taking some of the estimated coefficients <span class="math inline">\(b_?\)</span> in our linear regression model and modelling these as randomly varying by clusters (i.e.&nbsp;each cluster gets its own value of <span class="math inline">\(b_?\)</span>).</p>
+<p>Let’s see how this works by starting with the intercept, <span class="math inline">\(b_0\)</span>.</p>
+<section id="random-intercept" class="level2">
+<h2 class="anchored" data-anchor-id="random-intercept">random intercept</h2>
+<p>To extend the single-level regression model to the multi-level regression model, we add in an extra suffix to our equation to indicate which cluster an observation belongs to.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> Then, we can take our coefficients <span class="math inline">\(b_?\)</span> and allow them to be different for each cluster <span class="math inline">\(i\)</span> by adding the suffix <span class="math inline">\(b_{?i}\)</span>. Below, we have done this for our intercept <span class="math inline">\(b_0\)</span>.</p>
+<p>However, we also need to <em>define</em> these differences, and the multilevel model does this by expressing each cluster’s intercept as a deviation (<span class="math inline">\(\zeta_{0i}\)</span> for cluster <span class="math inline">\(i\)</span>, below) from a fixed number (<span class="math inline">\(\gamma_{00}\)</span>, below). Because these differences are to do with the <em>clusters</em> (and not the individual observations within them), we often write these as a “level 2 equation”:</p>
+<p><span class="math display">\[
+\begin{align}
+\text{For observation }j&amp;\text{ in cluster }i \\
+\text{Level 1:}&amp; \\
+y_{ij} &amp;= b_{0i} + b_1 \cdot x_{ij} + \epsilon_{ij} \\
+\text{Level 2:}&amp; \\
+b_{0i} &amp;= \gamma_{00} + \zeta_{0i} \\
+\end{align}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+mixed-effects notation
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Instead of writing several equations at multiple levels, we substitute the Level 2 terms into the Level 1 equation to get something that is longer, but all in one:</p>
+<p><span class="math display">\[
+\color{red}{y_{ij}} = \underbrace{(\gamma_{00} + \color{orange}{\zeta_{0i}})}_{\color{blue}{b_{0i}}} \cdot 1 + \color{blue}{b_{1}} \cdot x_{ij}  +  \varepsilon_{ij}
+\]</span></p>
+<p>This notation typically corresponds with the “mixed effects” terminology because parameters can now be a combination of both a fixed number and a random deviation, as in the intercept below:</p>
+<p><span class="math display">\[
+\color{red}{y_{ij}} = \underbrace{(\underbrace{\gamma_{00}}_{\textrm{fixed}} + \color{orange}{\underbrace{\zeta_{0i}}_{\textrm{random}}})}_{\text{intercept, }b_{0i}} \cdot 1 + \underbrace{b_2}_{\textrm{fixed}} \cdot x_{ij} +  \varepsilon_{ij}
+\]</span></p>
+</div>
+</div>
+</div>
+<p>Returning to our school children’s grade example, we can fit a model with “random intercepts for schools”, which would account for the possibility that some schools have higher grades, some have lower grades, etc.</p>
+<p><span class="math display">\[
+\begin{align}
+\text{For Child }j\text{ in School }i&amp; \\
+\text{Level 1 (child):}&amp; \\
+\text{grade}_{ij} &amp;= b_{0i} + b_1 \cdot \text{motiv}_{ij} + \epsilon_{ij} \\
+\text{Level 2 (school):}&amp; \\
+b_{0i} &amp;= \gamma_{00} + \zeta_{0i} \\
+\end{align}
+\]</span> If we consider one of our schools (e.g.&nbsp;“Dyce Academy”) we can see that our model predicts that this school has higher grades than most other schools (<a href="#fig-ri_1school">Figure&nbsp;3</a>). We can see how this is modelled as a deviation <span class="math inline">\(\zeta_{0\text{DA}}\)</span> (DA for Dyce Academy) from some fixed value <span class="math inline">\(\gamma_{00}\)</span>.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-ri_1school" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="01b_lmm_files/figure-html/fig-ri_1school-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;3: Fitted values from a multilevel model with random intercepts for schools</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>TODO PANEL PLOT</p>
+<p>At this point, you might be wondering how this is any different from simply fitting clusters as an additional predictor in a single level regression (i.e.&nbsp;a clusters-as-fixed-effect approach of <code>lm(grade ~ motiv + schoolid)</code>). This would also estimate an difference for each cluster?</p>
+<div class="sticky">
+<p>The key to the multilevel model is that we are not actually estimating the cluster-specific differences themselves (although we can_ get these out). We are estimating a <strong>distribution</strong> of differences.</p>
+</div>
+<p>Specifically, the parameters of the multilevel model that are being estimated are the mean and <em>variance</em> of a <em>normal</em> distribution of clusters.</p>
+<p>So the parameters that are estimated from our model with a random intercept by-schools, are:</p>
+<p><span class="math display">\[
+\begin{align}
+\text{For Child }j\text{ in School }i&amp; \\
+\text{Level 1 (child):}&amp; \\
+\text{grade}_{ij} &amp;= b_{0i} + b_1 \cdot \text{motiv}_{ij} + \epsilon_{ij} \\
+\text{Level 2 (school):}&amp; \\
+b_{0i} &amp;= \gamma_{00} + \zeta_{0i} \\
+\text{where: }&amp; \\
+&amp;\varepsilon_{ij} \sim N(0,\sigma_\varepsilon) \\
+&amp;\zeta_{0i} \sim N(0,\sigma_0) \\
+\end{align}
+\]</span></p>
+<ul>
+<li>a fixed intercept <span class="math inline">\(\gamma_{00}\)</span><br>
+</li>
+<li>the variance with which schools deviate from the fixed intercept <span class="math inline">\(\sigma_0\)</span><br>
+</li>
+<li>a fixed slope for <code>motiv</code> <span class="math inline">\(b_1\)</span><br>
+</li>
+<li>(and we also get the residual variance too, in <span class="math inline">\(\sigma_\varepsilon\)</span>)</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="01b_lmm_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="random-slopes" class="level2">
+<h2 class="anchored" data-anchor-id="random-slopes">random slopes</h2>
+<p><span class="math display">\[
+\begin{align}
+\text{For observation }j&amp;\text{ in cluster }i \\
+\text{Level 1:}&amp; \\
+y_{ij} &amp;= b_{0i} + b_{1i} \cdot x_{ij} + \epsilon_{ij} \\
+\text{Level 2:}&amp; \\
+b_{0i} &amp;= \gamma_{00} + \zeta_{0i} \\
+b_{1i} &amp;= \gamma_{10} + \zeta_{1i} \\
+\end{align}
+\]</span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="01b_lmm_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>intercepts vary slopes vary</p>
+<p>TODO PANEL PLOT</p>
+</section>
+<section id="partial-pooling" class="level2">
+<h2 class="anchored" data-anchor-id="partial-pooling">partial pooling</h2>
+<p>It’s tempting to think that we could get the fixed intercept <span class="math inline">\(\gamma_{00}\)</span> by calculating a simple linear model for each school and taking the average intercept. However, the multilevel model is more clever than that. The amount by which Each cluster in a multilevel model contributes to the estimate of the fixed intercept by an amount that depends on:</p>
+<ol type="a">
+<li>how much between-cluster variation there is relative to within-cluster variation (TODO if clusters are very distinct )</li>
+<li>the number of observations in each cluster</li>
+</ol>
+<p>This is a really useful feature, because it means that we</p>
+<p>less data and, when clusters are quite similar/less distinct, then they contribute similar amounts</p>
+<ul>
+<li>socialist vs liberal analogy?</li>
+</ul>
+<p>how/why does it do this? by modelling a distribution of lines</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="01b_lmm_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+optional: how does it work?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><span class="math display">\[
+\frac{\sigma^2_{b} }{\sigma^2_b + \frac{\sigma^2_e }{n_i}}
+\]</span></p>
+<p>This means that the fixed center of this distribution (the <span class="math inline">\(\gamma_00\)</span>) However,</p>
+<p>TODO - what defines the amount to which a cluster contributes to the fixed estimate?<br>
+how do far away/few n clusters influence the estimate?</p>
+<p>in the multilevel modelling approach, each school gets its own intercept and slope, but these ‘borrow strength’ from the others.</p>
+<p>The borrowing of strength is more apparent for the (what would be) more extreme clusters, as well as those that have fewer datapoints. What happens to these cluster estimates is that they are shrunk towards the population average.</p>
+<p><span class="math inline">\(\frac{\sigma^2_{b} }{\sigma^2_b + \frac{\sigma^2_e }{n_i}}\)</span></p>
+<p>more shrinkage when: - smaller n_j - when within var is large relative to between var - both of these are basically ‘when we have less information about that group’</p>
+<p>https://jeanettemumford.org/MixedModelSeries/v4-introduction-to-regularization-in-mixed-models.html#introduction-2</p>
+<p>https://jeanettemumford.org/MixedModelSeries/v5-conditional-modes-vs-means.html#the-equation-for-shrinkage</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="fitting-multilevel-models-in-r" class="level1">
+<h1>fitting multilevel models in R</h1>
+<p>fixed estimates = average cluster</p>
 <p>lme4 lmer</p>
-</section>
-<section id="model-parameters" class="level1">
-<h1>model parameters</h1>
 <p><em>what</em> are the model parameters? i.e.&nbsp;variance components.</p>
-<p>eq with model params coloured $$</p>
-<p>$$</p>
+<p>eq with model params coloured</p>
 <p>we <em>can</em> get out estimates of the specific group-lines if we want, but really the model is estimating the variances.</p>
-</section>
-<section id="terminology-fixed-effects-random-effects-variance-components" class="level1">
-<h1>terminology: fixed effects, random effects, variance components</h1>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+terminology: fixed effects, random effects, variance components
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p>we often use “random effects” to just mean the distribution of random deviations. i.e.&nbsp;</p>
 <p>sometimes you might hear “random effect of group” “random effect for group” “random effect [of x] by group”</p>
 <p>generally, people are referring to the <code>(1 + ... | cluster)</code> bit.</p>
 <p>graphic on how to read it.</p>
 <p>intercept &gt;&gt; 1 slope of x &gt;&gt; x | &gt;&gt; varies by these groups &gt;&gt; cluster</p>
 <p>a common stumbling block. “effect of x varies by cluster” is not the same as “x varies by cluster”.</p>
+</div>
+</div>
+</div>
+<section id="model-parameters" class="level2">
+<h2 class="anchored" data-anchor-id="model-parameters">model parameters</h2>
+<p><em>what</em> are the model parameters? i.e.&nbsp;variance components.</p>
+<p>eq with model params coloured $$</p>
+<p>$$</p>
 </section>
-<section id="estimation" class="level1">
-<h1>estimation</h1>
+<section id="cluster-predictions" class="level2">
+<h2 class="anchored" data-anchor-id="cluster-predictions">cluster predictions</h2>
+<p>ranef</p>
+<p>fixef + ranef = coef</p>
+<p>dotplot.ranef.mer</p>
+</section>
+</section>
+<section id="model-estimation" class="level1">
+<h1>model estimation</h1>
 <section id="ml-and-reml" class="level2">
 <h2 class="anchored" data-anchor-id="ml-and-reml">ML and REML</h2>
 <p>MLE explainer</p>
@@ -334,15 +566,21 @@ a bit like n-1 in formula for sd</li>
 </ul>
 <p>REML - OLS to partial out fixef &gt; est varcorr &gt; est varcorr &gt; est varcorr &gt; use GLS to est fixef - in the estimation of varcorr, the fixed effects are 0 <em>by definition</em></p>
 </section>
-<section id="fitting-issues" class="level2">
-<h2 class="anchored" data-anchor-id="fitting-issues">fitting issues</h2>
+<section id="convergence-issues" class="level2">
+<h2 class="anchored" data-anchor-id="convergence-issues">convergence issues</h2>
 <p>convergence warnings, singular fits</p>
 
 
 </section>
 </section>
 
-</main> <!-- /main -->
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Some books use “cluster <span class="math inline">\(j\)</span> &gt;&gt; observation <span class="math inline">\(i\)</span>”, others use “cluster <span class="math inline">\(i\)</span> &gt;&gt; observation <span class="math inline">\(j\)</span>”. We use the latter here<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
