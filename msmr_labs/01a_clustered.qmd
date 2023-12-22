@@ -221,12 +221,14 @@ However, there is one assumption that we are unable to identify through examinin
 :::sticky
 __Independence of observations__  
 
-Individual observations in the sample are not related to one another in any way. The value of one observation does not influence the value of any other observation.  
+Individual observations in the sample are not dependent upon one another in any way. The value of one observation is not systematically related to the value of any other observation.  
 
 :::
 
 One common way in which observations are not independent can come when the data has a _hierarchical_ structure - some form of __clustering__ of observations into different groups. These groups, or 'clusters', could be simply something we observe, or they could be the result of how we have designed our study.  
 
+
+<div class="divider div-transparent div-dot"></div>
 
 # Clustered Data
 
@@ -332,7 +334,7 @@ p3 = df |> mutate(r=resid(lm(y~x,df)),f=fitted(lm(y~x,df))) |>
 
 ```
 
-Put another way - the children are _not_ independent from one another, because they tend to be more similar to other children in the same school than they are to children from a different school. Our assumption of the normal linear model that $\varepsilon \sim N(0,\sigma) \text{ independently}$ is violated, because groups of residuals are related to one another - e.g. all the children from the green school have positive residuals (see residuals vs fitted plot in @fig-egschool2).  
+Put another way - the children are _not_ independent from one another, because they tend to be more similar to other children in the same school than they are to children from a different school. Our assumption of the normal linear model that $\varepsilon \sim N(0,\sigma)$  $\text{ independently}$ is violated, because groups of residuals *are* related to one another - e.g. all the children from the green school have positive residuals (see residuals vs fitted plot in @fig-egschool2).  
 
 ```{r}
 #| label: fig-egschool2
@@ -340,6 +342,48 @@ Put another way - the children are _not_ independent from one another, because t
 #| fig-cap: "Residuals vs Fitted plot from the linear model that ignores the school/children structure of the data"
 p3
 ```
+
+
+::: {.callout-note collapse="true"}
+#### the impact of non-independence on inferences
+
+The reason that violations of our assumption of independence is problematic is that it means we are placing more confidence in our estimates than we should.  
+
+This is because all of our inferential tests rely on the estimated variability in our residuals $y_i - \hat y_i$. This variability is estimated by taking the mean squared error^[or "mean squares residual"]:    
+
+$$
+\text{mean squared error} = \frac{\sum{(y_i - \hat y_i)^2}}{n-k-1}
+$$
+The denominator bit on the bottom is our _degrees of freedom_ (where $n$ is the total sample size, $k$ is how many predictors we have in our model). This is how many independent pieces of information are available for estimating the parameters in our model.  
+
+In the scenario where we have, e.g. 33 pupils clustered into 5 schools, how many independent bits of information do we have to begin with? 33? 5? somewhere in between?  
+
+If we assume these pupils are all independent, as our old friend `lm()` would, then our estimate of the residual variability will be smaller. This means that on average our standard errors will be too narrow, any confidence intervals too narrow, our F statistics will be too large, and our p-values too small.  
+
+In essence - our inferences will all be wrong!!  
+
+::: {.callout-caution collapse="true"}
+#### F and t and MSE
+
+The mean squared error (MSE) goes into our $F$-statistics as they are the ratio of the mean squares associated with the model and the mean squared error 
+$$
+F = \frac{\text{Mean Squares Model}}{\text{Mean Squared Error}}
+$$
+
+The MSE also goes into our standard errors for our coefficients (and so any subsequent $t$-statistics or confidence intervals that we might calculate).  
+
+TODO tidy
+$$
+SE(b_p) = \sqrt{  \frac{MSE}{(1-R^2_{x_p | x_p}) \cdot Var(x_p)} }
+$$
+:::
+
+
+
+
+
+:::
+
 
 ## Clusters clusters everywhere
 
@@ -446,6 +490,8 @@ knitr::include_graphics("images/panel2.png")
 
 :::
 
+<div class="divider div-transparent div-dot"></div>
+
 # Working with Clustered Data
 
 :::frame
@@ -511,7 +557,7 @@ dd
 :::panel
 #### Wide
 
-We can express the same information in a different way. Instead of having one row per person, we could have one row per cluster, and have a column for each of the people. We can see this below - Aja Dan and Josiah have moved to now be all in the 1st row (for North West Community Campus) - we can see their grades (50, 65 and 40) in that row, and Emma and Umberto are in the row for Paisley Grammar School:  
+We can express the same information in a different way. Instead of having one row per person, we could have one row per cluster, and have a column for each of the people. We can see this below - Aja, Dan and Josiah have moved to now be all in the 1st row (for North West Community Campus) - we can see their grades (50, 65 and 40) in that row, and Emma and Umberto are in the row for Paisley Grammar School:  
 
 ```{r}
 #| echo: false
@@ -853,6 +899,7 @@ ggplot(schoolmot, aes(x=motiv,y=grade,group=schoolid))+
 :::
 :::
 
+<div class="divider div-transparent div-dot"></div>
 
 # Information, pooled
 
@@ -875,19 +922,20 @@ Take all the children, fit a regression line for `grade ~ motivation`.
 __No Pooling__  
 
 Information from each cluster contributes **only** to an estimate for that specific cluster.  
+
+e.g. 
+
+1. Estimate the effect of motivation on grades after accounting for school-specific differences in grades.: 
 ```{r}
 #| eval: false
 lm(grade ~ motiv + schoolid, data = schoolmot)
 ```
-Estimate effect of motivation on grades will accounting for school-specific differences in grades.  
 
+2. Estimate school-specific differences in grades, and school-specific differences in the effect of motivation on grades. Get _loads_ of coefficients that aren't really of interest. Slightly more difficult to get out an average slope of `grade ~ motiv`, and each school contributes equally to this average (regardless of how many children we have from that school).   
 ```{r}
 #| eval: false
 lm(grade ~ motiv * schoolid, data = schoolmot)
 ```
-Estimate school-specific differences in grades, and school-specific differences in the effect of motivation on grades. Get _loads_ of coefficients that aren't really of interest.   
-
-
 
 :::
 

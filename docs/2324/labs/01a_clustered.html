@@ -209,7 +209,7 @@ if(f.classList.contains('fa-circle-right')) {
   <li><a href="#working-with-clustered-data" id="toc-working-with-clustered-data" class="nav-link" data-scroll-target="#working-with-clustered-data">Working with Clustered Data</a>
   <ul class="collapse">
   <li><a href="#determining-sample-sizes" id="toc-determining-sample-sizes" class="nav-link" data-scroll-target="#determining-sample-sizes">Determining Sample Sizes</a></li>
-  <li><a href="#icc" id="toc-icc" class="nav-link" data-scroll-target="#icc">ICC</a></li>
+  <li><a href="#icc---quantifying-clustering-in-an-outcome-variable" id="toc-icc---quantifying-clustering-in-an-outcome-variable" class="nav-link" data-scroll-target="#icc---quantifying-clustering-in-an-outcome-variable">ICC - Quantifying clustering in an outcome variable</a></li>
   <li><a href="#visualisations" id="toc-visualisations" class="nav-link" data-scroll-target="#visualisations">Visualisations</a></li>
   </ul></li>
   <li><a href="#information-pooled" id="toc-information-pooled" class="nav-link" data-scroll-target="#information-pooled">Information, pooled</a></li>
@@ -258,12 +258,18 @@ In this way, we can use the regression model to isolate the association between 
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> .... xp, <span class="at">data =</span> mydata)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="optional-begin">
-<button id="opt-start-1" class="fa-solid fa-circle-right optional-icon clickable" onclick="toggle_visibility('opt-body-1', 'opt-start-1')">
-Optional: a general notation
-</button>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-<div id="opt-body-1" class="optional-body" style="display: none;">
+<div class="callout-title-container flex-fill">
+optional: a general notation
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p>If we wanted to write this more simply, we can express <span class="math inline">\(x_1\)</span> to <span class="math inline">\(x_p\)</span> as an <span class="math inline">\(n \times p\)</span> matrix (sample size <span class="math inline">\(\times\)</span> parameters), and <span class="math inline">\(b_0\)</span> to <span class="math inline">\(b_p\)</span> as a vector of coefficients: <span class="math display">\[
 \begin{align}
 &amp; \color{red}{\mathbf{y}} = \color{blue}{\mathbf{X b}} + \boldsymbol{\varepsilon} \\
@@ -274,8 +280,8 @@ Optional: a general notation
 \begin{align} \color{red}{y_i} \;\;\;\; &amp; = \;\;\;\;\; \color{blue}{b_0 \cdot{} 1 + b_1 \cdot{} x_{1i} + ... + b_p \cdot x_{pi}} &amp; + &amp; \;\;\;\varepsilon_i \\ \qquad \\ \color{red}{\begin{bmatrix}y_1 \\ y_2 \\ y_3 \\ y_4 \\ y_5 \\ \vdots \\ y_n \end{bmatrix}} &amp; = \color{blue}{\begin{bmatrix} 1 &amp; x_{11} &amp; x_{21} &amp; \dots &amp; x_{p1} \\ 1 &amp; x_{12} &amp; x_{22} &amp;  &amp; x_{p2} \\ 1 &amp; x_{13} &amp; x_{23} &amp;  &amp; x_{p3} \\ 1 &amp; x_{14} &amp; x_{24} &amp;  &amp; x_{p4} \\ 1 &amp; x_{15} &amp; x_{25} &amp;  &amp; x_{p5} \\ \vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ 1 &amp; x_{1n} &amp; x_{2n} &amp; \dots &amp; x_{pn} \end{bmatrix} \begin{bmatrix} b_0 \\ b_1 \\ b_2 \\ \vdots \\ b_p \end{bmatrix}} &amp; + &amp; \begin{bmatrix} \varepsilon_1 \\ \varepsilon_2 \\ \varepsilon_3 \\ \varepsilon_4 \\ \varepsilon_5 \\ \vdots \\ \varepsilon_n \end{bmatrix} \\ \qquad \\ \color{red}{\boldsymbol y} \;\;\;\;\; &amp; = \qquad \qquad \;\;\; \mathbf{\color{blue}{X \qquad \qquad \qquad \;\;\;\: b}} &amp; + &amp; \;\;\; \boldsymbol \varepsilon \\ \end{align}
 \]</span></p>
 </div>
-<p class="optional-end">
-</p>
+</div>
+</div>
 <!-- We have seen various ways we can extend this model to capture different processes - predictors can be continuous or categorical; we can include _interactions_ (where the effect of $x_1$ on $y$ _depends_ on the level of $x_2$); and we can even extend the same model structure to model discrete outcomes (with a little trickery of using a function to link the expected value of $\color{red}{y}$ to the linear prediction $\color{blue}{b_0 + b_1(x_1) + ... + b_p(x_p)}$).  -->
 </div>
 <p>When we fit linear regression models, we are fitting a line (or a regression surface, when we add in more predictors), to a cloud of datapoints. The discrepancy between the fitted model and the observed data is taken up by the residuals.</p>
@@ -309,7 +315,7 @@ Optional: a general notation
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -318,7 +324,7 @@ Refresher: Standard Error
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Taking <strong>samples</strong> from a <strong>population</strong> involves an element of <em>randomness</em>. The mean height of 10 randomly chosen Scottish people will not be exactly equal to the mean height of the entire Scottish population. Take another sample of 10, and we get <em>another</em> mean height (<a href="#fig-se">Figure&nbsp;3</a>).</p>
 <div class="cell" data-layout-align="center">
@@ -346,13 +352,16 @@ Refresher: Standard Error
 </div>
 </div>
 </div>
-<p>In the face of plots (or tests) that appear to show violations of the distributional assumptions (i.e.&nbsp;our residuals appear non-normal, or variance changes across the range of the fitted model), we should always take care to ensure our model is correctly specified (interactions or other non-linear effects, if present in the data but omitted from our model, can result in assumption violations). Following this, if we continue to have problems satisfying our assumptions, there are various options that give us more flexibility. If you’re interested, you can read brief explanations about some of these methods <a href="00_lm_assumpt.html" target="_blank">here</a>.</p>
-<p>One assumption that none of the above approaches address is our assumption of <strong>“independence”</strong>.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> Thinking broadly, if our observations are not independent from one another, this means that there are systematic differences in our outcome variable that our model is not capturing.</p>
+<p>In the face of plots (or tests) that appear to show violations of the distributional assumptions (i.e.&nbsp;our residuals appear non-normal, or variance changes across the range of the fitted model), we should always take care to ensure our model is correctly specified (interactions or other non-linear effects, if present in the data but omitted from our model, can result in assumption violations). Following this, if we continue to have problems satisfying our assumptions, there are various options that give us more flexibility when we are faced with non-normality or non-constant variance of our residuals. If you’re interested, you can read brief explanations about some of these methods <a href="00_lm_assumpt.html" target="_blank">here</a>.</p>
+<p>However, there is one assumption that we are unable to identify through examining diagnostic plots for patterns, and that is our assumption of <strong>“independence”</strong>. Thinking broadly, if our observations are not independent from one another, this means that there are systematic differences in our outcome variable that our model is not capturing. This is not something that is easily ‘corrected’<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> - it is something that we want to incorporate into our model structure.</p>
 <div class="sticky">
 <p><strong>Independence of observations</strong></p>
-<p>Individual observations in the sample are not related to one another in any way. The value of one observation does not influence the value of any other observation.</p>
+<p>Individual observations in the sample are not dependent upon one another in any way. The value of one observation is not systematically related to the value of any other observation.</p>
 </div>
 <p>One common way in which observations are not independent can come when the data has a <em>hierarchical</em> structure - some form of <strong>clustering</strong> of observations into different groups. These groups, or ‘clusters’, could be simply something we observe, or they could be the result of how we have designed our study.</p>
+<div class="divider div-transparent div-dot">
+
+</div>
 </section>
 <section id="clustered-data" class="level1">
 <h1>Clustered Data</h1>
@@ -363,12 +372,12 @@ Refresher: Standard Error
 <div id="fig-egschool" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="01a_clustered_files/figure-html/fig-egschool-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
-<figcaption class="figure-caption">Figure&nbsp;5: Observations (children) are clustered (into schools), and their grades are dependent upon which cluster they are in. Ignoring the clustering may lead to erroneous conclusions</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;5: Observations (children) are clustered (into schools), and their outcome (grades) are dependent upon which cluster they are in. Ignoring the clustering may lead to erroneous conclusions</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>Put another way - the children are <em>not</em> independent from one another, because they tend to be more similar to other children in the same school than they are to children from a different school. Our assumption of the normal linear model that <span class="math inline">\(\varepsilon \sim N(0,\sigma) \text{ independently}\)</span> is violated, because groups of residuals are related to one another - e.g.&nbsp;all the children from the green school have positive residuals (see residuals vs fitted plot in <a href="#fig-egschool2">Figure&nbsp;6</a>).</p>
+<p>Put another way - the children are <em>not</em> independent from one another, because they tend to be more similar to other children in the same school than they are to children from a different school. Our assumption of the normal linear model that <span class="math inline">\(\varepsilon \sim N(0,\sigma)\)</span> <span class="math inline">\(\text{ independently}\)</span> is violated, because groups of residuals <em>are</em> related to one another - e.g.&nbsp;all the children from the green school have positive residuals (see residuals vs fitted plot in <a href="#fig-egschool2">Figure&nbsp;6</a>).</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div id="fig-egschool2" class="quarto-figure quarto-figure-center anchored">
@@ -379,10 +388,55 @@ Refresher: Standard Error
 </div>
 </div>
 </div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+the impact of non-independence on inferences
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The reason that violations of our assumption of independence is problematic is that it means we are placing more confidence in our estimates than we should.</p>
+<p>This is because all of our inferential tests rely on the estimated variability in our residuals <span class="math inline">\(y_i - \hat y_i\)</span>. This variability is estimated by taking the mean squared error<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>:</p>
+<p><span class="math display">\[
+\text{mean squared error} = \frac{\sum{(y_i - \hat y_i)^2}}{n-k-1}
+\]</span> The denominator bit on the bottom is our <em>degrees of freedom</em> (where <span class="math inline">\(n\)</span> is the total sample size, <span class="math inline">\(k\)</span> is how many predictors we have in our model). This is how many independent pieces of information are available for estimating the parameters in our model.</p>
+<p>In the scenario where we have, e.g.&nbsp;33 pupils clustered into 5 schools, how many independent bits of information do we have to begin with? 33? 5? somewhere in between?</p>
+<p>If we assume these pupils are all independent, as our old friend <code>lm()</code> would, then our estimate of the residual variability will be smaller. This means that on average our standard errors will be too narrow, any confidence intervals too narrow, our F statistics will be too large, and our p-values too small.</p>
+<p>In essence - our inferences will all be wrong!!</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+F and t and MSE
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The mean squared error (MSE) goes into our <span class="math inline">\(F\)</span>-statistics as they are the ratio of the mean squares associated with the model and the mean squared error <span class="math display">\[
+F = \frac{\text{Mean Squares Model}}{\text{Mean Squared Error}}
+\]</span></p>
+<p>The MSE also goes into our standard errors for our coefficients (and so any subsequent <span class="math inline">\(t\)</span>-statistics or confidence intervals that we might calculate).</p>
+<p>TODO tidy <span class="math display">\[
+SE(b_p) = \sqrt{  \frac{MSE}{(1-R^2_{x_p | x_p}) \cdot Var(x_p)} }
+\]</span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <section id="clusters-clusters-everywhere" class="level2">
 <h2 class="anchored" data-anchor-id="clusters-clusters-everywhere">Clusters clusters everywhere</h2>
-<p>The idea of observing “children in schools” is just one such example of clustering that we might come across. This same <em>hierarchical data structure</em> can be found in patients within medical practices, employees within departments, people within towns etc. These sort of groups exist ‘in the wild’ (i.e.&nbsp;the schools, departments and towns are all just occurrences of groups that we have observed). However, there are also lots of cases where clustered data might arise as the result of our study design. For instance, in a <strong>Repeated Measures</strong> study we have individual experimental trials clustered within participants. <strong>Longitudinal</strong> studies exhibit the same data structure but have <em>time-ordered</em> observations clustered within people.</p>
-<p>In addition, we can extend this logic to think about having clusters of clusters, and clusters of cluster of clusters<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>. <a href="#tbl-design">Table&nbsp;1</a> shows just a few examples of different levels of clustering that may arise from different types of study.</p>
+<p>The idea of observing “children in schools” is just one such example of clustering that we might come across. This same <em>hierarchical data structure</em> can be found in other settings, such as patients within medical practices, employees within departments, people within towns etc. These sort of groups are higher level observations that we might sample (i.e.&nbsp;I randomly sample 20 schools, and then from each school randomly sample 30 children). However, there are also lots of cases where clustered data might arise as the result of our study design. For instance, in a <strong>Repeated Measures</strong> study we have individual experimental trials clustered within participants. <strong>Longitudinal</strong> studies exhibit the same data structure but have <em>time-ordered</em> observations clustered within people.</p>
+<p>In addition, we can extend this logic to think about having clusters of clusters, and clusters of cluster of clusters<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>. <a href="#tbl-design">Table&nbsp;1</a> shows just a few examples of different levels of clustering that may arise from different types of study.</p>
 <!-- Cross sectional studies are snapshots of a structure (and that structure may contain clusters); Repeated measures studies involve assessing the same person^[it doesn't have to be people, but in psychology it usually is!] multiple times across different experimental conditions/items (resulting in clusters of observation for each person);  Longitudinal studies also result in clusters of observations for each person, but there is a temporal sequence to these observations (e.g. at various ages).   -->
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -867,6 +921,7 @@ Refresher: Standard Error
 </div>
 </div>
 </div>
+<p>The common thread throughout all these designs is the hierarchy. At the lowest level of our hierarchy is the individual observed thing. For some designs, individual people might be the lowest observation level, for others, people might be the clusters (i.e.&nbsp;we have multiple data points per person).</p>
 </section>
 <section id="what-are-clusters" class="level2">
 <h2 class="anchored" data-anchor-id="what-are-clusters">What are ‘clusters’?</h2>
@@ -881,7 +936,7 @@ Refresher: Standard Error
 </ul>
 </div>
 <p>Contrast the idea of ‘clusters’ with how we think about other sorts of groupings. In a study that looks at “how do drugs placebo/aspirin/beta-blockers influence people’s heart rate?” (<a href="#fig-clgroup">Figure&nbsp;7</a> LH plot), we can group participants into which drug they have received. But these groupings are the very groups of interest to us, and we are interested in comparing placebo with aspirin with beta-blockers. If we were to run the study again, we’ll use the same drugs (they’re not just a random sample of drugs - the x-axis of our LH plot in <a href="#fig-clgroup">Figure&nbsp;7</a> will be the same).</p>
-<p>If we are interested in “what is the average grade at GCSE?”, and we have children grouped into different schools (<a href="#fig-clgroup">Figure&nbsp;7</a> RH plot), we are probably not interested in all the specific differences between grades in Calderglen High School vs Gleniffer High School etc. If we were to run our study again, we might not collect data from the same set of schools. We can view these schools as ‘clusters’ - they are another source of random variation (i.e.&nbsp;not systematic variation such as the effect of a drug, but variation we see just because schools are different from one another).</p>
+<p>If we are interested in “what is the average grade at GCSE?”, and we have children grouped into different schools (<a href="#fig-clgroup">Figure&nbsp;7</a> RH plot), we are probably not interested in all the specific differences between grades in Calderglen High School vs Gleniffer High School etc. If we were to run our study again, we don’t collect data from the same set of schools. We can view these schools as ‘clusters’ - they are another source of random variation (i.e.&nbsp;not systematic variation such as the effect of a drug, but variation we see just because schools are different from one another).</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div id="fig-clgroup" class="quarto-figure quarto-figure-center anchored">
@@ -892,35 +947,35 @@ Refresher: Standard Error
 </div>
 </div>
 </div>
-<p>Often, while the specific clusters are not of interest, we may have research questions that are about features of those clusters, and how they relate to things at other levels. For example, we might be interested in if the level of school funding (a school-level variable) influences the grade performance (a child-level variable). The focus of this course is multilevel modelling (also known as “mixed effects modelling”), which is a regression modelling technique that allows us to explore questions such as these (and many more).<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<p>Often, while the specific clusters are not of interest, we may have research questions that are about features of those clusters, and how they relate to things at other levels. For example, we might be interested in if the level of school funding (a school-level variable) influences the grade performance (a child-level variable). The focus of this course is multilevel modelling (also known as “mixed effects modelling”), which is a regression modelling technique that allows us to explore questions such as these (and many more).<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Optional “univariate”and “multivariate”
+optional “univariate”and “multivariate”
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>In “univariate” statistics there is just one source of variation we are looking at explaining, which is the observation level. In psychology, our observations are often individual people, and we have variation because people are different from one another. Our studies are looking to explain this variation.</p>
 <p>In “multivariate” statistics, there are more sources of variation. For the “children in schools” example: individual children are different from another, and schools are also different from one another. We also have multiple sources of variation from questionnaire scales (e.g.&nbsp;9 survey questions about anxiety), because both there is variation in scores due to both a) people varying from one another and b) the 9 questions tending to illicit different responses from one another.</p>
 </div>
 </div>
 </div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Optional: “Panel data”
+optional: “Panel data”
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>In some fields (e.g.&nbsp;economics), clustering sometimes gets referred to as ‘panel data’. This can be a nice intuitive way of thinking about it, because we think of a plot of our data being split into different panels for each cluster:</p>
 <div class="cell" data-layout-align="center">
@@ -945,6 +1000,9 @@ Optional: “Panel data”
 </div>
 </div>
 </div>
+</div>
+<div class="divider div-transparent div-dot">
+
 </div>
 </section>
 </section>
@@ -1426,20 +1484,80 @@ this group-identifier visible in the schoolid column</p> </caption>
 </div>
 </div>
 </div>
-<p>In terms of the dataframes we are going to be working with, clusters are simply included in another column that contains a unique identifier for each cluster:<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
+<p>In terms of the dataframes we are going to be working with, clusters are simply included in another column that contains a unique identifier for each cluster:<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a></p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 8 × 4
-  motiv funding schoolid                    grade
-  &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;                       &lt;chr&gt;
-1 6.78  5.51    North West Community Campus 42.38
-2 4.53  5.62    Paisley Grammar School      39.08
-3 5.13  5.1     Gleniffer High School       42.43
-4 5.13  5.51    North West Community Campus 40.04
-5 4.29  5.51    North West Community Campus 25.42
-6 6.26  5.62    Paisley Grammar School      25.48
-7 8.6   4.74    Strathaven Academy          64.97
-8 ...   ...     ...                         ...  </code></pre>
+<pre><code>  motiv funding                    schoolid grade
+1  6.78    5.51 North West Community Campus 42.38
+2  4.53    5.62      Paisley Grammar School 39.08
+3  5.13     5.1       Gleniffer High School 42.43
+4  5.13    5.51 North West Community Campus 40.04
+5  4.29    5.51 North West Community Campus 25.42
+6  6.26    5.62      Paisley Grammar School 25.48
+7   8.6    4.74          Strathaven Academy 64.97
+8   ...     ...                         ...   ...</code></pre>
+</div>
+</div>
+<p>Data in the way it is shaped just above is referred to as being in <strong>long format</strong> - we have one row for every individual lowest observation. In this example our individual observations are children, and they are clustered into schools. So our data in this long format has one row for every child. However, our data needn’t be shaped like this. We could contain the same information in a <strong>wide</strong> format.</p>
+<div class="panelset">
+<section id="long" class="level4 panel">
+<h4 class="anchored" data-anchor-id="long">Long</h4>
+<p>In long format, the individual observations are separate rows in the data. We need to have a column identifying which cluster each observation belongs to. In the example below, the individual observations are <em>people</em>, but this is not always the case. For instance, we might have multiple trials clustered within participants (in which case each individual observation is a single trial).</p>
+<p>Below, we have one row per person (we can see that Aja, Dan, Josiah, Emma, Umberto are all on different rows), and we have a column <code>schoolid</code> that identifies what cluster they belong to (what school they attend).</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>                           schoolid grade
+Aja     North West Community Campus    50
+Dan     North West Community Campus    65
+Josiah  North West Community Campus    40
+..                              ...   ...
+Emma         Paisley Grammar School    75
+Umberto      Paisley Grammar School    80
+...                             ...   ...</code></pre>
+</div>
+</div>
+</section>
+<section id="wide" class="level4 panel">
+<h4 class="anchored" data-anchor-id="wide">Wide</h4>
+<p>We can express the same information in a different way. Instead of having one row per person, we could have one row per cluster, and have a column for each of the people. We can see this below - Aja, Dan and Josiah have moved to now be all in the 1st row (for North West Community Campus) - we can see their grades (50, 65 and 40) in that row, and Emma and Umberto are in the row for Paisley Grammar School:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>                            child 1 child 2 child 3 child 4
+North West Community Campus      50      65      40     ...
+..                              ...     ...     ...     ...
+Paisley Grammar School           75      80     ...     ...
+...                             ...     ...     ...     ...</code></pre>
+</div>
+</div>
+</section>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+moving between wide and long data
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>One of the more confusing things to get to grips with is the idea of reshaping a dataframe.<br>
+For different reasons, you might sometimes want to have data in wide, or in long format.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://www.fromthebottomoftheheap.net/assets/img/posts/tidyr-longer-wider.gif" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Source: https://fromthebottomoftheheap.net/2019/10/25/pivoting-tidily/</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>When the data is wide, we can make it long using <code>pivot_longer()</code>. When we make data longer, we’re essentially making lots of columns into 2 longer columns. Above, in the animation, the wide variable <strong>x</strong>, <strong>y</strong> and <strong>z</strong> go into a new longer column called <strong>name</strong> that specifies which (x/y/z) it came from, and the values get put into the <strong>val</strong> column.</p>
+<p>The animation takes a shortcut in the code it displays above, but you could also use <code>pivot_longer(c(x,y,z), names_to = "name", values_to = "val")</code>. To reverse this, and put it back to being wide, we tell R which columns to take the names and values <em>from</em>: <code>pivot_wider(names_from = name, values_from = val)</code>.</p>
+</div>
 </div>
 </div>
 <section id="determining-sample-sizes" class="level2">
@@ -1914,15 +2032,15 @@ In the description of the <strong>SchoolMot</strong> data above we are told the 
 </div>
 <p>We can check this in our data:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># schoolmot &lt;- read_csv("https://uoepsy.github.io/data/schoolmot.csv")</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># how many children? (how many rows in the data?)</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># schoolmot &lt;- read_csv("https://uoepsy.github.io/data/schoolmot.csv")</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># how many children? (how many rows in the data?)</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 900</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># how many schools? (how many distinct values in the schoolid column?)</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">n_distinct</span>(schoolmot<span class="sc">$</span>schoolid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># how many schools? (how many distinct values in the schoolid column?)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">n_distinct</span>(schoolmot<span class="sc">$</span>schoolid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 30</code></pre>
 </div>
@@ -1930,9 +2048,9 @@ In the description of the <strong>SchoolMot</strong> data above we are told the 
 <p>Another important thing to examine when you first get hierarchical data is the number of level 1 units that belong to each level 2 unit - i.e., do we have 100 children from Balfron High School and only 10 from Wallace Hall Academy, or do we have the same number in each?</p>
 <p>We can easily count how many children are in each school by counting the number of rows for each distinct value in the school identifier column. We could then pass this to the <code>summary()</code> function to see the minimum, median, mean, maximum etc. As we can see below, in this dataset every school has data from exactly 30 children (min is the same as max):</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>schoolmot <span class="sc">%&gt;%</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(schoolid) <span class="sc">%&gt;%</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>schoolmot <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(schoolid) <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                    schoolid        n     
  Alness Academy         : 1   Min.   :30  
@@ -1945,9 +2063,9 @@ In the description of the <strong>SchoolMot</strong> data above we are told the 
 </div>
 </div>
 </section>
-<section id="icc" class="level2">
-<h2 class="anchored" data-anchor-id="icc">ICC</h2>
-<p>The <strong>IntraClass Correlation Coefficient (ICC)</strong> is a descriptive measure of how much variation in a variable is explained by the clustering. It is the ratio of the variance between the clusters/groups to the total variance in the variable, and is often denoted by the symbol <span class="math inline">\(\rho\)</span>:<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a></p>
+<section id="icc---quantifying-clustering-in-an-outcome-variable" class="level2">
+<h2 class="anchored" data-anchor-id="icc---quantifying-clustering-in-an-outcome-variable">ICC - Quantifying clustering in an outcome variable</h2>
+<p>The <strong>IntraClass Correlation Coefficient (ICC)</strong> is a measure of how much variation in a variable is attributable to the clustering. It is the ratio of the variance between the clusters/groups to the total variance in the variable, and is often denoted by the symbol <span class="math inline">\(\rho\)</span>:<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a></p>
 <p><span class="math display">\[
 \begin{align}
 ICC \; (\rho) &amp;= \frac{\sigma^2_{b}}{\sigma^2_{b} + \sigma^2_e} \\
@@ -1960,13 +2078,13 @@ ICC \; (\rho) &amp;= \frac{\sigma^2_{b}}{\sigma^2_{b} + \sigma^2_e} \\
 <div class="cell" data-layout-align="center">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(schoolmot, <span class="fu">aes</span>(<span class="at">x=</span>schoolid, <span class="at">y=</span>grade))<span class="sc">+</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">col=</span>schoolid),<span class="at">alpha=</span>.<span class="dv">3</span>)<span class="sc">+</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">geom =</span> <span class="st">"pointrange"</span>)<span class="sc">+</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">mean</span>(schoolmot<span class="sc">$</span>grade))<span class="sc">+</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_discrete</span>(<span class="at">labels=</span>abbreviate) <span class="sc">+</span> </span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x=</span><span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">90</span>))<span class="sc">+</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">col=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(schoolmot, <span class="fu">aes</span>(<span class="at">x=</span>schoolid, <span class="at">y=</span>grade))<span class="sc">+</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">col=</span>schoolid),<span class="at">alpha=</span>.<span class="dv">3</span>)<span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">geom =</span> <span class="st">"pointrange"</span>)<span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">mean</span>(schoolmot<span class="sc">$</span>grade))<span class="sc">+</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_discrete</span>(<span class="at">labels=</span>abbreviate) <span class="sc">+</span> </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x=</span><span class="fu">element_text</span>(<span class="at">angle=</span><span class="dv">90</span>))<span class="sc">+</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">col=</span><span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div id="fig-schooliccplot" class="quarto-figure quarto-figure-center anchored">
@@ -1977,26 +2095,26 @@ ICC \; (\rho) &amp;= \frac{\sigma^2_{b}}{\sigma^2_{b} + \sigma^2_e} \\
 </div>
 </div>
 </div>
-<p>There are various packages that allow us to calculate the ICC, and when we get to fitting multilevel models we will see how we can estimate from a fitted model.<br>
+<p>There are various packages that allow us to calculate the ICC, and when we get to fitting multilevel models we will see how we can extract it from a fitted model.<br>
 In the data (visualised above), it’s estimated that 40% of the variance in grades is due to school-related differences:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ICC)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ICCbare</span>(schoolid, grade, <span class="at">data =</span> schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ICC)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ICCbare</span>(schoolid, grade, <span class="at">data =</span> schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.4026178</code></pre>
 </div>
 </div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Optional: Calculating ICC manually
+optional: calculating ICC manually
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>We have equal group sizes here (there are 30 schools, each with 30 observations), which makes calculating ICC by hand a lot easier, but it’s still a bit tricky.</p>
 <p>Let’s take a look at the formula for ICC:</p>
@@ -2024,44 +2142,44 @@ MS_e = &amp; \textrm{Mean Squares within groups} \\
 <p>So we’re going to need to calculate the grand mean of <span class="math inline">\(y\)</span>, the group means of <span class="math inline">\(y\)</span>, and then the various squared differences between group means and grand mean, and between observations and their respective group means.</p>
 <p>The code below will give us a couple of new columns. The first is the overall mean of <span class="math inline">\(y\)</span>, and the second is the mean of <span class="math inline">\(y\)</span> for each group. Note that we calculate this by first using <code>group_by</code> to make the subsequent operation (the <code>mutate</code>) be applied to each group. To ensure that the grouping does not persist after this, we’ve passed it to <code>ungroup</code> at the end.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>schoolmot <span class="ot">&lt;-</span> </span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  schoolmot <span class="sc">%&gt;%</span> </span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">grand_mean =</span> <span class="fu">mean</span>(grade)</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(schoolid) <span class="sc">%&gt;%</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">group_mean =</span> <span class="fu">mean</span>(grade)</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>schoolmot <span class="ot">&lt;-</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  schoolmot <span class="sc">|&gt;</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">grand_mean =</span> <span class="fu">mean</span>(grade)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(schoolid) <span class="sc">|&gt;</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">group_mean =</span> <span class="fu">mean</span>(grade)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we need to create a column which is the squared differences between the observations <span class="math inline">\(y_{ij}\)</span> and the group means <span class="math inline">\(\bar{y_i}\)</span>.<br>
 We also want a column which is the squared differences between the group means <span class="math inline">\(\bar{y_i}\)</span> and the overall mean <span class="math inline">\(\bar{y}\)</span>.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>schoolmot <span class="ot">&lt;-</span> schoolmot <span class="sc">%&gt;%</span> </span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">within =</span> (grade<span class="sc">-</span>group_mean)<span class="sc">^</span><span class="dv">2</span>,</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">between =</span> (group_mean<span class="sc">-</span>grand_mean)<span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>schoolmot <span class="ot">&lt;-</span> schoolmot <span class="sc">|&gt;</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">within =</span> (grade<span class="sc">-</span>group_mean)<span class="sc">^</span><span class="dv">2</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">between =</span> (group_mean<span class="sc">-</span>grand_mean)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>And then we want to sum them:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>ssbetween <span class="ot">=</span> <span class="fu">sum</span>(schoolmot<span class="sc">$</span>between)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>sswithin <span class="ot">=</span> <span class="fu">sum</span>(schoolmot<span class="sc">$</span>within)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ssbetween <span class="ot">=</span> <span class="fu">sum</span>(schoolmot<span class="sc">$</span>between)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>sswithin <span class="ot">=</span> <span class="fu">sum</span>(schoolmot<span class="sc">$</span>within)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Finally, we divide them by the degrees of freedom. Our degrees of freedom for our between group variance <span class="math inline">\(30 \text{ groups} - 1 \text{ grand mean}=29\)</span><br>
 Our degrees of freedom for our within group variance is <span class="math inline">\(900 \text{ observations} - 30 \text{ groups}=870\)</span></p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mean Squares between</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>msb <span class="ot">=</span> ssbetween <span class="sc">/</span> (<span class="dv">30-1</span>)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Mean Squares within </span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>mse <span class="ot">=</span> sswithin <span class="sc">/</span> (<span class="dv">900-30</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mean Squares between</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>msb <span class="ot">=</span> ssbetween <span class="sc">/</span> (<span class="dv">30-1</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Mean Squares within </span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>mse <span class="ot">=</span> sswithin <span class="sc">/</span> (<span class="dv">900-30</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>And calculate the ICC!!!<br>
 The 29 here is the <span class="math inline">\(k-1\)</span> in the formula above, where <span class="math inline">\(k\)</span> is the number of observations within each group.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ICC</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>(msb<span class="sc">-</span>mse) <span class="sc">/</span>(msb <span class="sc">+</span> (<span class="dv">29</span><span class="sc">*</span>mse))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ICC</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>(msb<span class="sc">-</span>mse) <span class="sc">/</span>(msb <span class="sc">+</span> (<span class="dv">29</span><span class="sc">*</span>mse))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.4026178</code></pre>
 </div>
@@ -2081,41 +2199,41 @@ The 29 here is the <span class="math inline">\(k-1\)</span> in the formula above
 </div>
 </div>
 </div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Optional: A Little Simulation
+optional: a little simulation
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>We can actually do the “randomly drawn pair of observations from the same group” via simulation.<br>
 The code below creates a function for us to use. Can you figure out how it works?</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>get_random_pair <span class="ot">&lt;-</span> <span class="cf">function</span>(){</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  my_school <span class="ot">=</span> <span class="fu">sample</span>(<span class="fu">unique</span>(schoolmot<span class="sc">$</span>schoolid), <span class="dv">1</span>)</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  my_obs <span class="ot">=</span> <span class="fu">sample</span>(schoolmot<span class="sc">$</span>grade[schoolmot<span class="sc">$</span>schoolid <span class="sc">==</span> my_school], <span class="at">size=</span><span class="dv">2</span>)</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  my_obs</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>get_random_pair <span class="ot">&lt;-</span> <span class="cf">function</span>(){</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  my_school <span class="ot">=</span> <span class="fu">sample</span>(<span class="fu">unique</span>(schoolmot<span class="sc">$</span>schoolid), <span class="dv">1</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  my_obs <span class="ot">=</span> <span class="fu">sample</span>(schoolmot<span class="sc">$</span>grade[schoolmot<span class="sc">$</span>schoolid <span class="sc">==</span> my_school], <span class="at">size=</span><span class="dv">2</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  my_obs</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Try it out, by running it several times.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_random_pair</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_random_pair</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 51.47 52.86</code></pre>
 </div>
 </div>
 <p>Now let’s make our computer do it loads and loads of times:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># replicate is a way of making R execute the same code repeatedly, n times.</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">10000</span>, <span class="fu">get_random_pair</span>())</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># t() is short for "transpose" and simple rotates the object 90 degrees (so rows become columns and columns become rows)</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> <span class="fu">t</span>(sims)</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sims[,<span class="dv">1</span>], sims[,<span class="dv">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># replicate is a way of making R execute the same code repeatedly, n times.</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">10000</span>, <span class="fu">get_random_pair</span>())</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co"># t() is short for "transpose" and simple rotates the object 90 degrees (so rows become columns and columns become rows)</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> <span class="fu">t</span>(sims)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sims[,<span class="dv">1</span>], sims[,<span class="dv">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.3987734</code></pre>
 </div>
@@ -2123,29 +2241,31 @@ The code below creates a function for us to use. Can you figure out how it works
 </div>
 </div>
 </div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Optional: correlations from group-structured data
+optional: correlations from group-structured data
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Let’s suppose we had only 2 observations in each group.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output cell-output-stdout">
-<pre><code>  cluster observation   y
-1 group_1           1   4
-2 group_1           2   2
-3 group_2           1   4
-4 group_2           2   2
-5 group_3           1   7
-6 group_3           2   5
-7     ...         ... ...</code></pre>
+<pre><code># A tibble: 7 × 3
+  cluster observation y    
+* &lt;chr&gt;   &lt;chr&gt;       &lt;chr&gt;
+1 group_1 1           4    
+2 group_1 2           2    
+3 group_2 1           4    
+4 group_2 2           2    
+5 group_3 1           7    
+6 group_3 2           5    
+7 ...     ...         ...  </code></pre>
 </div>
 </div>
 <p><strong>The ICC for this data is 0.18.</strong></p>
@@ -2154,7 +2274,7 @@ Optional: correlations from group-structured data
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 7 × 3
   cluster obs1  obs2 
-  &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;
+* &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;
 1 group_1 4     2    
 2 group_2 4     2    
 3 group_3 7     5    
@@ -2174,7 +2294,7 @@ The data aren’t paired, they’re just random draws from a <strong>group.</str
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 7 × 3
   cluster obs1  obs2 
-  &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;
+* &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;
 1 group_1 4     2    
 2 group_2 4     2    
 3 group_3 7     5    
@@ -2192,7 +2312,7 @@ The data aren’t paired, they’re just random draws from a <strong>group.</str
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 7 × 3
   cluster obs1  obs2 
-  &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;
+* &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;
 1 group_1 2     4    
 2 group_2 4     2    
 3 group_3 7     5    
@@ -2209,7 +2329,7 @@ The data aren’t paired, they’re just random draws from a <strong>group.</str
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 7 × 3
   cluster obs1  obs2 
-  &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;
+* &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;
 1 group_1 2     4    
 2 group_2 2     4    
 3 group_3 7     5    
@@ -2226,7 +2346,7 @@ The data aren’t paired, they’re just random draws from a <strong>group.</str
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 7 × 3
   cluster obs1  obs2 
-  &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;
+* &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;
 1 group_1 2     4    
 2 group_2 2     4    
 3 group_3 5     7    
@@ -2256,13 +2376,13 @@ The data aren’t paired, they’re just random draws from a <strong>group.</str
 <section id="facets" class="level5 panel">
 <h5 class="anchored" data-anchor-id="facets">facets</h5>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(schoolmot, <span class="fu">aes</span>(<span class="at">x=</span>motiv,<span class="at">y=</span>grade))<span class="sc">+</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>schoolid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(schoolmot, <span class="fu">aes</span>(<span class="at">x=</span>motiv,<span class="at">y=</span>grade))<span class="sc">+</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>schoolid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="01a_clustered_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<p><img src="01a_clustered_files/figure-html/unnamed-chunk-41-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
 </figure>
 </div>
 </div>
@@ -2271,18 +2391,21 @@ The data aren’t paired, they’re just random draws from a <strong>group.</str
 <section id="group" class="level5 panel">
 <h5 class="anchored" data-anchor-id="group">group</h5>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(schoolmot, <span class="fu">aes</span>(<span class="at">x=</span>motiv,<span class="at">y=</span>grade,<span class="at">group=</span>schoolid))<span class="sc">+</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha=</span>.<span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">se=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(schoolmot, <span class="fu">aes</span>(<span class="at">x=</span>motiv,<span class="at">y=</span>grade,<span class="at">group=</span>schoolid))<span class="sc">+</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha=</span>.<span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">se=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="01a_clustered_files/figure-html/unnamed-chunk-39-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<p><img src="01a_clustered_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
+</div>
+<div class="divider div-transparent div-dot">
+
 </div>
 </section>
 </section>
@@ -2293,20 +2416,29 @@ The data aren’t paired, they’re just random draws from a <strong>group.</str
 <p><strong>Complete Pooling</strong></p>
 <p>All information from different clusters is pooled together estimate the relevant association (make one big line).</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(grade <span class="sc">~</span> motiv, <span class="at">data =</span> schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(grade <span class="sc">~</span> motiv, <span class="at">data =</span> schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Take all the children, fit a regression line for <code>grade ~ motivation</code>.</p>
 </div>
 <div class="sticky">
 <p><strong>No Pooling</strong></p>
 <p>Information from each cluster contributes <strong>only</strong> to an estimate for that specific cluster.</p>
+<p>e.g.&nbsp;</p>
+<ol type="1">
+<li>Estimate the effect of motivation on grades after accounting for school-specific differences in grades.:</li>
+</ol>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(grade <span class="sc">~</span> motiv <span class="sc">*</span> schoolid, <span class="at">data =</span> schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(grade <span class="sc">~</span> motiv <span class="sc">+</span> schoolid, <span class="at">data =</span> schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Estimate school-specific differences in grades, and school-specific differences in the effect of motivation on grades. Get <em>loads</em> of coefficients that aren’t really of interest.</p>
+<ol start="2" type="1">
+<li>Estimate school-specific differences in grades, and school-specific differences in the effect of motivation on grades. Get <em>loads</em> of coefficients that aren’t really of interest. Slightly more difficult to get out an average slope of <code>grade ~ motiv</code>, and each school contributes equally to this average (regardless of how many children we have from that school).</li>
+</ol>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(grade <span class="sc">~</span> motiv <span class="sc">*</span> schoolid, <span class="at">data =</span> schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Estimating the school-specific differences in our model (the no-pooling approach) is clearly better than simply ignoring them, but it does mean that we are treating the schools as if they are completely <em>independent</em> entities.<br>
-Suppose we had another school - School X - for which we had only <em>three</em> children’s data (<a href="#fig-borrowstrength">Figure&nbsp;12</a>). Intuitively, we don’t want to trust the line for School X as much as we trust the others (where we have 30 children’s data). In the no-pooling approach, it is only those three children from School X that contribute to the School X line. Take this further, and imagine we have only one child’s data from some School Y. In the no-pooling method, the model doesn’t learn <em>anything</em> from the other schools and cannot estimate a line for School Y.</p>
+</div>
+<p>Estimating the school-specific differences in our model (the no-pooling approach) is clearly better than simply ignoring them, but it does mean that we are treating the schools as if they are completely <em>independent</em> entities.</p>
+<p>Suppose we had another school - School X - for which we had only <em>three</em> children’s data (<a href="#fig-borrowstrength">Figure&nbsp;12</a>). Intuitively, we don’t want to trust the line for School X as much as we trust the others (where we have 30 children’s data). In the no-pooling approach, it is only those three children from School X that contribute to the School X line. Take this further, and imagine we have only one child’s data from some School Y. In the no-pooling method, the model doesn’t learn <em>anything</em> from the other schools and cannot estimate a line for School Y.</p>
 <p>What would be great is if we could <em>somehow</em> use the information from the other schools to inform our estimation of what is going on in Schools X and Y. This is what multi-level modelling achieves, <em>partially</em> pooling information across the groups, and this is where we’ll turn to next.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -2328,10 +2460,11 @@ Suppose we had another school - School X - for which we had only <em>three</em> 
 <ol>
 <li id="fn1"><p>Why is this? It’s because the formula to calculate the standard error involves <span class="math inline">\(\sigma^2\)</span> - the variance of the residuals. If this standard deviation is not accurate (because the residuals are non-normally distributed, or because it changes across the fitted model), then this in turn affects the accuracy of the standard error of the coefficient<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn2"><p>With the exception of Generalized Least Squares (an extension of Weighted Least Squares), for which we <em>can</em> actually specify a correlational structure of the residuals. As this course focuses on multilevel models, we will not cover GLS here. However, it can often be a useful method if our the nature of the dependency in our residuals is simply a nuisance thing (i.e.&nbsp;not something that has any properties which are of interest to us).<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3"><p>It’s <a href="https://en.wikipedia.org/wiki/Turtles_all_the_way_down" target="_blank">“turtles all the way down”</a><a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn4"><p>Depending on the research question and design of the study, we may be only interested in things that occur at “level 1” (the lowest observation level). While not the focus of this course, there are alternative methods (survey weighting tools, cluster robust standard errors, or generalised estimating equations) that we may use to simply “account for the nuisance clustering”.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn5"><p>Note, this is not true for a set of analytical methods called “cluster analysis”, which attempts to identify clusters that haven’t been measured/observed (or may not even ‘exist’ in any real sense of the word).<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn6"><p>although this symbol get used for lots of other correlation-y things too!<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>or “mean squares residual”<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>It’s <a href="https://en.wikipedia.org/wiki/Turtles_all_the_way_down" target="_blank">“turtles all the way down”</a><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>Depending on the research question and design of the study, we may be only interested in things that occur at “level 1” (the lowest observation level). While not the focus of this course, there are alternative methods (survey weighting tools, cluster robust standard errors, or generalised estimating equations) that we may use to simply “account for the nuisance clustering”.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>Note, this is not true for a set of analytical methods called “cluster analysis”, which attempts to identify clusters that haven’t been measured/observed (or may not even ‘exist’ in any real sense of the word).<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p>although this symbol get used for lots of other correlation-y things too!<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

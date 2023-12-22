@@ -47,7 +47,6 @@
 h1 {
   padding-top: 2em !important;
   margin-top: -1em !important;
-  text-transform: uppercase;
   font-weight: bold;
   font-family: 'Inter Sans', sans-serif;
   border-bottom: 0px;
@@ -66,14 +65,6 @@ body {
 
 /* Boxes */
 
-.panelset .panel-tabs .panel-tab.panel-tab{
-    background: #e6b6fc !important;
-}
-.panelset .panel-tabs .panel-tab.panel-tab-active{
-    background: #da8dfc !important;
-}
-
-
 div.lo, div.blue, div.red, div.frame, div.statbox{ 
     border-radius: 5px; 
     padding: 20px 20px 10px 20px; 
@@ -90,6 +81,17 @@ div.lo, div.blue, div.red, div.frame, div.statbox{
     border: 1px solid #333333 !important; 
 }
 
+.panelset .panel-tabs .panel-tab.panel-tab{
+    background: #e6b6fc !important;
+}
+.panelset .panel-tabs .panel-tab.panel-tab-active{
+    background: #da8dfc !important;
+}
+.panelset{
+    border: 2px solid #7f93c8;
+    padding: 2px;
+}
+
 div.int {
     margin-left: 2em;
     margin-right: 2em;
@@ -99,7 +101,18 @@ div.int {
     border-right: 10px solid #0071C5;
 }
 .lo {
-  border: 5px solid #FC766A !important; 
+  border: 4px solid #a41ae4 !important; 
+  border-left: 20px solid #e6b6fc !important;
+  border-right: 20px solid #e6b6fc !important;
+}
+.lo::before{
+  content: url(assets/lightbulb-solid.png);
+  font-weight: bold;
+  color: #a41ae4;
+  margin-right:-10px;
+  margin-top: -15px;
+  text-align: right;
+  float: right;
 }
 .statbox{
   border: 5px solid #82b69b !important; 
@@ -161,9 +174,13 @@ div.int {
 
 
 /* Questions and solutions */
-.hints{
-  font-size: .8em;
-  padding-left: 15px;
+.jk-circle-right::before {
+  vertical-align: middle;
+  content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/></svg>');
+}
+.jk-circle-down::before {
+  vertical-align: middle;
+  content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/></svg>');
 }
 
 .question-begin {
@@ -239,7 +256,10 @@ div.int {
     transform: translate(0,-50%);
 }
 
-
+.callout-caution .callout-icon::before {
+  content: '' !important; /* Clear default content */ 
+  background-image: url('assets/wiz.png') !important;
+}
 
 
 /* DIVIDER */
