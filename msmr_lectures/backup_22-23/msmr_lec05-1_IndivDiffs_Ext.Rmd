@@ -1,0 +1,209 @@
+---
+title: "<b>Week 5: Individual Differences, part 1</b>"
+subtitle: "Multivariate Statistics and Methodology using R (MSMR)<br><br> "
+author: "Dan Mirman"
+institute: "Department of Psychology<br>The University of Edinburgh"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      ratio: '16:9'
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE, message=FALSE}
+options(htmltools.dir.version = FALSE)
+options(digits = 4)
+library(knitr)
+library(kableExtra)
+library(patchwork)
+
+library(tidyverse)
+library(broom)
+library(broom.mixed)
+library(gt)
+library(lme4)
+library(lmerTest)
+```
+
+```{r xaringan-themer, include = FALSE}
+library(xaringanthemer)
+style_mono_accent(
+  # base_color = "#0F4C81", # DAPR1
+  # base_color = "#BF1932", # DAPR2
+  # base_color = "#88B04B", # DAPR3 
+  # base_color = "#FCBB06", # USMR
+  base_color = "#a41ae4", # MSMR
+  header_color = "#000000",
+  header_font_google = google_font("Source Sans Pro"),
+  header_font_weight = 400,
+  text_font_google = google_font("Source Sans Pro", "400", "400i", "600", "600i"),
+  code_font_google = google_font("Source Code Pro"),
+  extra_css = list(".scroll-output" = list("height"="90%","overflow-y"="scroll"))
+) 
+```
+
+# Individual differences
+
+**Individual differences provide an additional level of analysis for understanding phenomena**
+
+--
+
+* At a group level, a treatment works better than a placebo, but why does it work better for some people than for others?
+* People solve easy problems faster than hard problems, but why are some people a lot faster on the easy problems and other people only a little faster?
+
+--
+
+t-test and ANOVA methods treat individual differences as noise
+
+Multilevel models provide two ways to quantify and analyse individual differences
+
+---
+# "External" individual differences can be added as fixed effects
+
+Example: USA National Youth Survey longitudinal data on tolerance for deviant behaviour, exposure to deviant behaviour, and gender. Subset of 16 subjects printed in Willett (1997, Table 11.1). (`DeviantBehavior`)
+
+`Tolerance` was measured by asking whether it is wrong for someone their age to: 
+
+* cheat on tests
+* purposely destroy property of others
+* hit or threaten someone without reason
+* use alcohol
+* use marijuana
+* sell hard drugs
+* steal something worth less than $5
+* steal something worth more than $50
+* break into a building or vehicle to steal
+
+---
+# Tolerance for deviant behaviour
+
+```{r}
+load("./data/DeviantBehavior.RData")
+summary(DeviantBehavior)
+```
+
+```{r echo=FALSE, fig.height=3.25, fig.width=5}
+# The overall pattern (ignoring gender for now)
+ggplot(DeviantBehavior, aes(Age, Tolerance, color=Gender)) + 
+  stat_summary(fun=mean, geom="point", size=3) +
+  stat_summary(fun.data=mean_se, geom="errorbar", width=0.2) + 
+  stat_summary(fun=mean, geom="line") +
+  labs(x="Age", y="Tolerance for deviant behavior") + 
+  theme_bw()
+```
+
+---
+## Research question 1
+
+**Does tolerance increase with age and is it modulated by gender?**
+
+```{r, warning=FALSE}
+m.base <- lmer(Tolerance ~ Age*Gender + (Age | SubjID),
+                 contrasts=list(Gender="contr.sum"), data=DeviantBehavior)
+```
+```{r echo=FALSE}
+gt(tidy(m.base))
+```
+
+Significant increase with age, no significant effects of gender
+
+---
+## Research question 2
+
+**Is this modulated by exposure to deviant behavior?**
+
+`Exposure` scale is not clear and other effects would be estimated at `Exposure=0`, which is not an attested value. 
+
+If we center `Exposure`, its effects and the effects of other predictors will be easier to interpret.
+
+```{r}
+# center Exposure, but do not re-scale it
+DeviantBehavior$Exposure.center <- scale(DeviantBehavior$Exposure, scale=FALSE)
+```
+
+--
+
+Fit the full model
+
+```{r}
+m.exp1 <- lmer(Tolerance ~ Age*Gender*Exposure.center + (Age | SubjID), 
+               data=DeviantBehavior, contrasts=list(Gender="contr.sum"))
+```
+
+---
+
+```{r}
+gt(tidy(m.exp1))
+```
+
+* Significant main effects: **Age** and **Exposure**
+* Significant interactions: **Age-by-Exposure**, **Gender-by-Exposure**, **Age-by-Gender-by-Exposure**
+
+---
+# How to plot the three-way interaction?
+
+The three-way Age-by-Gender-by-Exposure interaction is a relationship among four variables (Tolerance for deviant behaviour, Exposure to deviant behaviour, Age, and Gender), three of which are continuous variables. **This is hard to visualize.**
+
+To make it easier to visualize, can split the `Exposure` into levels
+
+--
+
+Option 1: Median split
+```{r}
+DeviantBehavior$ExposureMedSpl <- ifelse(
+  DeviantBehavior$Exposure >= median(DeviantBehavior$Exposure), "High", "Low")
+```
+
+---
+
+```{r fig.height=3.5, fig.width=7}
+ggplot(DeviantBehavior, aes(Age, Tolerance, color=ExposureMedSpl)) + 
+  facet_wrap(~ Gender) + 
+  stat_summary(fun=mean, geom="point", size=3) +
+  stat_summary(fun.data=mean_se, geom="errorbar", width=0.2) + 
+  stat_summary(aes(y=fitted(m.exp1)), fun=mean, geom="line") +
+  labs(x="Age", y="Tolerance for deviant behavior", 
+       color="Exposure\n(Median Split)") + 
+  theme_bw() 
+```
+
+Adolescents with higher Exposure to deviant behaviour tend to have increased Tolerance for deviant behaviour as they get older, and more so for males than females.
+
+---
+# How to plot the three-way interaction?
+
+Option 2: tertile split provides a little more info than median split
+
+```{r warning=FALSE}
+# define break points
+b <- quantile(DeviantBehavior$Exposure, probs=seq(0, 1, by=1/3)) 
+# split continuous predictor and provide level labels
+DeviantBehavior$Exposure3 <- cut(DeviantBehavior$Exposure, 
+                                 breaks=b, include.lowest=T, 
+                                 labels=c("Low", "Medium", "High"))
+```
+
+---
+```{r fig.height=4, fig.width=8}
+ggplot(DeviantBehavior, aes(Age, Tolerance, color=Exposure3)) + 
+  facet_wrap(~ Gender) + 
+  stat_summary(fun=mean, geom="point", size=3) + 
+  stat_summary(fun.data=mean_se, geom="errorbar", width=0.2) + 
+  stat_summary(aes(y=fitted(m.exp1)), fun=mean, geom="line") +
+  labs(x="Age", y="Tolerance for deviant behavior", 
+       color="Exposure\n(Tertiles)") + 
+  theme_bw() 
+```
+
+**Warning**: reviewers and readers may get confused about whether your *model* used continuous or categorical predictors, so you will need to be extra clear about this in your write-up.
+
+---
+# Key points
+
+* Individual differences provide deeper insights into group-level phenomena
+* Can assess them by adding them to the multilevel model
+* Dividing a continuous variable into levels can help to visualise complex interactions

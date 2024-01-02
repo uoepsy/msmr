@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Week 00: Tidyverse and Markdown Review</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Dan Mirman" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# <b>Week 00: Tidyverse and Markdown Review</b>
+## Multivariate Statistics and Methodology using R (MSMR)<br><br>
+### Dan Mirman
+### Department of Psychology<br>The University of Edinburgh
+### AY 2020-2021
+
+---
+
+
+
+
+
+
+# Data Visualization
+
+Important in *science*, business, journalism, etc.
+
+Two key roles:
+
+1. Communication
+2. Analysis
+
+Summary statistics never give the full *picture*:
+
+![](./figs/SameData_DifferentGraphs.png)
+
+---
+
+# `ggplot`: Grammar of Graphics
+
+Many graphing programs treat data visualization like painting picture: red circle at `\(x_1,y_1\)`, blue square at `\(x_2,y_2\)`, etc.
+
+This is inefficient and very easy to make mistakes.
+
+---
+
+# `ggplot`: Grammar of Graphics
+
+Many graphing programs treat data visualization like painting picture: red circle at `\(x_1,y_1\)`, blue square at `\(x_2,y_2\)`, etc.
+
+This is inefficient and very easy to make mistakes.
+
+### The `ggplot` way: a graph has 3 core elements
+
+1. A data set
+2. A set of mappings between variables in the data set and properties (*aesthetics*) of the graph
+3. Layers of *geoms* to instantiate those mappings
+
+---
+
+# A simple example
+
+A basic line plot:
+
+```r
+library(ggplot2)
+ggplot(Orange, aes(x=age, y=circumference, color=Tree)) + 
+  geom_line()
+```
+
+![](msmr_lec00_tidyverse-markdown_files/figure-html/unnamed-chunk-1-1.png)&lt;!-- --&gt;
+
+---
+
+# A simple example
+
+
+```r
+ggplot(Orange, aes(x=age, y=circumference, color=Tree)) + 
+  geom_line() + geom_point() # Add points
+```
+
+![](msmr_lec00_tidyverse-markdown_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
+
+Notice that the lines and points have matching colors, but you only need to specify the color mapping once. 
+
+All geoms will "inherit" the same aesthetic mappings unless otherwise specified. *This helps maintain consistency.*
+
+---
+
+# Compute summaries on the fly
+
+
+```r
+ggplot(Orange, aes(age, circumference)) + 
+  geom_point() + stat_summary(fun=mean, geom="line")
+```
+
+![](msmr_lec00_tidyverse-markdown_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
+
+Do not need to have different data sets for all data and summarized data. Just use one data set and visualize it in different ways (all observations, grouped by participants, grouped by conditions, etc., etc., ...)
+
+*This makes exploratory visualization much easier.*
+
+--- 
+
+# Exclude cases on the fly
+
+
+```r
+ggplot(subset(Orange, Tree != "5"), aes(age, circumference)) +
+  geom_point() +
+  stat_summary(fun=mean, geom="line")
+```
+
+![](msmr_lec00_tidyverse-markdown_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+
+This also helps exploratory visualization.
+
+---
+
+# Small multiples, aka facets
+
+Very important for visualizing complex data sets. The individual facets are properly sized and aligned, and inherit aesthetics to make comparisons easy.
+
+
+```r
+ggplot(Orange, aes(age, circumference)) + 
+  facet_wrap(~ Tree, nrow=1) + 
+  geom_line()
+```
+
+![](msmr_lec00_tidyverse-markdown_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+
+---
+
+# Multi-panel plots
+
+For combining different plots, use `patchwork`
+
+
+```r
+library(patchwork)
+p1 &lt;- ggplot(esoph, aes(agegp, ncases/ncontrols, color=alcgp)) +
+  stat_smooth(aes(group=alcgp), se=FALSE) +
+  scale_color_brewer(palette = "Set1")
+p2 &lt;- ggplot(esoph, aes(agegp, ncases/ncontrols, color=tobgp)) + 
+  stat_smooth(aes(group=tobgp), se=FALSE) +
+  scale_color_brewer(palette = "Set1")
+p1 + p2
+```
+
+![](msmr_lec00_tidyverse-markdown_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+
+---
+
+# Showing variability: Weather data
+
+
+```r
+load("./data/Weather_2014.RData")
+summary(weather_day)
+```
+
+```
+##      month             day           TempAve           TempMin      
+##  Min.   : 1.000   Min.   : 1.00   Min.   : 0.6423   Min.   :-1.993  
+##  1st Qu.: 4.000   1st Qu.: 8.00   1st Qu.: 5.6862   1st Qu.: 3.431  
+##  Median : 7.000   Median :16.00   Median : 9.0329   Median : 6.486  
+##  Mean   : 6.526   Mean   :15.72   Mean   : 9.4095   Mean   : 6.664  
+##  3rd Qu.:10.000   3rd Qu.:23.00   3rd Qu.:13.1557   3rd Qu.:10.230  
+##  Max.   :12.000   Max.   :31.00   Max.   :19.2297   Max.   :14.720  
+##     TempMax            Rain       
+##  Min.   : 2.273   Min.   : 0.000  
+##  1st Qu.: 8.340   1st Qu.: 0.000  
+##  Median :12.030   Median : 0.400  
+##  Mean   :12.438   Mean   : 3.192  
+##  3rd Qu.:16.620   3rd Qu.: 2.800  
+##  Max.   :24.470   Max.   :46.800
+```
+
+---
+
+# Showing variability: Errorbars
+
+
+```r
+ggplot(weather_day, aes(month, TempAve)) +
+  stat_summary(fun=mean, geom="line") + 
+  stat_summary(fun.data=mean_se, geom="errorbar")
+```
+
+![](msmr_lec00_tidyverse-markdown_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
+
+---
+
+# Showing variability: Jittered points
+
+
+```r
+ggplot(weather_day, aes(month, TempAve)) +
+  geom_jitter(width=0.2)
+```
+
+![](msmr_lec00_tidyverse-markdown_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+
+---
+
+# Showing variability: Boxplots
+
+
+```r
+ggplot(weather_day, aes(as.factor(month), TempAve)) +
+  geom_boxplot()
+```
+
+![](msmr_lec00_tidyverse-markdown_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
+
+---
+
+# Showing variability: Violin plots
+
+
+```r
+ggplot(weather_day, aes(as.factor(month), TempAve)) +
+  geom_violin()
+```
+
+![](msmr_lec00_tidyverse-markdown_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
+
+---
+
+# Showing variability: Combinations
+
+
+```r
+ggplot(weather_day, aes(as.factor(month), TempAve)) +
+  geom_violin() +
+  geom_jitter(width=0.1, alpha=0.25) + 
+  geom_smooth(aes(x=month))
+```
+
+![](msmr_lec00_tidyverse-markdown_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
+
+---
+
+# Refining figures
+
+* Scales
+    + Colours
+    + Point shapes
+    + Legends/guides
+    + Etc.
+* Themes
+    + Axes, grid lines, tick marks and labels
+    + Legend position
+    + Font sizes
+* Annotations: geoms that are not data
+
+---
+
+# Example
+
+
+```r
+ggplot(weather_day, aes(month, TempAve)) +
+  geom_smooth(color="black") +
+  geom_jitter(width=0.1, alpha=0.5, aes(color=TempAve)) +
+  theme_bw(base_size=12) + 
+  scale_color_gradient(low="navy", high="red", guide=FALSE) +
+  labs(x="Month", y="Temperature", 
+       title="Edinburgh temperatures in 2014")
+```
+
+![](msmr_lec00_tidyverse-markdown_files/figure-html/unnamed-chunk-13-1.png)&lt;!-- --&gt;
+
+# Data management with `tidyverse`
+
+Raw data are rarely in a convenient format for analysis.
+
+Need to be pre-processed to be ready for analysis.
+
+Approx. 80% of analysis time is spent on getting data ready for analysis.
+
+### Basics
+* Preserve raw data
+* Save processed data in `.Rdata` files
+    + `save(dat1, dat2, ..., file="FileName.RData")`
+    + Later, you can restore all of those variables using `load("FileName.RData")`
+* Comment your code
+
+---
+
+# Data Transformation: `dplyr`
+
+* `filter` rows (observations)
+* `select` columns (variables)
+* `arrange` rows
+* `mutate` create new variables
+* `summarize` create summaries
+* `group_by` create grouped summaries (and mutations and filters)
+
+* `merge` data sets (base R)
+* `join` data sets (`dplyr`)
+
+---
+
+# Data Transformation: `tidyr`
+
+Tidy data
+
+&gt; "Happy families are all alike; every unhappy family is unhappy in its own way."
+- Leo Tolstoy
+
+&gt; "Tidy datasets are all alike, but every messy dataset is messy in its own way."
+- Hadley Wickham
+
+![](./figs/tidy-1.png)
+
+---
+
+# Data Transformation: `tidyr`
+
+Tidy data
+
+* `pivot_longer`
+* `pivot_wider`
+
+---
+
+# Pipes
+![](./figs/MagrittePipe.jpg)
+
+Easy way to do a series of operations:
+
+`g(f(x, y), z)` is the same as `x %&gt;% f(y) %&gt;% g(z)`
+
+But easier to read and write: "Take `x` then do `f(y)` then do `g(z)`"
+
+---
+
+# Pipes
+
+![](./figs/pipe_ex1.png)
+(source: https://twitter.com/dmi3k/status/1191824875842879489)
+
+---
+
+# Example: Public Health England data on mental health
+
+A few interesting and "robust" indicators:
+
+* 848 = overall depression prevalence
+* 90646 = overall depression incidence
+* 90275 = enough physical activity
+* 41001 = suicide rate per 100,000
+
+
+```r
+library(tidyverse)
+```
+
+---
+
+# Example: Public Health England data on mental health
+
+
+```r
+load("./data/PHE_MentalHealth.Rdata")
+summary(mh_phe)
+```
+
+```
+##   IndicatorID    IndicatorName         County             Region         
+##  Min.   :  848   Length:9422        Length:9422        Length:9422       
+##  1st Qu.:41001   Class :character   Class :character   Class :character  
+##  Median :41001   Mode  :character   Mode  :character   Mode  :character  
+##  Mean   :44945                                                           
+##  3rd Qu.:41001                                                           
+##  Max.   :90646                                                           
+##                                                                          
+##   Timeperiod            Value              Year     
+##  Length:9422        Min.   : 0.0532   Min.   :2001  
+##  Class :character   1st Qu.: 5.6154   1st Qu.:2006  
+##  Mode  :character   Median : 9.5482   Median :2011  
+##                     Mean   :12.7162   Mean   :2010  
+##                     3rd Qu.:14.2544   3rd Qu.:2014  
+##                     Max.   :71.1897   Max.   :2017  
+##                     NA's   :619
+```
+
+---
+
+# Example: Public Health England data on mental health
+
+
+```r
+str(mh_phe)
+```
+
+```
+## 'data.frame':	9422 obs. of  7 variables:
+##  $ IndicatorID  : int  848 848 848 848 848 848 848 848 848 848 ...
+##  $ IndicatorName: chr  "Depression: Recorded prevalence (aged 18+)" "Depression: Recorded prevalence (aged 18+)" "Depression: Recorded prevalence (aged 18+)" "Depression: Recorded prevalence (aged 18+)" ...
+##  $ County       : chr  "Hartlepool" "Middlesbrough" "Redcar and Cleveland" "Stockton-on-Tees" ...
+##  $ Region       : chr  "North East" "North East" "North East" "North East" ...
+##  $ Timeperiod   : chr  "2013/14" "2013/14" "2013/14" "2013/14" ...
+##  $ Value        : num  5.32 5.74 7.86 9.19 7.38 ...
+##  $ Year         : num  2013 2013 2013 2013 2013 ...
+```
+
+---
+
+# Table: Health Indicators by Region
+
+```r
+*mh_phe %&gt;% group_by(IndicatorName, Region) %&gt;%
+  summarize(Value = mean(Value, na.rm = TRUE)) %&gt;%
+  pivot_wider(names_from = IndicatorName, values_from = Value) 
+```
+
+---
+
+# Table: Health Indicators by Region
+
+```r
+mh_phe %&gt;% group_by(IndicatorName, Region) %&gt;%
+* summarize(Value = mean(Value, na.rm = TRUE)) %&gt;%
+  pivot_wider(names_from = IndicatorName, values_from = Value) 
+```
+
+---
+
+# Table: Health Indicators by Region
+
+```r
+mh_phe %&gt;% group_by(IndicatorName, Region) %&gt;%
+  summarize(Value = mean(Value, na.rm = TRUE)) %&gt;%
+* pivot_wider(names_from = IndicatorName, values_from = Value)
+```
+
+```
+## `summarise()` regrouping output by 'IndicatorName' (override with `.groups` argument)
+```
+
+```
+## # A tibble: 9 x 5
+##   Region  `Depression: QOF ~ `Depression: Rec~ `Percentage of ph~ `Suicide rate`
+##   &lt;chr&gt;                &lt;dbl&gt;             &lt;dbl&gt;              &lt;dbl&gt;          &lt;dbl&gt;
+## 1 East M~               1.49              8.68               56.9           9.90
+## 2 East o~               1.35              8.03               56.6           9.96
+## 3 London                1.00              6.01               57.3           9.61
+## 4 North ~               1.47              9.01               52.9          12.4 
+## 5 North ~               1.65              9.69               53.1          11.6 
+## 6 South ~               1.27              8.05               58.7          10.6 
+## 7 South ~               1.33              8.30               58.6          10.9 
+## 8 West M~               1.44              8.73               54.1          10.1 
+## 9 Yorksh~               1.43              8.80               55.2          10.7
+```
+
+---
+
+# Table: Health Indicators by Region
+.scroll-output[
+
+```r
+mh_phe %&gt;% group_by(IndicatorName, Region) %&gt;%
+  summarize(Value = mean(Value, na.rm = TRUE)) %&gt;%
+  pivot_wider(names_from = IndicatorName, values_from = Value) %&gt;% 
+* knitr::kable(digits = 2, format = 'html')
+```
+
+```
+## `summarise()` regrouping output by 'IndicatorName' (override with `.groups` argument)
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Region &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Depression: QOF incidence (18+) - new diagnosis &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Depression: Recorded prevalence (aged 18+) &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Percentage of physically active adults - historical method &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Suicide rate &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; East Midlands &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.49 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8.68 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 56.94 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9.90 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; East of England &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.35 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8.03 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 56.58 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9.96 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; London &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.00 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6.01 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 57.34 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9.61 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; North East &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.47 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9.01 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 52.88 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12.44 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; North West &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.65 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9.69 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 53.11 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11.61 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; South East &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.27 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8.05 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 58.71 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.62 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; South West &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.33 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8.30 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 58.57 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.90 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; West Midlands &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.44 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8.73 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 54.05 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.05 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Yorkshire and the Humber &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.43 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8.80 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 55.16 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.66 &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+---
+
+# Table: Health Indicators by Year
+
+.scroll-output[
+
+```r
+*mh_phe %&gt;% group_by(IndicatorName, Year) %&gt;%
+  summarize(Value = mean(Value, na.rm = TRUE)) %&gt;%
+  pivot_wider(names_from = IndicatorName, values_from = Value) %&gt;%
+  arrange(Year) %&gt;% 
+  knitr::kable(digits = 2, format = 'html')
+```
+]
+
+---
+
+# Table: Health Indicators by Year
+
+.scroll-output[
+
+```r
+mh_phe %&gt;% group_by(IndicatorName, Year) %&gt;% 
+  summarize(Value = mean(Value, na.rm = TRUE)) %&gt;%
+  pivot_wider(names_from = IndicatorName, values_from = Value) %&gt;%
+* arrange(Year) %&gt;%
+  knitr::kable(digits = 2, format = 'html') 
+```
+
+```
+## `summarise()` regrouping output by 'IndicatorName' (override with `.groups` argument)
+```
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:right;"&gt; Year &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Depression: QOF incidence (18+) - new diagnosis &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Depression: Recorded prevalence (aged 18+) &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Percentage of physically active adults - historical method &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Suicide rate &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2001 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11.25 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2002 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 11.01 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2003 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.95 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2004 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.82 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2005 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.39 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2006 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.30 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2007 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.36 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2008 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.26 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2009 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.23 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2010 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.27 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2011 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.60 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2012 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 55.67 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.68 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2013 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.04 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 6.44 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 55.51 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.83 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2014 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.18 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7.24 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 56.48 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.62 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2015 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.43 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 8.17 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 56.54 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.40 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2016 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.51 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9.04 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 10.31 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:right;"&gt; 2017 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.55 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9.78 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; NA &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
+
+# Reproducible Research
+
+* Scientific findings have to be _replicable_. Reproducibility is a pre-requisite for replicability: if I can't reproduce what you did, then I can't check whether it replicates.
+* Makes your work easier and more efficient
+    + Avoid errors because each step is documented and checkable.
+    + Easier to collaborate because full analysis path is easily shareable.
+    + Easier to update in response to feedback, reviews, etc.
+    + Higher impact: can share your methods as well as your results. _Nature_ journals are moving toward requiring code sharing to increase reproducibility and transparency (e.g., Eglen et al., 2017)
+
+---
+
+# Workflow 
+
+1. Collect data
+2. Read in raw data: `read.table`, `haven::read_sav`, `readxl::read_excel`, `load(url(...))`, etc.
+3. Check the data, make exploratory plots: `ggplot`
+4. Pre-process the raw data to get it ready for analysis: `filter`, `group_by`, `mutate`, `pivot_longer`, `pivot_wider`, etc.
+5. Check the data, make exploratory plots: `ggplot`
+6. Analyze the data: `t.test`, `lm`, `lmer`, `sem`, etc.
+7. Make final publication-quality figures: `ggplot`
+8. Write the report
+
+Use R Markdown for steps 2-7 to produce a fully reproducible analysis report.
+
+(Can also do step 8 and generate a final PDF or Word document of the full report)
+
+---
+
+# R Markdown
+
+&lt;img src="./figs/rmarkdown_wizards.png" width="800px" /&gt;
+
+---
+
+# R Markdown: Getting Started
+
+.pull-left[**Prerequisites**
+
+* You'll need the `rmarkdown` and `knitr` packages
+* Help is readily available:
+    + RStudio --&gt; Help --&gt; Markdown Quick Reference
+    + RStudio --&gt; Help --&gt; Cheatsheets --&gt; R Markdown Cheat Sheet
+    + RStudio --&gt; Help --&gt; Cheatsheets --&gt; R Markdown Reference Guide
+]
+
+.pull-right[
+**Create a markdown file**
+
+&lt;img src="./figs/markdown_create.png" width="177px" height="485px" /&gt;
+]
+---
+
+# R Markdown: Template
+
+&lt;img src="./figs/markdown_template.png" width="50%" /&gt;
+
+---
+
+# R Markdown: Example
+
+Excerpt from the R Markdown file for lecture slides:
+
+&lt;img src="./figs/markdown_example.png" width="50%" /&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
