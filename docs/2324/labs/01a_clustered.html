@@ -165,12 +165,6 @@ if(f.classList.contains('fa-circle-right')) {
  <span class="menu-text">1A: Clustered Data | LMM</span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./01b_lmm.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">1B: Linear Mixed Models/Multi-level Models</span></a>
-  </div>
-</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -237,7 +231,12 @@ if(f.classList.contains('fa-circle-right')) {
 </header>
 
 <div class="lo">
-<p>TODO this reading</p>
+<ul>
+<li>A refresher on the linear regression model<br>
+</li>
+<li>An introduction to clustered data</li>
+<li>Working with clustered data (sample sizes, ICC, visualisations)</li>
+</ul>
 </div>
 <section id="our-starting-point" class="level1">
 <h1>Our Starting Point</h1>
@@ -404,9 +403,9 @@ the impact of non-independence on inferences
 <p>This is because all of our inferential tests rely on the estimated variability in our residuals <span class="math inline">\(y_i - \hat y_i\)</span>. This variability is estimated by taking the mean squared error<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>:</p>
 <p><span class="math display">\[
 \text{mean squared error} = \frac{\sum{(y_i - \hat y_i)^2}}{n-k-1}
-\]</span> The denominator bit on the bottom is our <em>degrees of freedom</em> (where <span class="math inline">\(n\)</span> is the total sample size, <span class="math inline">\(k\)</span> is how many predictors we have in our model). This is how many independent pieces of information are available for estimating the parameters in our model.</p>
+\]</span> The denominator bit on the bottom is our <em>degrees of freedom</em> (where <span class="math inline">\(n\)</span> is the total sample size, <span class="math inline">\(k\)</span> is how many predictors we have in our model). This is how many <strong>independent</strong> pieces of information are available for estimating the parameters in our model.</p>
 <p>In the scenario where we have, e.g.&nbsp;33 pupils clustered into 5 schools, how many independent bits of information do we have to begin with? 33? 5? somewhere in between?</p>
-<p>If we assume these pupils are all independent, as our old friend <code>lm()</code> would, then our estimate of the residual variability will be smaller. This means that on average our standard errors will be too narrow, any confidence intervals too narrow, our F statistics will be too large, and our p-values too small.</p>
+<p>If we assume these pupils are all independent, because of how the mean squared error is calculated, our old friend <code>lm()</code> would estimate the residual variability to be smaller than it really is. This means that on average our standard errors will be too narrow, any confidence intervals too narrow, our F statistics will be too large, and our p-values too small.</p>
 <p>In essence - our inferences will all be wrong!!</p>
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
@@ -414,7 +413,7 @@ the impact of non-independence on inferences
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-F and t and MSE
+optional: F and t and MSE
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -423,10 +422,10 @@ F and t and MSE
 <p>The mean squared error (MSE) goes into our <span class="math inline">\(F\)</span>-statistics as they are the ratio of the mean squares associated with the model and the mean squared error <span class="math display">\[
 F = \frac{\text{Mean Squares Model}}{\text{Mean Squared Error}}
 \]</span></p>
-<p>The MSE also goes into our standard errors for our coefficients (and so any subsequent <span class="math inline">\(t\)</span>-statistics or confidence intervals that we might calculate).</p>
-<p>TODO tidy <span class="math display">\[
-SE(b_p) = \sqrt{  \frac{MSE}{(1-R^2_{x_p | x_p}) \cdot Var(x_p)} }
-\]</span></p>
+<p>The MSE also goes into our standard errors for our coefficients (and so any subsequent <span class="math inline">\(t\)</span>-statistics or confidence intervals that we might calculate).<br>
+<span class="math display">\[
+SE(b_p) = \sqrt{  \frac{MSE}{Var(x_p) \cdot (1-R^2_{x_p|x1,...}) }}
+\]</span> (Where <span class="math inline">\(R^2_{x_p|x1,...}\)</span> is the <span class="math inline">\(R^2\)</span> value of the predictor of interest <span class="math inline">\(x_p\)</span> regressed onto all other predictors).</p>
 </div>
 </div>
 </div>
@@ -2032,10 +2031,9 @@ In the description of the <strong>SchoolMot</strong> data above we are told the 
 </div>
 <p>We can check this in our data:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># schoolmot &lt;- read_csv("https://uoepsy.github.io/data/schoolmot.csv")</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># how many children? (how many rows in the data?)</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>schoolmot <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/schoolmot.csv"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># how many children? (how many rows in the data?)</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 900</code></pre>
 </div>
@@ -2052,14 +2050,13 @@ In the description of the <strong>SchoolMot</strong> data above we are told the 
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(schoolid) <span class="sc">|&gt;</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                    schoolid        n     
- Alness Academy         : 1   Min.   :30  
- Balfron High School    : 1   1st Qu.:30  
- Banff Academy          : 1   Median :30  
- Boroughmuir High School: 1   Mean   :30  
- Braes High School      : 1   3rd Qu.:30  
- Calderglen High School : 1   Max.   :30  
- (Other)                :24               </code></pre>
+<pre><code>   schoolid               n     
+ Length:30          Min.   :30  
+ Class :character   1st Qu.:30  
+ Mode  :character   Median :30  
+                    Mean   :30  
+                    3rd Qu.:30  
+                    Max.   :30  </code></pre>
 </div>
 </div>
 </section>
@@ -2095,8 +2092,8 @@ ICC \; (\rho) &amp;= \frac{\sigma^2_{b}}{\sigma^2_{b} + \sigma^2_e} \\
 </div>
 </div>
 </div>
-<p>There are various packages that allow us to calculate the ICC, and when we get to fitting multilevel models we will see how we can extract it from a fitted model.<br>
-In the data (visualised above), it’s estimated that 40% of the variance in grades is due to school-related differences:</p>
+<p>There are various packages that allow us to calculate the ICC, and when we get to fitting multilevel models we will see how we can extract it from a fitted model.</p>
+<p>In the school motivation data (visualised above), it’s estimated that 40% of the variance in grades is due to school-related differences:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ICC)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ICCbare</span>(schoolid, grade, <span class="at">data =</span> schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -2362,6 +2359,12 @@ The data aren’t paired, they’re just random draws from a <strong>group.</str
 <p><strong>ICC = the expected correlation of a <em>randomly drawn pair</em> of observations from the same group.</strong></p>
 </div>
 </div>
+</div>
+<div class="sticky">
+<p><strong>Why ICC?</strong></p>
+<p>The ICC tells us the proportion of the total variability in an outcome variable that is attributable to the differences between groups/clusters. It ranges from 0 to 1.</p>
+<p>This helps us to assess the appropriateness of using a multilevel approach. If the ICC is high, it suggests that a large amount of the variance is at the cluster level (justifying the use of multilevel modeling to account for this structure).</p>
+<p><strong>There are no cut-offs</strong> - the interpretation of ICC values is inherently field-specific, as what constitutes a high or low ICC depends on the nature of the outcome variable, and the hierarchical structure within a particular research context.</p>
 </div>
 </section>
 <section id="visualisations" class="level2">

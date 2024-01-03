@@ -21,7 +21,9 @@ xaringanExtra::use_panelset()
 
 :::lo
 
-TODO this reading
+- A refresher on the linear regression model  
+- An introduction to clustered data
+- Working with clustered data (sample sizes, ICC, visualisations)
 
 :::
 
@@ -354,16 +356,16 @@ This is because all of our inferential tests rely on the estimated variability i
 $$
 \text{mean squared error} = \frac{\sum{(y_i - \hat y_i)^2}}{n-k-1}
 $$
-The denominator bit on the bottom is our _degrees of freedom_ (where $n$ is the total sample size, $k$ is how many predictors we have in our model). This is how many independent pieces of information are available for estimating the parameters in our model.  
+The denominator bit on the bottom is our _degrees of freedom_ (where $n$ is the total sample size, $k$ is how many predictors we have in our model). This is how many **independent** pieces of information are available for estimating the parameters in our model.  
 
 In the scenario where we have, e.g. 33 pupils clustered into 5 schools, how many independent bits of information do we have to begin with? 33? 5? somewhere in between?  
 
-If we assume these pupils are all independent, as our old friend `lm()` would, then our estimate of the residual variability will be smaller. This means that on average our standard errors will be too narrow, any confidence intervals too narrow, our F statistics will be too large, and our p-values too small.  
+If we assume these pupils are all independent, because of how the mean squared error is calculated, our old friend `lm()` would estimate the residual variability to be smaller than it really is. This means that on average our standard errors will be too narrow, any confidence intervals too narrow, our F statistics will be too large, and our p-values too small.  
 
 In essence - our inferences will all be wrong!!  
 
 ::: {.callout-caution collapse="true"}
-#### F and t and MSE
+#### optional: F and t and MSE
 
 The mean squared error (MSE) goes into our $F$-statistics as they are the ratio of the mean squares associated with the model and the mean squared error 
 $$
@@ -371,11 +373,11 @@ F = \frac{\text{Mean Squares Model}}{\text{Mean Squared Error}}
 $$
 
 The MSE also goes into our standard errors for our coefficients (and so any subsequent $t$-statistics or confidence intervals that we might calculate).  
+$$
+SE(b_p) = \sqrt{  \frac{MSE}{Var(x_p) \cdot (1-R^2_{x_p|x1,...}) }}
+$$
+(Where $R^2_{x_p|x1,...}$ is the $R^2$ value of the predictor of interest $x_p$ regressed onto all other predictors).  
 
-TODO tidy
-$$
-SE(b_p) = \sqrt{  \frac{MSE}{(1-R^2_{x_p | x_p}) \cdot Var(x_p)} }
-$$
 :::
 
 
@@ -612,8 +614,7 @@ tribble(
 
 We can check this in our data: 
 ```{r}
-# TODO
-# schoolmot <- read_csv("https://uoepsy.github.io/data/schoolmot.csv")
+schoolmot <- read_csv("https://uoepsy.github.io/data/schoolmot.csv")
 # how many children? (how many rows in the data?)
 nrow(schoolmot)
 # how many schools? (how many distinct values in the schoolid column?)
@@ -660,7 +661,8 @@ ggplot(schoolmot, aes(x=schoolid, y=grade))+
 
 
 There are various packages that allow us to calculate the ICC, and when we get to fitting multilevel models we will see how we can extract it from a fitted model.  
-In the data (visualised above), it's estimated that `r round(suppressWarnings(ICC::ICCbare(schoolid, grade, data = schoolmot)),2)*100`% of the variance in grades is due to school-related differences:  
+
+In the school motivation data (visualised above), it's estimated that `r round(suppressWarnings(ICC::ICCbare(schoolid, grade, data = schoolmot)),2)*100`% of the variance in grades is due to school-related differences:  
 ```{r}
 library(ICC)
 ICCbare(schoolid, grade, data = schoolmot)
@@ -868,6 +870,18 @@ If we take the correlation of all these combinations of pairings, then we get ou
 __ICC = the expected correlation of a *randomly drawn pair* of observations from the same group.__
 
 :::
+
+:::sticky
+__Why ICC?__  
+
+The ICC tells us the proportion of the total variability in an outcome variable that is attributable to the differences between groups/clusters. It ranges from 0 to 1.  
+
+This helps us to assess the appropriateness of using a multilevel approach. If the ICC is high, it suggests that a large amount of the variance is at the cluster level (justifying the use of multilevel modeling to account for this structure).  
+
+__There are no cut-offs__ - the interpretation of ICC values is inherently field-specific, as what constitutes a high or low ICC depends on the nature of the outcome variable, and the hierarchical structure within a particular research context.  
+
+:::
+
 
 ## Visualisations
 
