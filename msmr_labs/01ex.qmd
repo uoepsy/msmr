@@ -1,0 +1,217 @@
+---
+title: "Week 1 Exercises"
+params: 
+    SHOW_SOLS: FALSE
+    TOGGLE: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+source('assets/setup.R')
+library(xaringanExtra)
+library(tidyverse)
+library(patchwork)
+library(ggdist)
+xaringanExtra::use_panelset()
+qcounter <- function(){
+  if(!exists("qcounter_i")){
+    qcounter_i <<- 1
+  }else{
+    qcounter_i <<- qcounter_i + 1
+  }
+  qcounter_i
+}
+toyyear <- tribble(
+  ~toy_type,~year,
+  "Barbie",1959,
+  "Farm Animals",1955,
+  "Furby",1998,
+  "G.I.Joe",1964,
+  "Lego Minifigures",1979,
+  "Minecraft",2011,
+  "My Little Pony",1982,
+  "Peppa Pig",2004,
+  "Playmobil",1975,
+  "Polly Pocket",1983,
+  "Power Rangers",1993,
+  "Rugrats",1991,
+  "Scooby Doo",1969,
+  "Sock Puppets",1901,
+  "Star Wars",1977,
+  "Stretch Armstrong",1976,
+  "SuperZings",2018,
+  "Teenage Mutant Ninja Turtles",1990,
+  "Toy Story",1996,
+  "Transformers",1984
+) 
+```
+
+
+::: {.callout-note collapse="true"}
+#### New Packages!
+
+These are the main packages we're going to use in this block. It might make sense to install them now if you do not have them already (note, the rstudio.ppls.ed.ac.uk server already has `lme4` and `tidyverse` installed for you).  
+
++ __tidyverse__ : for organising data  
++ __lme4__ : for fitting generalised linear mixed effects models
++ __broom.mixed__ : tidying methods for mixed models
++ __effects__ : for tabulating and graphing effects in linear models
+
+:::
+
+# A Toy Example  
+
+:::frame
+__Data: New Toys!__  
+  
+Recall the example from last semesters' USMR course, where the lectures explored linear regression with a toy dataset of how practice influences the reading age of Playmobil characters:  
+
+```{r echo=FALSE, fig.cap = "[USMR Week 7 Lecture](https://uoepsy.github.io/usmr/2324/lectures/lecture06.html#/learning-to-read-1)", out.width="300px",fig.align="center"}
+knitr::include_graphics("images/reading.png")
+```
+  
+We're going to now broaden our scope to the investigation of how practice affects reading age for **all** toys, (not just Playmobil characters).  
+You can find a dataset at [https://uoepsy.github.io/data/toyexample.csv]([https://uoepsy.github.io/data/toyexample.csv]){target="_blank"} containing information on 132 different toy figures. This time, however, they come from a selection of different families/types of toy. You can see the variables in the table below^[Image sources:<br>http://tophatsasquatch.com/2012-tmnt-classics-action-figures/<br>https://www.dezeen.com/2016/02/01/barbie-dolls-fashionista-collection-mattel-new-body-types/<br>https://www.wish.com/product/5da9bc544ab36314cfa7f70c<br>https://www.worldwideshoppingmall.co.uk/toys/jumbo-farm-animals.asp<br>https://www.overstock.com/Sports-Toys/NJ-Croce-Scooby-Doo-5pc.-Bendable-Figure-Set-with-Scooby-Doo-Shaggy-Daphne-Velma-and-Fred/28534567/product.html<br>https://tvtropes.org/pmwiki/pmwiki.php/Toys/Furby<br>https://www.fun.com/toy-story-4-figure-4-pack.html<br>https://www.johnlewis.com/lego-minifigures-71027-series-20-pack/p5079461].
+<br>
+<div style="display:inline-block; width: 45%;vertical-align: middle;">
+```{r echo=FALSE, out.width="300px",fig.align="center"}
+knitr::include_graphics("images/toys.png")
+```
+</div>
+<div style="display:inline-block; width: 45%;vertical-align: middle;">
+```{r echo=FALSE, message=FALSE,warning=FALSE}
+library(gt)
+toys_read <- read_csv("https://uoepsy.github.io/data/toyexample.csv")
+tibble(variable=names(toys_read),
+       description=c("Type of Toy","Character","Hours of practice per week","Age (in years)","Reading Age")
+) %>% gt()
+
+```
+</div>
+
+:::
+
+
+
+
+
+
+`r qbegin()`
+read data, plot, and facet by type of toy
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+library(tidyverse)
+
+toys <- read_csv("https://uoepsy.github.io/data/toyexample.csv")
+head(toys)
+
+ggplot(toys,aes(x=hrs_week,y=R_AGE))+
+  geom_point()+
+  facet_wrap(~toy_type)
+```
+
+`r solend()`
+
+
+`r qbegin()`
+here's a model. have we violated any assumptions?  
+```{r}
+#| eval: false
+mod1 <- lm(R_AGE ~ hrs_week, data = toys)
+plot(mod1)
+```
+```{r}
+#| echo: false
+mod1 <- lm(R_AGE ~ hrs_week, data = toys)
+par(mfrow=c(2,2));plot(mod1);par(mfrow=c(1,1))
+```
+
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+`r solend()`
+
+`r qbegin()`
+`predict(mod1)` will get predicted values for your model.  
+plot them along side the observations 
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+toys$pred <- predict(mod1)
+
+toys |>
+  ggplot(aes(x=hrs_week))+
+  geom_point(aes(y=R_AGE)) + # observations
+  geom_line(aes(y=pred)) + # predictions
+  facet_wrap(~toy_type)
+
+```
+
+`r solend()`
+
+`r qbegin()`
+fit model with random intercepts for each toy type. 
+
+using either predict() again, or augment() from the broom.mixed package, plot the predicted values and the observations
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+
+```{r}
+library(lme4)
+library(broom.mixed)
+
+mod2 <- lmer(R_AGE ~ 1 + hrs_week + (1 | toy_type), data = toys)
+
+augment(mod2) |>
+  ggplot(aes(x=hrs_week))+
+  geom_point(aes(y=R_AGE)) + # observations
+  geom_line(aes(y=.fitted)) + # predictions
+  facet_wrap(~toy_type)
+```
+
+`r solend()`
+
+
+
+`r qbegin()`
+fit model with random intercepts and slopes for each toy type. 
+
+using either predict() again, or augment() from the broom.mixed package, plot the predicted values and the observations
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+
+```{r}
+library(lme4)
+library(broom.mixed)
+
+mod2 <- lmer(R_AGE ~ 1 + hrs_week + (1 + hrs_week| toy_type), data = toys)
+
+augment(mod2) |>
+  ggplot(aes(x=hrs_week))+
+  geom_point(aes(y=R_AGE)) + # observations
+  geom_line(aes(y=.fitted)) + # predictions
+  facet_wrap(~toy_type)
+```
+
+`r solend()`
+
+
+
+
+
+
+
+
+
+
+
+
