@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>MSMR - 1A: Clustered Data | LMM</title>
+<title>MSMR - 1A: Clustered Data</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -125,7 +125,7 @@ if(f.classList.contains('fa-circle-right')) {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01a_clustered.html">Week 1</a></li><li class="breadcrumb-item"><a href="./01a_clustered.html">1A: Clustered Data | LMM</a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01a_clustered.html">Week 1</a></li><li class="breadcrumb-item"><a href="./01a_clustered.html">1A: Clustered Data</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -162,7 +162,13 @@ if(f.classList.contains('fa-circle-right')) {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./01a_clustered.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">1A: Clustered Data | LMM</span></a>
+ <span class="menu-text">1A: Clustered Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01b_lmm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">1B: Linear Mixed Models/Multi-level Models</span></a>
   </div>
 </li>
       </ul>
@@ -215,7 +221,7 @@ if(f.classList.contains('fa-circle-right')) {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">1A: Clustered Data | LMM</h1>
+<h1 class="title">1A: Clustered Data</h1>
 </div>
 
 
@@ -231,6 +237,7 @@ if(f.classList.contains('fa-circle-right')) {
 </header>
 
 <div class="lo">
+<p>This reading:</p>
 <ul>
 <li>A refresher on the linear regression model<br>
 </li>
@@ -364,7 +371,7 @@ Refresher: Standard Error
 </section>
 <section id="clustered-data" class="level1">
 <h1>Clustered Data</h1>
-<p>A common example to start thinking about clustered data is to think about conducting a study on school children. Each observation in our sample is a different child, and they come from a set of various schools (i.e.&nbsp;we might get 20 children from Dyce Academy, 15 from Fernhill School, and so on). If we ignore the clustering of children into their respective schools, we can end up reaching completely different conclusions.</p>
+<p>A common example to start thinking about clustered data is to think about conducting a study on school children. Each observation in our sample is a different child, and they come from a set of various schools (i.e.&nbsp;we might get 20 children from Dunfermline High School, 15 from Farr High School, and so on). If we ignore the clustering of children into their respective schools, we can end up reaching completely different conclusions.</p>
 <p>This can be seen in <a href="#fig-egschool">Figure&nbsp;5</a> - in which each datapoint is a single child. If we consider them to be independent of one another (Left-Hand plot), then we might think there is a strong positive relationship between <code>grade</code> and <code>motivation</code>. Once we colour them by which school they belong to, we can see that the observations in the top right of the plots are all high for some other reason - because they come from the green school.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -935,7 +942,7 @@ SE(b_p) = \sqrt{  \frac{MSE}{Var(x_p) \cdot (1-R^2_{x_p|x1,...}) }}
 </ul>
 </div>
 <p>Contrast the idea of ‘clusters’ with how we think about other sorts of groupings. In a study that looks at “how do drugs placebo/aspirin/beta-blockers influence people’s heart rate?” (<a href="#fig-clgroup">Figure&nbsp;7</a> LH plot), we can group participants into which drug they have received. But these groupings are the very groups of interest to us, and we are interested in comparing placebo with aspirin with beta-blockers. If we were to run the study again, we’ll use the same drugs (they’re not just a random sample of drugs - the x-axis of our LH plot in <a href="#fig-clgroup">Figure&nbsp;7</a> will be the same).</p>
-<p>If we are interested in “what is the average grade at GCSE?”, and we have children grouped into different schools (<a href="#fig-clgroup">Figure&nbsp;7</a> RH plot), we are probably not interested in all the specific differences between grades in Calderglen High School vs Gleniffer High School etc. If we were to run our study again, we don’t collect data from the same set of schools. We can view these schools as ‘clusters’ - they are another source of random variation (i.e.&nbsp;not systematic variation such as the effect of a drug, but variation we see just because schools are different from one another).</p>
+<p>If we are interested in “what is the average grade at GCSE?”, and we have children grouped into different schools (<a href="#fig-clgroup">Figure&nbsp;7</a> RH plot), we are probably not interested in all the specific differences between grades in Broughton High School vs Gryffe High School etc. If we were to run our study again, we don’t collect data from the same set of schools. We can view these schools as ‘clusters’ - they are another source of random variation (i.e.&nbsp;not systematic variation such as the effect of a drug, but variation we see just because schools are different from one another).</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div id="fig-clgroup" class="quarto-figure quarto-figure-center anchored">
@@ -1486,15 +1493,14 @@ this group-identifier visible in the schoolid column</p> </caption>
 <p>In terms of the dataframes we are going to be working with, clusters are simply included in another column that contains a unique identifier for each cluster:<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a></p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output cell-output-stdout">
-<pre><code>  motiv funding                    schoolid grade
-1  6.78    5.51 North West Community Campus 42.38
-2  4.53    5.62      Paisley Grammar School 39.08
-3  5.13     5.1       Gleniffer High School 42.43
-4  5.13    5.51 North West Community Campus 40.04
-5  4.29    5.51 North West Community Campus 25.42
-6  6.26    5.62      Paisley Grammar School 25.48
-7   8.6    4.74          Strathaven Academy 64.97
-8   ...     ...                         ...   ...</code></pre>
+<pre><code>  motiv funding              schoolid grade
+1  7.74    6.37       Kilsyth Academy 42.42
+2  3.62    3.66 Balwearie High School 48.23
+3  4.04    3.66 Balwearie High School 17.36
+4  4.63    3.66 Balwearie High School 58.76
+5  4.54    8.94     Stewarton Academy 70.51
+6  3.89    6.37       Kilsyth Academy 61.54
+7   ...     ...                   ...   ...</code></pre>
 </div>
 </div>
 <p>Data in the way it is shaped just above is referred to as being in <strong>long format</strong> - we have one row for every individual lowest observation. In this example our individual observations are children, and they are clustered into schools. So our data in this long format has one row for every child. However, our data needn’t be shaped like this. We could contain the same information in a <strong>wide</strong> format.</p>
@@ -1505,14 +1511,14 @@ this group-identifier visible in the schoolid column</p> </caption>
 <p>Below, we have one row per person (we can see that Aja, Dan, Josiah, Emma, Umberto are all on different rows), and we have a column <code>schoolid</code> that identifies what cluster they belong to (what school they attend).</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output cell-output-stdout">
-<pre><code>                           schoolid grade
-Aja     North West Community Campus    50
-Dan     North West Community Campus    65
-Josiah  North West Community Campus    40
-..                              ...   ...
-Emma         Paisley Grammar School    75
-Umberto      Paisley Grammar School    80
-...                             ...   ...</code></pre>
+<pre><code>                     schoolid grade
+Aja     Balwearie High School    50
+Dan     Balwearie High School    65
+Josiah  Balwearie High School    40
+..                        ...   ...
+Emma          Kilsyth Academy    75
+Umberto       Kilsyth Academy    80
+...                       ...   ...</code></pre>
 </div>
 </div>
 </section>
@@ -1521,11 +1527,11 @@ Umberto      Paisley Grammar School    80
 <p>We can express the same information in a different way. Instead of having one row per person, we could have one row per cluster, and have a column for each of the people. We can see this below - Aja, Dan and Josiah have moved to now be all in the 1st row (for North West Community Campus) - we can see their grades (50, 65 and 40) in that row, and Emma and Umberto are in the row for Paisley Grammar School:</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output cell-output-stdout">
-<pre><code>                            child 1 child 2 child 3 child 4
-North West Community Campus      50      65      40     ...
-..                              ...     ...     ...     ...
-Paisley Grammar School           75      80     ...     ...
-...                             ...     ...     ...     ...</code></pre>
+<pre><code>                      child 1 child 2 child 3 child 4
+Balwearie High School      50      65      40     ...
+..                        ...     ...     ...     ...
+Kilsyth Academy            75      80     ...     ...
+...                       ...     ...     ...     ...</code></pre>
 </div>
 </div>
 </section>
@@ -2043,7 +2049,7 @@ In the description of the <strong>SchoolMot</strong> data above we are told the 
 <pre><code>[1] 30</code></pre>
 </div>
 </div>
-<p>Another important thing to examine when you first get hierarchical data is the number of level 1 units that belong to each level 2 unit - i.e., do we have 100 children from Balfron High School and only 10 from Wallace Hall Academy, or do we have the same number in each?</p>
+<p>Another important thing to examine when you first get hierarchical data is the number of level 1 units that belong to each level 2 unit - i.e., do we have 100 children from Calderglen High School and only 10 from Broughton High School, or do we have the same number in each?</p>
 <p>We can easily count how many children are in each school by counting the number of rows for each distinct value in the school identifier column. We could then pass this to the <code>summary()</code> function to see the minimum, median, mean, maximum etc. As we can see below, in this dataset every school has data from exactly 30 children (min is the same as max):</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>schoolmot <span class="sc">|&gt;</span></span>
@@ -2093,12 +2099,12 @@ ICC \; (\rho) &amp;= \frac{\sigma^2_{b}}{\sigma^2_{b} + \sigma^2_e} \\
 </div>
 </div>
 <p>There are various packages that allow us to calculate the ICC, and when we get to fitting multilevel models we will see how we can extract it from a fitted model.</p>
-<p>In the school motivation data (visualised above), it’s estimated that 40% of the variance in grades is due to school-related differences:</p>
+<p>In the school motivation data (visualised above), it’s estimated that 22% of the variance in grades is due to school-related differences:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ICC)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ICCbare</span>(schoolid, grade, <span class="at">data =</span> schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.4026178</code></pre>
+<pre><code>[1] 0.2191859</code></pre>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
@@ -2178,14 +2184,14 @@ The 29 here is the <span class="math inline">\(k-1\)</span> in the formula above
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ICC</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>(msb<span class="sc">-</span>mse) <span class="sc">/</span>(msb <span class="sc">+</span> (<span class="dv">29</span><span class="sc">*</span>mse))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.4026178</code></pre>
+<pre><code>[1] 0.2191859</code></pre>
 </div>
 </div>
 </div>
 </div>
 </div>
 <p>Another way of thinking about the ICC is that it is the correlation between two randomly drawn observations from the same group. This is a bit of a tricky thing to get your head round if you try to relate it to the type of “correlation” that you are familiar with. Pearson’s correlation (e.g think about a typical scatterplot) operates on <em>pairs of observations</em> (a set of values on the x-axis and their corresponding values on the y-axis), whereas ICC operates on <em>data which is structured in groups</em>.</p>
-<p>Suppose I pick a school, and within that pick 2 children and plot their grades against each other. I randomly pick another school, and another two children from it, and add them to the plot, and then keep doing this (<a href="#fig-icccorplot">Figure&nbsp;11</a>). The ICC is the correlation between such pairs.</p>
+<p>We can think of it as the average correlation between all possible pairs of observations from the same group. Suppose I pick a school, and within that pick 2 children and plot their grades against each other. I randomly pick another school, and another two children from it, and add them to the plot, and then keep doing this (<a href="#fig-icccorplot">Figure&nbsp;11</a>). The ICC is the correlation between such pairs.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div id="fig-icccorplot" class="quarto-figure quarto-figure-center anchored">
@@ -2221,7 +2227,7 @@ The code below creates a function for us to use. Can you figure out how it works
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_random_pair</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 51.47 52.86</code></pre>
+<pre><code>[1] 28.35 50.84</code></pre>
 </div>
 </div>
 <p>Now let’s make our computer do it loads and loads of times:</p>
@@ -2232,7 +2238,7 @@ The code below creates a function for us to use. Can you figure out how it works
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> <span class="fu">t</span>(sims)</span>
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(sims[,<span class="dv">1</span>], sims[,<span class="dv">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.3987734</code></pre>
+<pre><code>[1] 0.2097805</code></pre>
 </div>
 </div>
 </div>
@@ -2428,13 +2434,13 @@ The data aren’t paired, they’re just random draws from a <strong>group.</str
 <p>Information from each cluster contributes <strong>only</strong> to an estimate for that specific cluster.</p>
 <p>e.g.&nbsp;</p>
 <ol type="1">
-<li>Estimate the effect of motivation on grades after accounting for school-specific differences in grades.:</li>
+<li>No Pooling - Additive Model: Estimate the effect of motivation on grades after accounting for school-specific differences in grades.:</li>
 </ol>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(grade <span class="sc">~</span> motiv <span class="sc">+</span> schoolid, <span class="at">data =</span> schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ol start="2" type="1">
-<li>Estimate school-specific differences in grades, and school-specific differences in the effect of motivation on grades. Get <em>loads</em> of coefficients that aren’t really of interest. Slightly more difficult to get out an average slope of <code>grade ~ motiv</code>, and each school contributes equally to this average (regardless of how many children we have from that school).</li>
+<li>No Pooling - Interaction Model: Estimate school-specific differences in grades, and school-specific differences in the effect of motivation on grades. Get <em>loads</em> of coefficients that aren’t really of interest. Slightly more difficult to get out an average slope of <code>grade ~ motiv</code>, and each school contributes equally to this average (regardless of how many children we have from that school).</li>
 </ol>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(grade <span class="sc">~</span> motiv <span class="sc">*</span> schoolid, <span class="at">data =</span> schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -2709,7 +2715,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-left">
       &nbsp;
     </div>   
-    <div class="nav-footer-center">© Copyright 2019-2023 <a href="https://www.ed.ac.uk/">The University of Edinburgh</a>. Site licensed under the <a href="https://www.gnu.org/licenses/agpl-3.0.en.html">GNU AGPLv3</a> license.</div>
+    <div class="nav-footer-center">© Copyright 2019-2024 <a href="https://www.ed.ac.uk/">The University of Edinburgh</a>. Site licensed under the <a href="https://www.gnu.org/licenses/agpl-3.0.en.html">GNU AGPLv3</a> license.</div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
