@@ -1,0 +1,109 @@
+---
+title: "Untitled"
+author: "Dan Mirman"
+date: "`r Sys.Date()`"
+output: html_document
+---
+---
+# A simple MLM example
+```{r}
+load("./data/VisualSearchEx.rda")
+str(VisualSearchEx)
+```
+
+```{r fig.height=2.5, fig.width=5, echo=FALSE}
+ggplot(VisualSearchEx, aes(Set.Size, RT, color=Group)) +
+  stat_summary(fun.data=mean_se, geom="pointrange")
+```
+
+---
+# A simple MLM example: Fit the models
+```{r message=FALSE, warning=FALSE}
+library(lme4)
+# a null, intercept-only model
+vs.null <- lmer(RT ~ 1 + (1 + Set.Size | Participant), 
+                data=VisualSearchEx, REML=FALSE)
+# add effect of set size
+vs <- lmer(RT ~ Set.Size + (Set.Size | Participant), 
+           data=VisualSearchEx, REML=F)
+```
+
+--
+
+```{r message=FALSE, warning=FALSE}
+# add effect of group
+vs.0 <- lmer(RT ~ Set.Size + Group + (Set.Size | Participant),
+             data=VisualSearchEx, REML=F)
+# add set size by group interaction
+vs.1 <- lmer(RT ~ Set.Size + Group + Set.Size:Group + (Set.Size | Participant),
+             data=VisualSearchEx, REML=F)
+```
+
+---
+# A simple MLM example: Compare the model fits
+```{r message=FALSE, warning=FALSE}
+anova(vs.null, vs, vs.0, vs.1)
+```
+
+---
+# A simple MLM example: Interpet results
+```{r echo=FALSE}
+kable(anova(vs.null, vs, vs.0, vs.1)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+```
+
+Compared to null model, adding set size (`vs`) substantially improves model fit: response times are affected by number of distractors
+
+--
+
+Adding effect of Group on intercept (`vs.0`) significantly improves model fit: stroke survivors respond more slowly than control participants do
+
+--
+
+Adding interaction of set size and Group, i.e., effect of Group on slope (`vs.1`), does not significantly improve model fit: stroke survivors are not more affected by distractors than control participants are
+
+---
+# A simple MLM example: Inspect model
+.scroll-output[
+```{r}
+summary(vs.1)
+```
+]
+---
+# A simple MLM example: Parameter p-values
+Oh no! `summary()` for models fit by `lme4::lmer` (`lmerMod` objects) does not include p-values.
+```{r echo=FALSE}
+coef(summary(vs.1))
+```
+
+Those p-values are one-sample t-tests of whether $Est \neq 0$ with $t = Est/SE$
+
+--
+
+The `df` for these t-tests are not simple to determine because random effects are not free parameters (estimated under constraints). 
+
+But `df` can be estimated, and the two most common estimations are "Kenward-Roger" and "Satterthwaite". These approximations are implemented in a few different packages (`afex`, `lmerTest`, `pbkrtest`).
+
+---
+# A simple MLM example: Parameter p-values
+
+One of the easiest to use is the `lmerTest` package: you can fit the model the same way (it just passes your call to `lmer`) and it will calculate the Satterthwaite approximation and add those `df` and p-values to the model summary
+
+--
+
+.scroll-output[
+```{r message=FALSE, warning=FALSE}
+library(lmerTest)
+vs.1 <- lmer(RT ~ Set.Size + Group + Set.Size:Group + (Set.Size | Participant), 
+             data=VisualSearchEx, REML=F)
+summary(vs.1)
+```
+]
+
+---
+# A simple MLM example: Plot model fit
+```{r fig.height=4, fig.width=6}
+ggplot(VisualSearchEx, aes(Set.Size, RT, color=Group)) + 
+  stat_summary(fun.data=mean_se, geom="pointrange") + 
+  stat_summary(aes(y=fitted(vs.0)), fun=mean, geom="line")
+```

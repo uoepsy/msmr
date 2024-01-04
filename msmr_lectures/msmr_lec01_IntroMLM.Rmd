@@ -17,16 +17,40 @@ output:
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
-```
+library(knitr)
+library(tidyverse)
+library(ggplot2)
+library(kableExtra)
+library(patchwork)
+library(broom)
 
-```{r xaringan-themer, include = FALSE}
+xaringanExtra::use_share_again()
+xaringanExtra::use_xaringan_extra(c("tile_view","animate_css","tachyons"))
+xaringanExtra::use_extra_styles(
+  mute_unhighlighted_code = FALSE
+)
+knitr::opts_chunk$set(
+  dev = "svg",
+  warning = FALSE,
+  message = FALSE,
+  cache = FALSE,
+  fig.asp = .8
+)
+
+options(htmltools.dir.version = FALSE)
+options(digits=4,scipen=2)
+options(knitr.table.format="html")
+
+theme_set(
+    theme_minimal() + 
+    theme(text = element_text(size=20))
+)
+
+#source("jk_source/jk_presfuncs.R")
+
 library(xaringanthemer)
 style_mono_accent(
-  # base_color = "#0F4C81", # DAPR1
-  # base_color = "#BF1932", # DAPR2
-  # base_color = "#88B04B", # DAPR3 
-  # base_color = "#FCBB06", # USMR
-  base_color = "#a41ae4", # MSMR
+ base_color = "#a41ae4", # MSMR
   header_color = "#000000",
   header_font_google = google_font("Source Sans Pro"),
   header_font_weight = 400,
@@ -36,172 +60,325 @@ style_mono_accent(
 ) 
 ```
 
-# What are nested data?
+# Today's Lecture: LM --> LMER
 
-Data that have hierarchical or clustered structure
+* Linear regression refresher
+* Extension to linear *mixed effects* regression (multilevel modeling)
+* "Nested" data, why use mixed effects / multilevel models
+* Your first MLM
 
-* Clustered observations (ex: multiple children in one family or classroom or neighborhood)
-* Repeated measures (ex: multiple questions on an exam, any within-subject manipulation)
-* Longitudinal data (ex: height of children)
+---
+# Statistical models
+
+.br3.pa2.f2[
+$$
+\begin{align}
+\color{red}{\textrm{outcome}} & = \color{blue}{(\textrm{model})} + \textrm{error} 
+\end{align}
+$$
+]
+
+- handspan = height + randomness  
+
+- cognitive test score = age + premorbid IQ + ... + randomness
+
+---
+# The Linear Model
+
+.br3.pa2.f2[
+$$
+\begin{align}
+\color{red}{\textrm{outcome}} & = \color{blue}{(\textrm{model})} + \textrm{error} \\
+\color{red}{y_i} & = \color{blue}{\beta_0 \cdot{} 1 + \beta_1 \cdot{} x_i} + \varepsilon_i \\
+\text{where } \\
+\varepsilon_i & \sim N(0, \sigma) \text{ independently} \\
+\end{align}
+$$
+]
+
+**OUTCOME** Y = linear combination of set of **PREDICTORS** X plus some error
+
+$\beta_{x}$: coefficient or weight of predictor $x$
+
+---
+# The Linear Model
+
+.pull-left[
+Our proposed model of the world:
+
+$\color{red}{y_i} = \color{blue}{\beta_0 \cdot{} 1 + \beta_1 \cdot{} x_i} + \varepsilon_i$  
+
+Our model _fitted_ to some data (note the $\widehat{\textrm{hats}}$):  
+
+$\hat{y}_i = \color{blue}{\hat \beta_0 \cdot{} 1 + \hat \beta_1 \cdot{} x_i}$  
+
+For the $i^{th}$ observation:
+  - $\color{red}{y_i}$ is the value we observe for $x_i$   
+  - $\hat{y}_i$ is the value the model _predicts_ for $x_i$   
+  - $\color{red}{y_i} = \hat{y}_i + \hat\varepsilon_i$ 
+]
+  
+.pull-right[
+```{r bb, echo=F, fig.asp=.6, warning=FALSE, message=FALSE}
+x <- tibble(x=c(-1,4))
+f <- function(x) {5+2*x}
+p1 <- x %>% ggplot(aes(x=x)) +
+  stat_function(fun=f,size=1,colour="blue") +
+  geom_segment(aes(x=0,xend=0,y=0,yend=f(0)),colour="blue", lty="dotted") +
+  geom_segment(aes(x=0,xend=1,y=f(0),yend=f(0)),colour="blue",linetype="dotted") +
+  geom_segment(aes(x=1,y=f(0),xend=1,yend=f(1)),colour="blue",linetype="dotted") +
+  annotate("text",x=.5,y=2.5,label=expression(paste(beta[0], " (intercept)")),
+           size=5,parse=TRUE,colour="blue") +
+  annotate("text",x=1.4,y=6,label=expression(paste(beta[1], " (slope)")),
+           size=5,parse=TRUE,colour="blue") +
+    ggtitle(expression(paste(beta[0]," = 5, ",beta[1]," = 2")))+
+  scale_y_continuous(breaks=0:13)+
+  scale_x_continuous(limits = c(-0.3, 4), breaks=0:4)
+p1 +
+  ggtitle("")+
+  scale_y_continuous("y",labels=NULL)+
+  scale_x_continuous(limits=c(-0.3,4), breaks=c(0,1), labels=c("0","1"))
+  
+```
+]
+
+---
+# An Example
+
+
+.pull-left[
+
+$\color{red}{y_i} = \color{blue}{5 \cdot{} 1 + 2 \cdot{} x_i} + \hat\varepsilon_i$  
+  
+__e.g.__   
+for the observation $x_i = 1.2, \; y_i = 9.9$:  
+
+$$
+\begin{align}
+\color{red}{9.9} & = \color{blue}{5 \cdot{}} 1 + \color{blue}{2 \cdot{}} 1.2 + \hat\varepsilon_i \\
+& = 7.4 + \hat\varepsilon_i \\
+& = 7.4 + 2.5 \\
+\end{align}
+$$
+]
+
+.pull-right[
+```{r errplot,fig.asp=.6,echo=FALSE}
+xX <-1.2
+yY <- 9.9
+p1 + ylab(expression(paste(hat(y)," = ",5 %.% 1 + 2 %.% x))) +
+  geom_point(aes(x=xX,y=yY),size=3,colour="red") +
+  geom_segment(aes(x=xX,xend=xX,y=f(xX),yend=yY),linetype="dotted",colour="black") +
+  annotate("text",.8,8.6,label=expression(paste(epsilon[i]," (residual)")),colour="black",size=5)
+```
+]
+
+---
+# A "Real" Example
+
+### Effect of caffeine consumption on processing speed
 
 --
 
-**Very common in psychological science**
+.pull-left[
+```{r caff_lm_plot, echo=FALSE}
+# simulate data
+N <- 30
+set.seed(8675309)
+caff_lm <- data.frame(Participant = seq(1, N*2),
+                      Caffeine = rep(c(TRUE, FALSE), each=N),
+                      RT = c(540 + rnorm(N, sd=15), 553 + rnorm(N, sd=15)))
+# plot the data
+ggplot(caff_lm, aes(Caffeine, RT, fill=Caffeine)) + 
+  geom_boxplot(show.legend = FALSE) 
+```
+]
 
-```{r setup2, include=FALSE, message=FALSE}
-options(digits = 4)
-library(tidyverse)
-library(knitr)
-library(kableExtra)
-library(patchwork)
-load("./data/WordLearnEx.rda")
-load("./data/VisualSearchEx.rda")
+--
+
+.pull-right[
+```{r caff_lm, echo=FALSE}
+sjPlot::tab_model(lm(RT ~ Caffeine, data=caff_lm))
 ```
 
----
-# Gradual change (based on a true story)
+.footnote[These data are simulated, but are inspired by real data from the UK Biobank]
 
-```{r echo=FALSE, fig.height=4, fig.width=6}
-ggplot(WordLearnEx, aes(Block, Accuracy, color=TP, fill=TP)) + 
-  stat_summary(fun=mean, geom="line") +
-  stat_summary(fun.data = mean_se, geom="ribbon", alpha=0.5, color=NA) +
-  scale_x_continuous(breaks=1:10) +
-  theme_bw() 
+]
+
+---
+# Assumptions
+
+.br3.pa2.f2[
+**L**inearity<br>
+**I**ndependence<br>
+**N**ormality<br>
+**E**qual variance<br>
+]
+
+---
+# Assumptions
+
+.br3.pa2.f2[
+**L**inearity<br>
+**Independence**<br>
+**N**ormality<br>
+**E**qual variance<br>
+]
+
+---
+# Clustering (aka Nested Data)
+.pull-left[
+- children within schools  
+
+- patients within clinics  
+
+- **observations within individuals**
+]
+
+.pull-right[
+```{r echo=FALSE}
+knitr::include_graphics("figs/h2.png")
+```
+]
+
+---
+# Clusters of Clustered Data
+
+.pull-left[
+- children within classrooms within schools within districts etc...  
+
+- patients within doctors within hospitals... 
+
+- time-periods within trials within individuals
+]
+
+.pull-right[
+```{r echo=FALSE}
+knitr::include_graphics("figs/h3.png")
+```
+]
+
+.footnote[
+Other relevant terms you will tend to see: "grouping structure", "levels", "hierarchies". 
+]
+
+---
+# Why do we care about nested/clustered data?
+
+.pull-left[
+- Observations within clusters are *__not independent__*: violating independence assumption
+
+- Observations within clusters tend to be more similar to each other than to those in other clusters
+    - Academic performance of children in the same classroom will tend to be more similar to one another (because of classrom-specific things such as the teacher) than to children in other classrooms.
+    - Participants with faster processing speed will tend to be faster than other participants both with and without caffeine
+]
+
+.pull-right[
+
+**Effect of caffeine consumption on processing speed**: Observations within individuals
+
+```{r caff_mlm_plot, echo=FALSE}
+# generate data
+set.seed(90210)
+caff_mlm <- data.frame(Participant = seq(1, N),
+                       Caffeine = 540 + rnorm(N, sd=15)) %>% 
+  mutate(NoCaffeine = Caffeine + 13 + rnorm(N, sd=15)) %>% 
+  pivot_longer(2:3, names_to = "Condition", values_to = "RT")
+
+# make a plot
+ggplot(caff_mlm, aes(Condition, RT, fill=Condition)) + 
+  geom_violin(show.legend = FALSE) +
+  geom_point(show.legend = FALSE) + 
+  geom_line(aes(group=Participant), show.legend = FALSE)
 ```
 
---
-
-* Novel word learning is faster for high TP than low TP words
-
---
-
-* But, t-test on overall mean accuracy is marginal (p=0.096)
-
---
-
-* Repeated measures ANOVA shows main effect of Block, marginal effect of TP, and no interaction (F<1)
-
---
-
-* Block-by-block t-test significant only in block 4 and marginal in block 5
+]
 
 ---
-# Two key features
+# Quantifying Clustering
 
-### Nested data are not independent
-
-* A child that is taller-than-average at time *t*, is likely to be taller-than-average at time *t+1*
-* Non-independence is related to individual differences
-* Nesting can happen on multiple levels: children within families or hospitals
+"Observations within clusters tend to be more similar to each other than to those in other clusters"
 
 --
 
-### Can be related by continuous variable (i.e., time, but could be [letter] size, number of distractors, etc.)
+**Intra-Class Correlation coefficient (ICC)**: ratio of *variance between groups* to *total variance* (There are different formulations of ICC, but they all share this core principle)
 
-* Ought to model this variable as continuous
-* Can quantify trajectories/shapes of change
-
----
-# Why use multilevel models for nested data?
-
-* Correctly model non-independence of observations
-* Estimate group-level and individual-level effects (same for other levels)
-* Model trajectories of change
+<br>
+$\rho = \frac{\sigma^2_{b}}{\sigma^2_{b} + \sigma^2_e} \\ \qquad \\\textrm{Where:} \\ \sigma^2_{b} = \textrm{variance between clusters} \\ \sigma^2_e = \textrm{variance within clusters (residual variance)} \\$
 
 --
 
-### Nomenclature note
+- A **larger ICC** means that more variability between clusters and (relatively) lower variability within the clusters. That is, observations within a cluster are highly consistent (correlated), but observations from different clusters are highly variable.
 
-All of these terms refer to the same family of statistical methods, with slight differences in term preference across application domains and in implied data type:
+- A **smaller ICC** means less variability between clusters relative to variability within clusters, so observations within clusters are *not* particularly similar relative to observations from different clusters
 
-* Multilevel models (MLM), Multilevel regression (MLR)
-* Hierarchical linear modeling (HLM)
-* Mixed effects models (MEM), Mixed effects regression (MER), Linear mixed models (LMM)
-* Growth curve analysis (GCA; implies longitudinal data with non-linear change)
+--
 
+Clustering is something **systematic** that our model should (arguably) take into account.
 
 ---
-# Linear regression: A brief review
-```{r echo=FALSE, message=FALSE, fig.height=4, fig.width=4}
-library(grid)
-set.seed(1)
-lr.dat <- data.frame(Time = 0:10, Y = 5:15 + runif(11, -2, 2))
-#basic plot
-f1 <- ggplot(lr.dat, aes(Time, Y)) + geom_point(shape=21) + 
-  stat_smooth(method="lm", se=F, color="black") + 
-  expand_limits(y=c(0,16), x=c(-1,11)) + 
-  theme_bw() + theme(axis.ticks = element_blank(), axis.text.x = element_blank(), axis.text.y = element_blank()) +
-  #add betas and dashed lines
-  annotate("segment", x=0, xend=10, y=5.2, yend=5.2, linetype="dashed", color="red") + 
-  annotate("segment", x=10, xend=10, y=5.2, yend=14.9, linetype="dashed", color="red") + 
-  annotate("text", x=-0.2, y=5.2, label = "beta[0]", parse=T, hjust=1, color="blue", size=8) + 
-  annotate("text", x=10.2, y=10, label = "beta[1]", parse=T, hjust=0, color="red", size=8) 
-#add Yij and epsilon
-f1 <- f1 + geom_point(data = subset(lr.dat, Time==5), shape=16) + 
-  annotate("text", x=4.9, y=12.1, label = "Y[ij]", parse=T, hjust=0, size=8) + 
-  annotate("text", x=4.8, y=11, label = "epsilon[ij]", parse=T, hjust=1, size=8) + 
-  geom_segment(aes(x = 5, y = 10.25, xend = 5, yend = 11.4), arrow = arrow(length = unit(0.1, "cm"), ends="both"))
-# render the image
-f1
+# Modeling clusters
+
+.pull-left[
+Our proposed model of the world (no clusters):
+
+$\color{red}{y_i} = \color{blue}{\beta_0 + \beta_1} \cdot{} x_i + \varepsilon_i$  
+
+__Fixed effects__: <span style="color:blue"> $\beta_{0}$ </span> (Intercept), <span style="color:blue"> $\beta_{1}$ </span> (Slope)
+
+* Fixed effects are the same (fixed) for all observations in the data set
+
+__Random effects__: $\varepsilon_i$ (Residual error)
+
+* Random effects are different (drawn randomly from a distribution) for each observation
+]
+
+--
+
+.pull-right[
+Our proposed model of the world (participant clusters):
+
+$\color{red}{y_{ij}} = \color{blue}{\beta_0 + \beta_1} \cdot{} x_{ij} + \color{green}{\zeta_{0i} + \zeta_{1i}}  \cdot{} x_{ij} + \varepsilon_{ij}$ 
+
+__Fixed effects__: <span style="color:blue"> $\beta_{0}$ </span> (Intercept), <span style="color:blue"> $\beta_{1}$ </span> (Slope)
+
+* Fixed effects are the same (fixed) for all observations in the data set
+
+__Random effects__
+
+* $\color{green}{\zeta_{0i}}$: participant $i$'s deviation from group mean **intercept**, drawn randomly from a distribution *for each participant*
+* $\color{green}{\zeta_{1i}}$ participant $i$'s deviation from group mean **slope**, drawn randomly from a distribution *for each participant*
+* $\varepsilon_{ij}$: drawn randomly from a distribution *for each observation* $(ij)$
+]
+
+---
+# Modeling clusters
+
+.pull-left[
+```{r caff_mlm_plot2, echo=FALSE}
+# re-make a plot
+ggplot(caff_mlm, aes(Condition, RT, fill=Condition)) + 
+  geom_violin(show.legend = FALSE) +
+  geom_point(show.legend = FALSE) + 
+  geom_line(aes(group=Participant), show.legend = FALSE)
 ```
+]
 
---
+.pull-right[
+Our proposed model of the world (participant clusters):
 
-$Y = \beta_{0} + \beta_{1} \cdot Time$
+$\color{red}{y_{ij}} = \color{blue}{\beta_0 + \beta_1} \cdot{} x_{ij} + \color{green}{\zeta_{0i} + \zeta_{1i}}  \cdot{} x_{ij} + \varepsilon_{ij}$ 
 
---
+__Fixed effects__: <span style="color:blue"> $\beta_{0}$ </span> (Intercept), <span style="color:blue"> $\beta_{1}$ </span> (Slope)
 
-$Y_{ij} = \beta_{0i} + \beta_{1i} \cdot Time_{j} + \epsilon_{ij}$
+* Fixed effects are the same (fixed) for all observations in the data set
 
---
+__Random effects__
 
-__Fixed effects__: <span style="color:blue"> $\beta_{0}$ </span> (Intercept), <span style="color:red"> $\beta_{1}$ </span> (Slope)
-
---
-
-__Random effects__: $\epsilon_{ij}$ (Residual error)
-
----
-# Multilevel models: Fixed effects
-Level 1: $Y_{ij} = \beta_{0i} + \beta_{1i} \cdot Time_{j} + \epsilon_{ij}$
-
---
-
-Level 2: model of the Level 1 parameter(s) 
-
-$\beta_{0i} = \gamma_{00} + \zeta_{0i}$ 
-
-* $\gamma_{00}$ is the population mean 
-* $\zeta_{0i}$ is individual deviation from the mean
-
---
-
-$\beta_{0i} = \gamma_{00} + \gamma_{0C} \cdot C  + \zeta_{0i}$ 
-
-* $\gamma_{0C}$ is the fixed effect of condition $C$ on the *intercept*
-
---
-
-$\beta_{1i} = \gamma_{10} + \gamma_{1C} \cdot C  + \zeta_{1i}$ 
-
-* $\gamma_{1C}$ is the fixed effect of condition $C$ on the *slope*
-
----
-# Multilevel models: Random effects
-Level 1: $Y_{ij} = \beta_{0i} + \beta_{1i} \cdot Time_{j} + \epsilon_{ij}$
-
-Level 2: 
-
-$\beta_{0i} = \gamma_{00} + \gamma_{0C} \cdot C  + \zeta_{0i}$
-
-$\beta_{1i} = \gamma_{10} + \gamma_{1C} \cdot C  + \zeta_{1i}$ 
-
-Residual errors
-
-* $\zeta_{0i}$ unexplained variance in *intercept*
-* $\zeta_{1i}$ unexplained variance in *slope*
-* Unexplained variance reflects individual differences
-* Random effects require a lot of data to estimate
+* $\color{green}{\zeta_{0i}}$: participant $i$'s deviation from group mean **intercept**, drawn randomly from a distribution *for each participant*
+* $\color{green}{\zeta_{1i}}$ participant $i$'s deviation from group mean **slope**, drawn randomly from a distribution *for each participant*
+* $\varepsilon_{ij}$: drawn randomly from a distribution *for each observation* $(ij)$
+]
 
 ---
 # Fixed vs. Random effects
@@ -209,16 +386,16 @@ Residual errors
 **Fixed effects**
 
 * Interesting in themselves
-* Reproducible fixed properties of the world (nouns vs. verbs, WM load, age, etc.)
-* <span style="color:red"> *Unique, unconstrained parameter estimate for each condition* </span>
+* Reproducible fixed properties of the world (caffeine consumption, nouns vs. verbs, WM load, age, etc.)
+* <span style="color:blue"> *Unique, unconstrained parameter estimate for each condition* </span>
 
 --
 
 **Random effects**
 
-* Randomly sampled observational units over which you intend to generalize (particular nouns/verbs, particular individuals, etc.)
-* Unexplained variance
-* <span style="color:red"> *Drawn from normal distribution with mean 0* </span>
+* Randomly sampled observational units over which you intend to generalise (individual participants, particular nouns/verbs, etc.)
+* Can be used to quantify individual differences
+* <span style="color:green"> *Drawn from normal distribution with mean 0* </span>
 
 ---
 # Maximum Likelihood Estimation
@@ -245,74 +422,50 @@ Goodness of fit measure: log likelihood (LL)
 4. Improve/adjust model(s), rinse, repeat
 
 ---
-# A simple MLM example
-```{r fig.height=3, fig.width=5}
-str(VisualSearchEx)
-ggplot(VisualSearchEx, aes(Set.Size, RT, color=Dx)) + stat_summary(fun.data=mean_se, geom="pointrange")
-```
+# Our first MLM
 
----
-# A simple MLM example: Fit the models
-```{r message=FALSE, warning=FALSE}
+### Effect of caffeine consumption on processing speed
+
+.pull-left[
+```{r caff_mod}
+head(caff_mlm)
 library(lme4)
-# a null, intercept-only model
-vs.null <- lmer(RT ~ 1 + (1 + Set.Size | Participant), 
-                data=VisualSearchEx, REML=FALSE)
-# add effect of set size
-vs <- lmer(RT ~ Set.Size + (Set.Size | Participant), 
-           data=VisualSearchEx, REML=F)
+mod_caff <- lmer(RT ~ 1 + Condition +
+                   (1 | Participant), 
+                 data=caff_mlm, REML=FALSE)
 ```
+]
 
---
-
-```{r message=FALSE, warning=FALSE}
-# add effect of diagnosis
-vs.0 <- lmer(RT ~ Set.Size + Dx + (Set.Size | Participant),
-             data=VisualSearchEx, REML=F)
-# add set size by diagnosis interaction
-vs.1 <- lmer(RT ~ Set.Size + Dx + Set.Size:Dx + (Set.Size | Participant),
-             data=VisualSearchEx, REML=F)
-```
-
----
-# A simple MLM example: Compare the model fits
-```{r message=FALSE, warning=FALSE}
-anova(vs.null, vs, vs.0, vs.1)
-```
-
----
-# A simple MLM example: Interpet results
-```{r echo=FALSE}
-kable(anova(vs.null, vs, vs.0, vs.1)) %>%
-  kable_styling(bootstrap_options = c("striped", "hover"))
-```
-
-Compared to null model, adding set size (`vs`) substantially improves model fit: response times are affected by number of distractors
-
---
-
-Adding effect of Diagnosis on intercept (`vs.0`) significantly improves model fit: stroke survivors respond more slowly than control participants do
-
---
-
-Adding interaction of set size and Diagnosis, i.e., effect of Diagnosis on slope (`vs.1`), does not significantly improve model fit: stroke survivors are not more affected by distractors than control participants are
-
----
-# A simple MLM example: Inspect model
-.scroll-output[
-```{r}
-summary(vs.1)
+.pull-right[
+```{r caff_mlm_plot3, echo=FALSE}
+ggplot(caff_mlm, aes(Condition, RT, fill=Condition)) + 
+  geom_violin(show.legend = FALSE) +
+  geom_point(show.legend = FALSE) + 
+  geom_line(aes(group=Participant), show.legend = FALSE)
 ```
 ]
 
 ---
-# A simple MLM example: Parameter p-values
+# Inspect the model
+
+.scroll-output[
+```{r caff_insp}
+summary(mod_caff)
+```
+]
+
+---
+# Parameter p-values
 Oh no! `summary()` for models fit by `lme4::lmer` (`lmerMod` objects) does not include p-values.
 ```{r echo=FALSE}
-coef(summary(vs.1))
+coef(summary(mod_caff))
 ```
 
-Those p-values are one-sample t-tests of whether $Est \neq 0$ with $t = Est/SE$
+--
+What *are* those p-values?
+
+--
+One-sample t-tests of whether $Est \neq 0$ with $t = Est/SE$
 
 --
 
@@ -321,7 +474,7 @@ The `df` for these t-tests are not simple to determine because random effects ar
 But `df` can be estimated, and the two most common estimations are "Kenward-Roger" and "Satterthwaite". These approximations are implemented in a few different packages (`afex`, `lmerTest`, `pbkrtest`).
 
 ---
-# A simple MLM example: Parameter p-values
+# Parameter p-values
 
 One of the easiest to use is the `lmerTest` package: you can fit the model the same way (it just passes your call to `lmer`) and it will calculate the Satterthwaite approximation and add those `df` and p-values to the model summary
 
@@ -330,39 +483,29 @@ One of the easiest to use is the `lmerTest` package: you can fit the model the s
 .scroll-output[
 ```{r message=FALSE, warning=FALSE}
 library(lmerTest)
-vs.1 <- lmer(RT ~ Set.Size + Dx + Set.Size:Dx + (Set.Size | Participant), 
-             data=VisualSearchEx, REML=F)
-summary(vs.1)
+mod_caff <- lmer(RT ~ 1 + Condition +
+                   (1 | Participant), 
+                 data=caff_mlm, REML=FALSE)
+summary(mod_caff)
 ```
 ]
 
 ---
-# A simple MLM example: Plot model fit
-```{r fig.height=4, fig.width=6}
-ggplot(VisualSearchEx, aes(Set.Size, RT, color=Dx)) + 
-  stat_summary(fun.data=mean_se, geom="pointrange") + 
-  stat_summary(aes(y=fitted(vs.0)), fun=mean, geom="line")
+# Remember: MLM is just an extension of LM
+
+**Our first MLM**
+```{r echo=FALSE}
+coef(summary(mod_caff))
 ```
 
----
-# Another way to plot model fit
-
-The `effects` package provides a convenient way to pull estimated values from a model (along with SE and confidence intervals). Very useful for plotting effects from complicated models, or when there are missing data, etc.
-
-```{r message=FALSE}
-library(effects)
-ef <- as.data.frame(effect("Set.Size:Dx", vs.0))
-head(ef)
+**A paired-samples t-test**
+```{r}
+t.test(RT ~ Condition, data=caff_mlm, paired=TRUE)
 ```
 
----
-# Another way to plot model fit
+--
 
-The `effects` package provides a convenient way to pull estimated values from a model (along with SE and confidence intervals). Very useful for plotting effects from complicated models, or when there are missing data, etc.
-
-```{r fig.height=4, fig.width=6, message=FALSE}
-ggplot(ef, aes(Set.Size, fit, color=Dx)) + geom_line()
-```
+**Key difference**: MLM offers more flexible specification of fixed and random effects
 
 ---
 # Some general advice
@@ -392,7 +535,7 @@ Questions?
 Recall: 
 
 1. ANOVA is a particular kind of GLM (linear regression with categorical predictors).
-2. Repeated-measures ANOVA is used for within-participant manipulations; aka, nested observations.
+2. Repeated-measures ANOVA is used for within-participant manipulations; aka, clustered or nested observations.
 
 --
 
@@ -400,8 +543,9 @@ MLM is an extension of GLM with random effects to capture within-participant nes
 
 --
 
-**Example 1**: Fazio (2020) Repetition Increases Perceived Truth Even for Known Falsehoods. *Collabra: Psychology, 6*(1):38. https://doi.org/10.1525/collabra.347. Data available at: https://osf.io/kt2p8/
+### Example: Effect of caffeine consumption on processing speed **in younger vs older adults**
 
-Participants had to determine whether statements were true or false. The manipulations were (1) whether the fact was known or unknown to the participant and (2) whether the participant had been previously exposed to the statement. We know repeated exposure increases "truthiness" of false statements, the key question is whether prior knowledge is a protective factor.
+```{r}
+load("./data/caff_age.rda")
+```
 
-That is, does *knowing* that the statement is false protect people from the repetition effect?
