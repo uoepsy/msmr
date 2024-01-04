@@ -162,7 +162,7 @@ if(f.classList.contains('fa-circle-right')) {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./01a_clustered.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">1A: Clustered Data | LMM</span></a>
+ <span class="menu-text">1A: Clustered Data</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -201,21 +201,20 @@ if(f.classList.contains('fa-circle-right')) {
    
   <ul>
   <li><a href="#fixed-effects" id="toc-fixed-effects" class="nav-link active" data-scroll-target="#fixed-effects">Fixed effects</a></li>
-  <li><a href="#the-multi-level-model" id="toc-the-multi-level-model" class="nav-link" data-scroll-target="#the-multi-level-model">The multi-level model</a>
+  <li><a href="#introducing-the-multilevel-model" id="toc-introducing-the-multilevel-model" class="nav-link" data-scroll-target="#introducing-the-multilevel-model">Introducing the Multilevel Model</a>
   <ul class="collapse">
-  <li><a href="#random-intercept" id="toc-random-intercept" class="nav-link" data-scroll-target="#random-intercept">random intercept</a></li>
+  <li><a href="#random-intercepts" id="toc-random-intercepts" class="nav-link" data-scroll-target="#random-intercepts">random intercepts</a></li>
   <li><a href="#random-slopes" id="toc-random-slopes" class="nav-link" data-scroll-target="#random-slopes">random slopes</a></li>
-  <li><a href="#partial-pooling" id="toc-partial-pooling" class="nav-link" data-scroll-target="#partial-pooling">partial pooling</a></li>
   </ul></li>
-  <li><a href="#fitting-multilevel-models-in-r" id="toc-fitting-multilevel-models-in-r" class="nav-link" data-scroll-target="#fitting-multilevel-models-in-r">fitting multilevel models in R</a>
+  <li><a href="#partial-pooling" id="toc-partial-pooling" class="nav-link" data-scroll-target="#partial-pooling">Partial pooling</a></li>
+  <li><a href="#fitting-multilevel-models-in-r" id="toc-fitting-multilevel-models-in-r" class="nav-link" data-scroll-target="#fitting-multilevel-models-in-r">Fitting Multilevel Models in R</a>
   <ul class="collapse">
-  <li><a href="#model-parameters" id="toc-model-parameters" class="nav-link" data-scroll-target="#model-parameters">model parameters</a></li>
-  <li><a href="#cluster-predictions" id="toc-cluster-predictions" class="nav-link" data-scroll-target="#cluster-predictions">cluster predictions</a></li>
+  <li><a href="#extracting-model-parameters" id="toc-extracting-model-parameters" class="nav-link" data-scroll-target="#extracting-model-parameters">Extracting model parameters</a></li>
+  <li><a href="#making-model-predictions" id="toc-making-model-predictions" class="nav-link" data-scroll-target="#making-model-predictions">Making model predictions</a></li>
   </ul></li>
-  <li><a href="#model-estimation" id="toc-model-estimation" class="nav-link" data-scroll-target="#model-estimation">model estimation</a>
+  <li><a href="#model-estimation" id="toc-model-estimation" class="nav-link" data-scroll-target="#model-estimation">Model Estimation</a>
   <ul class="collapse">
-  <li><a href="#ml-and-reml" id="toc-ml-and-reml" class="nav-link" data-scroll-target="#ml-and-reml">ML and REML</a></li>
-  <li><a href="#convergence-issues" id="toc-convergence-issues" class="nav-link" data-scroll-target="#convergence-issues">convergence issues</a></li>
+  <li><a href="#convergence-warnings-singular-fits" id="toc-convergence-warnings-singular-fits" class="nav-link" data-scroll-target="#convergence-warnings-singular-fits">convergence warnings &amp; singular fits</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -240,6 +239,26 @@ if(f.classList.contains('fa-circle-right')) {
 
 </header>
 
+<div class="lo">
+<p>This reading:</p>
+<ul>
+<li>Introducing the multilevel model (MLM)</li>
+<li>How the MLM achieves partial pooling</li>
+<li>Fitting multilevel models in R</li>
+<li>Model estimation and convergence</li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+different names for the same thing
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p>The methods we’re going to start to look at are known by lots of different names (see <a href="#fig-wordcloud">Figure&nbsp;1</a>). The core idea is that <strong>model parameters vary at more than one level.</strong>.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -251,13 +270,14 @@ if(f.classList.contains('fa-circle-right')) {
 </div>
 </div>
 </div>
-<div class="divider div-transparent div-dot">
-
+</div>
+</div>
+</div>
 </div>
 <section id="fixed-effects" class="level1">
 <h1>Fixed effects</h1>
 <p>In the simple linear regression model was written as <span class="math inline">\(\color{red}{y} = \color{blue}{b_0 + b_1x_1 \ + \ ... \ + \ b_px_p} \color{black}{\ + \ \varepsilon}\)</span>, the estimated coefficients <span class="math inline">\(\color{blue}{b_0}\)</span>, <span class="math inline">\(\color{blue}{b_1}\)</span> etc., are estimated as <strong>fixed</strong> values - i.e.&nbsp;we estimate just one number for <span class="math inline">\(b_0\)</span>, and one number for <span class="math inline">\(b_1\)</span>, for <span class="math inline">\(b_2\)</span> and so on, and that’s it.</p>
-<p>In the example where we model School children’s grades as a function of their motivation score, when we fit a simple regression model of <code>lm(grade ~ motiv)</code>, the estimated parameters are two values that define a line - an intercept and a slope (as in <a href="#fig-schoolplot1">Figure&nbsp;2</a>).</p>
+<p>In the example where we model school children’s grades as a function of their motivation score, when we fit a simple regression model of <code>lm(grade ~ motiv)</code>, the estimated parameters are two values that define a line - an intercept and a slope (as in <a href="#fig-schoolplot1">Figure&nbsp;2</a>).</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div id="fig-schoolplot1" class="quarto-figure quarto-figure-center anchored">
@@ -268,9 +288,9 @@ if(f.classList.contains('fa-circle-right')) {
 </div>
 </div>
 </div>
-<p>The intercept and slope here are ‘fixed’ in the sense that it does not matter what school a child is from, if they score 0 on the motivation scale, then our model predicts that they will get a grade of 40.3 (the intercept).</p>
+<p>The intercept and slope here are ‘fixed’ in the sense that it does not matter what school a child is from, if they score 0 on the motivation scale, then our model predicts that they will get a grade of 41.6 (the intercept).</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>schoolmot <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/schoolmot.csv"</span>)</span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>schoolmot <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/schoolmot.csv"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>srmod <span class="ot">&lt;-</span> <span class="fu">lm</span>(grade <span class="sc">~</span> motiv, <span class="at">data =</span> schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-layout-align="center">
@@ -278,8 +298,8 @@ if(f.classList.contains('fa-circle-right')) {
 <pre><code>...
 Coefficients:
             Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)  40.2776     1.8270  22.046  &lt; 2e-16 ***
-motiv         1.9551     0.3422   5.714  1.5e-08 ***
+(Intercept)   41.606      1.725  24.121  &lt; 2e-16 ***
+motiv          1.815      0.344   5.275 1.66e-07 ***
 ---</code></pre>
 </div>
 </div>
@@ -290,12 +310,11 @@ motiv         1.9551     0.3422   5.714  1.5e-08 ***
 &amp;\text{grade}_i = b_0 + b_1 \cdot \text{motiv}_i + \epsilon_i
 \end{align}
 \]</span> i.e.&nbsp;For any child <span class="math inline">\(i\)</span> that we choose, that child’s grade (<span class="math inline">\(\text{grade}_i\)</span>) is some fixed number (<span class="math inline">\(b_0\)</span>) plus some fixed amount (<span class="math inline">\(b_1\)</span>) times that child’s motivation (<span class="math inline">\(\text{motiv}_i\)</span>).</p>
-<p>The issue, as we saw in <a href="01a_clustered.html#clustered-data">1A #clustered-data</a>, is that the children in our study are actually related to one another in that they can be grouped into the schools that we sampled them from. It’s entirely possible (and likely) that there are school-level differences might actually account for quite a lot of the variation in grades (in <a href="01a_clustered.html#icc---quantifying-clustering-in-an-outcome-variable">1A #ICC</a> we actually estimated this to account for approx 40% of the variation in grades).</p>
-<p>TODO CHECK below</p>
-<p>We saw how we might add in <code>school</code> as a predictor to our linear model to estimate all these school-level differences (<code>lm(grade ~ schoolid + motiv)</code>). This is a good start, and may oftentimes be perfectly acceptable if our clustering is simply a nuisance thing that we want to account for - adding in the clustering as another predictor will completely account for <em>all</em> cluster-level variability in our outcome variable.</p>
-<p>However, more frequently these clusters are themselves additional units of observation that have features of interest to us. For instance, we may be interested in how the funding that a school receives moderates the association between childrens motivation and grades - i.e.&nbsp;we’re interested in things that happen both at the child-level (motivation, grades), and at the school-level (funding). For these scenarios, we really need a multilevel model.</p>
+<p>The issue, as we saw in <a href="01a_clustered.html#clustered-data">1A #clustered-data</a>, is that the children in our study are actually related to one another in that they can be grouped into the schools that we sampled them from. It’s entirely possible (and likely) that there are school-level differences might actually account for quite a lot of the variation in grades. In the previous reading we actually estimated this to account for approximately 22% grade variation (<a href="01a_clustered.html#icc---quantifying-clustering-in-an-outcome-variable">1A #ICC</a>).</p>
+<p>One option we have hinted at is that we could consider adding in the <code>schoolid</code> as a predictor to our linear model to estimate all these school-level differences (<code>lm(grade ~ schoolid + motiv)</code>). This is a good start, and may oftentimes be perfectly acceptable if our clustering is simply a nuisance thing that we want to account for - adding in the clustering as another predictor will completely account for <em>all</em> cluster-level variability in our outcome variable.</p>
+<p>However, more frequently these clusters are themselves additional units of observation that have features of interest to us. For instance, we may be interested in how the funding that a school receives moderates the association between childrens motivation and grades - i.e.&nbsp;we’re interested in things that happen both at the child-level (motivation, grades), <em>and</em> at the school-level (funding). For these scenarios, we really need a multilevel model.</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -304,7 +323,7 @@ clusters as fixed effects
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>We have already seen that we can include fixed effects for cluster differences (we referred to this as “no pooling”).</p>
 <p>e.g.&nbsp;to fit school-level differences in grades, we could use:</p>
@@ -320,20 +339,20 @@ clusters as fixed effects
 \end{align}
 \]</span></p>
 <p>The school coefficients are a series of dummy variables that essentially toggle on or off depending on which school child <span class="math inline">\(i\)</span> is from.</p>
-<p>Because these set of coefficients accoutn for <strong>all</strong> of the school-level differences in grades, it means we are then unable to consider other school-level variables like <code>funding</code> (how much govt funding the school receives). If we try, we can see that a coefficient for <code>funding</code> is not able to be estimated because <code>schoolid</code> is explaining everything school-related:</p>
+<p>Because these set of coefficients account for <strong>all</strong> of the school-level differences in grades, it means we are then unable to consider other school-level variables like <code>funding</code> (how much govt funding the school receives). If we try, we can see that a coefficient for <code>funding</code> is not able to be estimated because <code>schoolid</code> is explaining everything school-related:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>femod2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(grade <span class="sc">~</span> motiv <span class="sc">+</span> schoolid <span class="sc">+</span> funding, <span class="at">data =</span> schoolmot)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(femod2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <pre><code>Coefficients: (1 not defined because of singularities)
-                                   Estimate  Std. Error  t value  Pr(&gt;|t|)    
-(Intercept)                        36.2655      2.5667    14.129   &lt; 2e-16 ***
-motiv                              1.5723       0.3673    4.281   2.07e-05 ***
-schoolidBalfron High School        1.0683       2.8923    0.369   0.711946 
-schoolidBanff Academy             -3.3253       2.9142   -1.141   0.254163 
-...                                ...          ...       ...     ... 
-...                                ...          ...       ...     ... 
-funding                            NA           NA        NA      NA  </code></pre>
+                                  Estimate  Std. Error t value Pr(&gt;|t|)    
+(Intercept)                       33.1420   2.8257     11.729  &lt; 2e-16 ***
+motiv                             4.8107    0.4145     11.606  &lt; 2e-16 ***
+schoolidArdnamurchan High School -9.6072    3.1035    -3.096   0.00203 ** 
+schoolidBalwearie High School    -16.6493   3.0922    -5.384   9.36e-08 ***
+...                               ...       ...        ...     ... 
+...                               ...       ...        ...     ... 
+funding                           NA        NA         NA      NA  </code></pre>
 </div>
 </div>
 </div>
@@ -341,25 +360,25 @@ funding                            NA           NA        NA      NA  </code></p
 
 </div>
 </section>
-<section id="the-multi-level-model" class="level1">
-<h1>The multi-level model</h1>
-<p>The multi-level model is an alternative model structure that accounts for cluster-level differences in a more flexible and parsimonious way. It achieves this by taking some of the estimated coefficients <span class="math inline">\(b_?\)</span> in our linear regression model and modelling these as randomly varying by clusters (i.e.&nbsp;each cluster gets its own value of <span class="math inline">\(b_?\)</span>).</p>
+<section id="introducing-the-multilevel-model" class="level1">
+<h1>Introducing the Multilevel Model</h1>
+<p>The multi-level model is an alternative model structure that accounts for cluster-level differences in a more flexible and parsimonious way. It achieves this by taking some of the estimated coefficients (the <span class="math inline">\(b_?\)</span>’s) in our linear regression model and modelling these as randomly varying by clusters (i.e.&nbsp;clusters differ in their value for <span class="math inline">\(b_?\)</span>).</p>
 <p>Let’s see how this works by starting with the intercept, <span class="math inline">\(b_0\)</span>.</p>
-<section id="random-intercept" class="level2">
-<h2 class="anchored" data-anchor-id="random-intercept">random intercept</h2>
-<p>To extend the single-level regression model to the multi-level regression model, we add in an extra suffix to our equation to indicate which cluster an observation belongs to.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> Then, we can take our coefficients <span class="math inline">\(b_?\)</span> and allow them to be different for each cluster <span class="math inline">\(i\)</span> by adding the suffix <span class="math inline">\(b_{?i}\)</span>. Below, we have done this for our intercept <span class="math inline">\(b_0\)</span>.</p>
-<p>However, we also need to <em>define</em> these differences, and the multilevel model does this by expressing each cluster’s intercept as a deviation (<span class="math inline">\(\zeta_{0i}\)</span> for cluster <span class="math inline">\(i\)</span>, below) from a fixed number (<span class="math inline">\(\gamma_{00}\)</span>, below). Because these differences are to do with the <em>clusters</em> (and not the individual observations within them), we often write these as a “level 2 equation”:</p>
+<section id="random-intercepts" class="level2">
+<h2 class="anchored" data-anchor-id="random-intercepts">random intercepts</h2>
+<p>To extend the single-level regression model to the multi-level regression model, we add in an extra suffix to our equation to indicate which cluster an observation belongs to.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> Then, we can take a coefficient <span class="math inline">\(b_?\)</span> and allow it to be different for each cluster <span class="math inline">\(i\)</span> by adding the suffix <span class="math inline">\(b_{?i}\)</span>. Below, we have done this for our intercept <span class="math inline">\(b_0\)</span>, which has become <span class="math inline">\(b_{0i}\)</span>.</p>
+<p>However, we also need to <em>define</em> these differences in some way, and the multilevel model does this by expressing each cluster’s intercept as a deviation (<span class="math inline">\(\zeta_{0i}\)</span> for cluster <span class="math inline">\(i\)</span>, below) from a fixed number (<span class="math inline">\(\gamma_{00}\)</span>, below). Because these differences are to do with the <em>clusters</em> (and not the individual observations within them), we often write these as a “level 2 equation”:</p>
 <p><span class="math display">\[
 \begin{align}
 \text{For observation }j&amp;\text{ in cluster }i \\
 \text{Level 1:}&amp; \\
-y_{ij} &amp;= b_{0i} + b_1 \cdot x_{ij} + \epsilon_{ij} \\
+\color{red}y_{ij} &amp;\color{black}= \color{green}b_{0i} \color{blue} + b_1 \cdot x_{ij} \color{black}+ \epsilon_{ij} \\
 \text{Level 2:}&amp; \\
-b_{0i} &amp;= \gamma_{00} + \zeta_{0i} \\
+\color{green}b_{0i} &amp;\color{black}= \color{blue}\gamma_{00} \color{black}+ \color{orange}\zeta_{0i} \\
 \end{align}
 \]</span></p>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -368,20 +387,20 @@ mixed-effects notation
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Instead of writing several equations at multiple levels, we substitute the Level 2 terms into the Level 1 equation to get something that is longer, but all in one:</p>
 <p><span class="math display">\[
-\color{red}{y_{ij}} = \underbrace{(\gamma_{00} + \color{orange}{\zeta_{0i}})}_{\color{blue}{b_{0i}}} \cdot 1 + \color{blue}{b_{1}} \cdot x_{ij}  +  \varepsilon_{ij}
+\color{red}y_{ij} \color{black}= \underbrace{(\color{blue}\gamma_{00} \color{black}+ \color{orange}\zeta_{0i}\color{black})}_{\color{green}b_{0i}} \cdot 1 + \color{blue}b_{1} \cdot x_{ij} \color{black}+  \varepsilon_{ij}
 \]</span></p>
 <p>This notation typically corresponds with the “mixed effects” terminology because parameters can now be a combination of both a fixed number and a random deviation, as in the intercept below:</p>
 <p><span class="math display">\[
-\color{red}{y_{ij}} = \underbrace{(\underbrace{\gamma_{00}}_{\textrm{fixed}} + \color{orange}{\underbrace{\zeta_{0i}}_{\textrm{random}}})}_{\text{intercept, }b_{0i}} \cdot 1 + \underbrace{b_2}_{\textrm{fixed}} \cdot x_{ij} +  \varepsilon_{ij}
+y_{ij} = \underbrace{(\underbrace{\gamma_{00}}_{\textrm{fixed}} + \underbrace{\zeta_{0i}}_{\textrm{random}})}_{\text{intercept, }b_{0i}} \cdot 1 + \underbrace{b_1}_{\textrm{fixed}} \cdot x_{ij} +  \varepsilon_{ij}
 \]</span></p>
 </div>
 </div>
 </div>
-<p>Returning to our school children’s grade example, we can fit a model with “random intercepts for schools”, which would account for the possibility that some schools have higher grades, some have lower grades, etc.</p>
+<p>Returning to our school children’s grade example, we can fit a model with “random intercepts for schools”, which would account for some schools having higher grades, some having lower grades, etc.</p>
 <p><span class="math display">\[
 \begin{align}
 \text{For Child }j\text{ in School }i&amp; \\
@@ -390,7 +409,7 @@ mixed-effects notation
 \text{Level 2 (school):}&amp; \\
 b_{0i} &amp;= \gamma_{00} + \zeta_{0i} \\
 \end{align}
-\]</span> If we consider one of our schools (e.g.&nbsp;“Dyce Academy”) we can see that our model predicts that this school has higher grades than most other schools (<a href="#fig-ri_1school">Figure&nbsp;3</a>). We can see how this is modelled as a deviation <span class="math inline">\(\zeta_{0\text{DA}}\)</span> (DA for Dyce Academy) from some fixed value <span class="math inline">\(\gamma_{00}\)</span>.</p>
+\]</span> If we consider one of our schools (e.g.&nbsp;“Beeslack Community High School”) we can see that our model predicts that this school has higher grades than most other schools (<a href="#fig-ri_1school">Figure&nbsp;3</a>). We can see how this is modelled as a deviation <span class="math inline">\(\zeta_{0\text{B}}\)</span> (B for Beeslack) from some fixed value <span class="math inline">\(\gamma_{00}\)</span>.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div id="fig-ri_1school" class="quarto-figure quarto-figure-center anchored">
@@ -401,13 +420,18 @@ b_{0i} &amp;= \gamma_{00} + \zeta_{0i} \\
 </div>
 </div>
 </div>
-<p>TODO PANEL PLOT</p>
-<p>At this point, you might be wondering how this is any different from simply fitting clusters as an additional predictor in a single level regression (i.e.&nbsp;a clusters-as-fixed-effect approach of <code>lm(grade ~ motiv + schoolid)</code>). This would also estimate an difference for each cluster?</p>
+<p>At this point, you might be wondering how this is any different from simply fitting clusters as an additional predictor in a single level regression (i.e.&nbsp;a clusters-as-fixed-effect approach of <code>lm(grade ~ motiv + schoolid)</code>), which would also estimate a difference for each cluster?</p>
 <div class="sticky">
-<p>The key to the multilevel model is that we are not actually estimating the cluster-specific differences themselves (although we can_ get these out). We are estimating a <strong>distribution</strong> of differences.</p>
+<p>The key to the multilevel model is that we are not actually estimating the cluster-specific lines themselves (although we <em>can</em> get these out). We are estimating a <strong>distribution</strong> of deviations.</p>
 </div>
-<p>Specifically, the parameters of the multilevel model that are being estimated are the mean and <em>variance</em> of a <em>normal</em> distribution of clusters.</p>
+<p>Specifically, the parameters of the multilevel model that are estimated are the mean and the <em>variance</em> of a <em>normal</em> distribution of clusters.</p>
 <p>So the parameters that are estimated from our model with a random intercept by-schools, are:</p>
+<div class="columns">
+<div class="column" style="width:35%;">
+<p><br> - a fixed intercept <span class="math inline">\(\gamma_{00}\)</span> - the variance with which schools deviate from the fixed intercept <span class="math inline">\(\sigma^2_0\)</span> - a fixed slope for <code>motiv</code> <span class="math inline">\(b_1\)</span> - and we also need the residual variance too <span class="math inline">\(\sigma^2_\varepsilon\)</span></p>
+</div><div class="column" style="width:10%;">
+
+</div><div class="column" style="width:55%;">
 <p><span class="math display">\[
 \begin{align}
 \text{For Child }j\text{ in School }i&amp; \\
@@ -416,24 +440,20 @@ b_{0i} &amp;= \gamma_{00} + \zeta_{0i} \\
 \text{Level 2 (school):}&amp; \\
 b_{0i} &amp;= \gamma_{00} + \zeta_{0i} \\
 \text{where: }&amp; \\
-&amp;\varepsilon_{ij} \sim N(0,\sigma_\varepsilon) \\
 &amp;\zeta_{0i} \sim N(0,\sigma_0) \\
+&amp;\varepsilon_{ij} \sim N(0,\sigma_\varepsilon) \\
 \end{align}
 \]</span></p>
-<ul>
-<li>a fixed intercept <span class="math inline">\(\gamma_{00}\)</span><br>
-</li>
-<li>the variance with which schools deviate from the fixed intercept <span class="math inline">\(\sigma_0\)</span><br>
-</li>
-<li>a fixed slope for <code>motiv</code> <span class="math inline">\(b_1\)</span><br>
-</li>
-<li>(and we also get the residual variance too, in <span class="math inline">\(\sigma_\varepsilon\)</span>)</li>
-</ul>
+</div>
+</div>
+<p>Remember, <span class="math inline">\(\sim N(m,s)\)</span> is a way of writing “are normally distributed with a mean of <span class="math inline">\(m\)</span> and a standard deviation of <span class="math inline">\(s\)</span>”. So the <span class="math inline">\(\zeta_{0i} \sim N(0,\sigma_0)\)</span> bit is saying that the school deviations from the fixed intercept are modelled as a <em>normal distribution</em>, with a mean of 0, and a standard deviation of <span class="math inline">\(\sigma_0\)</span> (which gets estimated by our model).</p>
+<p>This can be seen in <a href="#fig-ri_param">Figure&nbsp;4</a> - the model is actually estimating a fixed intercept; a fixed slope; and the spread of a normal distribution of school-level deviations from the fixed intercept.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
+<div id="fig-ri_param" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p><img src="01b_lmm_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<p><img src="01b_lmm_files/figure-html/fig-ri_param-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;4: grade predicted by motivation, with a by-school random intercept. The school-level intercepts are modelled as a normal distribution. Parameters estimated by the model are shown in purple (fixed effects) and orange (variance components).</figcaption>
 </figure>
 </div>
 </div>
@@ -441,52 +461,116 @@ b_{0i} &amp;= \gamma_{00} + \zeta_{0i} \\
 </section>
 <section id="random-slopes" class="level2">
 <h2 class="anchored" data-anchor-id="random-slopes">random slopes</h2>
+<p>It is not just the intercept that we can allow to vary by-schools. We can also model cluster-level deviations from other coefficients (i.e.&nbsp;slopes). For instance, we can allow the slope of <span class="math inline">\(x\)</span> on <span class="math inline">\(y\)</span> to be different for each cluster, by specifying in our model that <span class="math inline">\(b_{1i}\)</span> is a distribution of cluster deviations <span class="math inline">\(\zeta_{1i}\)</span> around the fixed slope <span class="math inline">\(\gamma_{10}\)</span>.</p>
 <p><span class="math display">\[
 \begin{align}
 \text{For observation }j&amp;\text{ in cluster }i \\
 \text{Level 1:}&amp; \\
-y_{ij} &amp;= b_{0i} + b_{1i} \cdot x_{ij} + \epsilon_{ij} \\
+y_{ij} &amp;= b_{0i} + b_{1i} \cdot x_{ij} + \varepsilon_{ij} \\
 \text{Level 2:}&amp; \\
 b_{0i} &amp;= \gamma_{00} + \zeta_{0i} \\
 b_{1i} &amp;= \gamma_{10} + \zeta_{1i} \\
+&amp; \qquad \\
+\text{Where:}&amp; \\
+&amp; \begin{bmatrix} \zeta_{0i} \\ \zeta_{1i} \end{bmatrix}
+\sim N
+\left(
+    \begin{bmatrix} 0 \\ 0 \end{bmatrix},
+    \begin{bmatrix}
+        \sigma_0 &amp; \rho \sigma_0 \sigma_1 \\
+        \rho \sigma_0 \sigma_1 &amp; \sigma_1
+    \end{bmatrix}
+\right)
 \end{align}
 \]</span></p>
+<p>When we have random intercepts <em>and</em> random slopes, our assumption is that both of intercepts and slopes are normally distributed. However, we also typically allow these to be correlated, so the complicated looking bit at the bottom of the equation above is really just saying “random intercepts and slopes are normally distributed with mean of 0 and standard deviations of <span class="math inline">\(\sigma_0\)</span> and <span class="math inline">\(\sigma_1\)</span> respectively, and with a correlation of <span class="math inline">\(\rho \sigma_0 \sigma_1\)</span>”. We’ll see more on this in future weeks, so don’t worry too much right now.</p>
+<p>In <a href="#fig-rslope">Figure&nbsp;5</a>, we can see now that both the intercept <em>and</em> the slope of grades across motivation are varying by-school.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
+<div id="fig-rslope" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p><img src="01b_lmm_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<p><img src="01b_lmm_files/figure-html/fig-rslope-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;5: predicted values from the multilevel model that includes by-school random intercepts and by-school random slopes of motivation.</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>intercepts vary slopes vary</p>
-<p>TODO PANEL PLOT</p>
-</section>
-<section id="partial-pooling" class="level2">
-<h2 class="anchored" data-anchor-id="partial-pooling">partial pooling</h2>
-<p>It’s tempting to think that we could get the fixed intercept <span class="math inline">\(\gamma_{00}\)</span> by calculating a simple linear model for each school and taking the average intercept. However, the multilevel model is more clever than that. The amount by which Each cluster in a multilevel model contributes to the estimate of the fixed intercept by an amount that depends on:</p>
-<ol type="a">
-<li>how much between-cluster variation there is relative to within-cluster variation (TODO if clusters are very distinct )</li>
-<li>the number of observations in each cluster</li>
+<p>Much like for the random intercepts, we are modelling the random slopes as the distribution of school-level deviations <span class="math inline">\(\zeta_{1i}\)</span> around a fixed estimate <span class="math inline">\(\gamma_{10}\)</span>.</p>
+<p>So each group (school) now has, as visualised in <a href="#fig-unlmm">Figure&nbsp;6</a>:</p>
+<ol type="1">
+<li>a deviation from the fixed intercept</li>
+<li>a deviation from the fixed slope</li>
 </ol>
-<p>This is a really useful feature, because it means that we</p>
-<p>less data and, when clusters are quite similar/less distinct, then they contribute similar amounts</p>
-<ul>
-<li>socialist vs liberal analogy?</li>
-</ul>
-<p>how/why does it do this? by modelling a distribution of lines</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
+<div id="fig-unlmm" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p><img src="01b_lmm_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<p><img src="images/un_lmm.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;6: random intercepts and random slopes</figcaption>
 </figure>
+</div>
+</div>
+</div>
+<p>While it’s possible to show the distribution of intercepts on the left hand side of our <code>grade ~ motiv</code> plot, it’s hard to put the distribution of slopes on the same plot, so I have placed these in the bottom panel in <a href="#fig-rslopes2">Figure&nbsp;7</a>. We can see, for instance, that “Hutcheson’s Grammar School” has a higher intercept, but a lower slope.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-rslopes2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="01b_lmm_files/figure-html/fig-rslopes2-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;7: grade predicted by motivation, with by-school random intercepts and by-school random slopes of motivation. Parameters estimated by the model are shown in purple (fixed effects) and orange (variance components)</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="divider div-transparent div-dot">
+
+</div>
+</section>
+</section>
+<section id="partial-pooling" class="level1">
+<h1>Partial pooling</h1>
+<p>As the multilevel model treats our clusters as a random distribution of deviations around some fixed center, we can think of that fixed center as the ‘average cluster’. It’s tempting to think that we could get the fixed intercept <span class="math inline">\(\gamma_{00}\)</span> by calculating a simple linear model for each school and taking the average of all the intercepts. However, the multilevel model is much more clever than that.</p>
+<p>The amount by which each cluster contributes to the fixed estimate depends on:</p>
+<ol type="a">
+<li>how much between-cluster variation there is relative to within-cluster variation</li>
+<li>the number of observations in the cluster</li>
+</ol>
+<p>This is a really useful feature, because it means that a) the model is more skeptical of clusters with few datapoints than of those with many datapoints, and b) this skepticism is weaker when clusters are in general more distinct from one another than when they are quite similar.</p>
+<p>Another way of thinking about this is by looking at the model predicted lines for each cluster, which are <em>also</em> adjusted in the same way. In <a href="#fig-ppool">Figure&nbsp;8</a>, the blue lines show a simple linear model fitted to the data from each school (no pooling), and the orange lines show our predictions from the model with random intercepts and slopes for each school (partial pooling).</p>
+<p>Note two useful features:</p>
+<ol type="1">
+<li>For “Hypothetical School X”, which has far fewer datapoints, the multilevel model line is ‘shrunk’ back towards the average school line. This is good because we intuitively don’t want to give as much weight to that school as to the others.</li>
+<li>It is possible for the multilevel model to estimate a line for “Hypothetical School Y” <em>even though it only has one datapoint</em>. This is because these predicted lines “borrow strength” from the other schools.</li>
+</ol>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-ppool" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="01b_lmm_files/figure-html/fig-ppool-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;8: A set of 6 schools. The blue lines show simple regression models fitted to each schools’ data separately (no pooling). The orange lines show the predictions from the multilevel model in which both intercepts and slopes of motiv vary by school (partial pooling)</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+A (not very good) analogy
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The no-pooling approach (i.e.&nbsp;something like <code>lm(grade~motiv*schoolid)</code>, or fitting a simple <code>lm()</code> separately to each school) is like the libertarian ideology (valuing autonomy and personal freedom). Each school gets the freedom to define its own line without interference from others.</p>
+<p>The partial-pooling approach (the multilevel model) is more akin to social democracy, where there is a recognition of the value of personal freedoms and diverse perspectives, but this is <em>within</em> the framework of a broader societal structure.</p>
 </div>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -495,80 +579,293 @@ optional: how does it work?
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
+<p>The amount to which a cluster contributes to a fixed estimate (and the amount by which any predictions for that cluster are shrunk towards the average) is proportional to:<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
 <p><span class="math display">\[
-\frac{\sigma^2_{b} }{\sigma^2_b + \frac{\sigma^2_e }{n_i}}
+\begin{align}
+&amp;\frac{\sigma^2_{b} }{\sigma^2_b + \frac{\sigma^2_e }{n_i}} \\
+\qquad \\
+\text{Where:} \\
+&amp; \sigma^2_b = \text{variance between clusters} \\
+&amp; \sigma^2_e = \text{variance within clusters} \\
+&amp; n_i = \text{number of observations within cluster }i \\
+\end{align}
 \]</span></p>
-<p>This means that the fixed center of this distribution (the <span class="math inline">\(\gamma_00\)</span>) However,</p>
-<p>TODO - what defines the amount to which a cluster contributes to the fixed estimate?<br>
-how do far away/few n clusters influence the estimate?</p>
-<p>in the multilevel modelling approach, each school gets its own intercept and slope, but these ‘borrow strength’ from the others.</p>
-<p>The borrowing of strength is more apparent for the (what would be) more extreme clusters, as well as those that have fewer datapoints. What happens to these cluster estimates is that they are shrunk towards the population average.</p>
-<p><span class="math inline">\(\frac{\sigma^2_{b} }{\sigma^2_b + \frac{\sigma^2_e }{n_i}}\)</span></p>
-<p>more shrinkage when: - smaller n_j - when within var is large relative to between var - both of these are basically ‘when we have less information about that group’</p>
-<p>https://jeanettemumford.org/MixedModelSeries/v4-introduction-to-regularization-in-mixed-models.html#introduction-2</p>
-<p>https://jeanettemumford.org/MixedModelSeries/v5-conditional-modes-vs-means.html#the-equation-for-shrinkage</p>
+<p>This means that there is less contribution from (and more shrinkage of estimates for) clusters when:</p>
+<ul>
+<li>smaller <span class="math inline">\(n_j\)</span> (we have less information about a cluster)</li>
+<li>when within-cluster variance is large relative to between-cluster variance (clustering is not very informative)</li>
+</ul>
 </div>
 </div>
 </div>
-</section>
+<div class="divider div-transparent div-dot">
+
+</div>
 </section>
 <section id="fitting-multilevel-models-in-r" class="level1">
-<h1>fitting multilevel models in R</h1>
-<p>fixed estimates = average cluster</p>
-<p>lme4 lmer</p>
-<p><em>what</em> are the model parameters? i.e.&nbsp;variance components.</p>
-<p>eq with model params coloured</p>
-<p>we <em>can</em> get out estimates of the specific group-lines if we want, but really the model is estimating the variances.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<h1>Fitting Multilevel Models in R</h1>
+<p>While there is a big conceptual shift from the single level regression model to the multilevel model, the shift in R code is considerably less.</p>
+<p>We’re going to use the <code>lme4</code> package, and specifically the functions <code>lmer()</code> and <code>glmer()</code>. “(g)lmer” here stands for “(generalised) linear mixed effects regression”, and the two functions are designed to be logical extensions of <code>lm()</code> and <code>glm()</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-lmercode" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/lmercode.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;9: Syntax of the lmer() function from the lme4 package. For now, focus on the formula section, and how this extends from the lm() function.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>We write the first bit of our <strong>formula</strong> just the same as our old friend the normal linear model <code>y ~ 1 + x1 + x2 + ...</code>, where <code>y</code> is the name of our outcome variable, <code>1</code> is the intercept (which we don’t have to explicitly state as it will be included anyway) and <code>x1</code>, <code>x2</code> etc are the names of our explanatory variables (our predictors).</p>
+<p>With <code>lmer()</code>, we have the addition of <strong>random effect terms</strong>, specified in parenthesis with the <code>|</code> operator (the vertical line | is often found to the left of the z key on QWERTY keyboards).<br>
+We use the <code>|</code> operator to separate the parameters (intercept, slope etc.) on the left-hand side, from the grouping variable(s) on the right-hand side, by which we would like to model these parameters as varying.</p>
+<p>For instance, the two models we have been looking at can be fitted with:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>schoolmot <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/schoolmot.csv"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># a model with random intercepts by school</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># (estimate how schools vary in their intercept)</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>smod1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(grade <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> motiv <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> schoolid), </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> schoolmot)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># a model with random intercepts and random slopes by school</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># (estimate how schools vary in their intercept, and in their slope of motiv)</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>smod2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(grade <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> motiv <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> motiv <span class="sc">|</span> schoolid), </span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Much like the simple <code>lm()</code> models, we can get a nice summary output:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(smod2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed model fit by REML ['lmerMod']
+Formula: grade ~ 1 + motiv + (1 + motiv | schoolid)
+   Data: schoolmot
+
+REML criterion at convergence: 7098.4
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.0911 -0.6898  0.0287  0.6225  3.1781 
+
+Random effects:
+ Groups   Name        Variance Std.Dev. Corr 
+ schoolid (Intercept) 158.117  12.574        
+          motiv         4.288   2.071   -0.70
+ Residual             139.325  11.804        
+Number of obs: 900, groups:  schoolid, 30
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept)  29.2333     3.0453   9.600
+motiv         4.4757     0.5543   8.074
+
+Correlation of Fixed Effects:
+      (Intr)
+motiv -0.825</code></pre>
+</div>
+</div>
+<p>The output contains two major components - the “fixed effects” and the “random effects”. The fixed effects part contains the estimated intercept and slope(s) for the average school. The random effects part contains the estimated variance (and standard deviation<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>) of school deviations around those fixed estimates.</p>
+<p>So from our ouput we can build up a picture in our heads - we know from the fixed effects that in the average school, children with zero motivation have an estimated grade of 29, and for every 1 more motivated a child is, their grades are estimated to increase by 4.48.</p>
+<p>The random effects part tells us that we would expect schools to vary in their intercepts with a standard deviation of 12.6, and in their slopes with a standard deviation of 2.1.</p>
+<p>If we recall our rough heuristic about normal distributions - that 95% of the distribution falls within 2 standard deviations, then we can start to build up a picture - we would expect most schools to have intercepts about 25 either side of the fixed intercept, and we would expect most schools to have slopes that are about 4 either side of the fixed slope (so most slopes will be between 0.5 and 8.5 - i.e.&nbsp;most will be positive).</p>
+<p>So what we’re getting back to is something a bit like <a href="#fig-rslope">Figure&nbsp;5</a> that we saw earlier - the model provides a description of the population of schools that we have sampled from. To illustrate this more, we could imagine simulating (from our model) 1000 new schools, and plotting their lines, and we would get something like <a href="#fig-sim">Figure&nbsp;10</a>.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-sim" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="01b_lmm_files/figure-html/fig-sim-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;10: Model estimated fixed effects, with 1000 simulated hypothetical school lines</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-terminology: fixed effects, random effects, variance components
+mapping summary output to parts of the equation
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>we often use “random effects” to just mean the distribution of random deviations. i.e.&nbsp;</p>
-<p>sometimes you might hear “random effect of group” “random effect for group” “random effect [of x] by group”</p>
-<p>generally, people are referring to the <code>(1 + ... | cluster)</code> bit.</p>
-<p>graphic on how to read it.</p>
-<p>intercept &gt;&gt; 1 slope of x &gt;&gt; x | &gt;&gt; varies by these groups &gt;&gt; cluster</p>
-<p>a common stumbling block. “effect of x varies by cluster” is not the same as “x varies by cluster”.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/lmeroutput.png" class="img-fluid figure-img" style="width:100.0%"></p>
+</figure>
 </div>
 </div>
 </div>
-<section id="model-parameters" class="level2">
-<h2 class="anchored" data-anchor-id="model-parameters">model parameters</h2>
-<p><em>what</em> are the model parameters? i.e.&nbsp;variance components.</p>
-<p>eq with model params coloured $$</p>
-<p>$$</p>
+</div>
+</div>
+</div>
+<section id="extracting-model-parameters" class="level2">
+<h2 class="anchored" data-anchor-id="extracting-model-parameters">Extracting model parameters</h2>
+<p>Alongside <code>summary()</code>, there are some useful functions in R that allow us to extract the parameters estimated by the model:</p>
+<div class="rtip">
+<p><strong>fixed effects</strong></p>
+<p>The fixed effects represent the estimated average relationship within the entire sample of clusters.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fixef</span>(smod2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)       motiv 
+  29.233320    4.475717 </code></pre>
+</div>
+</div>
+</div>
+<div class="rtip">
+<p><strong>random effect variances</strong></p>
+<p>The random effect variances represent the estimated spread with which clusters vary around the fixed effects</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">VarCorr</span>(smod2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Groups   Name        Std.Dev. Corr  
+ schoolid (Intercept) 12.5745        
+          motiv        2.0708  -0.698
+ Residual             11.8036        </code></pre>
+</div>
+</div>
+</div>
 </section>
-<section id="cluster-predictions" class="level2">
-<h2 class="anchored" data-anchor-id="cluster-predictions">cluster predictions</h2>
-<p>ranef</p>
-<p>fixef + ranef = coef</p>
-<p>dotplot.ranef.mer</p>
+<section id="making-model-predictions" class="level2">
+<h2 class="anchored" data-anchor-id="making-model-predictions">Making model predictions</h2>
+<p>While they are not computed directly in the estimation of the model, the cluster-specific deviations from fixed effects can be extracted from our models</p>
+<div class="rtip">
+<p><strong>random effects</strong></p>
+<p>Often referred to as the “random effects”, the deviations for each cluster from the fixed effects can be obtained using <code>ranef()</code>.<br>
+Note that each row is a cluster (a school, in this example), and the columns show the distance from the fixed effects. We can see that “Anderson High School” has an estimated intercept that is 7.07 <em>higher</em> than average, and an estimate slope of motivation that is 0.47 <em>lower</em> than average.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ranef</span>(smod2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<pre><code>$schoolid
+                                        (Intercept)       motiv
+Anderson High School                     7.07164826 -0.46505592
+Ardnamurchan High School                -7.26417838  0.70012536
+Balwearie High School                  -20.53626558  2.31397177
+Beeslack Community High School          18.63574795 -1.45057126
+...                                     ...          ...</code></pre>
+<p>We can also visualise all these using a handy function. This sort of visualisation is great for checking for peculiar clusters.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot.ranef.mer</span>(<span class="fu">ranef</span>(smod2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$schoolid</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="01b_lmm_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div class="rtip">
+<p><strong>cluster coefficients</strong></p>
+<p>Rather than looking at <em>deviations</em> from fixed effects, we can calculate the intercept and slope for each cluster.<br>
+For example, if we are estimating that “Anderson High School” has an intercept that is 7.07 higher than average, and the average is 29.23, then we know that this has an intercept of 29.23 + 7.07 = 36.3.</p>
+<p>We can get these out using <code>coef()</code></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(smod2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<pre><code>$schoolid
+                                    (Intercept)  motiv
+Anderson High School                36.304968    4.010661
+Ardnamurchan High School            21.969141    5.175842
+Balwearie High School                8.697054    6.789689
+Beeslack Community High School      47.869068    3.025146
+...                                 ...          ...</code></pre>
+<div class="sticky">
+<center>
+fixef() + ranef() = coef()
+</center>
+</div>
+</div>
+<div class="divider div-transparent div-dot">
+
+</div>
 </section>
 </section>
 <section id="model-estimation" class="level1">
-<h1>model estimation</h1>
-<section id="ml-and-reml" class="level2">
-<h2 class="anchored" data-anchor-id="ml-and-reml">ML and REML</h2>
-<p>MLE explainer</p>
+<h1>Model Estimation</h1>
+<p>With single level regression models fitted with <code>lm()</code>, our estimated coefficients could actually be obtained using some matrix algebra. Fitting multilevel models is a bit more complicated, and so we have to instead rely on an iterative procedure known as “maximum likelihood estimation” (“ML” or “MLE”).</p>
+<p>We actually saw this previously when fitting logistic regressions. The process is iterative in that it involves testing the fit of a set of candidate parameters (i.e.&nbsp;giving some initial values for our coefficients) and working out what direction we need to change them in order to get a better fit. We then change them accordingly, evalute the fit, change them, evaluate fit, … and so on until we reach a point where we don’t think we can get any better.</p>
+<p>In maximum likelihood estimation, the “fit” of the model is assessed through the <em>likelihood</em> (the probability of seeing our data, given some hypothesis, see <a href="lvp.html" target="_blank">here</a> for an explanation).</p>
+<p>If we were estimating just one single parameter (e.g.&nbsp;a mean), then we can imagine the process of maximum likelihood estimation in a one-dimensional world - simply finding the top of the curve (<a href="#fig-mle">Figure&nbsp;11</a>, LH panel).</p>
+<p>However, our typical models estimate a whole bunch of parameters, and with lots of parameters being estimated and all interacting to influence the likelihood, our nice curved line becomes a complex surface (<a href="#fig-mle">Figure&nbsp;11</a> RH panel shows it in 3D). What MLE does is try to find the maximum (the top the mountain), but avoid local maxima (false summits) and impossible values (e.g., variances <span class="math inline">\(\leq 0\)</span>), without getting stuck (in plateaus).</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-mle" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/mle.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;11: maximum likelihood estimation in one dimension (LEFT), and a 3D visual of a multi-dimensional likelihood surface (RIGHT)</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>We can choose whether to estimate our model parameters with ML (maximum likelihood) or REML (restricted maximum likelihood) with the <code>REML</code> argument of <code>lmer()</code>:</p>
+<br>
+<div style="margin-left:50px;">
+lmer(<em>formula</em>,<br> &nbsp; &nbsp; &nbsp; &nbsp; data = <em>dataframe</em>, <br> &nbsp; &nbsp; &nbsp; &nbsp; REML = <strong><em>logical</em></strong>, <br> &nbsp; &nbsp; &nbsp; &nbsp; control = lmerControl(<em>options</em>) <br> &nbsp; &nbsp; &nbsp; &nbsp; )
+</div>
+<p><br></p>
+<div class="sticky">
+<p><strong>TL;DR</strong></p>
+<p><code>lmer()</code> models are by default fitted with REML, which tends to be better for small samples.</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+optional: why REML?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>REML overcomes a problem for multilevel models fitted with standard MLE, which is that at each iteration of the maximum likelihood, the random effect variances are estimated <em>after</em> the fixed effects (because they are the variances of clusters around the fixed effects). This means that we are essentially treating the fixed effects as a known constant when estimating the random effect variance. The downside of this is that it biases our variance estimates to be smaller than they should be<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>, especially if <span class="math inline">\(n_\textrm{clusters} - n_\textrm{level 2 predictors} - 1 &lt; 50\)</span>. This leads to the standard errors of the fixed effects being too small, thereby inflating our type 1 error rate (i.e.&nbsp;greater chance of incorrectly rejecting our null hypothesis).</p>
+<p>REML avoids this by first partialling out the fixed effects (i.e.&nbsp;removing all of the association, so that the fixed effects are 0 <em>by definition</em>), then using maximum likelihood to iteratively estimate the random effect variances. At the end, it then uses generalised least squares to estimate the fixed effects given the known random effect structure. Because this separates the estimation of fixed and random parts of the model, it results in unbiased estimates of the variance components.</p>
+</div>
+</div>
+</div>
+</div>
+<section id="convergence-warnings-singular-fits" class="level2">
+<h2 class="anchored" data-anchor-id="convergence-warnings-singular-fits">convergence warnings &amp; singular fits</h2>
+<p>There are different algorithms that we can use to actually undertake the iterative estimation procedure, which we can apply by using different ‘optimisers’.</p>
+<br>
+<div style="margin-left:50px;">
+lmer(<em>formula</em>,<br> &nbsp; &nbsp; &nbsp; &nbsp; data = <em>dataframe</em>, <br> &nbsp; &nbsp; &nbsp; &nbsp; REML = <em>logical</em>, <br> &nbsp; &nbsp; &nbsp; &nbsp; control = lmerControl(<strong><em>options</em></strong>) <br> &nbsp; &nbsp; &nbsp; &nbsp; )
+</div>
+<p><br></p>
+<p>Technical problems to do with <strong>model convergence</strong> and <strong>‘singular fit’</strong> come into play when the optimiser we are using either can’t find a suitable maximum, or gets stuck in a plateau, or gets stuck trying to move towards a number that we know isn’t possible.</p>
+<p>For large datasets and/or complex models (lots of random-effects terms), it is quite common to get a convergence warning when trying to fit a model, and in the coming weeks you will see plenty of warnings such as:</p>
 <ul>
-<li>problem for lmm est fix &gt; est varcorr &gt; est fix &gt; est varcorr est of varcorr assumes fixed effects are known. this biases var ests to be slightly smaller<br>
-a bit like n-1 in formula for sd</li>
+<li>A typical convergence warning:<br>
+
+<p style="color:red">
+warning(s): Model failed to converge with max|grad| = 0.0071877 (tol = 0.002, component 1)
+</p></li>
+<li>A singular fit:<br>
+
+<p style="color:red">
+boundary (singular) fit: see ?isSingular
+</p></li>
 </ul>
-<p>REML - OLS to partial out fixef &gt; est varcorr &gt; est varcorr &gt; est varcorr &gt; use GLS to est fixef - in the estimation of varcorr, the fixed effects are 0 <em>by definition</em></p>
-</section>
-<section id="convergence-issues" class="level2">
-<h2 class="anchored" data-anchor-id="convergence-issues">convergence issues</h2>
-<p>convergence warnings, singular fits</p>
+<div class="sticky">
+<p><strong>Do not trust the results of a model that does not converge</strong></p>
+</div>
+<p>There are lots of different ways to <a href="https://rstudio-pubs-static.s3.amazonaws.com/33653_57fc7b8e5d484c909b615d8633c01d51.html">deal with these</a> (to try to rule out hypotheses about what is causing them), but for the time being, if <code>lmer()</code> gives you convergence errors or singular fits, you could try changing the optimizer. Bobyqa is a good one: add <code>control = lmerControl(optimizer = "bobyqa")</code> when you run your model.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lmer</span>(y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> x1 <span class="sc">+</span> ... <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> .... <span class="sc">|</span> g), <span class="at">data =</span> df, </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">control =</span> <span class="fu">lmerControl</span>(<span class="at">optimizer =</span> <span class="st">"bobyqa"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 
 </section>
@@ -579,6 +876,9 @@ a bit like n-1 in formula for sd</li>
 
 <ol>
 <li id="fn1"><p>Some books use “cluster <span class="math inline">\(j\)</span> &gt;&gt; observation <span class="math inline">\(i\)</span>”, others use “cluster <span class="math inline">\(i\)</span> &gt;&gt; observation <span class="math inline">\(j\)</span>”. We use the latter here<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>this exact formula applies to the model with random intercepts, but the logic scales up when random slopes are added<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>remember, variance = standard deviation squared<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>it’s a bit like n-1 being in the denominator of the formula for standard deviation<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -820,7 +1120,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     <div class="nav-footer-left">
       &nbsp;
     </div>   
-    <div class="nav-footer-center">© Copyright 2019-2023 <a href="https://www.ed.ac.uk/">The University of Edinburgh</a>. Site licensed under the <a href="https://www.gnu.org/licenses/agpl-3.0.en.html">GNU AGPLv3</a> license.</div>
+    <div class="nav-footer-center">© Copyright 2019-2024 <a href="https://www.ed.ac.uk/">The University of Edinburgh</a>. Site licensed under the <a href="https://www.gnu.org/licenses/agpl-3.0.en.html">GNU AGPLv3</a> license.</div>
     <div class="nav-footer-right">
       &nbsp;
     </div>

@@ -1,5 +1,5 @@
 ---
-title: "1A: Clustered Data | LMM"
+title: "1A: Clustered Data"
 params: 
     SHOW_SOLS: FALSE
     TOGGLE: TRUE
@@ -20,8 +20,11 @@ xaringanExtra::use_panelset()
 
 
 :::lo
+This reading:  
 
-TODO this reading
+- A refresher on the linear regression model  
+- An introduction to clustered data
+- Working with clustered data (sample sizes, ICC, visualisations)
 
 :::
 
@@ -237,34 +240,47 @@ One common way in which observations are not independent can come when the data 
 #| eval: false
 #| label: SCHOOLDATA
 schoolids = read_csv("data/schoolnames.csv") |> janitor::clean_names() |> 
-  filter(secondary_12=="Secondary") |> pull(school_name)
-set.seed(nchar("cool cool cool cool cool")*1385)
-n_groups = 30
-# npgroup = round(runif(30,2,25))
-npgroup = rep(30,30)
-g = unlist(sapply(1:n_groups, function(x) rep(x,npgroup[x])))
-N = length(g)
-xd = rnorm(N)
-xm = rnorm(n_groups)[g]
-b = rnorm(n_groups, 6, 1.2)
-b = round(b[g],2)
-re0 = rnorm(n_groups, sd = 1)
-re  = re0[g]
-rex = rnorm(n_groups, sd = 1)
-re_x  = rex[g]
-lp = (0 + re) + 1*xm + (1 + re_x)*xd + 1*b - .1*b*(xd+xm)
-y = rnorm(N, mean = lp, sd = 2)
-y_bin = rbinom(N, size = 1, prob = plogis(lp))
-df = data.frame(x = xm+xd, b, g=factor(g), y, y_bin)
+    filter(secondary_12=="Secondary") |> pull(school_name)
 
-schoolmot = df |>
-  transmute(
-    motiv = round(x,2)+5,
-    funding = b,
-    schoolid = sample(schoolids,n_groups)[as.numeric(g)],
-    grade = round(50.356 + scale(y)[,1]*14.53,2)
-  )
-schoolmot[schoolmot$schoolid=="Fettes College","funding"] <- 9.1
+  ss = 817620#round(runif(1,1e3,1e6))
+  
+  set.seed(ss)
+  n_groups = 30
+  # npgroup = round(runif(30,2,25))
+  npgroup = rep(30,30)
+  g = unlist(sapply(1:n_groups, function(x) rep(x,npgroup[x])))
+  N = length(g)
+  xd = rnorm(N)
+  xm = rnorm(n_groups)[g]
+  b = rnorm(n_groups)
+  b = b[g]
+  res = MASS::mvrnorm(n=n_groups,
+                     mu=c(0,0),Sigma=matrix(c(3,0,0,.6),nrow=2))
+  re0 = res[,1]
+  re  = re0[g]
+  rex = res[,2]
+  re_x  = rex[g]
+  lp = (0 + re) + .3*xm + (2 + re_x)*xd + .7*b - .4*b*(xm+xd)
+  y = rnorm(N, mean = lp, sd = 4)
+  y_bin = rbinom(N, size = 1, prob = plogis(lp))
+  df = data.frame(x = xm+xd, b, g=factor(g), y, y_bin)
+  #set.seed(764)
+  schoolmot = df |>
+    transmute(
+      motiv = round(x,2)+5,
+      funding = round(scale(b)[,1]*1.2+6,2),
+      schoolid = sample(schoolids,n_groups)[as.numeric(g)],
+      grade = round(50.356 + scale(y)[,1]*14.53,2),
+      grade = pmax(0,pmin(97,grade))
+    )
+#   lmer(grade~1+motiv+(1|schoolid),schoolmot)
+#   lmer(grade~1+motiv+(1+motiv|schoolid),schoolmot) |> summary()
+#   vv = summary(lmer(grade~1+motiv*funding+(1+motiv|schoolid),schoolmot))$optinfo$conv$lme4$messages
+# # lmer(grade~1+motiv+(1|schoolid),schoolmot)
+# v = abs(cov2cor(VarCorr(lmer(grade~1+motiv+(1+motiv|schoolid),schoolmot))[[1]])[1,2])<.7
+# # lmer(grade~1+motiv*funding+(1+motiv|schoolid),schoolmot)
+#   if(v & is.null(vv)){break}
+# }
 
 # library(ICC)
 # ICCbare(schoolid, grade, data = schoolmot)
@@ -272,7 +288,7 @@ schoolmot[schoolmot$schoolid=="Fettes College","funding"] <- 9.1
 # lmer(grade~1+motiv*funding+(1+motiv|schoolid),schoolmot) |> summary()
 #    sjPlot::plot_model(type="pred",terms=c("motiv","funding [4, 5, 6, 7]"),show.data=TRUE)
 
-# write_csv(schoolmot,"data/schoolmot.csv")
+#write_csv(schoolmot,"data/schoolmot.csv")
 # schoolmot <- read_csv("data/schoolmot.csv")
 # academic_performance ~ 1 + motiv * schoolfunding + (1 + motiv | school)
 # health_anxiety ~ 1 + education * GPpracticesize + (1 + education | GP)
@@ -354,16 +370,16 @@ This is because all of our inferential tests rely on the estimated variability i
 $$
 \text{mean squared error} = \frac{\sum{(y_i - \hat y_i)^2}}{n-k-1}
 $$
-The denominator bit on the bottom is our _degrees of freedom_ (where $n$ is the total sample size, $k$ is how many predictors we have in our model). This is how many independent pieces of information are available for estimating the parameters in our model.  
+The denominator bit on the bottom is our _degrees of freedom_ (where $n$ is the total sample size, $k$ is how many predictors we have in our model). This is how many **independent** pieces of information are available for estimating the parameters in our model.  
 
 In the scenario where we have, e.g. 33 pupils clustered into 5 schools, how many independent bits of information do we have to begin with? 33? 5? somewhere in between?  
 
-If we assume these pupils are all independent, as our old friend `lm()` would, then our estimate of the residual variability will be smaller. This means that on average our standard errors will be too narrow, any confidence intervals too narrow, our F statistics will be too large, and our p-values too small.  
+If we assume these pupils are all independent, because of how the mean squared error is calculated, our old friend `lm()` would estimate the residual variability to be smaller than it really is. This means that on average our standard errors will be too narrow, any confidence intervals too narrow, our F statistics will be too large, and our p-values too small.  
 
 In essence - our inferences will all be wrong!!  
 
 ::: {.callout-caution collapse="true"}
-#### F and t and MSE
+#### optional: F and t and MSE
 
 The mean squared error (MSE) goes into our $F$-statistics as they are the ratio of the mean squares associated with the model and the mean squared error 
 $$
@@ -371,11 +387,11 @@ F = \frac{\text{Mean Squares Model}}{\text{Mean Squared Error}}
 $$
 
 The MSE also goes into our standard errors for our coefficients (and so any subsequent $t$-statistics or confidence intervals that we might calculate).  
+$$
+SE(b_p) = \sqrt{  \frac{MSE}{Var(x_p) \cdot (1-R^2_{x_p|x1,...}) }}
+$$
+(Where $R^2_{x_p|x1,...}$ is the $R^2$ value of the predictor of interest $x_p$ regressed onto all other predictors).  
 
-TODO tidy
-$$
-SE(b_p) = \sqrt{  \frac{MSE}{(1-R^2_{x_p | x_p}) \cdot Var(x_p)} }
-$$
 :::
 
 
@@ -521,7 +537,7 @@ In terms of the dataframes we are going to be working with, clusters are simply 
 
 ```{r}
 #| echo: false
-schoolmot |> slice(1,46,105,2,4,50,80) |> 
+schoolmot |> slice(1,505:507,400,2) |> 
   rbind("...") |> mutate(schoolid=ifelse(is.na(schoolid),"...",
                                          as.character(schoolid))) |> as.data.frame()
 ```
@@ -540,12 +556,12 @@ Below, we have one row per person (we can see that Aja, Dan, Josiah, Emma, Umber
 #| echo: false
 tribble(
   ~schoolid,~grade,
-  "North West Community Campus","50",
-  "North West Community Campus","65",
-  "North West Community Campus","40",
+  "Balwearie High School","50",
+  "Balwearie High School","65",
+  "Balwearie High School","40",
   "...","...",
-  "Paisley Grammar School","75",
-  "Paisley Grammar School","80",
+  "Kilsyth Academy","75",
+  "Kilsyth Academy","80",
   "...","...",
 ) |> as.data.frame() -> dd
 row.names(dd) <- c("Aja","Dan","Josiah","..","Emma","Umberto","...")
@@ -568,7 +584,7 @@ tribble(
   "75","80","...","...",
   "...","...","...","...",
 ) |> as.data.frame() -> dd
-row.names(dd)<-c("North West Community Campus","..","Paisley Grammar School","...")
+row.names(dd)<-c("Balwearie High School","..","Kilsyth Academy","...")
 dd
 
 ```
@@ -612,8 +628,7 @@ tribble(
 
 We can check this in our data: 
 ```{r}
-# TODO
-# schoolmot <- read_csv("https://uoepsy.github.io/data/schoolmot.csv")
+schoolmot <- read_csv("https://uoepsy.github.io/data/schoolmot.csv")
 # how many children? (how many rows in the data?)
 nrow(schoolmot)
 # how many schools? (how many distinct values in the schoolid column?)
@@ -660,7 +675,8 @@ ggplot(schoolmot, aes(x=schoolid, y=grade))+
 
 
 There are various packages that allow us to calculate the ICC, and when we get to fitting multilevel models we will see how we can extract it from a fitted model.  
-In the data (visualised above), it's estimated that `r round(suppressWarnings(ICC::ICCbare(schoolid, grade, data = schoolmot)),2)*100`% of the variance in grades is due to school-related differences:  
+
+In the school motivation data (visualised above), it's estimated that `r round(suppressWarnings(ICC::ICCbare(schoolid, grade, data = schoolmot)),2)*100`% of the variance in grades is due to school-related differences:  
 ```{r}
 library(ICC)
 ICCbare(schoolid, grade, data = schoolmot)
@@ -748,9 +764,9 @@ The 29 here is the $k-1$ in the formula above, where $k$ is the number of observ
 
 :::
 
-Another way of thinking about the ICC is that it is the correlation between two randomly drawn observations from the same group. This is a bit of a tricky thing to get your head round if you try to relate it to the type of "correlation" that you are familiar with. Pearson's correlation (e.g think about a typical scatterplot) operates on *pairs of observations* (a set of values on the x-axis and their corresponding values on the y-axis), whereas ICC operates on *data which is structured in groups*.   
+Another way of thinking about the ICC is that it is the correlation between two randomly drawn observations from the same group. This is a bit of a tricky thing to get your head round if you try to relate it to the type of "correlation" that you are familiar with. Pearson's correlation (e.g think about a typical scatterplot) operates on *pairs of observations* (a set of values on the x-axis and their corresponding values on the y-axis), whereas ICC operates on *data which is structured in groups*. 
 
-Suppose I pick a school, and within that pick 2 children and plot their grades against each other. I randomly pick another school, and another two children from it, and add them to the plot, and then keep doing this (@fig-icccorplot). The ICC is the correlation between such pairs. 
+We can think of it as the average correlation between all possible pairs of observations from the same group. Suppose I pick a school, and within that pick 2 children and plot their grades against each other. I randomly pick another school, and another two children from it, and add them to the plot, and then keep doing this (@fig-icccorplot). The ICC is the correlation between such pairs. 
 
 ```{r}
 #| echo: false
@@ -869,6 +885,18 @@ __ICC = the expected correlation of a *randomly drawn pair* of observations from
 
 :::
 
+:::sticky
+__Why ICC?__  
+
+The ICC tells us the proportion of the total variability in an outcome variable that is attributable to the differences between groups/clusters. It ranges from 0 to 1.  
+
+This helps us to assess the appropriateness of using a multilevel approach. If the ICC is high, it suggests that a large amount of the variance is at the cluster level (justifying the use of multilevel modeling to account for this structure).  
+
+__There are no cut-offs__ - the interpretation of ICC values is inherently field-specific, as what constitutes a high or low ICC depends on the nature of the outcome variable, and the hierarchical structure within a particular research context.  
+
+:::
+
+
 ## Visualisations
 
 When we're visualising data that has a hierarchical structure such as this (i.e. observations grouped into clusters), we need to be careful to think about what exactly we want to show. 
@@ -925,13 +953,13 @@ Information from each cluster contributes **only** to an estimate for that speci
 
 e.g. 
 
-1. Estimate the effect of motivation on grades after accounting for school-specific differences in grades.: 
+1. No Pooling - Additive Model: Estimate the effect of motivation on grades after accounting for school-specific differences in grades.: 
 ```{r}
 #| eval: false
 lm(grade ~ motiv + schoolid, data = schoolmot)
 ```
 
-2. Estimate school-specific differences in grades, and school-specific differences in the effect of motivation on grades. Get _loads_ of coefficients that aren't really of interest. Slightly more difficult to get out an average slope of `grade ~ motiv`, and each school contributes equally to this average (regardless of how many children we have from that school).   
+2. No Pooling - Interaction Model: Estimate school-specific differences in grades, and school-specific differences in the effect of motivation on grades. Get _loads_ of coefficients that aren't really of interest. Slightly more difficult to get out an average slope of `grade ~ motiv`, and each school contributes equally to this average (regardless of how many children we have from that school).   
 ```{r}
 #| eval: false
 lm(grade ~ motiv * schoolid, data = schoolmot)
@@ -952,7 +980,7 @@ What would be great is if we could _somehow_ use the information from the other 
 #| fig-cap: "Blue lines show the estimated fitted values from the no-pooling approach lm(grade ~ motiv * schoolid). School X's estimate is based on just the 3 datapoints from that school, and does not take into account any of the other schools in anyway."
 set.seed(123)
 bind_rows(
-  schoolmot |> filter(schoolid %in% sort(unique(schoolmot$schoolid))[c(1:4)]),
+  schoolmot |> filter(schoolid %in% sort(unique(schoolmot$schoolid))[c(c(1,4,5,9))]),
   tibble(
     schoolid = "Hypothetical School X",
     motiv = c(-1,0.1,1.4)+5,
