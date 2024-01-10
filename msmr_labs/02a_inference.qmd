@@ -35,17 +35,14 @@ test of coefficient vs model comparison
 
 ddf
 
-perfectly balanced, then we can calculate ddf for F
+in a perfectly balanced design, then we can calculate ddf for F
 
 mi = nr of groups at level i
 mim1 = nr of groups as level i-1 (**higher** level)
 pi = df for terms at level i
 ddf_i = mi - (mim1 + pi)
 
-
 SE = derived via ML/REML (not SS resid)
-
-
 
 ## wald t (balanced only)
 
@@ -58,12 +55,23 @@ kr
 ```{r}
 #| eval: false
 # ddf ----
+d3=slice_sample(d3,prop=.78)
+m0 =lmer(ACE ~ visit + condition + (1+visit|ppt), d3,REML=F)
+m0r =lmer(ACE ~ visit + condition + (1+visit|ppt), d3,REML=T)
+m1 =lmer(ACE ~ visit * condition + (1+visit|ppt), d3,REML=F)
+m1r =lmer(ACE ~ visit * condition + (1+visit|ppt), d3,REML=T)
+SATmodcomp(m1,m0) # refits with REML
+SATmodcomp(m1r,m0r) # refits with REML
+KRmodcomp(m1,m0) # refits with REML
+KRmodcomp(m1r,m0r) # refits with REML
+
+
 SATmodcomp(m1,m0) # refits with REML
 KRmodcomp(m1,m0) # refits with REML
 
-parameters::model_parameters(m1, ci_method="kr", ci_random=FALSE)
+parameters::model_parameters(m1, ci_method="kr")
 # CIs computed via REML, estimates, t, p not unless initial model fitted with REML
-parameters::model_parameters(m1,ci_method="sat", ci_random=FALSE)
+parameters::model_parameters(m1r,ci_method="sat")
 # CIs computed via REML, estimates, t, p not unless initial model fitted with REML
 ```
 

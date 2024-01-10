@@ -97,17 +97,17 @@ function toggle_visibility(id1, id2) {
 var e = document.getElementById(id1);
 var f = document.getElementById(id2);
 e.style.display = ((e.style.display!='none') ? 'none' : 'block');
-if(f.classList.contains('fa-circle-right')) {
-    f.classList.add('fa-circle-down')
-    f.classList.remove('fa-circle-right')
+if(f.classList.contains('jk-circle-right')) {
+    f.classList.add('jk-circle-down')
+    f.classList.remove('jk-circle-right')
 } else {
-    f.classList.add('fa-circle-right')
-    f.classList.remove('fa-circle-down')
+    f.classList.add('jk-circle-right')
+    f.classList.remove('jk-circle-down')
 }
 }
 </script>
 
-<script src="https://kit.fontawesome.com/120b08a6f5.js" crossorigin="anonymous"></script>
+<!---<script src="https://kit.fontawesome.com/120b08a6f5.js" crossorigin="anonymous"></script>-->
 <link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet">
 <script src="site_libs/panelset-0.2.6/panelset.js"></script>
 
@@ -171,6 +171,12 @@ if(f.classList.contains('fa-circle-right')) {
  <span class="menu-text">1B: Linear Mixed Models/Multi-level Models</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 1 Exercises: Intro to MLM</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -211,6 +217,7 @@ if(f.classList.contains('fa-circle-right')) {
   <ul class="collapse">
   <li><a href="#extracting-model-parameters" id="toc-extracting-model-parameters" class="nav-link" data-scroll-target="#extracting-model-parameters">Extracting model parameters</a></li>
   <li><a href="#making-model-predictions" id="toc-making-model-predictions" class="nav-link" data-scroll-target="#making-model-predictions">Making model predictions</a></li>
+  <li><a href="#a-more-complex-model" id="toc-a-more-complex-model" class="nav-link" data-scroll-target="#a-more-complex-model">A more complex model</a></li>
   </ul></li>
   <li><a href="#model-estimation" id="toc-model-estimation" class="nav-link" data-scroll-target="#model-estimation">Model Estimation</a>
   <ul class="collapse">
@@ -428,7 +435,16 @@ b_{0i} &amp;= \gamma_{00} + \zeta_{0i} \\
 <p>So the parameters that are estimated from our model with a random intercept by-schools, are:</p>
 <div class="columns">
 <div class="column" style="width:35%;">
-<p><br> - a fixed intercept <span class="math inline">\(\gamma_{00}\)</span> - the variance with which schools deviate from the fixed intercept <span class="math inline">\(\sigma^2_0\)</span> - a fixed slope for <code>motiv</code> <span class="math inline">\(b_1\)</span> - and we also need the residual variance too <span class="math inline">\(\sigma^2_\varepsilon\)</span></p>
+<p><br></p>
+<ul>
+<li>a fixed intercept <span class="math inline">\(\gamma_{00}\)</span><br>
+</li>
+<li>the variance with which schools deviate from the fixed intercept <span class="math inline">\(\sigma^2_0\)</span><br>
+</li>
+<li>a fixed slope for <code>motiv</code> <span class="math inline">\(b_1\)</span><br>
+</li>
+<li>and we also need the residual variance too <span class="math inline">\(\sigma^2_\varepsilon\)</span></li>
+</ul>
 </div><div class="column" style="width:10%;">
 
 </div><div class="column" style="width:55%;">
@@ -787,6 +803,147 @@ fixef() + ranef() = coef()
 </center>
 </div>
 </div>
+</section>
+<section id="a-more-complex-model" class="level2">
+<h2 class="anchored" data-anchor-id="a-more-complex-model">A more complex model</h2>
+<p>The models fitted in the reading thus far are fairly simple in that they only really have one predictor (a measure of a child’s education motivation, <code>motiv</code>), and our observations (children) happen to be clustered into groups (schools).</p>
+<p>However, the multilevel model can also allow us to study questions that we might have about features of those groups (i.e., things about the schools) and how those relate to observation-level variables (things about the children).</p>
+<p>For instance, we might have questions that take the form:</p>
+<ul>
+<li>“does [Level-2 variable] predict [Level-1 outcome]?”<br>
+</li>
+<li>“does [Level-2 variable] influence the relationship between [Level-1 predictor] and [Level-1 outcome]?</li>
+</ul>
+<p><em>(in our example, Level-1 = children, Level-2 = Schools).</em></p>
+<p>Consider, for example, if we want to investigate whether the relationship between children’s motivation levels and their grades is different depending upon the source of school funding (private vs state).</p>
+<p>Addressing such questions simply requires a more complex fixed effect structure (specifically the interaction between <code>motiv</code> and <code>funding</code> (private vs state).</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>smod3 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(grade <span class="sc">~</span> motiv <span class="sc">*</span> funding <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> motiv <span class="sc">|</span> schoolid), </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Note, we <em>cannot</em> include <code>funding</code> in the random effects part of our model, because “the effect of funding on school grades” is something we assess by comparing <em>between</em> schools. We cannot think of that effect varying by-school because every school is <em>either</em> “private” <em>or</em> “state” funded. We never observe “Ardnamurchan High School” as anything other than “state” funded, so “the effect on grades of being state/private funded” does not exist for Ardnamurchan High School (and hence it is illogical to try and say that this effect varies between schools).</p>
+<p>Our additions to the fixed effects part here simply add in a couple of fixed terms to our model (the <code>funding</code> coefficient and the <code>motiv:funding</code> interaction coefficient). This means that in terms of our model structure, it is simply moving from the single line we had in <a href="#fig-rslopes2">Figure&nbsp;7</a>, to having two lines (one for “private” schools and one for “state” schools). The random effects are, as before, the variance in deviations of individual schools around these fixed estimates.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Model equation
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>This model is not too much of an extension on our previous equation, but when we move to models with more than 2 levels (e.g., children in schools in districts), these equations can become very cumbersome.</p>
+<p>Additionally, as you become more practiced at fitting multilevel models, you may well begin to think of these models in terms of the <code>lmer()</code> syntax in R, rather than in terms of the mathematical expressions.</p>
+<p>This is absolutely fine, and you should feel free to ignore these equations if they are of no help to your understanding!</p>
+<p>Because the <code>funding</code> variable is something we measure at Level 2 (schools), in most notations it gets placed in the level 2 equations:</p>
+<p><span class="math display">\[
+\begin{align}
+\text{For Child }j\text{ in School }i&amp; \\
+\text{Level 1 (child):}&amp; \\
+\text{grade}_{ij} &amp;= b_{0i} + b_{1i} \cdot \text{motiv}_{ij} + \epsilon_{ij} \\
+\text{Level 2 (school):}&amp; \\
+b_{0i} &amp;= \gamma_{00} + \zeta_{0i} + \gamma_{01} \cdot \text{Funding}_i\\
+b_{1i} &amp;= \gamma_{10} + \zeta_{1i} + \gamma_{11} \cdot \text{Funding}_i\\
+\end{align}
+\]</span></p>
+<p>It is sometimes easier to think of this in the “mixed effects notation” we saw above, where we substitute the level 2 equations into the level 1 equation, and rearrange to get:<br>
+<span class="math display">\[
+\begin{align}
+&amp;\text{For Child }j\text{ in School }i \\
+&amp;\text{grade}_{ij} = (\gamma_{00} + \zeta_{0i}) + \gamma_{01} \cdot \text{Funding}_i + (\gamma_{10} + \zeta_{1i})\cdot \text{motiv}_{ij} + \gamma_{11} \cdot \text{Funding}_i \cdot \text{motiv}_{ij} + \epsilon_{ij} \\
+\end{align}
+\]</span></p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+optional: an attempted visual explanation
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><a href="#fig-crosslev1">Figure&nbsp;11</a> shows an attempted visual intuition of how the different parts of the model work:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-crosslev1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="01b_lmm_files/figure-html/fig-crosslev1-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;11: visual explanation of a model with a cross-level interaction</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="panelset">
+<section id="model-summary" class="level4 panel">
+<h4 class="anchored" data-anchor-id="model-summary">model summary</h4>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(smod3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed model fit by REML ['lmerMod']
+Formula: grade ~ motiv * funding + (1 + motiv | schoolid)
+   Data: schoolmot
+
+REML criterion at convergence: 7083.6
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-3.08250 -0.67269  0.03043  0.63562  3.13012 
+
+Random effects:
+ Groups   Name        Variance Std.Dev. Corr 
+ schoolid (Intercept) 105.124  10.253        
+          motiv         2.595   1.611   -0.48
+ Residual             139.030  11.791        
+Number of obs: 900, groups:  schoolid, 30
+
+Fixed effects:
+                   Estimate Std. Error t value
+(Intercept)         40.3143     4.6414   8.686
+motiv                2.6294     0.8652   3.039
+fundingstate       -17.2531     5.7346  -3.009
+motiv:fundingstate   2.8485     1.0591   2.689
+
+Correlation of Fixed Effects:
+            (Intr) motiv  fndngs
+motiv       -0.782              
+fundingstat -0.809  0.633       
+mtv:fndngst  0.639 -0.817 -0.773</code></pre>
+</div>
+</div>
+</section>
+<section id="plot" class="level4 panel">
+<h4 class="anchored" data-anchor-id="plot">plot</h4>
+<p>For plotting the fixed effect estimates (which are often the bit we’re most interested in) from multilevel models, we can’t rely on using <code>predict()</code>, <code>fitted()</code> or <code>augment()</code>, as these return to us the cluster-specific predicted values.</p>
+<p>Instead, we need to use tools like the <strong>effects</strong> package that we saw at the end of the USMR course, that takes a fixed effect and averages over the other terms in the model:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effects)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">effect</span>(<span class="at">term=</span><span class="st">"motiv*funding"</span>,<span class="at">mod=</span>smod3,<span class="at">xlevels=</span><span class="dv">20</span>) <span class="sc">|&gt;</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>motiv,<span class="at">y=</span>fit,<span class="at">col=</span>funding,<span class="at">fill=</span>funding))<span class="sc">+</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()<span class="sc">+</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin=</span>lower,<span class="at">ymax=</span>upper),<span class="at">alpha=</span>.<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="01b_lmm_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</div>
 <div class="divider div-transparent div-dot">
 
 </div>
@@ -797,14 +954,14 @@ fixef() + ranef() = coef()
 <p>With single level regression models fitted with <code>lm()</code>, our estimated coefficients could actually be obtained using some matrix algebra. Fitting multilevel models is a bit more complicated, and so we have to instead rely on an iterative procedure known as “maximum likelihood estimation” (“ML” or “MLE”).</p>
 <p>We actually saw this previously when fitting logistic regressions. The process is iterative in that it involves testing the fit of a set of candidate parameters (i.e.&nbsp;giving some initial values for our coefficients) and working out what direction we need to change them in order to get a better fit. We then change them accordingly, evalute the fit, change them, evaluate fit, … and so on until we reach a point where we don’t think we can get any better.</p>
 <p>In maximum likelihood estimation, the “fit” of the model is assessed through the <em>likelihood</em> (the probability of seeing our data, given some hypothesis, see <a href="lvp.html" target="_blank">here</a> for an explanation).</p>
-<p>If we were estimating just one single parameter (e.g.&nbsp;a mean), then we can imagine the process of maximum likelihood estimation in a one-dimensional world - simply finding the top of the curve (<a href="#fig-mle">Figure&nbsp;11</a>, LH panel).</p>
-<p>However, our typical models estimate a whole bunch of parameters, and with lots of parameters being estimated and all interacting to influence the likelihood, our nice curved line becomes a complex surface (<a href="#fig-mle">Figure&nbsp;11</a> RH panel shows it in 3D). What MLE does is try to find the maximum (the top the mountain), but avoid local maxima (false summits) and impossible values (e.g., variances <span class="math inline">\(\leq 0\)</span>), without getting stuck (in plateaus).</p>
+<p>If we were estimating just one single parameter (e.g.&nbsp;a mean), then we can imagine the process of maximum likelihood estimation in a one-dimensional world - simply finding the top of the curve (<a href="#fig-mle">Figure&nbsp;12</a>, LH panel).</p>
+<p>However, our typical models estimate a whole bunch of parameters, and with lots of parameters being estimated and all interacting to influence the likelihood, our nice curved line becomes a complex surface (<a href="#fig-mle">Figure&nbsp;12</a> RH panel shows it in 3D). What MLE does is try to find the maximum (the top the mountain), but avoid local maxima (false summits) and impossible values (e.g., variances <span class="math inline">\(\leq 0\)</span>), without getting stuck (in plateaus).</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div id="fig-mle" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="images/mle.png" class="img-fluid figure-img" style="width:80.0%"></p>
-<figcaption class="figure-caption">Figure&nbsp;11: maximum likelihood estimation in one dimension (LEFT), and a 3D visual of a multi-dimensional likelihood surface (RIGHT)</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;12: maximum likelihood estimation in one dimension (LEFT), and a 3D visual of a multi-dimensional likelihood surface (RIGHT)</figcaption>
 </figure>
 </div>
 </div>
@@ -819,7 +976,7 @@ lmer(<em>formula</em>,<br> &nbsp; &nbsp; &nbsp; &nbsp; data = <em>dataframe</em>
 <p><strong>TL;DR</strong></p>
 <p><code>lmer()</code> models are by default fitted with REML, which tends to be better for small samples.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -828,7 +985,7 @@ optional: why REML?
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>REML overcomes a problem for multilevel models fitted with standard MLE, which is that at each iteration of the maximum likelihood, the random effect variances are estimated <em>after</em> the fixed effects (because they are the variances of clusters around the fixed effects). This means that we are essentially treating the fixed effects as a known constant when estimating the random effect variance. The downside of this is that it biases our variance estimates to be smaller than they should be<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>, especially if <span class="math inline">\(n_\textrm{clusters} - n_\textrm{level 2 predictors} - 1 &lt; 50\)</span>. This leads to the standard errors of the fixed effects being too small, thereby inflating our type 1 error rate (i.e.&nbsp;greater chance of incorrectly rejecting our null hypothesis).</p>
 <p>REML avoids this by first partialling out the fixed effects (i.e.&nbsp;removing all of the association, so that the fixed effects are 0 <em>by definition</em>), then using maximum likelihood to iteratively estimate the random effect variances. At the end, it then uses generalised least squares to estimate the fixed effects given the known random effect structure. Because this separates the estimation of fixed and random parts of the model, it results in unbiased estimates of the variance components.</p>
@@ -863,8 +1020,8 @@ boundary (singular) fit: see ?isSingular
 </div>
 <p>There are lots of different ways to <a href="https://rstudio-pubs-static.s3.amazonaws.com/33653_57fc7b8e5d484c909b615d8633c01d51.html">deal with these</a> (to try to rule out hypotheses about what is causing them), but for the time being, if <code>lmer()</code> gives you convergence errors or singular fits, you could try changing the optimizer. Bobyqa is a good one: add <code>control = lmerControl(optimizer = "bobyqa")</code> when you run your model.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lmer</span>(y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> x1 <span class="sc">+</span> ... <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> .... <span class="sc">|</span> g), <span class="at">data =</span> df, </span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">control =</span> <span class="fu">lmerControl</span>(<span class="at">optimizer =</span> <span class="st">"bobyqa"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lmer</span>(y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> x1 <span class="sc">+</span> ... <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> .... <span class="sc">|</span> g), <span class="at">data =</span> df, </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">control =</span> <span class="fu">lmerControl</span>(<span class="at">optimizer =</span> <span class="st">"bobyqa"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 

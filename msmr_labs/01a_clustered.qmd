@@ -273,30 +273,18 @@ schoolids = read_csv("data/schoolnames.csv") |> janitor::clean_names() |>
       grade = round(50.356 + scale(y)[,1]*14.53,2),
       grade = pmax(0,pmin(97,grade))
     )
-#   lmer(grade~1+motiv+(1|schoolid),schoolmot)
-#   lmer(grade~1+motiv+(1+motiv|schoolid),schoolmot) |> summary()
-#   vv = summary(lmer(grade~1+motiv*funding+(1+motiv|schoolid),schoolmot))$optinfo$conv$lme4$messages
-# # lmer(grade~1+motiv+(1|schoolid),schoolmot)
-# v = abs(cov2cor(VarCorr(lmer(grade~1+motiv+(1+motiv|schoolid),schoolmot))[[1]])[1,2])<.7
-# # lmer(grade~1+motiv*funding+(1+motiv|schoolid),schoolmot)
-#   if(v & is.null(vv)){break}
-# }
 
-# library(ICC)
-# ICCbare(schoolid, grade, data = schoolmot)
-# library(lme4)
-# lmer(grade~1+motiv*funding+(1+motiv|schoolid),schoolmot) |> summary()
-#    sjPlot::plot_model(type="pred",terms=c("motiv","funding [4, 5, 6, 7]"),show.data=TRUE)
+pschools = c("Kilsyth Academy","St Andrew's Academy","Calderglen High School","St Ambrose High School", "Beeslack Community High School","The Mary Erskine School","Tarbert Academy","Stewarton Academy","St Columba's High School","Castlebrae Community High School","Penicuik High School")
 
-#write_csv(schoolmot,"data/schoolmot.csv")
-# schoolmot <- read_csv("data/schoolmot.csv")
-# academic_performance ~ 1 + motiv * schoolfunding + (1 + motiv | school)
-# health_anxiety ~ 1 + education * GPpracticesize + (1 + education | GP)
+schoolmot = schoolmot |> mutate(
+  funding = ifelse(schoolid%in%pschools,"private","state")
+)
+# write_csv(schoolmot,"data/schoolmot.csv")
 ```
 
 ```{r}
 #| include: false
-schoolmot <- read_csv("data/schoolmot.csv") |> mutate(schoolid=factor(schoolid))
+schoolmot <- read_csv("https://uoepsy.github.io/data/schoolmot.csv") |> mutate(schoolid=factor(schoolid))
 ```
 
 A common example to start thinking about clustered data is to think about conducting a study on school children. Each observation in our sample is a different child, and they come from a set of various schools (i.e. we might get 20 children from `r levels(schoolmot$schoolid)[10]`, 15 from `r levels(schoolmot$schoolid)[11]`, and so on). If we ignore the clustering of children into their respective schools, we can end up reaching completely different conclusions. 
@@ -474,7 +462,7 @@ ggplot(pltd,aes(x=schoolid,y=grade))+
 
 ```
 
-Often, while the specific clusters are not of interest, we may have research questions that are about features of those clusters, and how they relate to things at other levels. For example, we might be interested in if the level of school funding (a school-level variable) influences the grade performance (a child-level variable). The focus of this course is multilevel modelling (also known as "mixed effects modelling"), which is a regression modelling technique that allows us to explore questions such as these (and many more).^[Depending on the research question and design of the study, we may be only interested in things that occur at "level 1" (the lowest observation level). While not the focus of this course, there are alternative methods (survey weighting tools, cluster robust standard errors, or generalised estimating equations) that we may use to simply "account for the nuisance clustering".]  
+Often, while the specific clusters are not of interest, we may have research questions that are about features of those clusters, and how they relate to things at other levels. For example, we might be interested in if the type of school funding (a school-level variable) influences the grade performance (a child-level variable). The focus of this course is multilevel modelling (also known as "mixed effects modelling"), which is a regression modelling technique that allows us to explore questions such as these (and many more).^[Depending on the research question and design of the study, we may be only interested in things that occur at "level 1" (the lowest observation level). While not the focus of this course, there are alternative methods (survey weighting tools, cluster robust standard errors, or generalised estimating equations) that we may use to simply "account for the nuisance clustering".]  
 
 
 
@@ -525,7 +513,7 @@ It is available at [https://uoepsy.github.io/data/schoolmot.csv](https://uoepsy.
 tibble(variable=names(schoolmot),
        description = c(
          "Child's Education Motivation Score (range 0 - 10)",
-         "Annual School Funding (in 1000s of £)",
+         "Funding ('state' or 'private')",
          "Name of School that the child attends",
          "Child's end-of-year grade average (0-100)")
 ) |> gt::gt()

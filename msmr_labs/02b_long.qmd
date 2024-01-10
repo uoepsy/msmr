@@ -1,0 +1,49 @@
+---
+title: "Multilevel Models for Longitudinal Data"
+params: 
+    SHOW_SOLS: FALSE
+    TOGGLE: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+source('assets/setup.R')
+library(xaringanExtra)
+library(tidyverse)
+library(patchwork)
+xaringanExtra::use_panelset()
+```
+
+
+multilevel models are perfectly geared towards dealing with longitudinal data, which can be framed as having essentially the same hierarchical structure as "children in schools".  
+
+
+
+
+::: {.callout-note collapse="true"}
+#### Mindful Cognitive Aging
+
+A study is interested in examining **whether engaging in mindfulness can prevent cognitive decline in older adults**. They recruit a sample of 20 participants at age 60, and administer the Addenbrooke's Cognitive Examination (ACE) every 2 years (until participants were aged 78). Half of the participants undertake to complete daily mindfulness sessions, while the remaining participants did not.   
+
+**DATASET:** [https://uoepsy.github.io/data/dapr3_mindfuldecline.csv](https://uoepsy.github.io/data/dapr3_mindfuldecline.csv)
+
+```{r}
+#| echo: false
+d3 <- read_csv("https://uoepsy.github.io/data/dapr3_mindfuldecline.csv")
+tibble(
+  variable=names(d3),
+  description=c("Site Identifier",
+                "Participant Identifier",
+                "Whether the participant engages in mindfulness or not (control/mindfulness)",
+                "Visit number (1 - 10)",
+                "Age (years) at visit",
+                "Addenbrooke's Cognitive Examination Score. Scores can range from 0 to 100",
+                "Clinical diagnosis of cognitive impairment ('imp' = impaired, 'unimp' = unimpaired)")
+) |> gt::gt()
+
+```
+
+:::

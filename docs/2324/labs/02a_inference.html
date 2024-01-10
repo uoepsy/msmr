@@ -97,17 +97,17 @@ function toggle_visibility(id1, id2) {
 var e = document.getElementById(id1);
 var f = document.getElementById(id2);
 e.style.display = ((e.style.display!='none') ? 'none' : 'block');
-if(f.classList.contains('fa-circle-right')) {
-    f.classList.add('fa-circle-down')
-    f.classList.remove('fa-circle-right')
+if(f.classList.contains('jk-circle-right')) {
+    f.classList.add('jk-circle-down')
+    f.classList.remove('jk-circle-right')
 } else {
-    f.classList.add('fa-circle-right')
-    f.classList.remove('fa-circle-down')
+    f.classList.add('jk-circle-right')
+    f.classList.remove('jk-circle-down')
 }
 }
 </script>
 
-<script src="https://kit.fontawesome.com/120b08a6f5.js" crossorigin="anonymous"></script>
+<!---<script src="https://kit.fontawesome.com/120b08a6f5.js" crossorigin="anonymous"></script>-->
 <link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet">
 <script src="site_libs/panelset-0.2.6/panelset.js"></script>
 
@@ -169,6 +169,12 @@ if(f.classList.contains('fa-circle-right')) {
   <div class="sidebar-item-container"> 
   <a href="./01b_lmm.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">1B: Linear Mixed Models/Multi-level Models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 1 Exercises: Intro to MLM</span></a>
   </div>
 </li>
       </ul>
@@ -244,7 +250,7 @@ if(f.classList.contains('fa-circle-right')) {
 <section id="inference-in-lmm" class="level1">
 <h1>Inference in LMM</h1>
 <p>ddf</p>
-<p>perfectly balanced, then we can calculate ddf for F</p>
+<p>in a perfectly balanced design, then we can calculate ddf for F</p>
 <p>mi = nr of groups at level i mim1 = nr of groups as level i-1 (<strong>higher</strong> level) pi = df for terms at level i ddf_i = mi - (mim1 + pi)</p>
 <p>SE = derived via ML/REML (not SS resid)</p>
 <section id="wald-t-balanced-only" class="level2">
@@ -256,13 +262,24 @@ if(f.classList.contains('fa-circle-right')) {
 <p>kr</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ddf ----</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">SATmodcomp</span>(m1,m0) <span class="co"># refits with REML</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">KRmodcomp</span>(m1,m0) <span class="co"># refits with REML</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(m1, <span class="at">ci_method=</span><span class="st">"kr"</span>, <span class="at">ci_random=</span><span class="cn">FALSE</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># CIs computed via REML, estimates, t, p not unless initial model fitted with REML</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(m1,<span class="at">ci_method=</span><span class="st">"sat"</span>, <span class="at">ci_random=</span><span class="cn">FALSE</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># CIs computed via REML, estimates, t, p not unless initial model fitted with REML</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>d3<span class="ot">=</span><span class="fu">slice_sample</span>(d3,<span class="at">prop=</span>.<span class="dv">78</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>m0 <span class="ot">=</span><span class="fu">lmer</span>(ACE <span class="sc">~</span> visit <span class="sc">+</span> condition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">+</span>visit<span class="sc">|</span>ppt), d3,<span class="at">REML=</span>F)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>m0r <span class="ot">=</span><span class="fu">lmer</span>(ACE <span class="sc">~</span> visit <span class="sc">+</span> condition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">+</span>visit<span class="sc">|</span>ppt), d3,<span class="at">REML=</span>T)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">=</span><span class="fu">lmer</span>(ACE <span class="sc">~</span> visit <span class="sc">*</span> condition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">+</span>visit<span class="sc">|</span>ppt), d3,<span class="at">REML=</span>F)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>m1r <span class="ot">=</span><span class="fu">lmer</span>(ACE <span class="sc">~</span> visit <span class="sc">*</span> condition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">+</span>visit<span class="sc">|</span>ppt), d3,<span class="at">REML=</span>T)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">SATmodcomp</span>(m1,m0) <span class="co"># refits with REML</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">SATmodcomp</span>(m1r,m0r) <span class="co"># refits with REML</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">KRmodcomp</span>(m1,m0) <span class="co"># refits with REML</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">KRmodcomp</span>(m1r,m0r) <span class="co"># refits with REML</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">SATmodcomp</span>(m1,m0) <span class="co"># refits with REML</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">KRmodcomp</span>(m1,m0) <span class="co"># refits with REML</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(m1, <span class="at">ci_method=</span><span class="st">"kr"</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># CIs computed via REML, estimates, t, p not unless initial model fitted with REML</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(m1r,<span class="at">ci_method=</span><span class="st">"sat"</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># CIs computed via REML, estimates, t, p not unless initial model fitted with REML</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="likelihood-based" class="level2">

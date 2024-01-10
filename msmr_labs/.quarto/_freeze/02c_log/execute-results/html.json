@@ -1,0 +1,18 @@
+{
+  "hash": "631f9b07adc38108ef325056e41df468",
+  "result": {
+    "markdown": "---\ntitle: \"Logistic Multilevel Models\"\nparams: \n    SHOW_SOLS: FALSE\n    TOGGLE: TRUE\neditor_options: \n  chunk_output_type: console\n---\n\n\n\n::: {.cell layout-align=\"center\"}\n\n```{.r .cell-code}\nd3 <- read_csv(\"https://uoepsy.github.io/data/dapr3_mindfuldecline.csv\")\nd3$isImp <- ifelse(d3$imp==\"imp\",1,0)\n\nlibrary(lme4)\n\nglmer(isImp ~ visit + (1+visit|ppt), d3, family=binomial) |> summary()\n```\n\n::: {.cell-output .cell-output-stdout}\n```\nGeneralized linear mixed model fit by maximum likelihood (Laplace\n  Approximation) [glmerMod]\n Family: binomial  ( logit )\nFormula: isImp ~ visit + (1 + visit | ppt)\n   Data: d3\n\n     AIC      BIC   logLik deviance df.resid \n   122.7    138.5    -56.3    112.7      172 \n\nScaled residuals: \n     Min       1Q   Median       3Q      Max \n-2.41073  0.00504  0.05123  0.26999  1.43076 \n\nRandom effects:\n Groups Name        Variance Std.Dev. Corr \n ppt    (Intercept) 3.501    1.871         \n        visit       1.218    1.104    -0.90\nNumber of obs: 177, groups:  ppt, 20\n\nFixed effects:\n            Estimate Std. Error z value Pr(>|z|)   \n(Intercept)  -1.0187     0.7344  -1.387  0.16539   \nvisit         1.0066     0.3729   2.699  0.00695 **\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nCorrelation of Fixed Effects:\n      (Intr)\nvisit -0.839\n```\n:::\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {
+      "include-in-header": [
+        "<link href=\"site_libs/panelset-0.2.6/panelset.css\" rel=\"stylesheet\" />\r\n<script src=\"site_libs/panelset-0.2.6/panelset.js\"></script>\r\n"
+      ]
+    },
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

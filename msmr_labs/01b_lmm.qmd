@@ -16,7 +16,7 @@ library(tidyverse)
 library(patchwork)
 xaringanExtra::use_panelset()
 
-schoolmot <- read_csv("data/schoolmot.csv") |>
+schoolmot <- read_csv("https://uoepsy.github.io/data/schoolmot.csv") |>
   mutate(schoolid=factor(schoolid))
 srmod <- lm(grade ~ motiv, data = schoolmot)
 ```
@@ -327,11 +327,13 @@ So the parameters that are estimated from our model with a random intercept by-s
 :::: {.columns}
 :::{.column width="35%"}
 
-<br>
-- a fixed intercept $\gamma_{00}$
-- the variance with which schools deviate from the fixed intercept $\sigma^2_0$
-- a fixed slope for `motiv` $b_1$
-- and we also need the residual variance too $\sigma^2_\varepsilon$
+<br>  
+
+- a fixed intercept $\gamma_{00}$  
+- the variance with which schools deviate from the fixed intercept $\sigma^2_0$  
+- a fixed slope for `motiv` $b_1$  
+- and we also need the residual variance too $\sigma^2_\varepsilon$  
+
 
 :::
 :::{.column width="10%"}
@@ -653,7 +655,7 @@ tdf |>
   geom_line(data=feplot,
             aes(y=.fitted),col="blue",lwd=1)+
   geom_line(data=rsplot,
-            aes(x=x,y=.fitted),col="darkorange",lwd=1)+
+            aes(x=x,y=.fitted),col="darkorange3",lwd=1)+
   ylim(0,100)
 ```
 
@@ -692,6 +694,7 @@ This means that there is less contribution from (and more shrinkage of estimates
 :::
 
 <div class="divider div-transparent div-dot"></div>
+
 
 # Fitting Multilevel Models in R
 
@@ -893,8 +896,241 @@ fixef() + ranef() = coef()
 
 :::
 
-<div class="divider div-transparent div-dot"></div>
 
+## A more complex model
+
+The models fitted in the reading thus far are fairly simple in that they only really have one predictor (a measure of a child's education motivation, `motiv`), and our observations (children) happen to be clustered into groups (schools). 
+
+However, the multilevel model can also allow us to study questions that we might have about features of those groups (i.e., things about the schools) and how those relate to observation-level variables (things about the children).  
+
+For instance, we might have questions that take the form:  
+
+- "does [Level-2 variable] predict [Level-1 outcome]?"  
+- "does [Level-2 variable] influence the relationship between [Level-1 predictor] and [Level-1 outcome]?  
+
+_(in our example, Level-1 = children, Level-2 = Schools)._  
+
+Consider, for example, if we want to investigate whether the relationship between children's motivation levels and their grades is different depending upon the source of school funding (private vs state).  
+
+Addressing such questions simply requires a more complex fixed effect structure (specifically the interaction between `motiv` and `funding` (private vs state).    
+
+```{r}
+smod3 <- lmer(grade ~ motiv * funding + (1 + motiv | schoolid), 
+              data = schoolmot)
+```
+
+Note, we _cannot_ include `funding` in the random effects part of our model, because "the effect of funding on school grades" is something we assess by comparing _between_ schools. We cannot think of that effect varying by-school because every school is _either_ "private" _or_ "state" funded. We never observe "Ardnamurchan High School" as anything other than "state" funded, so "the effect on grades of being state/private funded" does not exist for Ardnamurchan High School (and hence it is illogical to try and say that this effect varies between schools).  
+
+Our additions to the fixed effects part here simply add in a couple of fixed terms to our model (the `funding` coefficient and the `motiv:funding` interaction coefficient). This means that in terms of our model structure, it is simply moving from the single line we had in @fig-rslopes2, to having two lines (one for "private" schools and one for "state" schools). The random effects are, as before, the variance in deviations of individual schools around these fixed estimates.  
+
+
+::: {.callout-tip collapse="true"}
+#### Model equation
+
+This model is not too much of an extension on our previous equation, but when we move to models with more than 2 levels (e.g., children in schools in districts), these equations can become very cumbersome. 
+
+Additionally, as you become more practiced at fitting multilevel models, you may well begin to think of these models in terms of the `lmer()` syntax in R, rather than in terms of the mathematical expressions. 
+
+This is absolutely fine, and you should feel free to ignore these equations if they are of no help to your understanding!  
+
+Because the `funding` variable is something we measure at Level 2 (schools), in most notations it gets placed in the level 2 equations:  
+
+$$
+\begin{align}
+\text{For Child }j\text{ in School }i& \\
+\text{Level 1 (child):}& \\
+\text{grade}_{ij} &= b_{0i} + b_{1i} \cdot \text{motiv}_{ij} + \epsilon_{ij} \\
+\text{Level 2 (school):}& \\
+b_{0i} &= \gamma_{00} + \zeta_{0i} + \gamma_{01} \cdot \text{Funding}_i\\
+b_{1i} &= \gamma_{10} + \zeta_{1i} + \gamma_{11} \cdot \text{Funding}_i\\
+\end{align}
+$$
+
+It is sometimes easier to think of this in the "mixed effects notation" we saw above, where we substitute the level 2 equations into the level 1 equation, and rearrange to get:  
+$$
+\begin{align}
+&\text{For Child }j\text{ in School }i \\
+&\text{grade}_{ij} = (\gamma_{00} + \zeta_{0i}) + \gamma_{01} \cdot \text{Funding}_i + (\gamma_{10} + \zeta_{1i})\cdot \text{motiv}_{ij} + \gamma_{11} \cdot \text{Funding}_i \cdot \text{motiv}_{ij} + \epsilon_{ij} \\
+\end{align}
+$$
+  
+::: {.callout-caution collapse="true"}
+#### optional: an attempted visual explanation
+
+@fig-crosslev1 shows an attempted visual intuition of how the different parts of the model work:  
+
+```{r}
+#| echo: false
+#| label: fig-crosslev1
+#| fig-cap: "visual explanation of a model with a cross-level interaction"
+pschools = c("Kilsyth Academy","St Andrew's Academy","Calderglen High School","St Ambrose High School", "Beeslack Community High School","The Mary Erskine School","Tarbert Academy","Stewarton Academy","St Columba's High School","Castlebrae Community High School","Penicuik High School")
+
+plotlabs = schoolmot |> count(schoolid,funding) |> select(-n) |>
+  mutate(motiv=10,x=10)
+plotlabs$y = predict(smod3, newdata=plotlabs)
+
+plotlines = as.data.frame(coef(smod3)$schoolid) |> 
+  rownames_to_column() |>
+  mutate(g = 1:n(),
+         funding = ifelse(rowname%in%pschools,"private","state"),
+         fundingstate = ifelse(funding=="state",fundingstate,0),
+         `motiv:fundingstate` = ifelse(funding=="state",`motiv:fundingstate`,0),
+         data = pmap(list(`(Intercept)`,motiv,fundingstate,`motiv:fundingstate`), 
+                     ~tibble(x = 0:10, .fitted = ..1 + ..2*(0:10)+..3+(..4)*(0:10)))
+  ) |> unnest(data) |>
+  select(rowname,g,funding,x,.fitted)
+
+
+pf <- basep + 
+  with_blur(geom_line(data = plotlines, aes(x=x,y=.fitted,group=g,col=funding),alpha=.4),sigma=2) +
+  geom_text(data=plotlabs,
+            aes(x=x,y=y,label=schoolid,col=funding),
+            hjust=0,alpha=.3)+
+  geom_abline(intercept=fixef(smod3)[1],slope=fixef(smod3)[2], lwd=1,col="#00a8cc") + 
+  geom_abline(intercept=sum(fixef(smod3)[c(1,3)]),slope=sum(fixef(smod3)[c(2,4)]), 
+              lwd=1,col="#a41ae4")+
+  # stat_eye(side="left",
+  #          data=tibble(motiv=-1,grade=50),
+  #          aes(x=0,ydist=dist_normal(fixef(smod3)[1],sqrt(VarCorr(smod3)[[1]][1]))),
+  #          alpha=.3, fill="#00a8cc") +
+  # stat_eye(side="left",
+  #          data=tibble(motiv=-1,grade=50),
+  #          aes(x=0,ydist=dist_normal(sum(fixef(smod3)[c(1,3)]),sqrt(VarCorr(smod3)[[1]][1]))),
+  #          alpha=.3, fill="#a41ae4") +
+  geom_point(x=0,y=fixef(smod3)[1],size=3,col="#00a8cc")+
+ annotate("text",x=-.1,y=fixef(smod3)[1],
+         label=expression(gamma["00"]),size=5,
+         hjust=-.25,vjust=-.5,col="#00a8cc") +
+ geom_segment(x=1,xend=2,
+              y=(fixef(smod3)[1:2]%*%c(1,1))[[1]],
+              yend=(fixef(smod3)[1:2]%*%c(1,1))[[1]])+
+  geom_segment(x=2,xend=2,
+              y=(fixef(smod3)[1:2]%*%c(1,1))[[1]],
+              yend=(fixef(smod3)[1:2]%*%c(1,2))[[1]],
+              col="#00a8cc",lwd=1)+
+  geom_segment(x=1,xend=2,
+              y=(fixef(smod3)%*%c(1,1,1,1))[[1]],
+              yend=(fixef(smod3)%*%c(1,1,1,1))[[1]])+
+  geom_segment(x=2,xend=2,
+              y=(fixef(smod3)%*%c(1,1,1,1))[[1]],
+              yend=(fixef(smod3)%*%c(1,2,1,2))[[1]],
+              col="#a41ae4",lwd=1)+
+  geom_segment(x=2,xend=2,
+              y=(fixef(smod3)%*%c(1,1,1,1))[[1]],
+              yend=(fixef(smod3)%*%c(1,2,1,1))[[1]],
+              col="#00a8cc",lwd=1)+
+  geom_segment(x=1,xend=2,
+              y=(fixef(smod3)%*%c(1,1,1,1))[[1]],
+              yend=(fixef(smod3)%*%c(1,2,1,1))[[1]],
+              col="#00a8cc") +
+  geom_segment(x=0.1,xend=0.1,
+              y=(fixef(smod3)%*%c(1,0,0,0))[[1]],
+              yend=(fixef(smod3)%*%c(1,0,1,0))[[1]],
+              col="green4",lwd=1) +
+  annotate("text",x=0.1,y=33,
+            label=expression(gamma["01"]),size=5,
+            hjust=-.3,col="green4") +
+  
+  annotate("text",x=2,y=(fixef(smod3)%*%c(1,1,0,0))[[1]],
+            label=expression(gamma["10"]),size=5,
+            hjust=-.2,col="#00a8cc") +
+  annotate("text",x=2,y=(fixef(smod3)%*%c(1.1,1,1,1))[[1]],
+            label=expression(gamma["11"]),size=5,
+            hjust=-.2,col="#a41ae4") +
+ #  
+ # geom_segment(x=-.2,xend=-.2,y=fixef(smod3)[1],
+ #                yend=fixef(smod3)[1]+sqrt(VarCorr(smod3)[[1]][1]),
+ #                col="darkorange3",lwd=1) +
+ # annotate("text",x=-.2,y=45,
+ #            label=expression(sigma["0"]),size=5,
+ #            hjust=1.2,col="darkorange3") +
+ # geom_segment(x=-.2,xend=-.2,y=sum(fixef(smod3)[c(1,3)]),
+ #               yend=sum(fixef(smod3)[c(1,3)])+sqrt(VarCorr(smod3)[[1]][1]),
+ #               col="darkorange3",lwd=1) +
+ # annotate("text",x=-.2,y=27,
+ #           label=expression(sigma["0"]),size=5,
+ #           hjust=1.2,col="darkorange3")+
+  NULL
+
+pi <- as.data.frame(ranef(smod3)$schoolid) |>
+  rownames_to_column() |>
+  mutate(funding = ifelse(rowname%in%pschools,"private","state")) |>
+  ggplot(aes(x=`(Intercept)`))+
+  geom_area(stat = "function", fun = dnorm,args=list(mean=0,sd=sqrt(VarCorr(smod3)[[1]][1,1])),fill="#a41ae4",xlim=c(-30,30),alpha=.3)+
+  geom_rug(alpha=.7,aes(col=funding),lwd=1,
+                     length = unit(0.05, "npc")) +
+  scale_color_manual(values=c("#00a8cc","#a41ae4"))+
+  geom_segment(x=0,xend=sqrt(VarCorr(smod3)[[1]][1,1]),
+               y=0.005, yend=0.005,
+               col="darkorange3",lwd=1)+
+  annotate("text",
+           y=0.01,x=sqrt(VarCorr(smod3)[[1]][1,1])/2,
+           label=expression(sigma["0"]),
+           col="darkorange3",size=5)+
+  guides(col="none")+
+  scale_y_continuous(NULL,breaks=NULL)+
+  labs(title="intercept deviations",x=expression(zeta["0i"]))
+
+ps <- as.data.frame(ranef(smod3)$schoolid) |>
+  rownames_to_column() |>
+  mutate(funding = ifelse(rowname%in%pschools,"private","state")) |>
+  ggplot(aes(x=motiv))+
+  geom_area(stat = "function", fun = dnorm,args=list(mean=0,sd=sqrt(VarCorr(smod3)[[1]][2,2])),fill="#a41ae4",xlim=c(-6,6),alpha=.3)+
+  geom_rug(alpha=.7,aes(col=funding),lwd=1,
+                     length = unit(0.05, "npc")) +
+  geom_segment(x=0,xend=sqrt(VarCorr(smod3)[[1]][2,2]),
+               y=0.03, yend=0.03,
+               col="darkorange3",lwd=1)+
+  annotate("text",
+           y=0.06,x=sqrt(VarCorr(smod3)[[1]][2,2])/2,
+           label=expression(sigma["1"]),
+           col="darkorange3",size=5)+
+  guides(col="none")+
+  scale_color_manual(values=c("#00a8cc","#a41ae4"))+
+  scale_y_continuous(NULL,breaks=NULL)+
+  labs(title="slope deviations",x=expression(zeta["1i"]))
+
+(pf + (pi / ps)) + plot_layout(widths=c(2,1))
+```
+
+
+:::
+
+:::
+
+
+
+
+::::panelset
+:::panel
+#### model summary
+
+```{r}
+summary(smod3)
+```
+
+:::
+:::panel
+#### plot  
+
+For plotting the fixed effect estimates (which are often the bit we're most interested in) from multilevel models, we can't rely on using `predict()`, `fitted()` or `augment()`, as these return to us the cluster-specific predicted values.  
+
+Instead, we need to use tools like the __effects__ package that we saw at the end of the USMR course, that takes a fixed effect and averages over the other terms in the model:  
+
+```{r}
+library(effects)
+effect(term="motiv*funding",mod=smod3,xlevels=20) |>
+  as.data.frame() |>
+  ggplot(aes(x=motiv,y=fit,col=funding,fill=funding))+
+  geom_line()+
+  geom_ribbon(aes(ymin=lower,ymax=upper),alpha=.3)
+```
+
+:::
+::::
+
+
+<div class="divider div-transparent div-dot"></div>
 
 # Model Estimation
 

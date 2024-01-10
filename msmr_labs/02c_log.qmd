@@ -1,0 +1,29 @@
+---
+title: "Logistic Multilevel Models"
+params: 
+    SHOW_SOLS: FALSE
+    TOGGLE: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+source('assets/setup.R')
+library(xaringanExtra)
+library(tidyverse)
+library(patchwork)
+xaringanExtra::use_panelset()
+```
+
+```{r}
+d3 <- read_csv("https://uoepsy.github.io/data/dapr3_mindfuldecline.csv")
+d3$isImp <- ifelse(d3$imp=="imp",1,0)
+
+library(lme4)
+
+glmer(isImp ~ visit + (1+visit|ppt), d3, family=binomial) |> summary()
+
+```
+

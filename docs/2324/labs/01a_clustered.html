@@ -97,17 +97,17 @@ function toggle_visibility(id1, id2) {
 var e = document.getElementById(id1);
 var f = document.getElementById(id2);
 e.style.display = ((e.style.display!='none') ? 'none' : 'block');
-if(f.classList.contains('fa-circle-right')) {
-    f.classList.add('fa-circle-down')
-    f.classList.remove('fa-circle-right')
+if(f.classList.contains('jk-circle-right')) {
+    f.classList.add('jk-circle-down')
+    f.classList.remove('jk-circle-right')
 } else {
-    f.classList.add('fa-circle-right')
-    f.classList.remove('fa-circle-down')
+    f.classList.add('jk-circle-right')
+    f.classList.remove('jk-circle-down')
 }
 }
 </script>
 
-<script src="https://kit.fontawesome.com/120b08a6f5.js" crossorigin="anonymous"></script>
+<!---<script src="https://kit.fontawesome.com/120b08a6f5.js" crossorigin="anonymous"></script>-->
 <link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet">
 <script src="site_libs/panelset-0.2.6/panelset.js"></script>
 
@@ -169,6 +169,12 @@ if(f.classList.contains('fa-circle-right')) {
   <div class="sidebar-item-container"> 
   <a href="./01b_lmm.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">1B: Linear Mixed Models/Multi-level Models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 1 Exercises: Intro to MLM</span></a>
   </div>
 </li>
       </ul>
@@ -953,7 +959,7 @@ SE(b_p) = \sqrt{  \frac{MSE}{Var(x_p) \cdot (1-R^2_{x_p|x1,...}) }}
 </div>
 </div>
 </div>
-<p>Often, while the specific clusters are not of interest, we may have research questions that are about features of those clusters, and how they relate to things at other levels. For example, we might be interested in if the level of school funding (a school-level variable) influences the grade performance (a child-level variable). The focus of this course is multilevel modelling (also known as “mixed effects modelling”), which is a regression modelling technique that allows us to explore questions such as these (and many more).<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
+<p>Often, while the specific clusters are not of interest, we may have research questions that are about features of those clusters, and how they relate to things at other levels. For example, we might be interested in if the type of school funding (a school-level variable) influences the grade performance (a child-level variable). The focus of this course is multilevel modelling (also known as “mixed effects modelling”), which is a regression modelling technique that allows us to explore questions such as these (and many more).<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -1476,7 +1482,7 @@ this group-identifier visible in the schoolid column</p> </caption>
     <tr><td headers="variable" class="gt_row gt_left">motiv</td>
 <td headers="description" class="gt_row gt_left">Child's Education Motivation Score (range 0 - 10)</td></tr>
     <tr><td headers="variable" class="gt_row gt_left">funding</td>
-<td headers="description" class="gt_row gt_left">Annual School Funding (in 1000s of £)</td></tr>
+<td headers="description" class="gt_row gt_left">Funding ('state' or 'private')</td></tr>
     <tr><td headers="variable" class="gt_row gt_left">schoolid</td>
 <td headers="description" class="gt_row gt_left">Name of School that the child attends</td></tr>
     <tr><td headers="variable" class="gt_row gt_left">grade</td>
@@ -1494,12 +1500,12 @@ this group-identifier visible in the schoolid column</p> </caption>
 <div class="cell" data-layout-align="center">
 <div class="cell-output cell-output-stdout">
 <pre><code>  motiv funding              schoolid grade
-1  7.74    6.37       Kilsyth Academy 42.42
-2  3.62    3.66 Balwearie High School 48.23
-3  4.04    3.66 Balwearie High School 17.36
-4  4.63    3.66 Balwearie High School 58.76
-5  4.54    8.94     Stewarton Academy 70.51
-6  3.89    6.37       Kilsyth Academy 61.54
+1  7.74 private       Kilsyth Academy 42.42
+2  3.62   state Balwearie High School 48.23
+3  4.04   state Balwearie High School 17.36
+4  4.63   state Balwearie High School 58.76
+5  4.54 private     Stewarton Academy 70.51
+6  3.89 private       Kilsyth Academy 61.54
 7   ...     ...                   ...   ...</code></pre>
 </div>
 </div>
