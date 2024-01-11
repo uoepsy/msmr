@@ -136,8 +136,7 @@ Facet the plot by the type of toy.
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 ```{r}
 library(tidyverse)
-# TODO
-# toy2 <- read_csv("https://uoepsy.github.io/data/toy2.csv")
+toy2 <- read_csv("https://uoepsy.github.io/data/toy2.csv")
 
 head(toy2)
 
@@ -150,7 +149,7 @@ ggplot(toy2,aes(x=hrs_week,y=R_AGE))+
 
 `r qbegin(qcounter())`
 Below is the code to fit a simple linear model and produce some diagnostic plots.  
-Have we violated any assumptions?  
+After running the code, do you think that we have violated any assumptions?  
 ```{r}
 #| eval: false
 mod1 <- lm(R_AGE ~ hrs_week, data = toy2)
@@ -198,6 +197,8 @@ This only works because we don't have missing data (and so the length of `predic
 # add predictions to data:
 toy2$pred <- predict(mod1)
 ```
+
+
 `r solend()`
 `r solbegin(label="2 - add predictions to the plot", slabel=F,show=T, toggle=params$TOGGLE)`
 ```{r}
@@ -335,20 +336,19 @@ Here is the model with the random intercepts (but not random slopes) that we fit
 
 Below is the code that produces a plot of the fitted values: 
 
-
-
 ::: {.callout-note collapse="true"}
 #### A. Model Equation
-  
+
 $$
 \begin{align}
-\text{For Toy }j&\text{ of Type }i \\
+\text{For Toy }j\text{ of Type }i & \\
 \text{Level 1 (Toy):}& \\
-\text{R_AGE}_{ij} &= b_{0i} + b_1 \cdot \text{hrs_week}_{ij} + \epsilon_{ij} \qquad \\
+\text{R\_AGE}_{ij} &= b_{0i} + b_1 \cdot \text{hrs\_week}_{ij} + \epsilon_{ij} \\
 \text{Level 2 (Type):}& \\
 b_{0i} &= \gamma_{00} + \zeta_{0i} \\
 \end{align}
-$$
+$$  
+  
   
 :::
 ::: {.callout-note collapse="true"}
@@ -376,7 +376,7 @@ augment(mod2) |>
 
 :::
 
-Match the bits from each of the above sections  
+Match the parameters from the model equation, as well as coefficients from model output, to the corresponding points on the plot of fitted values.  
 
 :::: {.columns}
 ::: {.column width="20%"}
@@ -619,17 +619,17 @@ Consider the following questions about the study:
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 
 - What is our outcome of interest?  
-__SDMT scores__  
+    + __SDMT scores__  
 - What variables are we seeking to investigate in terms of their impact on the outcome?  
-__audio type__ and the interaction __audio type $\times$ wearing headphones__
+    + __audio type__ and the interaction __audio type $\times$ wearing headphones__
 - What are the units of observations?  
-__individual trials__  
+    + __individual trials__  
 - What are the groups/clusters?  
-__participants__  
+    + __participants__  
 - What varies *within* these clusters?  
-__the type of audio__    
+    + __the type of audio__    
 - What varies *between* these clusters?  
-__whether they listen via headphones or speakers__  
+    + __whether they listen via headphones or speakers__  
 
 `r solend()`
 
@@ -749,14 +749,14 @@ $$
 `r solbegin(label="1 - fixed effects", slabel=F,show=T, toggle=params$TOGGLE)`
 
 The question  
-&npsb;&npsb;&npsb; "*How do different types of audio interfere with executive functioning*"   means we are interested in the effects of audio type (`audio`) on executive functioning (`SDMT` scores), so we will want:
+&nbsp;&nbsp;&nbsp; "*How do different types of audio interfere with executive functioning*"   means we are interested in the effects of audio type (`audio`) on executive functioning (`SDMT` scores), so we will want:
 
 ```
 lmer(SDMT ~ audio ...
 ```
 
 However, the research aim also asks    
-&npsb;&npsb;&npsb; "*... and does this interference differ depending upon whether or not noise-cancelling headphones are used?*"  
+&nbsp;&nbsp;&nbsp; "*... and does this interference differ depending upon whether or not noise-cancelling headphones are used?*"  
 which suggests that we are interested in the interaction `SDMT ~ audio * headphones`  
 
 ```
