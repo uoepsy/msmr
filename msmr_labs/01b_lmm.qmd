@@ -1039,8 +1039,12 @@ plotlines = as.data.frame(coef(smod3)$schoolid) |>
   ) |> unnest(data) |>
   select(rowname,g,funding,x,.fitted)
 
-
-pf <- basep + 
+pf <- 
+  ggplot(schoolmot, aes(x=motiv,y=grade))+
+    geom_point(alpha=.1,aes(col=schoolid)) +
+    guides(col="none")+
+    geom_vline(xintercept=0,lty="dashed")+
+    scale_x_continuous(limits=c(-1,12),breaks=0:10) +
   with_blur(geom_line(data = plotlines, aes(x=x,y=.fitted,group=g,col=funding),alpha=.4),sigma=2) +
   geom_text(data=plotlabs,
             aes(x=x,y=y,label=schoolid,col=funding),
@@ -1048,14 +1052,6 @@ pf <- basep +
   geom_abline(intercept=fixef(smod3)[1],slope=fixef(smod3)[2], lwd=1,col="#00a8cc") + 
   geom_abline(intercept=sum(fixef(smod3)[c(1,3)]),slope=sum(fixef(smod3)[c(2,4)]), 
               lwd=1,col="#a41ae4")+
-  # stat_eye(side="left",
-  #          data=tibble(motiv=-1,grade=50),
-  #          aes(x=0,ydist=dist_normal(fixef(smod3)[1],sqrt(VarCorr(smod3)[[1]][1]))),
-  #          alpha=.3, fill="#00a8cc") +
-  # stat_eye(side="left",
-  #          data=tibble(motiv=-1,grade=50),
-  #          aes(x=0,ydist=dist_normal(sum(fixef(smod3)[c(1,3)]),sqrt(VarCorr(smod3)[[1]][1]))),
-  #          alpha=.3, fill="#a41ae4") +
   geom_point(x=0,y=fixef(smod3)[1],size=3,col="#00a8cc")+
  annotate("text",x=-.1,y=fixef(smod3)[1],
          label=expression(gamma["00"]),size=5,
