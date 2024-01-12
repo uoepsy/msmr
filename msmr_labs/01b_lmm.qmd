@@ -628,7 +628,7 @@ as.data.frame(ranef(rsmod)$schoolid) |>
   ggplot(aes(x=int,y=motiv)) +
   guides(col="none")+
   with_blur(geom_point(aes(col=rowname),size=3,alpha=.5),sigma=1) + 
-  geom_density2d() +
+  geom_density2d(data=pdist[1:1e5,]) +
   scale_x_continuous(expression(zeta["0i"]))+
   scale_y_continuous(expression(zeta["1i"]))+
   geom_point(x=6.80639854,y=-3.03100767,col="green4",size=3)+
