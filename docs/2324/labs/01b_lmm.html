@@ -538,6 +538,48 @@ b_{1i} &amp;= \gamma_{10} + \zeta_{1i} \\
 </div>
 </div>
 </div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+optional: joint distribution of intercept and slopes
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>When we have random intercepts <strong>and</strong> slopes in our model, we don’t just estimate two separate distributions of intercept deviations and slope deviations. We estimate them as related. This comes back to the part of the equation we mentioned briefly above, where we used:</p>
+<ul>
+<li><span class="math inline">\(\sigma_0\)</span> to represent the standard deviation of intercept deviations</li>
+<li><span class="math inline">\(\sigma_1\)</span> to represent the standard deviation of slope deviations</li>
+<li><span class="math inline">\(\rho \sigma_0 \sigma_1\)</span> to represent the correlation between intercept deviations and slope deviations</li>
+</ul>
+<p><span class="math display">\[
+\begin{bmatrix} \zeta_{0i} \\ \zeta_{1i} \end{bmatrix}
+\sim N
+\left(
+    \begin{bmatrix} 0 \\ 0 \end{bmatrix},
+    \begin{bmatrix}
+        \sigma_0 &amp; \rho \sigma_0 \sigma_1 \\
+        \rho \sigma_0 \sigma_1 &amp; \sigma_1
+    \end{bmatrix}
+\right)
+\]</span> For a visual intuition about this, see <a href="#fig-randcor">Figure&nbsp;8</a>, in which the x-axis is the intercept deviations, and the y-axis is the slope deviations. We can see that these are each distributed normally, but are negatively related (schools with higher intercepts tend to have slightly lower slopes).</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-randcor" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="01b_lmm_files/figure-html/fig-randcor-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;8: Intercept deviations (x axis) and slope deviations (y axis). One school is highlighted for comparison with previous plot of fitted values</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="divider div-transparent div-dot">
 
 </div>
@@ -552,7 +594,7 @@ b_{1i} &amp;= \gamma_{10} + \zeta_{1i} \\
 <li>the number of observations in the cluster</li>
 </ol>
 <p>This is a really useful feature, because it means that a) the model is more skeptical of clusters with few datapoints than of those with many datapoints, and b) this skepticism is weaker when clusters are in general more distinct from one another than when they are quite similar.</p>
-<p>Another way of thinking about this is by looking at the model predicted lines for each cluster, which are <em>also</em> adjusted in the same way. In <a href="#fig-ppool">Figure&nbsp;8</a>, the blue lines show a simple linear model fitted to the data from each school (no pooling), and the orange lines show our predictions from the model with random intercepts and slopes for each school (partial pooling).</p>
+<p>Another way of thinking about this is by looking at the model predicted lines for each cluster, which are <em>also</em> adjusted in the same way. In <a href="#fig-ppool">Figure&nbsp;9</a>, the blue lines show a simple linear model fitted to the data from each school (no pooling), and the orange lines show our predictions from the model with random intercepts and slopes for each school (partial pooling).</p>
 <p>Note two useful features:</p>
 <ol type="1">
 <li>For “Hypothetical School X”, which has far fewer datapoints, the multilevel model line is ‘shrunk’ back towards the average school line. This is good because we intuitively don’t want to give as much weight to that school as to the others.</li>
@@ -563,13 +605,13 @@ b_{1i} &amp;= \gamma_{10} + \zeta_{1i} \\
 <div id="fig-ppool" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="01b_lmm_files/figure-html/fig-ppool-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
-<figcaption class="figure-caption">Figure&nbsp;8: A set of 6 schools. The blue lines show simple regression models fitted to each schools’ data separately (no pooling). The orange lines show the predictions from the multilevel model in which both intercepts and slopes of motiv vary by school (partial pooling)</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;9: A set of 6 schools. The blue lines show simple regression models fitted to each schools’ data separately (no pooling). The orange lines show the predictions from the multilevel model in which both intercepts and slopes of motiv vary by school (partial pooling)</figcaption>
 </figure>
 </div>
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -578,7 +620,7 @@ A (not very good) analogy
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The no-pooling approach (i.e.&nbsp;something like <code>lm(grade~motiv*schoolid)</code>, or fitting a simple <code>lm()</code> separately to each school) is like the libertarian ideology (valuing autonomy and personal freedom). Each school gets the freedom to define its own line without interference from others.</p>
 <p>The partial-pooling approach (the multilevel model) is more akin to social democracy, where there is a recognition of the value of personal freedoms and diverse perspectives, but this is <em>within</em> the framework of a broader societal structure.</p>
@@ -586,7 +628,7 @@ A (not very good) analogy
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -595,7 +637,7 @@ optional: how does it work?
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The amount to which a cluster contributes to a fixed estimate (and the amount by which any predictions for that cluster are shrunk towards the average) is proportional to:<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
 <p><span class="math display">\[
@@ -629,7 +671,7 @@ optional: how does it work?
 <div id="fig-lmercode" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="images/lmercode.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<figcaption class="figure-caption">Figure&nbsp;9: Syntax of the lmer() function from the lme4 package. For now, focus on the formula section, and how this extends from the lm() function.</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;10: Syntax of the lmer() function from the lme4 package. For now, focus on the formula section, and how this extends from the lm() function.</figcaption>
 </figure>
 </div>
 </div>
@@ -687,19 +729,19 @@ motiv -0.825</code></pre>
 <p>So from our ouput we can build up a picture in our heads - we know from the fixed effects that in the average school, children with zero motivation have an estimated grade of 29, and for every 1 more motivated a child is, their grades are estimated to increase by 4.48.</p>
 <p>The random effects part tells us that we would expect schools to vary in their intercepts with a standard deviation of 12.6, and in their slopes with a standard deviation of 2.1.</p>
 <p>If we recall our rough heuristic about normal distributions - that 95% of the distribution falls within 2 standard deviations, then we can start to build up a picture - we would expect most schools to have intercepts about 25 either side of the fixed intercept, and we would expect most schools to have slopes that are about 4 either side of the fixed slope (so most slopes will be between 0.5 and 8.5 - i.e.&nbsp;most will be positive).</p>
-<p>So what we’re getting back to is something a bit like <a href="#fig-rslope">Figure&nbsp;5</a> that we saw earlier - the model provides a description of the population of schools that we have sampled from. To illustrate this more, we could imagine simulating (from our model) 1000 new schools, and plotting their lines, and we would get something like <a href="#fig-sim">Figure&nbsp;10</a>.</p>
+<p>So what we’re getting back to is something a bit like <a href="#fig-rslope">Figure&nbsp;5</a> that we saw earlier - the model provides a description of the population of schools that we have sampled from. To illustrate this more, we could imagine simulating (from our model) 1000 new schools, and plotting their lines, and we would get something like <a href="#fig-sim">Figure&nbsp;11</a>.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div id="fig-sim" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="01b_lmm_files/figure-html/fig-sim-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
-<figcaption class="figure-caption">Figure&nbsp;10: Model estimated fixed effects, with 1000 simulated hypothetical school lines</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;11: Model estimated fixed effects, with 1000 simulated hypothetical school lines</figcaption>
 </figure>
 </div>
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -708,7 +750,7 @@ mapping summary output to parts of the equation
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
@@ -776,7 +818,7 @@ Beeslack Community High School          18.63574795 -1.45057126
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="01b_lmm_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<p><img src="01b_lmm_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
 </figure>
 </div>
 </div>
@@ -824,7 +866,7 @@ fixef() + ranef() = coef()
 <p>Note, we <em>cannot</em> include <code>funding</code> in the random effects part of our model, because “the effect of funding on school grades” is something we assess by comparing <em>between</em> schools. We cannot think of that effect varying by-school because every school is <em>either</em> “private” <em>or</em> “state” funded. We never observe “Ardnamurchan High School” as anything other than “state” funded, so “the effect on grades of being state/private funded” does not exist for Ardnamurchan High School (and hence it is illogical to try and say that this effect varies between schools).</p>
 <p>Our additions to the fixed effects part here simply add in a couple of fixed terms to our model (the <code>funding</code> coefficient and the <code>motiv:funding</code> interaction coefficient). This means that in terms of our model structure, it is simply moving from the single line we had in <a href="#fig-rslopes2">Figure&nbsp;7</a>, to having two lines (one for “private” schools and one for “state” schools). The random effects are, as before, the variance in deviations of individual schools around these fixed estimates.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -833,7 +875,7 @@ Model equation
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>This model is not too much of an extension on our previous equation, but when we move to models with more than 2 levels (e.g., children in schools in districts), these equations can become very cumbersome.</p>
 <p>Additionally, as you become more practiced at fitting multilevel models, you may well begin to think of these models in terms of the <code>lmer()</code> syntax in R, rather than in terms of the mathematical expressions.</p>
@@ -857,7 +899,7 @@ b_{1i} &amp;= \gamma_{10} + \zeta_{1i} + \gamma_{11} \cdot \text{Funding}_i\\
 \end{align}
 \]</span></p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -866,15 +908,15 @@ optional: an attempted visual explanation
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p><a href="#fig-crosslev1">Figure&nbsp;11</a> shows an attempted visual intuition of how the different parts of the model work:</p>
+<p><a href="#fig-crosslev1">Figure&nbsp;12</a> shows an attempted visual intuition of how the different parts of the model work:</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div id="fig-crosslev1" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="01b_lmm_files/figure-html/fig-crosslev1-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
-<figcaption class="figure-caption">Figure&nbsp;11: visual explanation of a model with a cross-level interaction</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;12: visual explanation of a model with a cross-level interaction</figcaption>
 </figure>
 </div>
 </div>
@@ -937,7 +979,7 @@ mtv:fndngst  0.639 -0.817 -0.773</code></pre>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="01b_lmm_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<p><img src="01b_lmm_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
 </figure>
 </div>
 </div>
@@ -954,14 +996,14 @@ mtv:fndngst  0.639 -0.817 -0.773</code></pre>
 <p>With single level regression models fitted with <code>lm()</code>, our estimated coefficients could actually be obtained using some matrix algebra. Fitting multilevel models is a bit more complicated, and so we have to instead rely on an iterative procedure known as “maximum likelihood estimation” (“ML” or “MLE”).</p>
 <p>We actually saw this previously when fitting logistic regressions. The process is iterative in that it involves testing the fit of a set of candidate parameters (i.e.&nbsp;giving some initial values for our coefficients) and working out what direction we need to change them in order to get a better fit. We then change them accordingly, evalute the fit, change them, evaluate fit, … and so on until we reach a point where we don’t think we can get any better.</p>
 <p>In maximum likelihood estimation, the “fit” of the model is assessed through the <em>likelihood</em> (the probability of seeing our data, given some hypothesis, see <a href="lvp.html" target="_blank">here</a> for an explanation).</p>
-<p>If we were estimating just one single parameter (e.g.&nbsp;a mean), then we can imagine the process of maximum likelihood estimation in a one-dimensional world - simply finding the top of the curve (<a href="#fig-mle">Figure&nbsp;12</a>, LH panel).</p>
-<p>However, our typical models estimate a whole bunch of parameters, and with lots of parameters being estimated and all interacting to influence the likelihood, our nice curved line becomes a complex surface (<a href="#fig-mle">Figure&nbsp;12</a> RH panel shows it in 3D). What MLE does is try to find the maximum (the top the mountain), but avoid local maxima (false summits) and impossible values (e.g., variances <span class="math inline">\(\leq 0\)</span>), without getting stuck (in plateaus).</p>
+<p>If we were estimating just one single parameter (e.g.&nbsp;a mean), then we can imagine the process of maximum likelihood estimation in a one-dimensional world - simply finding the top of the curve (<a href="#fig-mle">Figure&nbsp;13</a>, LH panel).</p>
+<p>However, our typical models estimate a whole bunch of parameters, and with lots of parameters being estimated and all interacting to influence the likelihood, our nice curved line becomes a complex surface (<a href="#fig-mle">Figure&nbsp;13</a> RH panel shows it in 3D). What MLE does is try to find the maximum (the top the mountain), but avoid local maxima (false summits) and impossible values (e.g., variances <span class="math inline">\(\leq 0\)</span>), without getting stuck (in plateaus).</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div id="fig-mle" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="images/mle.png" class="img-fluid figure-img" style="width:80.0%"></p>
-<figcaption class="figure-caption">Figure&nbsp;12: maximum likelihood estimation in one dimension (LEFT), and a 3D visual of a multi-dimensional likelihood surface (RIGHT)</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;13: maximum likelihood estimation in one dimension (LEFT), and a 3D visual of a multi-dimensional likelihood surface (RIGHT)</figcaption>
 </figure>
 </div>
 </div>
@@ -976,7 +1018,7 @@ lmer(<em>formula</em>,<br> &nbsp; &nbsp; &nbsp; &nbsp; data = <em>dataframe</em>
 <p><strong>TL;DR</strong></p>
 <p><code>lmer()</code> models are by default fitted with REML, which tends to be better for small samples.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -985,7 +1027,7 @@ optional: why REML?
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>REML overcomes a problem for multilevel models fitted with standard MLE, which is that at each iteration of the maximum likelihood, the random effect variances are estimated <em>after</em> the fixed effects (because they are the variances of clusters around the fixed effects). This means that we are essentially treating the fixed effects as a known constant when estimating the random effect variance. The downside of this is that it biases our variance estimates to be smaller than they should be<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>, especially if <span class="math inline">\(n_\textrm{clusters} - n_\textrm{level 2 predictors} - 1 &lt; 50\)</span>. This leads to the standard errors of the fixed effects being too small, thereby inflating our type 1 error rate (i.e.&nbsp;greater chance of incorrectly rejecting our null hypothesis).</p>
 <p>REML avoids this by first partialling out the fixed effects (i.e.&nbsp;removing all of the association, so that the fixed effects are 0 <em>by definition</em>), then using maximum likelihood to iteratively estimate the random effect variances. At the end, it then uses generalised least squares to estimate the fixed effects given the known random effect structure. Because this separates the estimation of fixed and random parts of the model, it results in unbiased estimates of the variance components.</p>

@@ -589,6 +589,65 @@ p2 <- as.data.frame(ranef(rsmod)$schoolid) |>
 (p1 / p2) + plot_layout(heights=c(2,1))
 ```
 
+
+::: {.callout-caution collapse="true"}
+#### optional: joint distribution of intercept and slopes
+
+When we have random intercepts __and__ slopes in our model, we don't just estimate two separate distributions of intercept deviations and slope deviations. We estimate them as related. 
+This comes back to the part of the equation we mentioned briefly above, where we used:  
+
+- $\sigma_0$ to represent the standard deviation of intercept deviations
+- $\sigma_1$ to represent the standard deviation of slope deviations
+- $\rho \sigma_0 \sigma_1$ to represent the correlation between intercept deviations and slope deviations  
+
+$$
+\begin{bmatrix} \zeta_{0i} \\ \zeta_{1i} \end{bmatrix}
+\sim N
+\left(
+    \begin{bmatrix} 0 \\ 0 \end{bmatrix},
+    \begin{bmatrix}
+        \sigma_0 & \rho \sigma_0 \sigma_1 \\
+        \rho \sigma_0 \sigma_1 & \sigma_1
+    \end{bmatrix}
+\right)
+$$
+For a visual intuition about this, see @fig-randcor, in which the x-axis is the intercept deviations, and the y-axis is the slope deviations. We can see that these are each distributed normally, but are negatively related (schools with higher intercepts tend to have slightly lower slopes).  
+
+```{r}
+#| label: fig-randcor
+#| fig-cap: "Intercept deviations (x axis) and slope deviations (y axis). One school is highlighted for comparison with previous plot of fitted values"  
+#| echo: false
+
+library(ggside)
+pdist = MASS::mvrnorm(1e6, mu=c(0,0),Sigma=VarCorr(rsmod)[[1]]) |>
+  as_tibble() |>
+  mutate(int=`(Intercept)`)
+as.data.frame(ranef(rsmod)$schoolid) |>
+  rownames_to_column() |>
+  mutate(int=`(Intercept)`) |>
+  ggplot(aes(x=int,y=motiv)) +
+  guides(col="none")+
+  with_blur(geom_point(aes(col=rowname),size=3,alpha=.5),sigma=1) + 
+  geom_density2d() +
+  scale_x_continuous(expression(zeta["0i"]))+
+  scale_y_continuous(expression(zeta["1i"]))+
+  geom_point(x=6.80639854,y=-3.03100767,col="green4",size=3)+
+  annotate("text",label="Hutchesons'\nGrammar School",
+           x=9,y=-5,col="green4",vjust=1)+
+  geom_segment(x=6.8,xend=9,y=-3.03,yend=-5,
+               col="green4") + 
+  #with_blur(geom_rug(alpha=.7,aes(col=rowname),lwd=1,
+  #                   length = unit(0.05, "npc")),sigma=1) + 
+  geom_xsidedensity(data=pdist,fill="#a41ae4", alpha=.4,col=NA)+
+  geom_ysidedensity(data=pdist,fill="#a41ae4", alpha=.4, col=NA)+
+  theme_ggside_void()
+```
+
+
+:::
+
+
+
 <div class="divider div-transparent div-dot"></div>
 
 # Partial pooling
