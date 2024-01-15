@@ -39,7 +39,7 @@ These are the main packages we're going to use in this block. It might make sens
 + __broom.mixed__ : tidying methods for mixed models
 + __effects__ : for tabulating and graphing effects in linear models
 + __lmerTest__: for quick p-values from mixed models
-+ __parameters__: various inferential methods for 
++ __parameters__: various inferential methods for mixed models
 
 :::
 
@@ -346,7 +346,11 @@ $$
 \text{R\_AGE}_{ij} &= b_{0i} + b_1 \cdot \text{hrs\_week}_{ij} + \epsilon_{ij} \\
 \text{Level 2 (Type):}& \\
 b_{0i} &= \gamma_{00} + \zeta_{0i} \\
+\text{Where:}& \\
+\zeta_{0i} &\sim N(0,\sigma_{0}) \\
+\varepsilon &\sim N(0,\sigma_{e}) \\
 \end{align}
+
 $$  
   
   
@@ -371,7 +375,9 @@ augment(mod2) |>
   geom_line(aes(y=.fitted)) + # predictions 
   geom_abline(intercept = fixef(mod2)[1], 
               slope = fixef(mod2)[2], lwd=1) +  # fixed effect line
-  guides(col="none") # remove legend
+  guides(col="none") + # remove legend
+  xlim(0,7) # extent to x=0
+
 ```
 
 :::
@@ -483,7 +489,7 @@ ef_music <- ef_music %>% group_by(PID) %>%
 
 efrep <- slice_sample(ef_music, prop = .8) %>% select(PID,trial_n,audio,headphones,SDMT)
 
-# write_csv(efrep, file="../../data/ef_replication.csv")
+# write_csv(efrep |> select(-trial_n), file="../../data/efsdmt.csv")
 ```
 
 :::frame
@@ -495,15 +501,14 @@ This data is from a simulated study that aims to investigate the following resea
 
 `r length(unique(efrep$PID))` healthy volunteers each completed the Symbol Digit Modalities Test (SDMT) - a commonly used test to assess processing speed and motor speed - a total of 15 times. During the tests, participants listened to either no audio (5 tests), white noise (5 tests) or classical music (5 tests). Half the participants listened via active-noise-cancelling headphones, and the other half listened via speakers in the room. Unfortunately, lots of the tests were not administered correctly, and so not every participant has the full 15 trials worth of data.  
 
-The data is available at [https://uoepsy.github.io/data/ef_replication.csv](https://uoepsy.github.io/data/ef_replication.csv).  
+The data is available at [https://uoepsy.github.io/data/efsdmt.csv](https://uoepsy.github.io/data/efsdmt.csv).  
 
 ```{r}
 #| echo: false
-efrep <- read_csv("https://uoepsy.github.io/data/ef_replication.csv")
+efrep <- read_csv("https://uoepsy.github.io/data/efsdmt.csv")
 tibble(variable=names(efrep),
        description = c(
          "Participant ID",
-         "Trial Number (1-15)",
          "Audio heard during the test ('no_audio', 'white_noise','music')",
          "Whether the participant listened via speakers in the room or via noise cancelling headphones",
          "Symbol Digit Modalities Test (SDMT) score")
@@ -528,19 +533,19 @@ Functions like `table()` and `count()` will likely be useful here.
 `r qend()`
 `r solbegin(label="1 - read in the data ", slabel=F,show=T, toggle=params$TOGGLE)`
 ```{r}
-efrep <- read_csv("https://uoepsy.github.io/data/ef_replication.csv")
-head(efrep)
+efdat <- read_csv("https://uoepsy.github.io/data/efsdmt.csv")
+head(efdat)
 ```
 `r solend()`
 `r solbegin(label="2 - how many ppts?", slabel=F,show=T, toggle=params$TOGGLE)`
 For a quick "how many?", functions like `n_distinct()` can be handy:  
 ```{r}
-n_distinct(efrep$PID)
+n_distinct(efdat$PID)
 ```
 
 Which is essentially the same as asking: 
 ```{r}
-unique(efrep$PID) |> length()
+unique(efdat$PID) |> length()
 ```
 
 
@@ -549,39 +554,39 @@ unique(efrep$PID) |> length()
 Here are the counts of trials for each participant. 
 ```{r}
 #| eval: false
-efrep |> 
+efdat |> 
   count(PID)
 ```
 ```{r}
 #| echo: false
-efrep |> 
+efdat |> 
   count(PID) |>
   print(n=5)
 ```
 
 We can pass that to something like `summary()` to get a quick descriptive of the `n` column, and so we can see that no participant completed all 15 trials (max is 14). Everyone completed at least 10, and the median was 12. 
 ```{r}
-efrep |> 
+efdat |> 
   count(PID) |>
   summary()
 ```
 
 We could also do this easily with things like:
 ```{r}
-table(efrep$PID) |> median()
+table(efdat$PID) |> median()
 ```
 
 `r solend()`
 `r solbegin(label="4 - how many observations for each audio type per ppt?", slabel=F,show=T, toggle=params$TOGGLE)`
 For this kind of thing I would typically default to using `table()` for smaller datasets, to see how many datapoints are in each combination of `PID` and `audio`:  
 ```{r}
-table(efrep$PID, efrep$audio)
+table(efdat$PID, efdat$audio)
 ```
 
 From the above, we can see that everyone has data from $\geq 2$ trials for a given audio type.  
 
 ```{r}
-table(efrep$PID, efrep$audio) |> min()
+table(efdat$PID, efdat$audio) |> min()
 ```
 
 
@@ -590,7 +595,7 @@ table(efrep$PID, efrep$audio) |> min()
 
 When tables get too big, we can do the same thing with `count()`, but we need to make sure that we are working with factors, in order to summarise all possible combinations of groups (even empty ones)
 ```{r}
-efrep |> 
+efdat |> 
   mutate(PID = factor(PID),
          audio = factor(audio)) |>
   # the .drop=FALSE means "keep empty groups"
@@ -650,10 +655,10 @@ See [1A #icc](01a_clustered.html#icc---quantifying-clustering-in-an-outcome-vari
 
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-`r (ICC::ICCbare(x = PID, y = SDMT, data = efrep)[[1]]*100) |> round()`% of the variance in SDMT scores is attributable to participant level differences.  
+`r (ICC::ICCbare(x = PID, y = SDMT, data = efdat)[[1]]*100) |> round()`% of the variance in SDMT scores is attributable to participant level differences.  
 ```{r}
 library(ICC)
-ICCbare(x = PID, y = SDMT, data = efrep)
+ICCbare(x = PID, y = SDMT, data = efdat)
 ```
 `r solend()`
 
@@ -687,7 +692,7 @@ $$
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 
 ```{r}
-nullmod <- lmer(SDMT ~ 1 + (1 | PID), data = efrep)
+nullmod <- lmer(SDMT ~ 1 + (1 | PID), data = efdat)
 summary(nullmod)
 ```
 ```{r}
@@ -718,7 +723,7 @@ Can't remember about setting factors and reference levels? Check back to USMR ma
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 
 ```{r}
-efrep <- efrep %>%
+efdat <- efdat %>%
   mutate(
     audio = fct_relevel(factor(audio), "no_audio"),
     headphones = fct_relevel(factor(headphones), "speakers")
@@ -769,8 +774,8 @@ lmer(SDMT ~ audio * headphones + ...
 There are lots of ways that our data is grouped.  
 We have:  
 
-- 3 different groups of audio type (`r paste(unique(efrep$audio),collapse=", ")`)
-- 2 groups of listening condition (`r paste(unique(efrep$headphones),collapse=", ")`)
+- 3 different groups of audio type (`r paste(unique(efdat$audio),collapse=", ")`)
+- 2 groups of listening condition (`r paste(unique(efdat$headphones),collapse=", ")`)
 - 30 groups of participants ("PPT_01", "PPT_02", "PPT_03", ...) 
 
 The effects of audio type and headphones are both things we actually want to _test_ - these variables are in our fixed effects. The levels of audio and headphones are not just a random sample from a wider population of levels - they're a specific set of things we want to compare SDMT scores between.  
@@ -792,7 +797,7 @@ We can also include a random by-participant effect of `audio`.
 
 ```
 lmer(SDMT ~ audio * headphones + 
-              (1 + audio | PID), data = efrep)
+              (1 + audio | PID), data = efdat)
 ```
 
 
@@ -805,12 +810,18 @@ Remember that `y ~ ... + (x | g)` is saying "the slope of y~x varies by g".
 Such a sentence only makes sense if each "the slope of y~x" is defined for every (or most) groups.  
 
 For the `headphones` predictor, every participant is _either_ in the "speakers" condition _or_ the "anc_headphones" condition.  
+This means that "the effect of headphones on SDMT" _doesn't exist_ for any single participant! This means it makes no sense to try and think of the effect as 'varying by participant'.  
+
+Compare this to the `audio` predictor, for the effect _does_ exist for a single given participant, therefore it is possible to think of it as being different for different participants (e.g. PPT_30's performance improves with white noise, but PPT_16's performance does not).  
+
+The plots below may help to cement this idea:  
 
 ```{r}
-ggplot(efrep, aes(x=headphones,y=SDMT))+
-  geom_boxplot() +
-  facet_wrap(~PID) 
+#| echo: false
+library(lattice)
+bwplot(SDMT~headphones|PID, data = efdat, scales=list(x=list(rot=90)))
 
+bwplot(SDMT~audio|PID, data = efdat, scales=list(x=list(rot=90)))
 ```
 
 :::
@@ -846,9 +857,9 @@ To test the interaction as a whole, we can create a model without the interactio
   
 ```{r}
 sdmt_mod <- lmer(SDMT ~ audio * headphones + 
-              (1 + audio | PID), data = efrep)
+              (1 + audio | PID), data = efdat)
 sdmt_res <- lmer(SDMT ~ audio + headphones + 
-                   (1 + audio | PID), data = efrep)
+                   (1 + audio | PID), data = efdat)
 library(pbkrtest)
 SATmodcomp(largeModel = sdmt_mod, smallModel = sdmt_res)
 ```
@@ -863,7 +874,7 @@ SATmodcomp(largeModel = sdmt_mod, smallModel = sdmt_res)
 
 ```{r}
 sdmt_mod <- lmerTest::lmer(SDMT ~ audio * headphones + 
-              (1 + audio | PID), data = efrep)
+              (1 + audio | PID), data = efdat)
 
 summary(sdmt_mod)
 ```
@@ -928,7 +939,7 @@ These results suggest that while music appears to interfere with executive funct
 plotfit <- effect(term = "audio*headphones", mod = sdmt_mod) |>
   as.data.frame()
 
-ggplot(efrep, aes(x=audio,y=SDMT,col=headphones))+
+ggplot(efdat, aes(x=audio,y=SDMT,col=headphones))+
   geom_jitter(height=0,width=.2,alpha=.3) +
   geom_pointrange(data = plotfit, 
                   aes(y=fit,ymin=lower,ymax=upper),

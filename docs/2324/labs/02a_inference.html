@@ -111,6 +111,8 @@ if(f.classList.contains('jk-circle-right')) {
 <link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet">
 <script src="site_libs/panelset-0.2.6/panelset.js"></script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -207,14 +209,6 @@ if(f.classList.contains('jk-circle-right')) {
    
   <ul>
   <li><a href="#inference" id="toc-inference" class="nav-link active" data-scroll-target="#inference">Inference</a></li>
-  <li><a href="#inference-in-lm" id="toc-inference-in-lm" class="nav-link" data-scroll-target="#inference-in-lm">Inference in LM</a></li>
-  <li><a href="#inference-in-lmm" id="toc-inference-in-lmm" class="nav-link" data-scroll-target="#inference-in-lmm">Inference in LMM</a>
-  <ul class="collapse">
-  <li><a href="#wald-t-balanced-only" id="toc-wald-t-balanced-only" class="nav-link" data-scroll-target="#wald-t-balanced-only">wald t (balanced only)</a></li>
-  <li><a href="#df-approximations" id="toc-df-approximations" class="nav-link" data-scroll-target="#df-approximations">df approximations</a></li>
-  <li><a href="#likelihood-based" id="toc-likelihood-based" class="nav-link" data-scroll-target="#likelihood-based">likelihood based</a></li>
-  <li><a href="#parametric-bootstrap" id="toc-parametric-bootstrap" class="nav-link" data-scroll-target="#parametric-bootstrap">parametric bootstrap</a></li>
-  </ul></li>
   </ul>
 </nav>
     </div>
@@ -240,61 +234,118 @@ if(f.classList.contains('jk-circle-right')) {
 
 <section id="inference" class="level1">
 <h1>Inference</h1>
-<p>SE, p-vals/confints</p>
-</section>
-<section id="inference-in-lm" class="level1">
-<h1>Inference in LM</h1>
-<p>SE calc F/t distribution ddf</p>
-<p>test of coefficient vs model comparison</p>
-</section>
-<section id="inference-in-lmm" class="level1">
-<h1>Inference in LMM</h1>
-<p>ddf</p>
-<p>in a perfectly balanced design, then we can calculate ddf for F</p>
-<p>mi = nr of groups at level i mim1 = nr of groups as level i-1 (<strong>higher</strong> level) pi = df for terms at level i ddf_i = mi - (mim1 + pi)</p>
-<p>SE = derived via ML/REML (not SS resid)</p>
-<section id="wald-t-balanced-only" class="level2">
-<h2 class="anchored" data-anchor-id="wald-t-balanced-only">wald t (balanced only)</h2>
-</section>
-<section id="df-approximations" class="level2">
-<h2 class="anchored" data-anchor-id="df-approximations">df approximations</h2>
+<p>The term “inference” is used to refer to the process of moving from beyond a description of our specific sample to being able to make statements about the broader population from which we have sampled.</p>
+<p>In the framework for statistics that we have been learning, this centers on the idea of <em>samples statistics that we might see in the long run</em> (i.e.&nbsp;if we did the experiment again and again and again with a new sample each time).</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-se3" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="02a_inference_files/figure-html/fig-se3-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;1: The standard error is the standard deviation of the ‘sampling distribution’ - the distribution of sample statistics that we <em>could</em> see. We use this to ask how likely our observed sample is in a universe where the null hypothesis is true. This probability gives us reason to reject (or not) said null hypothesis.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>In USMR, we saw various ways in which this logic was applied, combining the observed sample statistic with the standard error to create a <em>test statistic</em> (<span class="math inline">\(z\)</span>, <span class="math inline">\(t\)</span>, <span class="math inline">\(\chi^2\)</span>, <span class="math inline">\(F\)</span>, then compared to the appropriate standard distribution).</p>
+<p>In the linear models we were making with <code>lm()</code>, these were <span class="math inline">\(t\)</span> (for the coefficient estimate) and <span class="math inline">\(F\)</span> (the reduction in residual sums of squares) tests, and accordingly they had an associated degrees of freedom. If we fit a linear model <code>lm(y~x)</code> to 10 datapoints, then our tests would have <span class="math inline">\(10-2=8\)</span><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> degrees of freedom, and test statistics would be compared against, e.g.&nbsp;a <span class="math inline">\(t\)</span> distribution with 8 degrees of freedom. Alternatively, if we fit the same model to 100 datapoints, we would be working with a distribution with 98 degrees of freedom. The degrees of freedom reflects the fact that there is more variability in statistics from smaller samples.</p>
+<p>Another way of thinking of degrees of freedom is that they are the number of independent datapoints that are left “free to vary” around our model parameters.</p>
+<p>But we are now working with multilevel data, and in the scenario where we have, e.g.&nbsp;<span class="math inline">\(n_p\)</span> pupils clustered into <span class="math inline">\(n_s\)</span> schools, how many independent bits of information do we have to begin with? <span class="math inline">\(n_p\)</span>? <span class="math inline">\(n_s\)</span>? somewhere in between? Our random effects are not “free to vary” in the sense that they are estimated under certain constraints (such as following a normal distribution).</p>
+<p>In very specific situations that correspond to classical experimental designs (in which, e.g., we have perfectly balanced numbers across experimental factors and equal sizes within groups) it is possible to conduct similar <span class="math inline">\(F\)</span> tests (and so <span class="math inline">\(t\)</span> too) with a calculable degrees of freedom. Unfortunately, transferring this to more general scenarios (any missing data, unbalanced designs, more complex random effect structures) is problematic. Partly because defining the degrees of freedom is much more tricky, and partly because the test statistic may not even follow an <span class="math inline">\(F\)</span> distribution with <em>any</em> degrees of freedom.</p>
+<p>However, there are various strategies that we can use to conduct inferences that either attempt to approximate the degrees of freedom, or use an alternative method based on, e.g., likelihoods or bootstrapping.</p>
+<p>Below, we’ll go through each method in R, applying it to the following model (recall this is the model we ended with in reading <a href="01b_lmm.html#a-more-complex-model" target="_blank">1B</a>).</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>schoolmot <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/schoolmot.csv"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>smod3 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(grade <span class="sc">~</span> motiv <span class="sc">*</span> funding <span class="sc">+</span> </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                (<span class="dv">1</span> <span class="sc">+</span> motiv <span class="sc">|</span> schoolid), </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+df approximations (Satterthwaite &amp; KR)
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Two methods have been suggested as approximations for the denominator degrees of freedom for multilevel models.</p>
 <p>satterthwaite</p>
 <p>kr</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ddf ----</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>d3<span class="ot">=</span><span class="fu">slice_sample</span>(d3,<span class="at">prop=</span>.<span class="dv">78</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>m0 <span class="ot">=</span><span class="fu">lmer</span>(ACE <span class="sc">~</span> visit <span class="sc">+</span> condition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">+</span>visit<span class="sc">|</span>ppt), d3,<span class="at">REML=</span>F)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>m0r <span class="ot">=</span><span class="fu">lmer</span>(ACE <span class="sc">~</span> visit <span class="sc">+</span> condition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">+</span>visit<span class="sc">|</span>ppt), d3,<span class="at">REML=</span>T)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">=</span><span class="fu">lmer</span>(ACE <span class="sc">~</span> visit <span class="sc">*</span> condition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">+</span>visit<span class="sc">|</span>ppt), d3,<span class="at">REML=</span>F)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>m1r <span class="ot">=</span><span class="fu">lmer</span>(ACE <span class="sc">~</span> visit <span class="sc">*</span> condition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">+</span>visit<span class="sc">|</span>ppt), d3,<span class="at">REML=</span>T)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">SATmodcomp</span>(m1,m0) <span class="co"># refits with REML</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">SATmodcomp</span>(m1r,m0r) <span class="co"># refits with REML</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">KRmodcomp</span>(m1,m0) <span class="co"># refits with REML</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">KRmodcomp</span>(m1r,m0r) <span class="co"># refits with REML</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">SATmodcomp</span>(m1,m0) <span class="co"># refits with REML</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">KRmodcomp</span>(m1,m0) <span class="co"># refits with REML</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(m1, <span class="at">ci_method=</span><span class="st">"kr"</span>)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># CIs computed via REML, estimates, t, p not unless initial model fitted with REML</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(m1r,<span class="at">ci_method=</span><span class="st">"sat"</span>)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># CIs computed via REML, estimates, t, p not unless initial model fitted with REML</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ddf ----</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>d3<span class="ot">=</span><span class="fu">slice_sample</span>(d3,<span class="at">prop=</span>.<span class="dv">78</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>m0 <span class="ot">=</span><span class="fu">lmer</span>(ACE <span class="sc">~</span> visit <span class="sc">+</span> condition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">+</span>visit<span class="sc">|</span>ppt), d3,<span class="at">REML=</span>F)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>m0r <span class="ot">=</span><span class="fu">lmer</span>(ACE <span class="sc">~</span> visit <span class="sc">+</span> condition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">+</span>visit<span class="sc">|</span>ppt), d3,<span class="at">REML=</span>T)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">=</span><span class="fu">lmer</span>(ACE <span class="sc">~</span> visit <span class="sc">*</span> condition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">+</span>visit<span class="sc">|</span>ppt), d3,<span class="at">REML=</span>F)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>m1r <span class="ot">=</span><span class="fu">lmer</span>(ACE <span class="sc">~</span> visit <span class="sc">*</span> condition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">+</span>visit<span class="sc">|</span>ppt), d3,<span class="at">REML=</span>T)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">SATmodcomp</span>(m1,m0) <span class="co"># refits with REML</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">SATmodcomp</span>(m1r,m0r) <span class="co"># refits with REML</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">KRmodcomp</span>(m1,m0) <span class="co"># refits with REML</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">KRmodcomp</span>(m1r,m0r) <span class="co"># refits with REML</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">SATmodcomp</span>(m1,m0) <span class="co"># refits with REML</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">KRmodcomp</span>(m1,m0) <span class="co"># refits with REML</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(m1, <span class="at">ci_method=</span><span class="st">"kr"</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># CIs computed via REML, estimates, t, p not unless initial model fitted with REML</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(m1r,<span class="at">ci_method=</span><span class="st">"sat"</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># CIs computed via REML, estimates, t, p not unless initial model fitted with REML</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
-<section id="likelihood-based" class="level2">
-<h2 class="anchored" data-anchor-id="likelihood-based">likelihood based</h2>
-<p>profile likelihood</p>
-<p>lrt</p>
-</section>
-<section id="parametric-bootstrap" class="level2">
-<h2 class="anchored" data-anchor-id="parametric-bootstrap">parametric bootstrap</h2>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+likelihood based methods
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+parametric bootstrap
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</div>
+<p>table!</p>
 
 
 </section>
-</section>
 
-</main> <!-- /main -->
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p><span class="math inline">\(n\)</span> observations minus <span class="math inline">\(k\)</span> parameters (slope of <code>x</code>) minus 1 intercept<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

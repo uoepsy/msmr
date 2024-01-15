@@ -20,34 +20,81 @@ xaringanExtra::use_panelset()
 
 # Inference
 
-SE, p-vals/confints
+The term "inference" is used to refer to the process of moving from beyond a description of our specific sample to being able to make statements about the broader population from which we have sampled. 
+
+In the framework for statistics that we have been learning, this centers on the idea of _samples statistics that we might see in the long run_ (i.e. if we did the experiment again and again and again with a new sample each time). 
+
+```{r}
+#| echo: false
+#| label: fig-se3
+#| fig-cap: "The standard error is the standard deviation of the 'sampling distribution' - the distribution of sample statistics that we _could_ see. We use this to ask how likely our observed sample is in a universe where the null hypothesis is true. This probability gives us reason to reject (or not) said null hypothesis."
+set.seed(2394)
+samplemeans <- seq(-5,5,.1)
+g <- ggplot(data=tibble(samplemeans),aes(x=samplemeans))+
+  #geom_histogram(alpha=.3)+
+  stat_function(geom="line",fun=~dnorm(.x, mean=0,sd=1),lwd=1)
 
 
-# Inference in LM
+ld <- layer_data(g) |> filter(x <= 1 & x >= -1)
+ld2 <- layer_data(g) |> filter(x <= 2 & x >= -2)
+ld3 <- layer_data(g) |> filter(x >= 2.5)
 
-SE calc
-F/t distribution ddf
+g + geom_area(data=ld,aes(x=x,y=y),fill="grey30",alpha=.3) + 
+  geom_area(data=ld2,aes(x=x,y=y),fill="grey30",alpha=.1) +
+  geom_area(data=ld3,aes(x=x,y=y),fill="red",alpha=.1) +
+  geom_vline(xintercept=2.5,col="red",lty="dashed")+
+  annotate("text",x=2.6,y=.2,label="observed\nsample statistic",angle=90,col="red",vjust=1)+
+  geom_vline(xintercept = 0, col="black",lty="dashed", lwd=.5) +
+  annotate("text",
+           x=-2, y=.3, 
+           label="Null Hypothesis", col="black",
+           hjust=1)+
+  geom_curve(aes(x=-2, xend=0, y=.3, yend=.3), col="black", size=0.5, 
+             curvature = 0, arrow = arrow(length = unit(0.03, "npc")))+
+  
+  geom_segment(x=0,xend=-1,y=.15,yend=.15) +
+  annotate("text",x=-3, y=.16, label="Standard Error (SE)\n(standard deviation of\nsampling distribution)", col="grey30")+
+  geom_curve(aes(x=-3, xend=-.5, y=.18, yend=.15), col="grey30", size=0.5, curvature = -0.5, arrow = arrow(length = unit(0.03, "npc")))+
 
-test of coefficient vs model comparison 
+  scale_y_continuous(NULL,breaks=NULL)+
+  theme_minimal()+
+  scale_x_continuous("sample means under the null hypothesis",breaks=NULL) 
+  
+  
+
+```
+
+In USMR, we saw various ways in which this logic was applied, combining the observed sample statistic with the standard error to create a _test statistic_ ($z$, $t$, $\chi^2$, $F$, then compared to the appropriate standard distribution). 
+
+In the linear models we were making with `lm()`, these were $t$ (for the coefficient estimate) and $F$ (the reduction in residual sums of squares) tests, and accordingly they had an associated degrees of freedom. If we fit a linear model `lm(y~x)` to 10 datapoints, then our tests would have $10-2=8$^[$n$ observations minus $k$ parameters (slope of `x`) minus 1 intercept] degrees of freedom, and test statistics would be compared against, e.g. a $t$ distribution with 8 degrees of freedom. Alternatively, if we fit the same model to 100 datapoints, we would be working with a distribution with 98 degrees of freedom. The degrees of freedom reflects the fact that there is more variability in statistics from smaller samples.  
+
+Another way of thinking of degrees of freedom is that they are the number of independent datapoints that are left "free to vary" around our model parameters. 
+
+But we are now working with multilevel data, and in the scenario where we have, e.g. $n_p$ pupils clustered into $n_s$ schools, how many independent bits of information do we have to begin with? $n_p$? $n_s$? somewhere in between? Our random effects are not "free to vary" in the sense that they are estimated under certain constraints (such as following a normal distribution).  
+
+In very specific situations that correspond to classical experimental designs (in which, e.g., we have perfectly balanced numbers across experimental factors and equal sizes within groups) it is possible to conduct similar $F$ tests (and so $t$ too) with a calculable degrees of freedom. Unfortunately, transferring this to more general scenarios (any missing data, unbalanced designs, more complex random effect structures) is problematic. Partly because defining the degrees of freedom is much more tricky, and partly because the test statistic may not even follow an $F$ distribution with _any_ degrees of freedom.  
+
+However, there are various strategies that we can use to conduct inferences that either attempt to approximate the degrees of freedom, or use an alternative method based on, e.g., likelihoods or bootstrapping.  
+
+Below, we'll go through each method in R, applying it to the following model (recall this is the model we ended with in reading [1B](01b_lmm.html#a-more-complex-model){target="_blank"}).  
+
+```{r}
+library(tidyverse)
+library(lme4)
+
+schoolmot <- read_csv("https://uoepsy.github.io/data/schoolmot.csv")
+
+smod3 <- lmer(grade ~ motiv * funding + 
+                (1 + motiv | schoolid), 
+              data = schoolmot)
+```
 
 
-# Inference in LMM
+::: {.callout-tip collapse="true"}
+#### df approximations (Satterthwaite & KR)
 
-ddf
+Two methods have been suggested as approximations for the denominator degrees of freedom for multilevel models.  
 
-in a perfectly balanced design, then we can calculate ddf for F
-
-mi = nr of groups at level i
-mim1 = nr of groups as level i-1 (**higher** level)
-pi = df for terms at level i
-ddf_i = mi - (mim1 + pi)
-
-SE = derived via ML/REML (not SS resid)
-
-## wald t (balanced only)
-
-
-## df approximations
 
 satterthwaite
 
@@ -75,14 +122,25 @@ parameters::model_parameters(m1r,ci_method="sat")
 # CIs computed via REML, estimates, t, p not unless initial model fitted with REML
 ```
 
-## likelihood based
-
-profile likelihood
-
-lrt
+:::
 
 
-## parametric bootstrap
+::: {.callout-tip collapse="true"}
+#### likelihood based methods 
+
+
+:::
+
+
+
+::: {.callout-tip collapse="true"}
+#### parametric bootstrap
+
+
+:::
+
+
+table!  
 
 
 

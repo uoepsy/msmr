@@ -158,7 +158,7 @@
     "href": "01ex.html",
     "title": "Week 1 Exercises: Intro to MLM",
     "section": "",
-    "text": "New Packages!\n\n\n\n\n\nThese are the main packages we’re going to use in this block. It might make sense to install them now if you do not have them already\n\ntidyverse : for organising data\n\nlme4 : for fitting generalised linear mixed effects models\nbroom.mixed : tidying methods for mixed models\neffects : for tabulating and graphing effects in linear models\nlmerTest: for quick p-values from mixed models\nparameters: various inferential methods for"
+    "text": "New Packages!\n\n\n\n\n\nThese are the main packages we’re going to use in this block. It might make sense to install them now if you do not have them already\n\ntidyverse : for organising data\n\nlme4 : for fitting generalised linear mixed effects models\nbroom.mixed : tidying methods for mixed models\neffects : for tabulating and graphing effects in linear models\nlmerTest: for quick p-values from mixed models\nparameters: various inferential methods for mixed models"
   },
   {
     "objectID": "01ex.html#footnotes",
@@ -172,7 +172,7 @@
     "href": "01exMARKOV.html",
     "title": "Week 1 Exercises: Intro to MLM",
     "section": "",
-    "text": "New Packages!\n\n\n\n\n\nThese are the main packages we’re going to use in this block. It might make sense to install them now if you do not have them already\n\ntidyverse : for organising data\n\nlme4 : for fitting generalised linear mixed effects models\nbroom.mixed : tidying methods for mixed models\neffects : for tabulating and graphing effects in linear models\nlmerTest: for quick p-values from mixed models\nparameters: various inferential methods for"
+    "text": "New Packages!\n\n\n\n\n\nThese are the main packages we’re going to use in this block. It might make sense to install them now if you do not have them already\n\ntidyverse : for organising data\n\nlme4 : for fitting generalised linear mixed effects models\nbroom.mixed : tidying methods for mixed models\neffects : for tabulating and graphing effects in linear models\nlmerTest: for quick p-values from mixed models\nparameters: various inferential methods for mixed models"
   },
   {
     "objectID": "01exMARKOV.html#footnotes",
@@ -186,35 +186,14 @@
     "href": "02a_inference.html",
     "title": "Inference for LMM",
     "section": "",
-    "text": "SE, p-vals/confints"
+    "text": "The term “inference” is used to refer to the process of moving from beyond a description of our specific sample to being able to make statements about the broader population from which we have sampled.\nIn the framework for statistics that we have been learning, this centers on the idea of samples statistics that we might see in the long run (i.e. if we did the experiment again and again and again with a new sample each time).\n\n\n\n\n\nFigure 1: The standard error is the standard deviation of the ‘sampling distribution’ - the distribution of sample statistics that we could see. We use this to ask how likely our observed sample is in a universe where the null hypothesis is true. This probability gives us reason to reject (or not) said null hypothesis.\n\n\n\n\nIn USMR, we saw various ways in which this logic was applied, combining the observed sample statistic with the standard error to create a test statistic (\\(z\\), \\(t\\), \\(\\chi^2\\), \\(F\\), then compared to the appropriate standard distribution).\nIn the linear models we were making with lm(), these were \\(t\\) (for the coefficient estimate) and \\(F\\) (the reduction in residual sums of squares) tests, and accordingly they had an associated degrees of freedom. If we fit a linear model lm(y~x) to 10 datapoints, then our tests would have \\(10-2=8\\)1 degrees of freedom, and test statistics would be compared against, e.g. a \\(t\\) distribution with 8 degrees of freedom. Alternatively, if we fit the same model to 100 datapoints, we would be working with a distribution with 98 degrees of freedom. The degrees of freedom reflects the fact that there is more variability in statistics from smaller samples.\nAnother way of thinking of degrees of freedom is that they are the number of independent datapoints that are left “free to vary” around our model parameters.\nBut we are now working with multilevel data, and in the scenario where we have, e.g. \\(n_p\\) pupils clustered into \\(n_s\\) schools, how many independent bits of information do we have to begin with? \\(n_p\\)? \\(n_s\\)? somewhere in between? Our random effects are not “free to vary” in the sense that they are estimated under certain constraints (such as following a normal distribution).\nIn very specific situations that correspond to classical experimental designs (in which, e.g., we have perfectly balanced numbers across experimental factors and equal sizes within groups) it is possible to conduct similar \\(F\\) tests (and so \\(t\\) too) with a calculable degrees of freedom. Unfortunately, transferring this to more general scenarios (any missing data, unbalanced designs, more complex random effect structures) is problematic. Partly because defining the degrees of freedom is much more tricky, and partly because the test statistic may not even follow an \\(F\\) distribution with any degrees of freedom.\nHowever, there are various strategies that we can use to conduct inferences that either attempt to approximate the degrees of freedom, or use an alternative method based on, e.g., likelihoods or bootstrapping.\nBelow, we’ll go through each method in R, applying it to the following model (recall this is the model we ended with in reading 1B).\n\nlibrary(tidyverse)\nlibrary(lme4)\n\nschoolmot &lt;- read_csv(\"https://uoepsy.github.io/data/schoolmot.csv\")\n\nsmod3 &lt;- lmer(grade ~ motiv * funding + \n                (1 + motiv | schoolid), \n              data = schoolmot)\n\n\n\n\n\n\n\ndf approximations (Satterthwaite & KR)\n\n\n\n\n\nTwo methods have been suggested as approximations for the denominator degrees of freedom for multilevel models.\nsatterthwaite\nkr\n\n# ddf ----\nd3=slice_sample(d3,prop=.78)\nm0 =lmer(ACE ~ visit + condition + (1+visit|ppt), d3,REML=F)\nm0r =lmer(ACE ~ visit + condition + (1+visit|ppt), d3,REML=T)\nm1 =lmer(ACE ~ visit * condition + (1+visit|ppt), d3,REML=F)\nm1r =lmer(ACE ~ visit * condition + (1+visit|ppt), d3,REML=T)\nSATmodcomp(m1,m0) # refits with REML\nSATmodcomp(m1r,m0r) # refits with REML\nKRmodcomp(m1,m0) # refits with REML\nKRmodcomp(m1r,m0r) # refits with REML\n\n\nSATmodcomp(m1,m0) # refits with REML\nKRmodcomp(m1,m0) # refits with REML\n\nparameters::model_parameters(m1, ci_method=\"kr\")\n# CIs computed via REML, estimates, t, p not unless initial model fitted with REML\nparameters::model_parameters(m1r,ci_method=\"sat\")\n# CIs computed via REML, estimates, t, p not unless initial model fitted with REML\n\n\n\n\n\n\n\n\n\n\nlikelihood based methods\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nparametric bootstrap\n\n\n\n\n\n\n\n\n\ntable!"
   },
   {
-    "objectID": "02a_inference.html#wald-t-balanced-only",
-    "href": "02a_inference.html#wald-t-balanced-only",
+    "objectID": "02a_inference.html#footnotes",
+    "href": "02a_inference.html#footnotes",
     "title": "Inference for LMM",
-    "section": "wald t (balanced only)",
-    "text": "wald t (balanced only)"
-  },
-  {
-    "objectID": "02a_inference.html#df-approximations",
-    "href": "02a_inference.html#df-approximations",
-    "title": "Inference for LMM",
-    "section": "df approximations",
-    "text": "df approximations\nsatterthwaite\nkr\n\n# ddf ----\nd3=slice_sample(d3,prop=.78)\nm0 =lmer(ACE ~ visit + condition + (1+visit|ppt), d3,REML=F)\nm0r =lmer(ACE ~ visit + condition + (1+visit|ppt), d3,REML=T)\nm1 =lmer(ACE ~ visit * condition + (1+visit|ppt), d3,REML=F)\nm1r =lmer(ACE ~ visit * condition + (1+visit|ppt), d3,REML=T)\nSATmodcomp(m1,m0) # refits with REML\nSATmodcomp(m1r,m0r) # refits with REML\nKRmodcomp(m1,m0) # refits with REML\nKRmodcomp(m1r,m0r) # refits with REML\n\n\nSATmodcomp(m1,m0) # refits with REML\nKRmodcomp(m1,m0) # refits with REML\n\nparameters::model_parameters(m1, ci_method=\"kr\")\n# CIs computed via REML, estimates, t, p not unless initial model fitted with REML\nparameters::model_parameters(m1r,ci_method=\"sat\")\n# CIs computed via REML, estimates, t, p not unless initial model fitted with REML"
-  },
-  {
-    "objectID": "02a_inference.html#likelihood-based",
-    "href": "02a_inference.html#likelihood-based",
-    "title": "Inference for LMM",
-    "section": "likelihood based",
-    "text": "likelihood based\nprofile likelihood\nlrt"
-  },
-  {
-    "objectID": "02a_inference.html#parametric-bootstrap",
-    "href": "02a_inference.html#parametric-bootstrap",
-    "title": "Inference for LMM",
-    "section": "parametric bootstrap",
-    "text": "parametric bootstrap"
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\n\\(n\\) observations minus \\(k\\) parameters (slope of x) minus 1 intercept↩︎"
   },
   {
     "objectID": "02b_long.html",
@@ -263,14 +242,14 @@
     "href": "lvp.html#setup",
     "title": "Likelihood vs Probability",
     "section": "Setup",
-    "text": "Setup\nLet’s consider a coin flip. For a fair coin, the chance of getting a heads/tails for any given flip is 0.5.\nWe can simulate the number of “heads” in a single fair coin flip with the following code (because it is a single flip, it’s just going to return 0 or 1):\n\nrbinom(n = 1, size = 1, prob = 0.5)\n\n[1] 1\n\n\nWe can simulate the number of “heads” in 8 fair coin flips with the following code:\n\nrbinom(n = 1, size = 8, prob = 0.5)\n\n[1] 5\n\n\nAs the coin is fair, what number of heads would we expect to see out of 8 coin flips? Answer: 4! Doing another 8 flips:\n\nrbinom(n = 1, size = 8, prob = 0.5)\n\n[1] 5\n\n\nand another 8:\n\nrbinom(n = 1, size = 8, prob = 0.5)\n\n[1] 6\n\n\nWe see that they tend to be around our intuition expected number of 4 heads. We can change n = 1 to ask rbinom() to not just do 1 set of 8 coin flips, but to do 1000 sets of 8 flips:\n\ntable(rbinom(n = 1000, size = 8, prob = 0.5))\n\n\n  0   1   2   3   4   5   6   7   8 \n  2  26 117 214 285 221 100  33   2"
+    "text": "Setup\nLet’s consider a coin flip. For a fair coin, the chance of getting a heads/tails for any given flip is 0.5.\nWe can simulate the number of “heads” in a single fair coin flip with the following code (because it is a single flip, it’s just going to return 0 or 1):\n\nrbinom(n = 1, size = 1, prob = 0.5)\n\n[1] 0\n\n\nWe can simulate the number of “heads” in 8 fair coin flips with the following code:\n\nrbinom(n = 1, size = 8, prob = 0.5)\n\n[1] 2\n\n\nAs the coin is fair, what number of heads would we expect to see out of 8 coin flips? Answer: 4! Doing another 8 flips:\n\nrbinom(n = 1, size = 8, prob = 0.5)\n\n[1] 3\n\n\nand another 8:\n\nrbinom(n = 1, size = 8, prob = 0.5)\n\n[1] 6\n\n\nWe see that they tend to be around our intuition expected number of 4 heads. We can change n = 1 to ask rbinom() to not just do 1 set of 8 coin flips, but to do 1000 sets of 8 flips:\n\ntable(rbinom(n = 1000, size = 8, prob = 0.5))\n\n\n  0   1   2   3   4   5   6   7   8 \n  3  40 114 222 261 214 113  28   5"
   },
   {
     "objectID": "lvp.html#probability",
     "href": "lvp.html#probability",
     "title": "Likelihood vs Probability",
     "section": "Probability",
-    "text": "Probability\nSo what is the probability of observing \\(k\\) heads in \\(n\\) flips of a fair coin?\nAs coin flips are independent, we can calculate probability using the product rule (\\(P(AB) = P(A)\\cdot P(B)\\) where \\(A\\) and \\(B\\) are independent).\nSo the probability of observing 2 heads in 2 flips is \\(0.5 \\cdot 0.5 = 0.25\\)\nWe can get to this probability using dbinom():\n\ndbinom(2, size=2, prob=0.5)\n\n[1] 0.25\n\n\nIn 8 flips, those two heads could occur in various ways:\n\n\n\n\n\n\n  \n    \n    \n      Ways to get 2 heads in 8 flips\n    \n  \n  \n    TTHTTTTH\n    TTTTHTHT\n    TTTTTHHT\n    TTTTTTHH\n    HHTTTTTT\n    TTTTHHTT\n    TTHHTTTT\n    TTTHHTTT\n    ...\n  \n  \n  \n\n\n\n\nAs it happens, there are 28 different ways this could happen.2\nThe probability of getting 2 heads in 8 flips of a fair coin is, therefore:\n\n28 * (0.5^8)\n\n[1] 0.109375\n\n\nOr, using dbinom()\n\ndbinom(2, size = 8, prob = 0.5)\n\n[1] 0.109375\n\n\n\nThe important thing here is that when we are computing the probability, two things are fixed:\n\nthe number of coin flips (8)\nthe value(s) that govern the coin’s behaviour (0.5 chance of landing on heads for any given flip)\n\nWe can then can compute the probabilities for observing various numbers of heads:\n\ndbinom(0:8, 8, prob = 0.5)\n\n[1] 0.00390625 0.03125000 0.10937500 0.21875000 0.27343750 0.21875000 0.10937500\n[8] 0.03125000 0.00390625\n\n\n\n\n\n\n\n\n\n\n\nNote that the probability of observing 10 heads in 8 coin flips is 0, as we would hope!\n\ndbinom(10, 8, prob = 0.5)\n\n[1] 0"
+    "text": "Probability\nSo what is the probability of observing \\(k\\) heads in \\(n\\) flips of a fair coin?\nAs coin flips are independent, we can calculate probability using the product rule (\\(P(AB) = P(A)\\cdot P(B)\\) where \\(A\\) and \\(B\\) are independent).\nSo the probability of observing 2 heads in 2 flips is \\(0.5 \\cdot 0.5 = 0.25\\)\nWe can get to this probability using dbinom():\n\ndbinom(2, size=2, prob=0.5)\n\n[1] 0.25\n\n\nIn 8 flips, those two heads could occur in various ways:\n\n\n\n\n\n\n  \n    \n    \n      Ways to get 2 heads in 8 flips\n    \n  \n  \n    TTHTHTTT\n    TTTTTHHT\n    TTTTTHTH\n    THHTTTTT\n    TTTHTTHT\n    TTHHTTTT\n    TTTTHHTT\n    HHTTTTTT\n    HTTHTTTT\n    ...\n  \n  \n  \n\n\n\n\nAs it happens, there are 28 different ways this could happen.2\nThe probability of getting 2 heads in 8 flips of a fair coin is, therefore:\n\n28 * (0.5^8)\n\n[1] 0.109375\n\n\nOr, using dbinom()\n\ndbinom(2, size = 8, prob = 0.5)\n\n[1] 0.109375\n\n\n\nThe important thing here is that when we are computing the probability, two things are fixed:\n\nthe number of coin flips (8)\nthe value(s) that govern the coin’s behaviour (0.5 chance of landing on heads for any given flip)\n\nWe can then can compute the probabilities for observing various numbers of heads:\n\ndbinom(0:8, 8, prob = 0.5)\n\n[1] 0.00390625 0.03125000 0.10937500 0.21875000 0.27343750 0.21875000 0.10937500\n[8] 0.03125000 0.00390625\n\n\n\n\n\n\n\n\n\n\n\nNote that the probability of observing 10 heads in 8 coin flips is 0, as we would hope!\n\ndbinom(10, 8, prob = 0.5)\n\n[1] 0"
   },
   {
     "objectID": "lvp.html#likelihood",
