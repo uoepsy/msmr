@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>MSMR - Inference for LMM</title>
+<title>MSMR - Inference for MLM</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -196,6 +196,12 @@ if(f.classList.contains('jk-circle-right')) {
  <span class="menu-text">LM Troubleshooting</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lvp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Likelihood vs Probability</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -217,7 +223,7 @@ if(f.classList.contains('jk-circle-right')) {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Inference for LMM</h1>
+<h1 class="title">Inference for MLM</h1>
 </div>
 
 
@@ -235,22 +241,20 @@ if(f.classList.contains('jk-circle-right')) {
 <section id="inference" class="level1">
 <h1>Inference</h1>
 <p>The term “inference” is used to refer to the process of moving from beyond a description of our specific sample to being able to make statements about the broader population from which we have sampled.</p>
-<p>In the framework for statistics that we have been learning, this centers on the idea of <em>samples statistics that we might see in the long run</em> (i.e.&nbsp;if we did the experiment again and again and again with a new sample each time).</p>
+<p>In the framework for statistics that we have been learning, this centers on the idea of <em>sample statistics that we might see in the long run</em> (i.e.&nbsp;if we did the experiment again and again and again with a new sample each time, see <a href="#fig-se3">Figure&nbsp;1</a>). In USMR, we saw various ways in which this logic was applied, combining the observed sample statistic with the standard error to create a <em>test statistic</em> (<span class="math inline">\(z\)</span>, <span class="math inline">\(t\)</span>, <span class="math inline">\(\chi^2\)</span>, <span class="math inline">\(F\)</span>, then compared to the appropriate standard distribution).</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div id="fig-se3" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="02a_inference_files/figure-html/fig-se3-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
-<figcaption class="figure-caption">Figure&nbsp;1: The standard error is the standard deviation of the ‘sampling distribution’ - the distribution of sample statistics that we <em>could</em> see. We use this to ask how likely our observed sample is in a universe where the null hypothesis is true. This probability gives us reason to reject (or not) said null hypothesis.</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;1: The standard error is the standard deviation of the ‘sampling distribution’ - the distribution of sample statistics that we <em>could</em> see. We use this to ask how likely we are to see our observed sample in a universe where the null hypothesis is true. This probability gives us reason to reject (or not) said null hypothesis.</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>In USMR, we saw various ways in which this logic was applied, combining the observed sample statistic with the standard error to create a <em>test statistic</em> (<span class="math inline">\(z\)</span>, <span class="math inline">\(t\)</span>, <span class="math inline">\(\chi^2\)</span>, <span class="math inline">\(F\)</span>, then compared to the appropriate standard distribution).</p>
-<p>In the linear models we were making with <code>lm()</code>, these were <span class="math inline">\(t\)</span> (for the coefficient estimate) and <span class="math inline">\(F\)</span> (the reduction in residual sums of squares) tests, and accordingly they had an associated degrees of freedom. If we fit a linear model <code>lm(y~x)</code> to 10 datapoints, then our tests would have <span class="math inline">\(10-2=8\)</span><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> degrees of freedom, and test statistics would be compared against, e.g.&nbsp;a <span class="math inline">\(t\)</span> distribution with 8 degrees of freedom. Alternatively, if we fit the same model to 100 datapoints, we would be working with a distribution with 98 degrees of freedom. The degrees of freedom reflects the fact that there is more variability in statistics from smaller samples.</p>
-<p>Another way of thinking of degrees of freedom is that they are the number of independent datapoints that are left “free to vary” around our model parameters.</p>
-<p>But we are now working with multilevel data, and in the scenario where we have, e.g.&nbsp;<span class="math inline">\(n_p\)</span> pupils clustered into <span class="math inline">\(n_s\)</span> schools, how many independent bits of information do we have to begin with? <span class="math inline">\(n_p\)</span>? <span class="math inline">\(n_s\)</span>? somewhere in between? Our random effects are not “free to vary” in the sense that they are estimated under certain constraints (such as following a normal distribution).</p>
-<p>In very specific situations that correspond to classical experimental designs (in which, e.g., we have perfectly balanced numbers across experimental factors and equal sizes within groups) it is possible to conduct similar <span class="math inline">\(F\)</span> tests (and so <span class="math inline">\(t\)</span> too) with a calculable degrees of freedom. Unfortunately, transferring this to more general scenarios (any missing data, unbalanced designs, more complex random effect structures) is problematic. Partly because defining the degrees of freedom is much more tricky, and partly because the test statistic may not even follow an <span class="math inline">\(F\)</span> distribution with <em>any</em> degrees of freedom.</p>
+<p>In the linear models we were fitting with <code>lm()</code>, these were <span class="math inline">\(t\)</span> (for the coefficient estimate) and <span class="math inline">\(F\)</span> (the reduction in residual sums of squares) tests, and accordingly they had an associated degrees of freedom. If we fit a linear model <code>lm(y~x)</code> to 10 datapoints, then our tests would have <span class="math inline">\(10-2=8\)</span><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> degrees of freedom, and test statistics would be compared against, e.g.&nbsp;a <span class="math inline">\(t\)</span> distribution with 8 degrees of freedom. Alternatively, if we were to fit that model to 100 datapoints, we would be working with 98 degrees of freedom. The degrees of freedom reflects the fact that there is more variability in statistics from smaller samples. Another way of thinking of degrees of freedom is that they are the number of independent datapoints that are left “free to vary” around our model parameters.</p>
+<p>But we are now working with multilevel data, and in the scenario where we have, e.g.&nbsp;<span class="math inline">\(n_p\)</span> pupils clustered into <span class="math inline">\(n_s\)</span> schools, how many independent bits of information do we have to begin with? Is it <span class="math inline">\(n_p\)</span>? Or <span class="math inline">\(n_s\)</span>? Or somewhere in between? Our random effects are not “free to vary” in the sense that they are estimated under certain constraints (such as following a normal distribution).</p>
+<p>In very specific situations that correspond to classical experimental designs (in which, e.g., we have perfectly balanced numbers across experimental factors and equal sizes within groups) it is possible to conduct similar <span class="math inline">\(F\)</span> tests (and hence <span class="math inline">\(t\)</span>-tests too) with a known degrees of freedom. Unfortunately, transferring this to more general scenarios is problematic (e.g., any missing data, unbalanced designs, more complex random effect structures). Partly because defining the necessarily follow an <span class="math inline">\(F\)</span> distribution with <em>any</em> degrees of freedom.</p>
 <p>However, there are various strategies that we can use to conduct inferences that either attempt to approximate the degrees of freedom, or use an alternative method based on, e.g., likelihoods or bootstrapping.</p>
 <p>Below, we’ll go through each method in R, applying it to the following model (recall this is the model we ended with in reading <a href="01b_lmm.html#a-more-complex-model" target="_blank">1B</a>).</p>
 <div class="cell" data-layout-align="center">
@@ -259,51 +263,184 @@ if(f.classList.contains('jk-circle-right')) {
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>schoolmot <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/schoolmot.csv"</span>)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>smod3 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(grade <span class="sc">~</span> motiv <span class="sc">*</span> funding <span class="sc">+</span> </span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                (<span class="dv">1</span> <span class="sc">+</span> motiv <span class="sc">|</span> schoolid), </span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>smod3 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(grade <span class="sc">~</span> motiv <span class="sc">*</span> funding <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> motiv <span class="sc">|</span> schoolid), </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> schoolmot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-df approximations (Satterthwaite &amp; KR)
+df approximations (Satterthwaite)
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Two methods have been suggested as approximations for the denominator degrees of freedom for multilevel models.</p>
-<p>satterthwaite</p>
-<p>kr</p>
+<p>Two methods have been suggested as approximations for the denominator degrees of freedom for multilevel models. The maths behind these are pretty intense, so we’re going to focus on how to implement them in R, and emphasise some of their respective benefits/drawbacks.</p>
+<p>The Satterthwaite approximation is easily implemented by packages such as <strong>lmerTest</strong>. This package simply overwrites the <code>lmer()</code> function to use a version that has the degrees of freedom and associated p-values displayed in the summary.</p>
+<p>It can be used for models fitted with either ML or REML, and generally scales well, so if you are fitting models to big datasets, it won’t take too much extra time.</p>
+<div class="panelset">
+<section id="tests-of-single-parameters" class="level4 panel">
+<h4 class="anchored" data-anchor-id="tests-of-single-parameters">tests of single parameters</h4>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ddf ----</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>d3<span class="ot">=</span><span class="fu">slice_sample</span>(d3,<span class="at">prop=</span>.<span class="dv">78</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>m0 <span class="ot">=</span><span class="fu">lmer</span>(ACE <span class="sc">~</span> visit <span class="sc">+</span> condition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">+</span>visit<span class="sc">|</span>ppt), d3,<span class="at">REML=</span>F)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>m0r <span class="ot">=</span><span class="fu">lmer</span>(ACE <span class="sc">~</span> visit <span class="sc">+</span> condition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">+</span>visit<span class="sc">|</span>ppt), d3,<span class="at">REML=</span>T)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">=</span><span class="fu">lmer</span>(ACE <span class="sc">~</span> visit <span class="sc">*</span> condition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">+</span>visit<span class="sc">|</span>ppt), d3,<span class="at">REML=</span>F)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>m1r <span class="ot">=</span><span class="fu">lmer</span>(ACE <span class="sc">~</span> visit <span class="sc">*</span> condition <span class="sc">+</span> (<span class="dv">1</span><span class="sc">+</span>visit<span class="sc">|</span>ppt), d3,<span class="at">REML=</span>T)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">SATmodcomp</span>(m1,m0) <span class="co"># refits with REML</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">SATmodcomp</span>(m1r,m0r) <span class="co"># refits with REML</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">KRmodcomp</span>(m1,m0) <span class="co"># refits with REML</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">KRmodcomp</span>(m1r,m0r) <span class="co"># refits with REML</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">SATmodcomp</span>(m1,m0) <span class="co"># refits with REML</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">KRmodcomp</span>(m1,m0) <span class="co"># refits with REML</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(m1, <span class="at">ci_method=</span><span class="st">"kr"</span>)</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># CIs computed via REML, estimates, t, p not unless initial model fitted with REML</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(m1r,<span class="at">ci_method=</span><span class="st">"sat"</span>)</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># CIs computed via REML, estimates, t, p not unless initial model fitted with REML</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>smod3sat <span class="ot">&lt;-</span> lmerTest<span class="sc">::</span><span class="fu">lmer</span>(grade <span class="sc">~</span> motiv <span class="sc">*</span> funding <span class="sc">+</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                (<span class="dv">1</span> <span class="sc">+</span> motiv <span class="sc">|</span> schoolid), </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> schoolmot)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(smod3sat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite's method [
+lmerModLmerTest]
+Formula: grade ~ motiv * funding + (1 + motiv | schoolid)
+   Data: schoolmot
+
+REML criterion at convergence: 7083.6
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-3.08250 -0.67269  0.03043  0.63562  3.13012 
+
+Random effects:
+ Groups   Name        Variance Std.Dev. Corr 
+ schoolid (Intercept) 105.124  10.253        
+          motiv         2.595   1.611   -0.48
+ Residual             139.030  11.791        
+Number of obs: 900, groups:  schoolid, 30
+
+Fixed effects:
+                   Estimate Std. Error       df t value Pr(&gt;|t|)    
+(Intercept)         40.3143     4.6414  26.7240   8.686  2.9e-09 ***
+motiv                2.6294     0.8652  28.5939   3.039  0.00503 ** 
+fundingstate       -17.2531     5.7346  25.5625  -3.009  0.00583 ** 
+motiv:fundingstate   2.8485     1.0591  26.5413   2.689  0.01221 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Correlation of Fixed Effects:
+            (Intr) motiv  fndngs
+motiv       -0.782              
+fundingstat -0.809  0.633       
+mtv:fndngst  0.639 -0.817 -0.773</code></pre>
+</div>
+</div>
+<div class="int">
+<p><strong>Reporting</strong></p>
+<p>… degrees of freedom in the coefficients tests have been corrected via Satterthwaite’s method.<br>
+…<br>
+…<br>
+The association between childrens’ motivation level and their school grades was moderated by the type of school attended (state/private), with a 1 unit increase in motivation associated with an additional 2.85 point increase for children in state school in comparison to those attending private schools (<span class="math inline">\(b = 2.85,\ SE = 1.06,\ t(26.54^*) = 2.69,\ p = .012\)</span>).</p>
+</div>
+</section>
+<section id="model-comparisons" class="level4 panel">
+<h4 class="anchored" data-anchor-id="model-comparisons">model comparisons</h4>
+<p>You can conduct model comparisons with an <span class="math inline">\(F\)</span> test and the Satterthwaite df approximation using the function <code>SATmodcomp()</code> from the <strong>pbkrtest</strong> package:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>smod3 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(grade <span class="sc">~</span> motiv <span class="sc">*</span> funding <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> motiv <span class="sc">|</span> schoolid), </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> schoolmot)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>smod3_res <span class="ot">&lt;-</span> <span class="fu">lmer</span>(grade <span class="sc">~</span> motiv <span class="sc">+</span> funding <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> motiv <span class="sc">|</span> schoolid), </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> schoolmot)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pbkrtest)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">SATmodcomp</span>(<span class="at">largeModel =</span> smod3, <span class="at">smallModel =</span> smod3_res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>large : grade ~ motiv * funding + (1 + motiv | schoolid)
+small (restriction matrix) : 
+        
+ 0 0 0 1
+     statistic    ndf    ddf p.value  
+[1,]    7.2332 1.0000 26.541 0.01221 *
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<div class="int">
+<p><strong>Reporting</strong></p>
+<p>… the interaction between motivation level and school funding resulted in a significant improvement in model fit (<span class="math inline">\(F(1,26.54^*)=7.23, p=.012\)</span>, with degrees of freedom approximated using the Satterthwaite method).</p>
+</div>
+</section>
 </div>
 </div>
 </div>
 </div>
-<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+df approximations (Kenward Rogers)
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The Kenward Rogers (KR) approximation involves a correcting the standard errors for small samples, and then approximating the degrees of freedom similarly to Satterthwaite. Because the standard errors are adjusted in KR, <span class="math inline">\(t\)</span>-statistics will be slightly different too.</p>
+<p>The KR approach is generally a good option for smaller sample sizes. The adjustment for smaller samples in KR relies on estimates obtained via REML, which means that to use this method we must fit models with <code>REML=TRUE</code>. One thing to note is that the calculation can be computationally demanding, and so as n increases, it will take more and more time to implement.</p>
+<div class="panelset">
+<section id="tests-of-single-parameters-1" class="level4 panel">
+<h4 class="anchored" data-anchor-id="tests-of-single-parameters-1">tests of single parameters</h4>
+<p>We can use the <strong>parameters</strong> package to get out tests of coefficients using the KR method. It displays both confidence intervals and p-values:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parameters)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">model_parameters</span>(smod3, <span class="at">ci_method=</span><span class="st">"kr"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Fixed Effects
+
+Parameter               | Coefficient |   SE |          95% CI |     t |    df |      p
+---------------------------------------------------------------------------------------
+(Intercept)             |       40.31 | 4.68 | [ 30.72, 49.90] |  8.61 | 28.43 | &lt; .001
+motiv                   |        2.63 | 0.87 | [  0.85,  4.41] |  3.01 | 31.05 | 0.005 
+funding [state]         |      -17.25 | 5.78 | [-29.11, -5.39] | -2.98 | 27.19 | 0.006 
+motiv × funding [state] |        2.85 | 1.07 | [  0.66,  5.03] |  2.67 | 28.79 | 0.012 
+
+# Random Effects
+
+Parameter                       | Coefficient
+---------------------------------------------
+SD (Intercept: schoolid)        |       10.25
+SD (motiv: schoolid)            |        1.61
+Cor (Intercept~motiv: schoolid) |       -0.48
+SD (Residual)                   |       11.79</code></pre>
+</div>
+</div>
+<div class="int">
+<p><strong>Reporting</strong></p>
+<p>… standard errors and degrees of freedom for the coefficients tests have been corrected via the Kenward Rogers method.<br>
+…<br>
+…<br>
+The association between childrens’ motivation level and their school grades was moderated by the type of school attended (state/private), with a 1 unit increase in motivation associated with an additional 2.85 point increase for children in state school in comparison to those attending private schools (<span class="math inline">\(b = 2.85,\ SE = 1.07,\ t(28.79^*) = 2.67,\ p = .012\)</span>).</p>
+</div>
+</section>
+<section id="model-comparisons-1" class="level4 panel">
+<h4 class="anchored" data-anchor-id="model-comparisons-1">model comparisons</h4>
+<p>And the <strong>pbkrtest</strong> package allows for the model comparison:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>smod3 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(grade <span class="sc">~</span> motiv <span class="sc">*</span> funding <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> motiv <span class="sc">|</span> schoolid), </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> schoolmot, <span class="at">REML=</span><span class="cn">TRUE</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>smod3_res <span class="ot">&lt;-</span> <span class="fu">lmer</span>(grade <span class="sc">~</span> motiv <span class="sc">+</span> funding <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> motiv <span class="sc">|</span> schoolid), </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> schoolmot, <span class="at">REML=</span><span class="cn">TRUE</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pbkrtest)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">KRmodcomp</span>(<span class="at">largeModel =</span> smod3, <span class="at">smallModel =</span> smod3_res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>large : grade ~ motiv * funding + (1 + motiv | schoolid)
+small : grade ~ motiv + funding + (1 + motiv | schoolid)
+         stat     ndf     ddf F.scaling p.value  
+Ftest  7.1147  1.0000 28.7941         1 0.01241 *
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<div class="int">
+<p><strong>Reporting</strong></p>
+<p>… the interaction between motivation level and school funding resulted in a significant improvement in model fit (<span class="math inline">\(F(1,28.79^*)=7.12, p=.012\)</span>, with degrees of freedom approximated using the Kenward Rogers method).</p>
+</div>
+</section>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -312,14 +449,83 @@ likelihood based methods
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-
+<p>Remember that multilevel models are typically fitted using maximum likelihood estimation - i.e.&nbsp;a process that iteratively tries to find the set of estimates that result in the greatest probability of observing the data that we have observed (<a href="#fig-mlee">Figure&nbsp;2</a>).</p>
+<div class="cell" data-layout-align="center" data-out.wight="200px">
+<div class="cell-output-display">
+<div id="fig-mlee" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/mle_single.png" style="width:80.0%" height="200" class="figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;2: likelihood is the probability of observing the data, given some model</figcaption>
+</figure>
 </div>
 </div>
 </div>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<p>There are two main things to be aware of with likelihood based methods.</p>
+<ul>
+<li><p>Because these methods rely on the likelihood, then in in order to assess significance of fixed effects, models must be fitted with <code>REML=FALSE</code> (functions like <code>anova()</code> and <code>confint()</code> shown below will re-fit models for you!). This is because when using REML, the likelihood is indexing the fit of the random effects only.</p></li>
+<li><p>Comparisons of two likelihoods (i.e.&nbsp;likelihood ratio tests) are only <strong>asymptotically</strong> <span class="math inline">\(\chi^2\)</span> distributed (i.e.&nbsp;as <span class="math inline">\(n \rightarrow \infty\)</span>), meaning that that this may not be appropriate for smaller sample sizes.</p></li>
+</ul>
+<div class="panelset">
+<section id="likelihood-ratio-tests-lrt" class="level4 panel">
+<h4 class="anchored" data-anchor-id="likelihood-ratio-tests-lrt">likelihood ratio tests (LRT)</h4>
+<p>If we consider two competing models, e.g., one with an interaction in it and one without, then we can examine how the inclusion of the model changes the likelihood of seeing our data.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>smod3 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(grade <span class="sc">~</span> motiv <span class="sc">*</span> funding <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> motiv <span class="sc">|</span> schoolid), </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> schoolmot, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>smod3_res <span class="ot">&lt;-</span> <span class="fu">lmer</span>(grade <span class="sc">~</span> motiv <span class="sc">+</span> funding <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> motiv <span class="sc">|</span> schoolid), </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> schoolmot, <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(smod3_res, smod3) <span class="co"># a likelihood ratio test!  </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Data: schoolmot
+Models:
+smod3_res: grade ~ motiv + funding + (1 + motiv | schoolid)
+smod3: grade ~ motiv * funding + (1 + motiv | schoolid)
+          npar    AIC    BIC  logLik deviance  Chisq Df Pr(&gt;Chisq)   
+smod3_res    7 7114.1 7147.7 -3550.0   7100.1                        
+smod3        8 7109.2 7147.7 -3546.6   7093.2 6.8417  1   0.008905 **
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>We can see the (log)likelihood of the two models, which have been multiplied by -2 to get “deviance”, and the <em>difference</em> in the deviance is under the ‘Chisq’ column of the output, with the associated degrees of freedom (how many parameters we’ve added) under the ‘Df’ column. Differences in two deviances are asymptotically <span class="math inline">\(\chi^2\)</span> distributed, and under this assumption we can compare the change in deviance between our two models to the appropriate <span class="math inline">\(\chi^2\)</span> distribution in order to obtain a p-value.</p>
+<div class="int">
+<p><strong>Reporting</strong></p>
+<p>… the interaction between motivation level and school funding resulted in a significant improvement in model fit, as indicated by a likelihood ratio test (<span class="math inline">\(\chi^2(1)=6.84,p=.009\)</span>).</p>
+</div>
+</section>
+<section id="profile-likelihood-confidence-intervals" class="level4 panel">
+<h4 class="anchored" data-anchor-id="profile-likelihood-confidence-intervals">profile likelihood confidence intervals</h4>
+<p>Another way in which we can use likelihoods is to construct confidence intervals around each parameter. Rather than simply comparing two distinct likelihoods (i.e.&nbsp;two models), we can create a profile of the curvature of the likelihood surface around our estimates (i.e. <a href="#fig-mlee">Figure&nbsp;2</a> shows the curvature in one dimension). If the curvature is sharp, we have more certainty in the estimate, whereas if it is gradual, we have less certainty. We can use this to create confidence intervals.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(smod3, <span class="at">method =</span> <span class="st">"profile"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                         2.5 %    97.5 %
+.sig01               3.9789910 15.676936
+.sig02              -1.0000000  1.000000
+.sig03               0.0000000  2.698323
+.sigma              11.2516781 12.387166
+(Intercept)         31.3570545 49.522410
+motiv                0.9403609  4.310786
+fundingstate       -28.6168996 -6.067518
+motiv:fundingstate   0.7521944  4.896439</code></pre>
+</div>
+</div>
+<div class="int">
+<p><strong>Reporting</strong></p>
+<p>… confidence intervals were obtained using profile likelihood<br>
+…<br>
+…<br>
+The association between childrens’ motivation level and their school grades was moderated by the type of school attended (state/private), with a 1 unit increase in motivation associated with an additional 2.8 point increase for children in state school in comparison to those attending private schools (<span class="math inline">\(b = 2.8\)</span>, 95% profile likelihood CI <span class="math inline">\([0.75, 4.90]\)</span>).</p>
+</div>
+</section>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -328,13 +534,118 @@ parametric bootstrap
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-
+<p>There are also various “bootstrapping” methods which it is worth looking into. Think back to USMR when we first learned about hypothesis testing. Remember that we did some simulating of data, so that we could compare what we actually observe with what we would expect if the null hypothesis were true? By doing this, we were essentially <em>creating</em> a null distribution, so that calculating a p-value can become an issue of summarising data (e.g.&nbsp;calculate the proportion of our simulated null distribution that is more extreme than our observed statistic).</p>
+<p>We can use this same logic to perform tests or construct confidence intervals for multilevel models. However, this particular flavour of <em>parametric</em> bootstrapping does not involve resampling with replacement from our data. Instead, it involves 1) simulating data from our model parameters, then 2) fitting model(s) to that simulated data to get an estimate, then 3) using the distribution of estimates obtained from doing steps 1 and 2 a thousand times.</p>
+<p>Some key things to note:</p>
+<ul>
+<li>This can be time consuming! and might not work well depending on how stable your random effect variances are (i.e.&nbsp;if some variance estimates are close to 0, some of the bootstrap iterations may fail).<br>
+</li>
+<li>Parametric bootstrapping has all the normal assumptions of the multilevel model (which we’ll learn about next week) - by simulating from the model, we’re assuming the model distributions (<span class="math inline">\(\zeta_{0i} \sim N(0,\sigma_0)\)</span>, <span class="math inline">\(\varepsilon \sim N(0,\sigma_e)\)</span> etc.) are correct.</li>
+</ul>
+<div class="panelset">
+<section id="parametric-bootstrapped-likelihood-ratio-test" class="level4 panel">
+<h4 class="anchored" data-anchor-id="parametric-bootstrapped-likelihood-ratio-test">parametric bootstrapped likelihood ratio test</h4>
+<p>Instead of assuming that the likelihood ratio test statistics are <span class="math inline">\(\chi^2\)</span>-distributed, we can bootstrap this test instead. This approach simulates data from the simpler model, fits both the simple model and the complex model and evaluates the change in log-likelihood. By doing this over and over again, we build a distribution of what changes in log-likelihood we would be likely to see if the more complex model is not any better. In this way it actually constructs a distribution reflecting our null hypothesis, against which we can then compare our actual observed effect:</p>
+<p>The <strong>pbkrtest</strong> package does this for us:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>smod3 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(grade <span class="sc">~</span> motiv <span class="sc">*</span> funding <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> motiv <span class="sc">|</span> schoolid), </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> schoolmot)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>smod3_res <span class="ot">&lt;-</span> <span class="fu">lmer</span>(grade <span class="sc">~</span> motiv <span class="sc">+</span> funding <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> motiv <span class="sc">|</span> schoolid), </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> schoolmot)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pbkrtest)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">PBmodcomp</span>(<span class="at">largeModel =</span> smod3, <span class="at">smallModel =</span> smod3_res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>Bootstrap test; time: 48.19 sec; samples: 1000; extremes: 12;
+Requested samples: 1000 Used samples: 999 Extremes: 12
+large : grade ~ motiv * funding + (1 + motiv | schoolid)
+grade ~ motiv + funding + (1 + motiv | schoolid)
+         stat df  p.value   
+LRT    6.8417  1 0.008905 **
+PBtest 6.8417    0.013000 * 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="parametric-bootstrapped-cis" class="level4 panel">
+<h4 class="anchored" data-anchor-id="parametric-bootstrapped-cis">parametric bootstrapped CIs</h4>
+<p>We can easily get parametric bootstrapped confidence intervals from <code>confint()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(smod3, <span class="at">method=</span><span class="st">"boot"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>                         2.5 %    97.5 %
+.sig01               4.0485533 15.215247
+.sig02              -1.0000000  1.000000
+.sig03               0.2365320  2.644912
+.sigma              11.2162524 12.383312
+(Intercept)         30.7863461 49.266665
+motiv                0.8772410  4.506990
+fundingstate       -28.2441006 -5.862185
+motiv:fundingstate   0.6870515  5.062587</code></pre>
+</div>
+</div>
+</section>
 </div>
 </div>
 </div>
-<p>table!</p>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Summary Table
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<table class="table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>df approximations: Satterthwaite (S) and Kenward Rogers (KR)</th>
+<th>likelihood-based</th>
+<th>parametric bootstrap</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>tests of parameters</td>
+<td>S: <code>lmerTest::lmer(...)</code><br>KR: <code>library(parameters)</code><br><code>model_parameters(model, ci_method="kr")</code></td>
+<td><code>confint(model, type="profile")</code></td>
+<td><code>confint(model, type="boot")</code></td>
+</tr>
+<tr class="even">
+<td>model comparison</td>
+<td><code>library(pbkrtest)</code><br>S: <code>SATmodcomp(model1,model0)</code><br>KR: <code>KRmodcomp(model1,model0)</code></td>
+<td><code>anova(model0,model)</code></td>
+<td><code>library(pbkrtest)</code><br><code>PBmodcomp(model1,model0)</code></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>for KR, models must be fitted with <code>REML=TRUE</code> (a good option for small samples). For S, models can be fitted with either.</td>
+<td>if models differ in fixed effects, we cannot use <span class="math inline">\(-2\Delta LL\)</span> when models are fitted with REML.</td>
+<td>Time consuming, but considered gold standard (can be problematic with unstable models)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 
 
 </section>
