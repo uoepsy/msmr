@@ -48,12 +48,6 @@ style_mono_accent(
     + These are problems rmANOVA
 * Trajectories of longitudinal change can be nonlinear (we'll get to that next week)
 
---
-
-## We've already seen some of this...
-
-* Visual search (not longitudinal, but principles are the same)
-
 ---
 # Another example
 
@@ -120,20 +114,38 @@ In this case, we made a very minor change, but the more general point is that it
 ---
 # Fit the models
 
+Sometimes it is helpful to build the model step-by-step so you can compare whether adding one (or more) parameters improved the model fit.
+
+--
+
+Start with a simple, baseline model of how CES_D changed over time across all conditions.
 ```{r}
-# base model: just change over time
 m <- lmer(CES_D ~ Time + (1 + Time | Participant), 
           data=web_cbt, REML=FALSE)
-# add baseline differences 
+```
+
+--
+
+Adding the condition terms `Phone * Web`, but not their interaction with `Time`, will allow us to test whether there were any differences at baseline
+
+```{r}
 m.int <- lmer(CES_D ~ Time + (Phone * Web) + (1 + Time | Participant), 
               data = web_cbt, REML = F)
-# full model
+```
+
+--
+
+This is the full model, including Time-by-Condition interactions that will allow us to test whether the conditions differed in terms of the slope of the recovery
+
+```{r}
 m.full <- lmer(CES_D ~ Time*Phone*Web + (1 + Time | Participant),
           data=web_cbt, REML=FALSE)
 ```
 
 ---
 # Compare models
+
+To compare the models, we use the `anova()` function, but recall that this is *not* an ANOVA, we are doing a likelihood ratio test and using a $\chi^2$ test statistic.
 
 ```{r}
 anova(m, m.int, m.full)
@@ -154,16 +166,26 @@ Parameters were estimated for the "No" groups relative to the "Yes" groups, whic
 
 ---
 # Fix factor coding and refit model
+
 ```{r}
 web_cbt <- web_cbt %>% mutate(Web = fct_rev(Web), Phone = fct_rev(Phone))
 m.full <- lmer(CES_D ~ Time*Phone*Web + (1 + Time | Participant), data=web_cbt, REML=F)
 ```
 
+.pull-left[
 ```{r echo=FALSE}
-gt(tidy(m.full, effects="fixed"))
+#gt(tidy(m.full, effects="fixed"))
+tidy(m.full, effects="fixed") %>% select(-effect) %>% gt(.)
 ```
+]
 
-Now the control group (no phone, no web) is the reference level and it did show some improvement over time (`Time`: $Est = -0.92, SE = 0.13, t(140)=-7.32, p < 0.0001$). The web intervention group improved even faster (`Time:WebYes`: $Est = -1.52, SE = 0.18, t(140)=-8.51, p < 0.0001$). All other effects were not statistically significant.
+.pull-right[
+Now the control group (no phone, no web) is the reference level and it did show some improvement over time (`Time`: $Est = -0.92, SE = 0.13, t(140)=-7.32, p < 0.0001$). 
+
+The web intervention group improved even faster (`Time:WebYes`: $Est = -1.52, SE = 0.18, t(140)=-8.51, p < 0.0001$). 
+
+All other effects were not statistically significant.
+]
 
 ---
 # Visualize effects (1): model-predicted values
@@ -179,10 +201,20 @@ ggplot(augment(m.full), aes(Time, CES_D, color=Web, shape=Phone)) +
 ---
 # Visualize effects (2): model-based lines
 
-```{r fig.width=8, fig.height=5}
+The `effects::effect()` function produces predicted outcome values from on a model for the specified predictor(s)
+
+```{r}
 ef <- as.data.frame(effect("Time:Phone:Web", m.full))
+#summary(ef)
+head(ef, 10)
+```
+
+---
+# Visualize effects (2): model-based lines
+
+```{r fig.width=8, fig.height=5}
 ggplot(ef, aes(Time, fit, color=Web, linetype=Phone)) +
-  geom_line(size=2) +
+  geom_line(linewidth=2) +
   theme_bw() + scale_color_brewer(palette = "Set1")
 ```
 
@@ -258,12 +290,16 @@ This captures the typical assumption of random sampling from some population to 
 ---
 # Live R
 
-### Longitudinal Data Analysis (linear): Weight-loss maintenance
+### Longitudinal Data Analysis is not just for longitudinal data
 
-Following a weight-loss programme, participants were randomly assigned to one of three weight maintenance conditions: 
+LDA methods are useful whenever there is a continuous predictor, even if that predictor is not 'Time'
 
-* None (Control)
-* Use a "Meal Replacement" to replace one meal and snack per day (MR)
-* A book and educational materials on purchasing and preparing foods lower in energy density, i.e., reduced fat content and/or increased water content (ED)
+Example: the time to find a target object among a bunch of distractors (visual search) is a linear function of the number of distractors
 
-Weight was assessed at baseline (start of maintenance), 12 months post, 24 months post, and 36 months post.
+```{r fig.height=3.5, fig.width=5, echo=FALSE, message=FALSE}
+load("./data/VisualSearchEx.rda")
+ggplot(VisualSearchEx, aes(Set.Size, RT)) +
+  stat_smooth(method = "lm", se=F) +
+  stat_summary(fun.data=mean_se, geom="pointrange") 
+```
+
