@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>MSMR - Multilevel Models for Longitudinal Data</title>
+<title>MSMR - Longitudinal MLMs</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -77,6 +111,8 @@ if(f.classList.contains('jk-circle-right')) {
 <link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet">
 <script src="site_libs/panelset-0.2.6/panelset.js"></script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -146,14 +182,18 @@ if(f.classList.contains('jk-circle-right')) {
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Week 2</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
  <span class="menu-text">Additional Docs</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./00_lm_assumpt.html" class="sidebar-item-text sidebar-link">
@@ -174,14 +214,24 @@ if(f.classList.contains('jk-circle-right')) {
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#example" id="toc-example" class="nav-link active" data-scroll-target="#example">Example</a>
+  <ul class="collapse">
+  <li><a href="#exploring-the-data" id="toc-exploring-the-data" class="nav-link" data-scroll-target="#exploring-the-data">exploring the data</a></li>
+  <li><a href="#modelling-change-over-time" id="toc-modelling-change-over-time" class="nav-link" data-scroll-target="#modelling-change-over-time">modelling change over time</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Multilevel Models for Longitudinal Data</h1>
+<h1 class="title">Longitudinal MLMs</h1>
 </div>
 
 
@@ -196,41 +246,54 @@ if(f.classList.contains('jk-circle-right')) {
 
 </header>
 
-<p>multilevel models are perfectly geared towards dealing with longitudinal data, which can be framed as having essentially the same hierarchical structure as “children in schools”.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+<p>Multilevel models are perfectly geared towards dealing with longitudinal data, which can be framed as having essentially the same hierarchical structure as “children in schools”, or “observations within participant”.</p>
+<p>The only difference is that in longitudinal data, the repeated measurements within a participant are ordered according to time. For instance, this could apply to anything from studying people over decades as they age to studying eye movements across the 1 second presentation of a spoken word.</p>
+<p>As with all applications of multilevel models, we will want our data in long format, so it is usually going to look something like this:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>    y time person ...  ...  
+1   ?    1      1  ...   ...
+2   ?    2      1  ...   ...
+3 ...  ...    ...  ...   ...
+4 ...  ...    ...  ...   ...
+5   ?    1      2  ...   ...
+6   ?    2      2  ...   ...
+7 ...  ...    ...  ...   ...</code></pre>
 </div>
-<div class="callout-title-container flex-fill">
-Mindful Cognitive Aging
 </div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+<p>We are treating time as continuous here, which has some great benefits - we don’t need to have seen everyone at every timepoint, nor do we even need to have everyone with regularly spaced intervals (although knowing the chronology is important for decisions about the shape of trajectory we might want to fit (more on that next week!)).</p>
+<p>Given the variables above, you might be able to guess the basic form that our models are going to take in order to assess “change over time”.</p>
+<p>Regressing the outcome variable on to our time variable gives us an estimate of the trajectory - i.e.&nbsp;how much the outcome changes with every 1 additional unit of time. Furthermore, we can fit random slopes of time in order to model how people<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> can vary in the trajectory.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lmer</span>(y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> time <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> time <span class="sc">|</span> person), ...)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>A study is interested in examining <strong>whether engaging in mindfulness can prevent cognitive decline in older adults</strong>. They recruit a sample of 20 participants at age 60, and administer the Addenbrooke’s Cognitive Examination (ACE) every 2 years (until participants were aged 78). Half of the participants undertake to complete daily mindfulness sessions, while the remaining participants did not.</p>
-<p><strong>DATASET:</strong> <a href="https://uoepsy.github.io/data/dapr3_mindfuldecline.csv">https://uoepsy.github.io/data/dapr3_mindfuldecline.csv</a></p>
+<p>And we can fit interactions between predictors and time (<code>y ~ time * x</code>) to ask questions such as whether different groups have different trajectories of <code>y</code>, or whether the association between <code>x</code> and <code>y</code> changes over time (<code>x</code> can also be something that changes over time!). For instance, we can use multilevel models to address question such as does the development of reading ability differ between monolingual and bilingual children? Does the association between physical activity and positive mood change as we age? Do people look at the more unusual of two objects following a speech disfluency?</p>
+<section id="example" class="level1">
+<h1>Example</h1>
+<div class="frame">
+<p><strong>Data: mindfuldecline.csv</strong></p>
+<p>A study is interested in examining <strong>whether engaging in mindfulness can prevent cognitive decline in older adults</strong>. They recruit a sample of 20 participants at age 60, and administer the Addenbrooke’s Cognitive Examination (ACE) every 2 years (until participants were aged 78). Half of the participants complete weekly mindfulness sessions, while the remaining participants did not.</p>
+<p>The data are available at: <a href="https://uoepsy.github.io/data/msmr_mindfuldecline.csv" target="_blank">https://uoepsy.github.io/data/msmr_mindfuldecline.csv</a>.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 
-<div id="iyyliwtmae" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#iyyliwtmae table {
+<div id="fppfzwbmhk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#fppfzwbmhk table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#iyyliwtmae thead, #iyyliwtmae tbody, #iyyliwtmae tfoot, #iyyliwtmae tr, #iyyliwtmae td, #iyyliwtmae th {
+#fppfzwbmhk thead, #fppfzwbmhk tbody, #fppfzwbmhk tfoot, #fppfzwbmhk tr, #fppfzwbmhk td, #fppfzwbmhk th {
   border-style: none;
 }
 
-#iyyliwtmae p {
+#fppfzwbmhk p {
   margin: 0;
   padding: 0;
 }
 
-#iyyliwtmae .gt_table {
+#fppfzwbmhk .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -256,12 +319,12 @@ Mindful Cognitive Aging
   border-left-color: #D3D3D3;
 }
 
-#iyyliwtmae .gt_caption {
+#fppfzwbmhk .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#iyyliwtmae .gt_title {
+#fppfzwbmhk .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -273,7 +336,7 @@ Mindful Cognitive Aging
   border-bottom-width: 0;
 }
 
-#iyyliwtmae .gt_subtitle {
+#fppfzwbmhk .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -285,7 +348,7 @@ Mindful Cognitive Aging
   border-top-width: 0;
 }
 
-#iyyliwtmae .gt_heading {
+#fppfzwbmhk .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -297,13 +360,13 @@ Mindful Cognitive Aging
   border-right-color: #D3D3D3;
 }
 
-#iyyliwtmae .gt_bottom_border {
+#fppfzwbmhk .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#iyyliwtmae .gt_col_headings {
+#fppfzwbmhk .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -318,7 +381,7 @@ Mindful Cognitive Aging
   border-right-color: #D3D3D3;
 }
 
-#iyyliwtmae .gt_col_heading {
+#fppfzwbmhk .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -338,7 +401,7 @@ Mindful Cognitive Aging
   overflow-x: hidden;
 }
 
-#iyyliwtmae .gt_column_spanner_outer {
+#fppfzwbmhk .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -350,15 +413,15 @@ Mindful Cognitive Aging
   padding-right: 4px;
 }
 
-#iyyliwtmae .gt_column_spanner_outer:first-child {
+#fppfzwbmhk .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#iyyliwtmae .gt_column_spanner_outer:last-child {
+#fppfzwbmhk .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#iyyliwtmae .gt_column_spanner {
+#fppfzwbmhk .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -370,11 +433,11 @@ Mindful Cognitive Aging
   width: 100%;
 }
 
-#iyyliwtmae .gt_spanner_row {
+#fppfzwbmhk .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#iyyliwtmae .gt_group_heading {
+#fppfzwbmhk .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -400,7 +463,7 @@ Mindful Cognitive Aging
   text-align: left;
 }
 
-#iyyliwtmae .gt_empty_group_heading {
+#fppfzwbmhk .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -415,15 +478,15 @@ Mindful Cognitive Aging
   vertical-align: middle;
 }
 
-#iyyliwtmae .gt_from_md > :first-child {
+#fppfzwbmhk .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#iyyliwtmae .gt_from_md > :last-child {
+#fppfzwbmhk .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#iyyliwtmae .gt_row {
+#fppfzwbmhk .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -442,7 +505,7 @@ Mindful Cognitive Aging
   overflow-x: hidden;
 }
 
-#iyyliwtmae .gt_stub {
+#fppfzwbmhk .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -455,7 +518,7 @@ Mindful Cognitive Aging
   padding-right: 5px;
 }
 
-#iyyliwtmae .gt_stub_row_group {
+#fppfzwbmhk .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -469,15 +532,15 @@ Mindful Cognitive Aging
   vertical-align: top;
 }
 
-#iyyliwtmae .gt_row_group_first td {
+#fppfzwbmhk .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#iyyliwtmae .gt_row_group_first th {
+#fppfzwbmhk .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#iyyliwtmae .gt_summary_row {
+#fppfzwbmhk .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -487,16 +550,16 @@ Mindful Cognitive Aging
   padding-right: 5px;
 }
 
-#iyyliwtmae .gt_first_summary_row {
+#fppfzwbmhk .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#iyyliwtmae .gt_first_summary_row.thick {
+#fppfzwbmhk .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#iyyliwtmae .gt_last_summary_row {
+#fppfzwbmhk .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -506,7 +569,7 @@ Mindful Cognitive Aging
   border-bottom-color: #D3D3D3;
 }
 
-#iyyliwtmae .gt_grand_summary_row {
+#fppfzwbmhk .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -516,7 +579,7 @@ Mindful Cognitive Aging
   padding-right: 5px;
 }
 
-#iyyliwtmae .gt_first_grand_summary_row {
+#fppfzwbmhk .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -526,7 +589,7 @@ Mindful Cognitive Aging
   border-top-color: #D3D3D3;
 }
 
-#iyyliwtmae .gt_last_grand_summary_row_top {
+#fppfzwbmhk .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -536,11 +599,11 @@ Mindful Cognitive Aging
   border-bottom-color: #D3D3D3;
 }
 
-#iyyliwtmae .gt_striped {
+#fppfzwbmhk .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#iyyliwtmae .gt_table_body {
+#fppfzwbmhk .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -549,7 +612,7 @@ Mindful Cognitive Aging
   border-bottom-color: #D3D3D3;
 }
 
-#iyyliwtmae .gt_footnotes {
+#fppfzwbmhk .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -563,7 +626,7 @@ Mindful Cognitive Aging
   border-right-color: #D3D3D3;
 }
 
-#iyyliwtmae .gt_footnote {
+#fppfzwbmhk .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -572,7 +635,7 @@ Mindful Cognitive Aging
   padding-right: 5px;
 }
 
-#iyyliwtmae .gt_sourcenotes {
+#fppfzwbmhk .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -586,7 +649,7 @@ Mindful Cognitive Aging
   border-right-color: #D3D3D3;
 }
 
-#iyyliwtmae .gt_sourcenote {
+#fppfzwbmhk .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -594,63 +657,63 @@ Mindful Cognitive Aging
   padding-right: 5px;
 }
 
-#iyyliwtmae .gt_left {
+#fppfzwbmhk .gt_left {
   text-align: left;
 }
 
-#iyyliwtmae .gt_center {
+#fppfzwbmhk .gt_center {
   text-align: center;
 }
 
-#iyyliwtmae .gt_right {
+#fppfzwbmhk .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#iyyliwtmae .gt_font_normal {
+#fppfzwbmhk .gt_font_normal {
   font-weight: normal;
 }
 
-#iyyliwtmae .gt_font_bold {
+#fppfzwbmhk .gt_font_bold {
   font-weight: bold;
 }
 
-#iyyliwtmae .gt_font_italic {
+#fppfzwbmhk .gt_font_italic {
   font-style: italic;
 }
 
-#iyyliwtmae .gt_super {
+#fppfzwbmhk .gt_super {
   font-size: 65%;
 }
 
-#iyyliwtmae .gt_footnote_marks {
+#fppfzwbmhk .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#iyyliwtmae .gt_asterisk {
+#fppfzwbmhk .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#iyyliwtmae .gt_indent_1 {
+#fppfzwbmhk .gt_indent_1 {
   text-indent: 5px;
 }
 
-#iyyliwtmae .gt_indent_2 {
+#fppfzwbmhk .gt_indent_2 {
   text-indent: 10px;
 }
 
-#iyyliwtmae .gt_indent_3 {
+#fppfzwbmhk .gt_indent_3 {
   text-indent: 15px;
 }
 
-#iyyliwtmae .gt_indent_4 {
+#fppfzwbmhk .gt_indent_4 {
   text-indent: 20px;
 }
 
-#iyyliwtmae .gt_indent_5 {
+#fppfzwbmhk .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -663,16 +726,14 @@ Mindful Cognitive Aging
     </tr>
   </thead>
   <tbody class="gt_table_body">
-    <tr><td headers="variable" class="gt_row gt_left">sitename</td>
-<td headers="description" class="gt_row gt_left">Site Identifier</td></tr>
     <tr><td headers="variable" class="gt_row gt_left">ppt</td>
 <td headers="description" class="gt_row gt_left">Participant Identifier</td></tr>
     <tr><td headers="variable" class="gt_row gt_left">condition</td>
 <td headers="description" class="gt_row gt_left">Whether the participant engages in mindfulness or not (control/mindfulness)</td></tr>
-    <tr><td headers="variable" class="gt_row gt_left">visit</td>
-<td headers="description" class="gt_row gt_left">Visit number (1 - 10)</td></tr>
+    <tr><td headers="variable" class="gt_row gt_left">study_visit</td>
+<td headers="description" class="gt_row gt_left">Study Visit Number (1 - 10)</td></tr>
     <tr><td headers="variable" class="gt_row gt_left">age</td>
-<td headers="description" class="gt_row gt_left">Age (years) at visit</td></tr>
+<td headers="description" class="gt_row gt_left">Age (in years) at study visit</td></tr>
     <tr><td headers="variable" class="gt_row gt_left">ACE</td>
 <td headers="description" class="gt_row gt_left">Addenbrooke's Cognitive Examination Score. Scores can range from 0 to 100</td></tr>
     <tr><td headers="variable" class="gt_row gt_left">imp</td>
@@ -685,12 +746,228 @@ Mindful Cognitive Aging
 </div>
 </div>
 </div>
+<section id="exploring-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="exploring-the-data">exploring the data</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># mmd &lt;- read_csv("https://uoepsy.github.io/data/msmr_mindfuldecline.csv")</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mmd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  ppt   condition study_visit   age   ACE imp  
+  &lt;chr&gt; &lt;chr&gt;           &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;
+1 PPT_1 control             1    60  84.5 unimp
+2 PPT_1 control             2    62  85.6 imp  
+3 PPT_1 control             3    64  84.5 imp  
+4 PPT_1 control             4    66  83.1 imp  
+5 PPT_1 control             5    68  82.3 imp  
+6 PPT_1 control             6    70  83.3 imp  </code></pre>
 </div>
 </div>
+<p>How many participants in each condition? We know from the description there should be 10 in each, but lets check!</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mmd <span class="sc">|&gt;</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(condition) <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_ppt =</span> <span class="fu">n_distinct</span>(ppt)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  condition   n_ppt
+  &lt;chr&gt;       &lt;int&gt;
+1 control        10
+2 mindfulness    10</code></pre>
+</div>
+</div>
+<p>How many observations does each participant have? With only 20 participants, we could go straight to plotting as a way of getting lots of information all at once. From the plot below, we can see that on the whole participants’ cognitive scores tend to decrease. Most participants have data at every time point, but 4 or 5 people are missing a few. The control participants look (to me) like they have a slightly steeper decline than the mindfulness group:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mmd, <span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> ACE, <span class="at">col =</span> condition)) <span class="sc">+</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group=</span>ppt), <span class="at">alpha=</span>.<span class="dv">4</span>)<span class="sc">+</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>ppt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="02b_long_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="modelling-change-over-time" class="level2">
+<h2 class="anchored" data-anchor-id="modelling-change-over-time">modelling change over time</h2>
+<p>Initially, we’ll just model how cognition changes over time across our entire sample (i.e.&nbsp;ignoring the condition the participants are in). Note that both the variables <code>study_visit</code> and <code>age</code> represent exactly the same information (time), so we have a choice of which one to use.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Why the age variable (currently) causes problems
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>As it is, the <code>age</code> variable we have starts at 60 and goes up to 78 or so.</p>
+<p>If we try and use this in a model, we get an error!</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(ACE <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> age <span class="sc">+</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>               (<span class="dv">1</span> <span class="sc">+</span> age <span class="sc">|</span> ppt), </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> mmd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><span style="color:red">Model failed to converge with max|grad| = 0.366837 (tol = 0.002, component 1)</span></p>
+<p>This is because of the fact that intercepts and slopes are inherently dependent upon one another. Remember that the intercept is “when all predictors are zero”. So in this case it is the estimate cognition of new-born babies. But all our data comes from people who are 65+ years old!</p>
+<p>This means that trying to fit <code>(1 + age | ppt)</code> will try to estimate the variability in people’s change in cognition over time, and the variability in cognition at age zero. As we can see in <a href="#fig-nonconv">Figure&nbsp;1</a>, because the intercept is so far away from the data, the angle of each persons’ slope has a <em>huge</em> influence over where their intercept is. The more upwards a persons’ slope is, the lower down their intercept is.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-nonconv" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="02b_long_files/figure-html/fig-nonconv-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;1: lines indicate predicted values from the model with random intercepts and random slopes of age, where age. Due to how age is coded, the ‘intercept’ is estimated back at age 0</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>This results in issues for estimating our model, because the intercepts and slopes are perfectly correlated! The estimation process has hit a boundary (a perfect correlation):</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">VarCorr</span>(mod1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Groups   Name        Std.Dev. Corr  
+ ppt      (Intercept) 7.51567        
+          age         0.12696  -0.999
+ Residual             0.51536        </code></pre>
+</div>
+</div>
+<p>So what we can do is either center age on 60 (so that the random intercept is the estimated variability in cognition at aged 60, i.e.&nbsp;the start of the study), or use the <code>study_visit</code> variable.<br>
+Either will do, we just need to remember the units they are measured in!</p>
+</div>
+</div>
+</div>
+<p>Let’s center age on 60:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>mmd<span class="sc">$</span>ageC <span class="ot">&lt;-</span> mmd<span class="sc">$</span>age<span class="dv">-60</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And fit our model:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(ACE <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> ageC <span class="sc">+</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>               (<span class="dv">1</span> <span class="sc">+</span> ageC <span class="sc">|</span> ppt), </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> mmd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>From our fixed effects, we can see that scores on the ACE tend to decrease by about 0.18 for every 1 year older people get (as a very rough rule of thumb, <span class="math inline">\(t\)</span> statistics that are <span class="math inline">\(&gt;|2\text{-ish}|\)</span> are probably going to be significant when assessed properly).</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<pre><code>...
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept) 85.22558    0.10198 835.735
+ageC        -0.17938    0.03666  -4.893</code></pre>
+<p>We’re now ready to add in group differences in their trajectories of cognition:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>mod2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(ACE <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> ageC <span class="sc">*</span> condition <span class="sc">+</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>               (<span class="dv">1</span> <span class="sc">+</span> ageC <span class="sc">|</span> ppt), </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> mmd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>From this model, we can see that for the control group the estimated score on the ACE at age 60 is 85 (that’s the <code>(Intercept)</code>). For these participants, scores are estimated to decrease by -0.27 points every year (that’s the slope of <code>ageC</code>). For the participants in the mindfulness condition, they do not score significantly differently from the control group at age 60 (the <code>condition [mindfulness]</code> coefficient). For the mindfulness group, there is a reduction in the decline of cognition compared to the control group, such that this group decline 0.17 less than the control group every year.<br>
+<em>(note, there are always lots of ways to frame interactions. A “reduction in decline” feels most appropriate to me here)</em><br>
+Given that we have a fairly small number of clusters here (20 participants), Kenward Rogers is a good method of inference as it allows us to use REML (meaning unbiased estimates of the random effect variances) and it includes a small sample adjustment to our standard errors.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(parameters)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">model_parameters</span>(mod2, <span class="at">ci_method=</span><span class="st">"kr"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Fixed Effects
+
+Parameter                      | Coefficient |   SE |         95% CI |      t |    df |      p
+----------------------------------------------------------------------------------------------
+(Intercept)                    |       85.20 | 0.15 | [84.89, 85.52] | 568.00 | 17.75 | &lt; .001
+ageC                           |       -0.27 | 0.04 | [-0.36, -0.17] |  -5.93 | 17.95 | &lt; .001
+condition [mindfulness]        |        0.05 | 0.21 | [-0.39,  0.49] |   0.23 | 17.49 | 0.821 
+ageC × condition [mindfulness] |        0.17 | 0.06 | [ 0.04,  0.31] |   2.73 | 17.99 | 0.014 
+
+# Random Effects
+
+Parameter                 | Coefficient |   SE |        95% CI
+--------------------------------------------------------------
+SD (Intercept: ppt)       |        0.35 | 0.11 | [ 0.19, 0.63]
+SD (ageC: ppt)            |        0.14 | 0.02 | [ 0.10, 0.20]
+Cor (Intercept~ageC: ppt) |        0.26 | 0.33 | [-0.40, 0.74]
+SD (Residual)             |        0.49 | 0.03 | [ 0.44, 0.56]</code></pre>
+</div>
+</div>
+<p>From those parameters and our interpretation above, we are able to start putting a picture together - two groups that start at the same point, one goes less steeply down over time than the other.<br>
+And that’s exactly what we see when we visualise those fixed effects:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effects)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">effect</span>(<span class="at">term=</span><span class="st">"ageC*condition"</span>, <span class="at">mod=</span>mod2, <span class="at">xlevels=</span><span class="dv">10</span>) <span class="sc">|&gt;</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>ageC<span class="sc">+</span><span class="dv">60</span>,<span class="at">y=</span>fit,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">ymin=</span>lower,<span class="at">ymax=</span>upper,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">col=</span>condition, <span class="at">fill =</span> condition))<span class="sc">+</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">lwd=</span><span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="at">alpha=</span>.<span class="dv">2</span>, <span class="at">col=</span><span class="cn">NA</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="02b_long_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Sometimes it is more helpful for a reader if we add in the actual observed trajectories to these plots. To do so, we need to combine two data sources - the fixed effects estimation from <code>effect()</code>, and the data itself:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>ploteff <span class="ot">&lt;-</span> <span class="fu">effect</span>(<span class="at">term=</span><span class="st">"ageC*condition"</span>, <span class="at">mod=</span>mod2, <span class="at">xlevels=</span><span class="dv">10</span>) <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>()</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>mmd <span class="sc">|&gt;</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>ageC<span class="sc">+</span><span class="dv">60</span>,<span class="at">col=</span>condition,<span class="at">fill=</span>condition))<span class="sc">+</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y=</span>ACE,<span class="at">group=</span>ppt), <span class="at">alpha=</span>.<span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> ploteff, <span class="fu">aes</span>(<span class="at">y=</span>fit), <span class="at">lwd=</span><span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="at">data =</span> ploteff, <span class="fu">aes</span>(<span class="at">y=</span>fit,<span class="at">ymin=</span>lower,<span class="at">ymax=</span>upper),</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">alpha=</span>.<span class="dv">2</span>, <span class="at">col=</span><span class="cn">NA</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="02b_long_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This plot gives us more a lot more context. To a lay reader, our initial plot potentially could be interpreted as if we would expect every person’s cognitive trajectories to fall in the blue and red bands. But those bands are representing the uncertainty in the fixed effects - i.e.&nbsp;the uncertainty in the average persons’ trajectory. When we add in the observed trajectories, we see the variability in people’s trajectories (one person even goes up over time!).<br>
+Our model represents this variability in the random effects part. While the estimated average slope is -0.3 for the control group (and -0.3+0.2=-0.09 for the mindfulness group), people are estimated to vary in their slopes with a standard deviation of 0.14. If you think about what this means - it means that some participants we <em>would</em> expect to actually increase in their slopes.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">VarCorr</span>(mod2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Groups   Name        Std.Dev. Corr 
+ ppt      (Intercept) 0.34615       
+          ageC        0.13866  0.260
+ Residual             0.49450       </code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(<span class="fu">dnorm</span>(x,<span class="fu">fixef</span>(mod2)[<span class="dv">2</span>],<span class="fu">sqrt</span>(<span class="fu">VarCorr</span>(mod2)[[<span class="dv">1</span>]][<span class="dv">2</span>,<span class="dv">2</span>])),<span class="sc">-</span><span class="dv">1</span>,<span class="dv">1</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">curve</span>(<span class="fu">dnorm</span>(x,<span class="fu">sum</span>(<span class="fu">fixef</span>(mod2)[<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>)]),<span class="fu">sqrt</span>(<span class="fu">VarCorr</span>(mod2)[[<span class="dv">1</span>]][<span class="dv">2</span>,<span class="dv">2</span>])),<span class="sc">-</span><span class="dv">1</span>,<span class="dv">1</span>, <span class="at">add=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="02b_long_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
+</section>
+</section>
 
-</main> <!-- /main -->
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>assuming that it is people we are studying!<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

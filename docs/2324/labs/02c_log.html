@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>MSMR - Logistic Multilevel Models</title>
+<title>MSMR - Logistic MLM</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -111,10 +111,12 @@ if(f.classList.contains('jk-circle-right')) {
 <link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet">
 <script src="site_libs/panelset-0.2.6/panelset.js"></script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
-<body class="nav-sidebar floating">
+<body class="nav-sidebar floating slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -180,14 +182,18 @@ if(f.classList.contains('jk-circle-right')) {
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
+      <span class="sidebar-item-text sidebar-link text-start">
+ <span class="menu-text">Week 2</span></span>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
  <span class="menu-text">Additional Docs</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./00_lm_assumpt.html" class="sidebar-item-text sidebar-link">
@@ -208,14 +214,26 @@ if(f.classList.contains('jk-circle-right')) {
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#example" id="toc-example" class="nav-link active" data-scroll-target="#example">Example</a>
+  <ul class="collapse">
+  <li><a href="#getting-to-know-my-monkeys" id="toc-getting-to-know-my-monkeys" class="nav-link" data-scroll-target="#getting-to-know-my-monkeys">getting to know my monkeys</a></li>
+  <li><a href="#models-of-monkeys" id="toc-models-of-monkeys" class="nav-link" data-scroll-target="#models-of-monkeys">models of monkeys</a></li>
+  <li><a href="#test-and-visualisations-of-monkey-status" id="toc-test-and-visualisations-of-monkey-status" class="nav-link" data-scroll-target="#test-and-visualisations-of-monkey-status">test and visualisations of monkey status</a></li>
+  <li><a href="#interpretation" id="toc-interpretation" class="nav-link" data-scroll-target="#interpretation">interpretation</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content page-columns page-full" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Logistic Multilevel Models</h1>
+<h1 class="title">Logistic MLM</h1>
 </div>
 
 
@@ -230,49 +248,790 @@ if(f.classList.contains('jk-circle-right')) {
 
 </header>
 
+<p>The vast majority of the transition across from linear multilevel models to logistic multilevel models is identical to what we talked about in USMR for single level regression models. Remember how we simply used <code>glm()</code> and could specify the <code>family = "binomial"</code> in order to fit a logistic regression? Well it’s much the same thing for multi-level models!</p>
+<ul>
+<li>Gaussian (normal) model:
+<ul>
+<li><code>lmer(y ~ x1 + x2 + (1 | g), data = data)</code><br>
+</li>
+</ul></li>
+<li>Binomial model:<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>
+<ul>
+<li><code>glmer(y ~ x1 + x2 + (1 | g), data = data, family = binomial(link='logit'))</code><br>or</li>
+<li><code>glmer(y ~ x1 + x2 + (1 | g), data = data, family = "binomial")</code><br>or</li>
+<li><code>glmer(y ~ x1 + x2 + (1 | g), data = data, family = binomial)</code></li>
+</ul></li>
+</ul>
+<p>The same logic applies as it did for <code>glm()</code> where we are not modeling the outcome <span class="math inline">\(y\)</span> directly, but via a mapping, or “link function”, which in this case is the logistic function. Beyond the material covered in <a href="https://uoepsy.github.io/usmr/2324/labs/10a_glm.html" target="_blank">USMR Week 10</a>, there are a few aspects of the logistic multilevel model that are worth commenting on.</p>
+<p>Firstly, GLMMs (‘generalised linear mixed models’) can take more time to run (for bigger datasets we’re talking minutes, and sometimes even hours!).</p>
+<p>Secondly, our choices of methods of inference (see <a href="02a_inference.html">2A</a>) are slightly different from what they were for <code>lmer()</code>. We continue to have the likelihood based methods as well as parametric bootstrapping (although this will more often result in computational issues with <code>glmer</code>). We also have the traditional <span class="math inline">\(z\)</span>-statistics that have carried over from <code>glm()</code>. We can get confidence intervals that follow this same method by using <code>confint(model, method="Wald")</code>, which may often be preferred purely for the fact that they are quick!</p>
+<p>Finally, one small but noteworthy feature of the logistic multilevel model is that our fixed effects coefficients, when translated back to odds ratios, represent “cluster specific” effects of a predictor:</p>
+<ul>
+<li>For a linear multilevel model: <code>lmer(y ~ x + (1 + x | cluster))</code>, the fixed effect of <span class="math inline">\(x\)</span> gives the change in the <span class="math inline">\(y\)</span> when <span class="math inline">\(x\)</span> is increased by one unit, averaged across clusters</li>
+<li>For a logistic multilevel model: <code>glmer(ybin ~ x + (1 + x | cluster), family=binomial)</code>, the odds ratio for <span class="math inline">\(x\)</span> - <code>exp(fixef(model))</code> - gives the multiplicative change in odds of <span class="math inline">\(y\)</span> when <span class="math inline">\(x\)</span> is increased by one unit <strong>for a particular cluster.</strong></li>
+</ul>
+<p>This becomes important when deciding if we want to estimate outcomes for individual clusters, or estimate group effects (in which case a mixed model might not be best).</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+optional: why are OR from glmer cluster-specific?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="panelset">
+<section id="linear" class="level4 panel">
+<h4 class="anchored" data-anchor-id="linear">Linear</h4>
+<p>consider a <strong>linear</strong> multilevel model:<br>
+<code>lmer(respiratory_rate ~ treatment + (1|hospital))</code></p>
+<p>Imagine two patients from different hospitals. One has a treatment, one does not.</p>
+<ul>
+<li>patient <span class="math inline">\(j\)</span> from hospital <span class="math inline">\(i\)</span> is “control”<br>
+</li>
+<li>patient <span class="math inline">\(j'\)</span> from hospital <span class="math inline">\(i'\)</span> is “treatment”</li>
+</ul>
+<p>The difference in estimated outcome between patient <span class="math inline">\(j\)</span> and patient <span class="math inline">\(j'\)</span> is the “the effect of having treatment” plus the distance in random deviations between hospitals <span class="math inline">\(i\)</span> and <span class="math inline">\(i'\)</span></p>
+<p>model for patient <span class="math inline">\(j\)</span> from hospital <span class="math inline">\(i\)</span><br>
+<span class="math inline">\(\hat{y}_{ij} = (\gamma_{00} + \zeta_{0i}) + b_1 (Treatment_{ij} = 0)\)</span></p>
+<p>model for patient <span class="math inline">\(j'\)</span> from hospital <span class="math inline">\(i'\)</span><br>
+<span class="math inline">\(\hat{y}_{i'j'} = (\gamma_{00} + \zeta_{0i'}) + b_1 (Treatment_{i'j'} = 1)\)</span></p>
+<p>difference:<br>
+<span class="math inline">\(\hat{y}_{i'j'} - \hat{y}_{ij} = b_1 + (\zeta_{0i'} - \zeta_{0i}) = b_1\)</span></p>
+<p>Because <span class="math inline">\(\zeta \sim N(0,\sigma_\zeta)\)</span>, the differences between all different <span class="math inline">\(\zeta_{0i'} - \zeta_{0i}\)</span> average out to be 0.</p>
+</section>
+<section id="logistic" class="level4 panel">
+<h4 class="anchored" data-anchor-id="logistic">Logistic</h4>
+<p>Now consider a <strong>logistic</strong> multilevel model:<br>
+<code>glmer(needs_operation ~ treatment + (1|hospital), family="binomial")</code></p>
+<p>Imagine two patients from different hospitals. One has a treatment, one does not.</p>
+<ul>
+<li>patient <span class="math inline">\(j\)</span> from hospital <span class="math inline">\(i\)</span> is “control”<br>
+</li>
+<li>patient <span class="math inline">\(j'\)</span> from hospital <span class="math inline">\(i'\)</span> is “treatment”</li>
+</ul>
+<p>The difference in <strong>probability of outcome</strong> between patient <span class="math inline">\(j\)</span> and patient <span class="math inline">\(j'\)</span> is the “the effect of having treatment” plus the distance in random deviations between hospitals <span class="math inline">\(i\)</span> and <span class="math inline">\(i'\)</span></p>
+<p>model for patient <span class="math inline">\(j\)</span> from hospital <span class="math inline">\(i\)</span><br>
+<span class="math inline">\(log \left( \frac{p_{ij}}{1 - p_{ij}} \right) = (\gamma_{00} + \zeta_{0i}) + b_1 (Treatment_{ij} = 0)\)</span></p>
+<p>model for patient <span class="math inline">\(j'\)</span> from hospital <span class="math inline">\(i'\)</span><br>
+<span class="math inline">\(log \left( \frac{p_{i'j'}}{1 - p_{i'j'}} \right) = (\gamma_{00} + \zeta_{0i'}) + b_1 (Treatment_{i'j'} = 1)\)</span></p>
+<p>difference (log odds):<br>
+<span class="math inline">\(log \left( \frac{p_{i'j'}}{1 - p_{i'j'}} \right) - log \left( \frac{p_{ij}}{1 - p_{ij}} \right) = b_1 + (\zeta_{0i'} - \zeta_{0i})\)</span></p>
+<p>difference (odds ratio):<br>
+<span class="math inline">\(\frac{p_{i'j'}/(1 - p_{i'j'})}{p_{ij}/(1 - p_{ij})} = e^{b_1 + (\zeta_{0i'} - \zeta_{0i})} \neq e^{b_1}\)</span></p>
+<p>Hence, the interpretation of <span class="math inline">\(e^{b_1}\)</span> is not the odds ratio for the effect of treatment “averaged over hospitals”, but rather for patients <em>from the same hospital</em>.</p>
+</section>
+</div>
+</div>
+</div>
+</div>
+<section id="example" class="level1 page-columns page-full">
+<h1>Example</h1>
+<div class="frame">
+<p><strong>Data: monkeystatus.csv</strong></p>
+<p>Our primate researchers have been busy collecting more data. They have given a sample of Rhesus Macaques various problems to solve in order to receive treats. Troops of Macaques have a complex social structure, but adult monkeys tend can be loosely categorised as having either a “dominant” or “subordinate” status. The monkeys in our sample are either adolescent monkeys, subordinate adults, or dominant adults. Each monkey attempted various problems before they got bored/distracted/full of treats. Each problems were classed as either “easy” or “difficult”, and the researchers recorded whether or not the monkey solved each problem.</p>
+<p>We’re interested in how the social status of monkeys is associated with the ability to solve problems.</p>
+<p>The data is available at <a href="https://uoepsy.github.io/data/msmr_monkeystatus.csv" target="_blank">https://uoepsy.github.io/data/msmr_monkeystatus.csv</a>.</p>
+</div>
+<section id="getting-to-know-my-monkeys" class="level2">
+<h2 class="anchored" data-anchor-id="getting-to-know-my-monkeys">getting to know my monkeys</h2>
+<p>We know from the study background that we have a series group of monkeys who have each attempted to solve some problems. If we look at our data, we can see that it is already in <em>long</em> format, in that each row represents the lowest unit of observation (a single problem attempted). We also have the variable <code>monkeyID</code> which indicates what monkey each problem has been attempted by. We can see the <code>status</code> of each monkey, and the <code>difficulty</code> of each task, along with whether it was <code>solved</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>d3 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/dapr3_mindfuldecline.csv"</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>d3<span class="sc">$</span>isImp <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(d3<span class="sc">$</span>imp<span class="sc">==</span><span class="st">"imp"</span>,<span class="dv">1</span>,<span class="dv">0</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">glmer</span>(isImp <span class="sc">~</span> visit <span class="sc">+</span> (<span class="dv">1</span><span class="sc">+</span>visit<span class="sc">|</span>ppt), d3, <span class="at">family=</span>binomial) <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>mstat <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/msmr_monkeystatus.csv"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mstat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 4
+  status      difficulty monkeyID solved
+  &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;     &lt;dbl&gt;
+1 subordinate easy       Seunghoo      1
+2 subordinate easy       Seunghoo      0
+3 subordinate difficult  Seunghoo      0
+4 subordinate easy       Seunghoo      1
+5 subordinate difficult  Seunghoo      0
+6 subordinate easy       Seunghoo      1</code></pre>
+</div>
+</div>
+<p>We can do some quick exploring to see how many monkeys we have (50), and how many problems each one attempted (min = 3, max = 11:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mstat <span class="sc">|&gt;</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(monkeyID) <span class="sc">|&gt;</span> <span class="co"># count the monkeys!  </span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   monkeyID               n        
+ Length:50          Min.   : 3.00  
+ Class :character   1st Qu.: 6.25  
+ Mode  :character   Median : 8.00  
+                    Mean   : 7.94  
+                    3rd Qu.:10.00  
+                    Max.   :11.00  </code></pre>
+</div>
+</div>
+<p>Let’s also see how many monkeys of different statuses we have in our sample:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mstat <span class="sc">|&gt;</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(status) <span class="sc">|&gt;</span> <span class="co"># group statuses</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># count the distinct monkeys</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">nmonkey =</span> <span class="fu">n_distinct</span>(monkeyID)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  status      nmonkey
+  &lt;chr&gt;         &lt;int&gt;
+1 adolescent       16
+2 dominant         23
+3 subordinate      11</code></pre>
+</div>
+</div>
+<p>It’s often worth plotting as much as you can to get to a sense of what we’re working with. Here are the counts of easy/difficult problems that each monkey attempted. We can see that Richard only did difficult problems, and Nadheera only did easy ones, but most of the monkeys did both types of problem.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># which monkeys did what type of problems? </span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>mstat <span class="sc">|&gt;</span> <span class="fu">count</span>(status, monkeyID, difficulty) <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>difficulty,<span class="at">y=</span>n, <span class="at">fill=</span>status))<span class="sc">+</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>()<span class="sc">+</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>monkeyID) <span class="sc">+</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_discrete</span>(<span class="at">labels=</span>abbreviate) <span class="sc">+</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="02c_log_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>When working with binary outcomes, it’s often useful to calculate and plot proportions. In this case, the proportions of problems solved for each status of monkey. At first glance it looks like “subordinate” monkeys solve more problems, and adolescents solve fewer (makes sense - they’re still learning!).</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># a quick look at proportions of problems solved:</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mstat, <span class="fu">aes</span>(<span class="at">x=</span>difficulty, <span class="at">y=</span>solved,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">col=</span>status))<span class="sc">+</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">geom=</span><span class="st">"pointrange"</span>,<span class="at">size=</span><span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>status)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="02c_log_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="models-of-monkeys" class="level2">
+<h2 class="anchored" data-anchor-id="models-of-monkeys">models of monkeys</h2>
+<p>Now we come to fitting our model.</p>
+<p>Recall that we are interested in how the ability to solve problems differs between monkeys of different statuses. It’s very likely that difficulty of a problem is going to influence that it is solved, so we’ll control for difficulty.</p>
+<pre><code>glmer(solved ~ difficulty + status + 
+      ...
+      data = mstat, family = binomial)</code></pre>
+<p>We know that we have multiple datapoints for each monkey, and it also makes sense that there will be monkey-to-monkey variability in the ability to solve problems (e.g.&nbsp;Brianna may be more likely to solve problems than Jonathan).</p>
+<pre><code>glmer(solved ~ difficulty + status + 
+      (1 + ... | monkeyID),
+      data = mstat, family = binomial)</code></pre>
+<p>Finally, it also makes sense that effects of problem-difficulty might vary by monkey (e.g., if Brianna is just really good at solving problems, problem-difficulty might not make much difference. Whereas if Jonathan is struggling with the easy problems, he’s likely to really really struggle with the difficult ones!).</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>mmod <span class="ot">&lt;-</span> <span class="fu">glmer</span>(solved <span class="sc">~</span> difficulty <span class="sc">+</span> status <span class="sc">+</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>      (<span class="dv">1</span> <span class="sc">+</span> difficulty <span class="sc">|</span> monkeyID),</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> mstat, <span class="at">family =</span> binomial)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mmod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Generalized linear mixed model fit by maximum likelihood (Laplace
   Approximation) [glmerMod]
  Family: binomial  ( logit )
-Formula: isImp ~ visit + (1 + visit | ppt)
-   Data: d3
+Formula: solved ~ difficulty + status + (1 + difficulty | monkeyID)
+   Data: mstat
 
      AIC      BIC   logLik deviance df.resid 
-   122.7    138.5    -56.3    112.7      172 
+   503.7    531.6   -244.8    489.7      390 
 
 Scaled residuals: 
-     Min       1Q   Median       3Q      Max 
--2.41073  0.00504  0.05123  0.26999  1.43076 
+    Min      1Q  Median      3Q     Max 
+-1.9358 -0.6325 -0.3975  0.6748  2.5161 
 
 Random effects:
- Groups Name        Variance Std.Dev. Corr 
- ppt    (Intercept) 3.501    1.871         
-        visit       1.218    1.104    -0.90
-Number of obs: 177, groups:  ppt, 20
+ Groups   Name           Variance Std.Dev. Corr 
+ monkeyID (Intercept)    1.633    1.278         
+          difficultyeasy 1.371    1.171    -0.49
+Number of obs: 397, groups:  monkeyID, 50
 
 Fixed effects:
-            Estimate Std. Error z value Pr(&gt;|z|)   
-(Intercept)  -1.0187     0.7344  -1.387  0.16539   
-visit         1.0066     0.3729   2.699  0.00695 **
+                  Estimate Std. Error z value Pr(&gt;|z|)   
+(Intercept)        -1.2531     0.4051  -3.093  0.00198 **
+difficultyeasy      0.8586     0.3053   2.812  0.00492 **
+statusdominant      0.6682     0.4714   1.417  0.15636   
+statussubordinate   1.4596     0.5692   2.564  0.01033 * 
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 Correlation of Fixed Effects:
-      (Intr)
-visit -0.839</code></pre>
+            (Intr) dffclt sttsdm
+difficltysy -0.436              
+statusdmnnt -0.712  0.031       
+statssbrdnt -0.592  0.033  0.497</code></pre>
 </div>
 </div>
+</section>
+<section id="test-and-visualisations-of-monkey-status" class="level2">
+<h2 class="anchored" data-anchor-id="test-and-visualisations-of-monkey-status">test and visualisations of monkey status</h2>
+<p>To examine if monkey status has an effect, we can compare with the model without <code>status</code>:</p>
+<div class="cell" data-layout-align="center">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>mmod0 <span class="ot">&lt;-</span> <span class="fu">glmer</span>(solved <span class="sc">~</span> difficulty <span class="sc">+</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>      (<span class="dv">1</span> <span class="sc">+</span> difficulty <span class="sc">|</span> monkeyID),</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> mstat, <span class="at">family =</span> binomial)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(mmod0, mmod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Data: mstat
+Models:
+mmod0: solved ~ difficulty + (1 + difficulty | monkeyID)
+mmod: solved ~ difficulty + status + (1 + difficulty | monkeyID)
+      npar    AIC    BIC  logLik deviance  Chisq Df Pr(&gt;Chisq)  
+mmod0    5 506.13 526.05 -248.07   496.13                       
+mmod     7 503.70 531.58 -244.85   489.70 6.4367  2    0.04002 *
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>And we can see that the status of monkeys <em>is</em> associated with differences in the probability of successful problem solving (<span class="math inline">\(\chi^2(2)\)</span> = 6.44, p &lt; 0.05).</p>
+<p>And if we want to visualise the relevant effect, we can (as we did with <code>glm()</code>) plot on the predicted probability scale, which is much easier to interpret:</p>
+<div class="cell" data-layout-align="center">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effects)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">effect</span>(<span class="at">term=</span><span class="fu">c</span>(<span class="st">"status"</span>,<span class="st">"difficulty"</span>), <span class="at">mod=</span>mmod) <span class="sc">|&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>difficulty, <span class="at">y=</span>fit))<span class="sc">+</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_pointrange</span>(<span class="fu">aes</span>(<span class="at">ymin=</span>lower,<span class="at">ymax=</span>upper, <span class="at">col=</span>status),</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>                  <span class="at">size=</span><span class="dv">1</span>, <span class="at">lwd=</span><span class="dv">1</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">position=</span><span class="fu">position_dodge</span>(<span class="at">width=</span>.<span class="dv">3</span>)) <span class="sc">+</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"problem difficulty"</span>, <span class="at">y =</span> <span class="st">"predicted probability"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="02c_log_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="interpretation" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="interpretation">interpretation</h2>
+<p>And just with the single level logistic models, our fixed effects can be converted to odds ratios (OR), by exponentiation:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fixef</span>(mmod), <span class="co"># the fixed effects</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">confint</span>(mmod, <span class="at">method=</span><span class="st">"Wald"</span>, <span class="at">parm=</span><span class="st">"beta_"</span>) <span class="co"># Wald CIs for fixed effects</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">exp</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                               2.5 %     97.5 %
+(Intercept)       0.285617 0.1291054  0.6318641
+difficultyeasy    2.359897 1.2971580  4.2933192
+statusdominant    1.950708 0.7743205  4.9143237
+statussubordinate 4.304281 1.4106406 13.1336310</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+
+<div id="tfmvmixirp" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#tfmvmixirp table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#tfmvmixirp thead, #tfmvmixirp tbody, #tfmvmixirp tfoot, #tfmvmixirp tr, #tfmvmixirp td, #tfmvmixirp th {
+  border-style: none;
+}
+
+#tfmvmixirp p {
+  margin: 0;
+  padding: 0;
+}
+
+#tfmvmixirp .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#tfmvmixirp .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#tfmvmixirp .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#tfmvmixirp .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#tfmvmixirp .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#tfmvmixirp .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#tfmvmixirp .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#tfmvmixirp .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#tfmvmixirp .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#tfmvmixirp .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#tfmvmixirp .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#tfmvmixirp .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#tfmvmixirp .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#tfmvmixirp .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#tfmvmixirp .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#tfmvmixirp .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#tfmvmixirp .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#tfmvmixirp .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#tfmvmixirp .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tfmvmixirp .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#tfmvmixirp .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#tfmvmixirp .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#tfmvmixirp .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tfmvmixirp .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#tfmvmixirp .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#tfmvmixirp .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#tfmvmixirp .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tfmvmixirp .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#tfmvmixirp .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#tfmvmixirp .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#tfmvmixirp .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#tfmvmixirp .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#tfmvmixirp .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tfmvmixirp .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#tfmvmixirp .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tfmvmixirp .gt_left {
+  text-align: left;
+}
+
+#tfmvmixirp .gt_center {
+  text-align: center;
+}
+
+#tfmvmixirp .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#tfmvmixirp .gt_font_normal {
+  font-weight: normal;
+}
+
+#tfmvmixirp .gt_font_bold {
+  font-weight: bold;
+}
+
+#tfmvmixirp .gt_font_italic {
+  font-style: italic;
+}
+
+#tfmvmixirp .gt_super {
+  font-size: 65%;
+}
+
+#tfmvmixirp .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#tfmvmixirp .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#tfmvmixirp .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#tfmvmixirp .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#tfmvmixirp .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#tfmvmixirp .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#tfmvmixirp .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="term">term</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="est">est</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="OR">OR</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="OR interpretation">OR interpretation</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="term" class="gt_row gt_left">(Intercept)</td>
+<td headers="est" class="gt_row gt_right">-1.25</td>
+<td headers="OR" class="gt_row gt_right">0.29</td>
+<td headers="OR interpretation" class="gt_row gt_left">estimated odds of an adolescent monkey solving an easy problem</td></tr>
+    <tr><td headers="term" class="gt_row gt_left">difficultyeasy</td>
+<td headers="est" class="gt_row gt_right">0.86</td>
+<td headers="OR" class="gt_row gt_right">2.36</td>
+<td headers="OR interpretation" class="gt_row gt_left">odds of successful problem solving are more than halved (0.42 times the odds) when a given monkey moves from an easy to a difficult problem</td></tr>
+    <tr><td headers="term" class="gt_row gt_left">statusdominant</td>
+<td headers="est" class="gt_row gt_right">0.67</td>
+<td headers="OR" class="gt_row gt_right">1.95</td>
+<td headers="OR interpretation" class="gt_row gt_left">odds of success would be almost doubled (1.95 times the odds) if a monkey were to change from adolescent to dominant status (NB this is non-significant)</td></tr>
+    <tr><td headers="term" class="gt_row gt_left">statussubordinate</td>
+<td headers="est" class="gt_row gt_right">1.46</td>
+<td headers="OR" class="gt_row gt_right">4.30</td>
+<td headers="OR interpretation" class="gt_row gt_left">odds of success would quadruple (4.3 times the odds) if a monkey were to change from adolescent to subordinate status</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+</div>
 
 
 
-</main> <!-- /main -->
+<div class="no-row-height column-margin column-container"><div class="">
+<p><strong>Side note</strong></p>
+<p>Contrast this with what we would get from a <em>linear</em> multilevel model. If we were instead modelling a “problem score” with <code>lmer()</code>, rather than “solved yes/no” with <code>glmer()</code>, our coefficients would be interpreted as the estimated difference in scores between adolescent and subordinate monkeys.</p>
+<p>Note that estimating differences between groups is not quite the same idea as estimating the effect “if a particular monkey changed from adolescent to subordinate”. In the linear world, these two things are the same, but our odds ratios give us only the latter.</p>
+</div></div></section>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Remember that binary outcomes are just a special case of the binomial<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
