@@ -126,7 +126,7 @@ m <- lmer(CES_D ~ Time + (1 + Time | Participant),
 
 --
 
-Adding the condition terms `Phone * Web`, but not their interaction with `Time`, will allow us to test whether there were any differences at baseline
+Adding the condition terms `Phone * Web`, but not their interaction with `Time`, will allow us to test overall differences between conditions
 
 ```{r}
 m.int <- lmer(CES_D ~ Time + (Phone * Web) + (1 + Time | Participant), 
@@ -151,9 +151,7 @@ To compare the models, we use the `anova()` function, but recall that this is *n
 anova(m, m.int, m.full)
 ```
 
-No differences at baseline ( $\chi^2(3) = 4.48, p = 0.21$ ), so randomisation worked. 
-
-Differences in slopes ( $\chi^2(3) = 104.10, p < 0.0001$ ), so groups differed in how their depression symptoms changed over the 6 weeks of the study.
+No differences overall ( $\chi^2(3) = 4.48, p = 0.21$ ), differences in slopes ( $\chi^2(3) = 104.10, p < 0.0001$ ). So the groups differed in how their depression symptoms changed over the 6 weeks of the study.
 
 ---
 # Examine Fixed Effects
@@ -179,12 +177,16 @@ tidy(m.full, effects="fixed") %>% select(-effect) %>% gt(.)
 ```
 ]
 
+--
+
 .pull-right[
 Now the control group (no phone, no web) is the reference level and it did show some improvement over time (`Time`: $Est = -0.92, SE = 0.13, t(140)=-7.32, p < 0.0001$). 
 
 The web intervention group improved even faster (`Time:WebYes`: $Est = -1.52, SE = 0.18, t(140)=-8.51, p < 0.0001$). 
 
-All other effects were not statistically significant.
+`PhoneYes`, `WebYes`, `PhoneYes:WebYes` are all not significant $(p > 0.3)$ indicating no differences at baseline; i.e., the randomisation worked.
+
+Effect of phone reminders is not significant on its own (`Time:PhoneYes`: $p > 0.3$) and does not affect the effect of web intervention (`Time:PhoneYes:WebYes`: $p > 0.7$)
 ]
 
 ---
