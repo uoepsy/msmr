@@ -1,0 +1,115 @@
+---
+title: "Week 2 Exercises: Logistic and Longitudinal"
+params: 
+    SHOW_SOLS: TRUE
+    TOGGLE: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+source('assets/setup.R')
+library(xaringanExtra)
+library(tidyverse)
+library(patchwork)
+library(ggdist)
+xaringanExtra::use_panelset()
+qcounter <- function(){
+  if(!exists("qcounter_i")){
+    qcounter_i <<- 1
+  }else{
+    qcounter_i <<- qcounter_i + 1
+  }
+  qcounter_i
+}
+```
+
+```{r}
+ss = 843912
+ss = round(runif(1,1e3,1e6))
+set.seed(ss)
+n_groups = 168
+npgroup = round(runif(368,2,11))
+g = unlist(sapply(1:n_groups, function(x) rep(x,npgroup[x])))
+N = length(g)
+x = round(runif(N,1,15))
+b = sample(letters[1:4],n_groups,T,prob=c(.3,.2,.3,.2))
+b = b[g]
+res = MASS::mvrnorm(n=n_groups,
+                    mu=c(0,0),
+                    Sigma=diag(c(3,2))%*%matrix(c(1,.4,.4,1),nrow=2)%*%diag(c(3,2)))
+re0 = res[,1]
+re  = re0[g]
+rex = res[,2]
+re_x  = rex[g]
+lp = (0 + re) + (1.1 + re_x)*scale(x,center=F)[,1] + 
+  1.4*(b=="a") +1.8*(b=="b") +    
+  .8*(b=="c")*scale(x,center=F)[,1]+
+  -1.1*(b=="d")*scale(x,center=F)[,1]
+y = lp + rnorm(N,0,1)
+df = data.frame(x = x, g=factor(g), b=b,y=y)
+
+library(lme4)
+m1=lmer(y~1+x+(1+x|g),df)
+m2=lmer(y~1+x+b+(1+x|g),df)
+m3=lmer(y~1+x*b+(1+x|g),df)
+any(!is.null(c(m1@optinfo$conv$lme4$messages,
+               m2@optinfo$conv$lme4$messages,
+               m3@optinfo$conv$lme4$messages)))
+anova(m1,m2,m3)
+plot(effects::effect("x*b",m3))
+
+# library(lme4)
+# m = glmer(solved ~ difficulty + status + (1+difficulty|monkeyID), monkeystatus, family=binomial)
+# summary(m)
+# 
+# m1=glmer(solved ~ difficulty + (1+difficulty|monkeyID), monkeystatus, family=binomial)
+# anova(m1,m)
+# 
+# lmer(probscore ~ 1 + difficulty + status +
+#                (1 + difficulty | monkeyID),
+#       data=monkeystatus) |> summary()
+
+
+
+
+
+```
+
+
+
+
+lmer(dominance ~ year * species + (1+year|primate))
+
+
+
+1 - read in data, data tidying!
+2 - counting
+3 - plotting (hint to reading, facet will be too many (lots of monkeys) but group=primate instead?).  
+4 - fit models 
+  - unconditional
+  - group differences
+  - group trajectories
+5 - compare
+6 - plot predicted  
+7 - aggregate predicted values (show code).  
+8 - plot fixed  
+
+
+# trolley problems
+
+glmer(choose ~ framing * .... 
+
+1 - read, check over (sample sizes, etc)
+2 - construct an appropriate plot to summarise the data in a suitable way to illustrate the research question. (hint - something like 2b log plot)
+3 - fit model  
+4 - visualise
+5 - OR and CIs, interpret (hint - OR confusing, so take the lead from your plot of what goes up/down etc)
+
+
+
+# optional extra: novel word learning
+
+
