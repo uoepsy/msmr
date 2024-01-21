@@ -1,0 +1,20 @@
+{
+  "hash": "0fa03cacae8f08f1da2b329fd0ef7d34",
+  "result": {
+    "markdown": "---\ntitle: \"Week 2 Exercises: Logistic and Longitudinal\"\nparams: \n    SHOW_SOLS: TRUE\n    TOGGLE: TRUE\neditor_options: \n  chunk_output_type: console\n---\n\n\n\n::: {.cell layout-align=\"center\"}\n\n```{.r .cell-code}\nss = 843912\nss = round(runif(1,1e3,1e6))\nset.seed(ss)\nn_groups = 168\nnpgroup = round(runif(368,2,11))\ng = unlist(sapply(1:n_groups, function(x) rep(x,npgroup[x])))\nN = length(g)\nx = round(runif(N,1,15))\nb = sample(letters[1:4],n_groups,T,prob=c(.3,.2,.3,.2))\nb = b[g]\nres = MASS::mvrnorm(n=n_groups,\n                    mu=c(0,0),\n                    Sigma=diag(c(3,2))%*%matrix(c(1,.4,.4,1),nrow=2)%*%diag(c(3,2)))\nre0 = res[,1]\nre  = re0[g]\nrex = res[,2]\nre_x  = rex[g]\nlp = (0 + re) + (1.1 + re_x)*scale(x,center=F)[,1] + \n  1.4*(b==\"a\") +1.8*(b==\"b\") +    \n  .8*(b==\"c\")*scale(x,center=F)[,1]+\n  -1.1*(b==\"d\")*scale(x,center=F)[,1]\ny = lp + rnorm(N,0,1)\ndf = data.frame(x = x, g=factor(g), b=b,y=y)\n\nlibrary(lme4)\nm1=lmer(y~1+x+(1+x|g),df)\nm2=lmer(y~1+x+b+(1+x|g),df)\nm3=lmer(y~1+x*b+(1+x|g),df)\nany(!is.null(c(m1@optinfo$conv$lme4$messages,\n               m2@optinfo$conv$lme4$messages,\n               m3@optinfo$conv$lme4$messages)))\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n[1] TRUE\n```\n:::\n\n```{.r .cell-code}\nanova(m1,m2,m3)\n```\n\n::: {.cell-output .cell-output-stdout}\n```\nData: df\nModels:\nm1: y ~ 1 + x + (1 + x | g)\nm2: y ~ 1 + x + b + (1 + x | g)\nm3: y ~ 1 + x * b + (1 + x | g)\n   npar    AIC    BIC  logLik deviance  Chisq Df Pr(>Chisq)    \nm1    6 4231.5 4261.6 -2109.7   4219.5                         \nm2    9 4227.4 4272.7 -2104.7   4209.4 10.037  3  0.0182571 *  \nm3   12 4216.1 4276.4 -2096.0   4192.1 17.370  3  0.0005932 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n```\n:::\n\n```{.r .cell-code}\nplot(effects::effect(\"x*b\",m3))\n```\n\n::: {.cell-output-display}\n![](02ex_files/figure-html/unnamed-chunk-2-1.png){fig-align='center' width=80%}\n:::\n\n```{.r .cell-code}\n# library(lme4)\n# m = glmer(solved ~ difficulty + status + (1+difficulty|monkeyID), monkeystatus, family=binomial)\n# summary(m)\n# \n# m1=glmer(solved ~ difficulty + (1+difficulty|monkeyID), monkeystatus, family=binomial)\n# anova(m1,m)\n# \n# lmer(probscore ~ 1 + difficulty + status +\n#                (1 + difficulty | monkeyID),\n#       data=monkeystatus) |> summary()\n```\n:::\n\n\n\n\n\nlmer(dominance ~ year * species + (1+year|primate))\n\n\n\n1 - read in data, data tidying!\n2 - counting\n3 - plotting (hint to reading, facet will be too many (lots of monkeys) but group=primate instead?).  \n4 - fit models \n  - unconditional\n  - group differences\n  - group trajectories\n5 - compare\n6 - plot predicted  \n7 - aggregate predicted values (show code).  \n8 - plot fixed  \n\n\n# trolley problems\n\nglmer(choose ~ framing * .... \n\n1 - read, check over (sample sizes, etc)\n2 - construct an appropriate plot to summarise the data in a suitable way to illustrate the research question. (hint - something like 2b log plot)\n3 - fit model  \n4 - visualise\n5 - OR and CIs, interpret (hint - OR confusing, so take the lead from your plot of what goes up/down etc)\n\n\n\n# optional extra: novel word learning\n\n\n",
+    "supporting": [
+      "02ex_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {
+      "include-in-header": [
+        "<link href=\"site_libs/panelset-0.2.6/panelset.css\" rel=\"stylesheet\" />\r\n<script src=\"site_libs/panelset-0.2.6/panelset.js\"></script>\r\n"
+      ]
+    },
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
