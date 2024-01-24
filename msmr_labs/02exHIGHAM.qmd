@@ -529,7 +529,7 @@ ss = 173223
   df = df |> transmute(
     frame = factor(x, levels=c("1","2","3"),
                    labels=c("positive","neutral","negative")),
-    lives = factor(x2, levels=c("d","e"),labels=c("5","15")),
+    lives = factor(x2, levels=c("d","e"),labels=c("5lives","15lives")),
     age = b,
     PID = paste0("PPT_",g),
     lever = y_bin
@@ -565,7 +565,7 @@ Previous research has found that the "framing" of the problem will influence the
 #| echo: false
 tribble(
   ~`positive frame`,~`neutral frame`,~`negative frame`,
-  "5 people will be saved if you pull the lever; one person on another track will be saved if you do not pull the lever. All your actions are legal and understandable. Will you pull the lever?","5 people will be saved if you pull the lever, but another person will die. One worker will be saved if you do not pull the lever, but 5 workers will die. All your actions are legal and understandable. Will you pull the lever?",
+  "5 people will be saved if you pull the lever; one person on another track will be saved if you do not pull the lever. All your actions are legal and understandable. Will you pull the lever?","5 people will be saved if you pull the lever, but another person will die. One people will be saved if you do not pull the lever, but 5 people will die. All your actions are legal and understandable. Will you pull the lever?",
   "One person will die if you pull the lever. 5 people will die if you do not pull the lever. All your actions are legal and understandable. Will you pull the lever?"
 ) |> gt::gt()
 ```
@@ -606,7 +606,7 @@ I would maybe try `data |> group_by(participant) |> summarise()`, and then use t
 
 
 `r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+`r solbegin(show=TRUE, toggle=params$TOGGLE)`
 
 ```{r}
 trolley <- read_csv("https://uoepsy.github.io/data/msmr_trolley.csv")
@@ -1102,7 +1102,7 @@ summary(m.recall.loc)
 
 __Note 1__: 
 
-In the above, we have made sure to select the patients by specifying `!is.na(lesion_location)`, meaning that we want those rows where the lesion location is not missing. As a reminder `!` is the negation function (not). As we saw in Question A1, this excludes the 126 healthy controls, as well as the 9 patients for which we have missing values (NAs).
+In the above, we have made sure to select the patients by specifying `!is.na(lesion_location)`, meaning that we want those rows where the lesion location is not missing. As a reminder `!` is the negation function (not). As we saw in the earlier question, this excludes the 126 healthy controls, as well as the 9 patients for which we have missing values (NAs).
 
 __Note 2__:  
 
@@ -1152,12 +1152,17 @@ These can be difficult, especially when it's logistic, and especially when there
 
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-* `(Intercept)` ==> Anterior lesion group performance in immediate test. This is the log-odds of them answering correctly in the immediate test. 
+```{r}
+exp(fixef(m.recall.loc))
+```
+
+
+* `(Intercept)` ==> Anterior lesion group performance in immediate test. This is the odds of them answering correctly in the immediate test. 
 * `PhaseFollow-up`  ==> Change in performance (for someone with an anterior lesion) from immediate to follow-up test. 
 * `lesion_locationposterior` ==> Change in performance in immediate test were a patient to have a posterior lesion instead of an anterior lesion. 
 * `PhaseFollow-up:lesion_locationposterior` ==> How change in performance from immediate to follow-up test would differ were a patient to have a posterior lesion instead of an anterior lesion.  
 
-```{r echo=FALSE}
+```{r}
 exp(fixef(m.recall.loc))[3]
 ```
 

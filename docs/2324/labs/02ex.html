@@ -2626,7 +2626,7 @@ age:speciesorangutan -0.10625760 -0.02167806</code></pre>
   </thead>
   <tbody class="gt_table_body">
     <tr><td headers="positive frame" class="gt_row gt_left">5 people will be saved if you pull the lever; one person on another track will be saved if you do not pull the lever. All your actions are legal and understandable. Will you pull the lever?</td>
-<td headers="neutral frame" class="gt_row gt_left">5 people will be saved if you pull the lever, but another person will die. One worker will be saved if you do not pull the lever, but 5 workers will die. All your actions are legal and understandable. Will you pull the lever?</td>
+<td headers="neutral frame" class="gt_row gt_left">5 people will be saved if you pull the lever, but another person will die. One people will be saved if you do not pull the lever, but 5 people will die. All your actions are legal and understandable. Will you pull the lever?</td>
 <td headers="negative frame" class="gt_row gt_left">One person will die if you pull the lever. 5 people will die if you do not pull the lever. All your actions are legal and understandable. Will you pull the lever?</td></tr>
   </tbody>
   
@@ -3132,20 +3132,25 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<button id="sol-start-4" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-4', 'sol-start-4')">
+Solution
+</button>
+</div>
+<div id="sol-body-4" class="solution-body" style="display: none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>trolley <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/msmr_trolley.csv"</span>)</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(trolley)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 4
-  PID   frame    lives lever
-  &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt;
-1 PPT_1 positive     5     1
-2 PPT_1 positive    15     1
-3 PPT_1 positive     5     1
-4 PPT_1 positive    15     1
-5 PPT_1 neutral      5     1
-6 PPT_1 neutral     15     0</code></pre>
+  PID   frame    lives   lever
+  &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;   &lt;dbl&gt;
+1 PPT_1 positive 5lives      1
+2 PPT_1 positive 15lives     1
+3 PPT_1 positive 5lives      1
+4 PPT_1 positive 15lives     1
+5 PPT_1 neutral  5lives      1
+6 PPT_1 neutral  15lives     0</code></pre>
 </div>
 </div>
 <p>How many participants?</p>
@@ -3278,11 +3283,11 @@ Hints
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-4" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-4', 'sol-start-4')">
+<button id="sol-start-5" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-5', 'sol-start-5')">
 1 - fixed
 </button>
 </div>
-<div id="sol-body-4" class="solution-body" style="display: none;">
+<div id="sol-body-5" class="solution-body" style="display: none;">
 <p>The researchers are <em>“interested in whether the framing effects on moral judgements depends upon the stakes (i.e.&nbsp;the number of lives saved)”</em>.</p>
 <p>“the framing effect on moral judgements” here is operationalised as</p>
 <div class="cell" data-layout-align="center">
@@ -3302,11 +3307,11 @@ Hints
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-5" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-5', 'sol-start-5')">
+<button id="sol-start-6" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-6', 'sol-start-6')">
 2 - grouping
 </button>
 </div>
-<div id="sol-body-5" class="solution-body" style="display: none;">
+<div id="sol-body-6" class="solution-body" style="display: none;">
 <p>We know that we have multiple observations for each participant, and those participants are just a random sample (it’s not something we’re interested in testing, we would like to model participant differences as random variation).</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glmer</span>(lever <span class="sc">~</span> frame <span class="sc">*</span> lives <span class="sc">+</span> ....</span>
@@ -3317,11 +3322,11 @@ Hints
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-6" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-6', 'sol-start-6')">
+<button id="sol-start-7" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-7', 'sol-start-7')">
 3 - random
 </button>
 </div>
-<div id="sol-body-6" class="solution-body" style="display: none;">
+<div id="sol-body-7" class="solution-body" style="display: none;">
 <p>Finally, what effects <em>could</em> theoretically vary between our participants?<br>
 Every participant saw everything (i.e.&nbsp;both <code>frame</code> and <code>lives</code> are “within participant” variables).</p>
 <p>In theory, all of these are possible given our design:</p>
@@ -3982,11 +3987,11 @@ Question 16
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-7" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-7', 'sol-start-7')">
+<button id="sol-start-8" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-8', 'sol-start-8')">
 Solution
 </button>
 </div>
-<div id="sol-body-7" class="solution-body" style="display: none;">
+<div id="sol-body-8" class="solution-body" style="display: none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">url</span>(<span class="st">"https://uoepsy.github.io/msmr/data/nwl.RData"</span>))</span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(nwl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -4051,11 +4056,11 @@ Hints
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-8" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-8', 'sol-start-8')">
+<button id="sol-start-9" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-9', 'sol-start-9')">
 Solution
 </button>
 </div>
-<div id="sol-body-8" class="solution-body" style="display: none;">
+<div id="sol-body-9" class="solution-body" style="display: none;">
 <p>The outcome here is (in words) the proportion of correct answers or, equivalently, the probability of answering correctly. A proportion/probability can only vary between 0 and 1 and, as such, we cannot use traditional linear regression or we could end up with predictions outside of the [0, 1] range.</p>
 <p>As said, the outcome is the proportion of correct answers in each block. This makes it tempting to look at the variable called <code>PropCorrect</code>, but this is encoded as a proportion. We have learned to use logistic models, but these require either:</p>
 <ul>
@@ -5059,11 +5064,11 @@ Hints
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-9" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-9', 'sol-start-9')">
+<button id="sol-start-10" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-10', 'sol-start-10')">
 1 - answers to the hints
 </button>
 </div>
-<div id="sol-body-9" class="solution-body" style="display: none;">
+<div id="sol-body-10" class="solution-body" style="display: none;">
 <ul>
 <li><p>Do we want <code>cbind(num_successes, num_failures)</code>?</p>
 <ul>
@@ -5103,11 +5108,11 @@ What do you want your model to allow to vary within these groups?</li>
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-10" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-10', 'sol-start-10')">
+<button id="sol-start-11" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-11', 'sol-start-11')">
 2 - modelling
 </button>
 </div>
-<div id="sol-body-10" class="solution-body" style="display: none;">
+<div id="sol-body-11" class="solution-body" style="display: none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>m.base <span class="ot">&lt;-</span> <span class="fu">glmer</span>(<span class="fu">cbind</span>(NumCorrect, NumError) <span class="sc">~</span> block <span class="sc">+</span> (block <span class="sc">|</span> ID), </span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> <span class="fu">filter</span>(nwl, block <span class="sc">&lt;</span> <span class="dv">8</span>, <span class="sc">!</span><span class="fu">is.na</span>(lesion_location)),</span>
@@ -5172,11 +5177,11 @@ Hints
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-11" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-11', 'sol-start-11')">
+<button id="sol-start-12" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-12', 'sol-start-12')">
 Solution
 </button>
 </div>
-<div id="sol-body-11" class="solution-body" style="display: none;">
+<div id="sol-body-12" class="solution-body" style="display: none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>nwl_test <span class="ot">&lt;-</span> <span class="fu">filter</span>(nwl, block <span class="sc">&gt;</span> <span class="dv">7</span>, <span class="sc">!</span><span class="fu">is.na</span>(lesion_location)) <span class="sc">%&gt;%</span></span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
@@ -5224,7 +5229,7 @@ PhsFllw-p:_  0.275 -0.739 -0.385</code></pre>
 </div>
 </div>
 <p><strong>Note 1</strong>:</p>
-<p>In the above, we have made sure to select the patients by specifying <code>!is.na(lesion_location)</code>, meaning that we want those rows where the lesion location is not missing. As a reminder <code>!</code> is the negation function (not). As we saw in Question A1, this excludes the 126 healthy controls, as well as the 9 patients for which we have missing values (NAs).</p>
+<p>In the above, we have made sure to select the patients by specifying <code>!is.na(lesion_location)</code>, meaning that we want those rows where the lesion location is not missing. As a reminder <code>!</code> is the negation function (not). As we saw in the earlier question, this excludes the 126 healthy controls, as well as the 9 patients for which we have missing values (NAs).</p>
 <p><strong>Note 2</strong>:</p>
 <p>We didn’t specify <code>(Phase | ID)</code> as the random effect because each participant only has 2 data points for Phase, and there is only one line that fits two data points. In other words, there is only one possible way to fit those two data points. As such, as each group of 2 points will have a perfect line fit, and the residuals <span class="math inline">\(\varepsilon_{ij}\)</span> will all be 0. As a consequence of this, the residuals will have no variability as they are all 0, so <span class="math inline">\(\sigma_{\epsilon}\)</span> is 0 which in turn leads to problem with estimating the model coefficients.</p>
 <div class="cell" data-layout-align="center">
@@ -5256,11 +5261,11 @@ Question 20
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-12" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-12', 'sol-start-12')">
+<button id="sol-start-13" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-13', 'sol-start-13')">
 Solution
 </button>
 </div>
-<div id="sol-body-12" class="solution-body" style="display: none;">
+<div id="sol-body-13" class="solution-body" style="display: none;">
 <ol type="1">
 <li><p>The link function is the <code>logit</code>, or log-odds (other link functions are available).</p></li>
 <li><p>To convert log-odds to odds, we can use <code>exp()</code>, to get odds and odds ratios.</p></li>
@@ -5279,7 +5284,7 @@ These can be difficult, especially when it’s logistic, and especially when the
 </ul>
 <!-- 
 
-<div class="optional-begin"><button id='opt-start-13' class="jk-circle-right optional-icon clickable" onclick="toggle_visibility('opt-body-13', 'opt-start-13')"> Optional help: Our Solution to A4 </button></div><div class="optional-body" id = "opt-body-13" style="display: none;">
+<div class="optional-begin"><button id='opt-start-14' class="jk-circle-right optional-icon clickable" onclick="toggle_visibility('opt-body-14', 'opt-start-14')"> Optional help: Our Solution to A4 </button></div><div class="optional-body" id = "opt-body-14" style="display: none;">
 
  -->
 <!-- ```{r eval=F} -->
@@ -5299,13 +5304,23 @@ These can be difficult, especially when it’s logistic, and especially when the
 <p class="question-end">
 </p>
 <div style="display:none;">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">fixef</span>(m.recall.loc))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                            (Intercept)                          PhaseFollow-up 
+                              0.8936639                               0.9725791 
+               lesion_locationposterior PhaseFollow-up:lesion_locationposterior 
+                              2.6306343                               0.8158868 </code></pre>
+</div>
+</div>
 <ul>
-<li><code>(Intercept)</code> ==&gt; Anterior lesion group performance in immediate test. This is the log-odds of them answering correctly in the immediate test.</li>
+<li><code>(Intercept)</code> ==&gt; Anterior lesion group performance in immediate test. This is the odds of them answering correctly in the immediate test.</li>
 <li><code>PhaseFollow-up</code> ==&gt; Change in performance (for someone with an anterior lesion) from immediate to follow-up test.</li>
 <li><code>lesion_locationposterior</code> ==&gt; Change in performance in immediate test were a patient to have a posterior lesion instead of an anterior lesion.</li>
 <li><code>PhaseFollow-up:lesion_locationposterior</code> ==&gt; How change in performance from immediate to follow-up test would differ were a patient to have a posterior lesion instead of an anterior lesion.</li>
 </ul>
 <div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">fixef</span>(m.recall.loc))[<span class="dv">3</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>lesion_locationposterior 
                 2.630634 </code></pre>
@@ -5336,30 +5351,30 @@ Question 22
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-14" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-14', 'sol-start-14')">
+<button id="sol-start-15" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-15', 'sol-start-15')">
 Solution
 </button>
 </div>
-<div id="sol-body-14" class="solution-body" style="display: none;">
+<div id="sol-body-15" class="solution-body" style="display: none;">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(nwl, <span class="sc">!</span><span class="fu">is.na</span>(lesion_location)), <span class="fu">aes</span>(block, PropCorrect, </span>
-<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>                                                 <span class="at">color=</span>lesion_location, </span>
-<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>                                                 <span class="at">shape=</span>lesion_location)) <span class="sc">+</span></span>
-<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">#geom_line(aes(group=ID),alpha=.2) + </span></span>
-<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_summary</span>(<span class="at">fun.data=</span>mean_se, <span class="at">geom=</span><span class="st">"pointrange"</span>) <span class="sc">+</span> </span>
-<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_summary</span>(<span class="at">data=</span><span class="fu">filter</span>(nwl, <span class="sc">!</span><span class="fu">is.na</span>(lesion_location), block <span class="sc">&lt;=</span> <span class="dv">7</span>), </span>
-<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fun=</span>mean, <span class="at">geom=</span><span class="st">"line"</span>) <span class="sc">+</span> </span>
-<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="fl">0.5</span>, <span class="at">linetype=</span><span class="st">"dashed"</span>) <span class="sc">+</span> </span>
-<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept=</span><span class="fu">c</span>(<span class="fl">7.5</span>, <span class="fl">8.5</span>), <span class="at">linetype=</span><span class="st">"dashed"</span>) <span class="sc">+</span> </span>
-<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>, </span>
-<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a>                       <span class="at">labels=</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>, <span class="st">"Test"</span>, <span class="st">"Follow-Up"</span>)) <span class="sc">+</span> </span>
-<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>(<span class="at">base_size=</span><span class="dv">10</span>) <span class="sc">+</span> </span>
-<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Block"</span>, <span class="at">y=</span><span class="st">"Proportion Correct"</span>, </span>
-<span id="cb57-14"><a href="#cb57-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">shape=</span><span class="st">"Lesion</span><span class="sc">\n</span><span class="st">Location"</span>, <span class="at">color=</span><span class="st">"Lesion</span><span class="sc">\n</span><span class="st">Location"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(nwl, <span class="sc">!</span><span class="fu">is.na</span>(lesion_location)), <span class="fu">aes</span>(block, PropCorrect, </span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>                                                 <span class="at">color=</span>lesion_location, </span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>                                                 <span class="at">shape=</span>lesion_location)) <span class="sc">+</span></span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">#geom_line(aes(group=ID),alpha=.2) + </span></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_summary</span>(<span class="at">fun.data=</span>mean_se, <span class="at">geom=</span><span class="st">"pointrange"</span>) <span class="sc">+</span> </span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_summary</span>(<span class="at">data=</span><span class="fu">filter</span>(nwl, <span class="sc">!</span><span class="fu">is.na</span>(lesion_location), block <span class="sc">&lt;=</span> <span class="dv">7</span>), </span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fun=</span>mean, <span class="at">geom=</span><span class="st">"line"</span>) <span class="sc">+</span> </span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="fl">0.5</span>, <span class="at">linetype=</span><span class="st">"dashed"</span>) <span class="sc">+</span> </span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept=</span><span class="fu">c</span>(<span class="fl">7.5</span>, <span class="fl">8.5</span>), <span class="at">linetype=</span><span class="st">"dashed"</span>) <span class="sc">+</span> </span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>, </span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>                       <span class="at">labels=</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>, <span class="st">"Test"</span>, <span class="st">"Follow-Up"</span>)) <span class="sc">+</span> </span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>(<span class="at">base_size=</span><span class="dv">10</span>) <span class="sc">+</span> </span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Block"</span>, <span class="at">y=</span><span class="st">"Proportion Correct"</span>, </span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">shape=</span><span class="st">"Lesion</span><span class="sc">\n</span><span class="st">Location"</span>, <span class="at">color=</span><span class="st">"Lesion</span><span class="sc">\n</span><span class="st">Location"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="02ex_files/figure-html/unnamed-chunk-53-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<p><img src="02ex_files/figure-html/unnamed-chunk-54-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
 </figure>
 </div>
 </div>
@@ -5393,7 +5408,7 @@ Solution
  -->
 <!-- 
 
-<div class="solution-begin"><button id='sol-start-15' class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-15', 'sol-start-15')">  Solution </button></div><div class="solution-body" id = "sol-body-15" style="display: none;">
+<div class="solution-begin"><button id='sol-start-16' class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-16', 'sol-start-16')">  Solution </button></div><div class="solution-body" id = "sol-body-16" style="display: none;">
 
  -->
 <!-- * `(Intercept)` ==> Overall performance in immediate test. This is the overall log-odds of answering correctly in the immediate test.  -->
