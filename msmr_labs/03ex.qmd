@@ -1,0 +1,157 @@
+---
+title: "Week 3 Exercises: Non-Linear Change"
+params: 
+    SHOW_SOLS: FALSE
+    TOGGLE: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+source('assets/setup.R')
+library(xaringanExtra)
+library(tidyverse)
+library(patchwork)
+library(ggdist)
+xaringanExtra::use_panelset()
+qcounter <- function(){
+  if(!exists("qcounter_i")){
+    qcounter_i <<- 1
+  }else{
+    qcounter_i <<- qcounter_i + 1
+  }
+  qcounter_i
+}
+```
+
+# Cognitive performance
+
+:::frame
+__Dataset: Az.rda__  
+  
+These data are available at [https://uoepsy.github.io/data/Az.rda](https://uoepsy.github.io/data/Az.rda).  
+You can load the dataset using:  
+```{r}
+load(url("https://uoepsy.github.io/data/Az.rda"))
+```
+and you will find the `Az` object in your environment.  
+
+The `Az` object contains information on 30 Participants with probable Alzheimer's Disease, who completed 3 tasks over 10 time points: A memory task, and two scales investigating ability to undertake complex activities of daily living (cADL) and simple activities of daily living (sADL). Performance on all of tasks was calculated as a percentage of total possible score, thereby ranging from 0 to 100. 
+
+```{r}
+#| echo: false
+tibble(
+    variable = names(Az),
+    description = c("Unique Subject Identifier","Time point of the study (1 to 10)","Task type (Memory, cADL, sADL)","Score on test (range 0 to 100)")
+) |> gt::gt()
+```
+:::
+
+`r qbegin(qcounter())`
+Load in the data and examine it.  
+How many participants, how many observations per participant, per task?  
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+load(url("https://uoepsy.github.io/data/Az.rda"))
+summary(Az)
+```
+
+30 participants: 
+```{r}
+length(unique(Az$Subject))
+```
+
+Does every participant have 10 datapoints for each Task type?  
+```{r}
+any( table(Az$Subject, Az$Task) != 10 )
+```
+
+`r solend()`
+
+`r qbegin(qcounter())`
+No modelling just yet.  
+
+Plot the performance over time for each type of task.  
+
+Try using `stat_summary` so that you are plotting the means (and standard errors) of each task, rather than every single data point. Why? Because this way you can get a shape of the average trajectories of performance over time in each task.  
+
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+ggplot(Az, aes(Time, Performance, color=Task, fill=Task)) + 
+  stat_summary(fun.data=mean_se, geom="ribbon", color=NA, alpha=0.5) +
+  stat_summary(fun=mean, geom="line")
+```
+`r solend()`
+
+`r qbegin(qcounter())`
+Why do you think *raw/natural* polynomials might be more useful than *orthogonal* polynomials for these data?  
+
+::: {.callout-tip collapse="true"}
+#### Hints
+
+Are we somewhat interested in group differences (i.e. differences in scores, or differences in rates of change) at a specific point in time?  
+
+:::
+
+
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+TODO 
+Because we're likely to be interested in whether there are task differences at the starting baseline point
+`r solend()`
+
+
+`r qbegin(qcounter())`
+fit full model  
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+TODO 
+```{r}
+#| eval: false
+Az <- Az |> mutate(
+  poly1 = poly(Time,2,raw=T)[,1],
+  poly2 = poly(Time,2,raw=T)[,2]
+)
+
+m1 = lmer(Performance ~ (poly1 + poly2) * Task +
+            (1 + poly1 + poly2 + Task + poly1:Task + poly2:Task| Subject),
+          data=Az, REML=F, control=lmerControl(optimizer = "bobyqa"))
+
+m2 = lmer(Performance ~ (poly1 + poly2) * Task +
+           (1 + poly1 + poly2 + Task + poly1:Task| Subject),
+         data=Az, REML=F, control=lmerControl(optimizer = "bobyqa"))
+
+m3 = lmer(Performance ~ (poly1 + poly2) * Task +
+            (1 + poly1 + Task + poly1:Task + poly2:Task| Subject),
+          data=Az, REML=F, control=lmerControl(optimizer = "bobyqa"))
+
+
+m4 = lmer(Performance ~ (poly1 + poly2) * Task +
+            (1 + poly1 + Task + poly1:Task | Subject),
+          data=Az, REML=F, control=lmerControl(optimizer = "bobyqa"))
+```
+
+`r solend()`
+
+
+
+- doesn't converge, but there's a neat trick with random slopes of categorical variables like `Task` that we haven't come across yet. try to apply logic here.
+(sol visible)
+
+- simplify.. how?  
+
+- run series of model comparisons investigating whether
+  - do tasks differ in linear
+  - do tasks differ in quadratic
+
+- interpretation
+
+- from coefficients, sketch out plot
+
+- make plot of fitted values
+

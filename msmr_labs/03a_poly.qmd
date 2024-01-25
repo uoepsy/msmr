@@ -16,6 +16,24 @@ library(tidyverse)
 library(patchwork)
 xaringanExtra::use_panelset()
 source("https://uoepsy.github.io/msmr/functions/code_poly.R")
+
+dfeg = MASS::mcycle |>
+  rename(y=accel,x=times) |> filter(x>20) |>
+  mutate(y=scale(y)[,1]*3,
+         y=y-min(y),
+         x=(x-20)/2
+         ) |>
+  transmute(
+    age = round(x,2),
+    syndens = pmax(.1,y)
+  ) 
+write_csv(dfeg, file="../../data/msmr_synapticdens.csv")
+syndat <- dfeg
+linmod <- lm(syndens ~ age, data = syndat)
+res <- broom::tidy(linmod) |> mutate(across(estimate:statistic,~round(.,2)))
+
+
+
 ```
 
 
@@ -23,374 +41,673 @@ source("https://uoepsy.github.io/msmr/functions/code_poly.R")
 This reading:  
 
 
++ [Winter & Wieling, 2016](https://doi.org/10.1093/jole/lzv003)  
+
 :::
 
 
-We have already seen in the last couple of weeks that we can use MLM to study something 'over the course of X'. In the novel word learning experiment from last week's lab, we investigated the change in the probability of answering correctly over the course of the experimental blocks. 
+We have already seen in the last couple of weeks that we can use MLM to study something 'over the course of X'. This might be "over the course of adolescence" (i.e. `y ~ age`), or "over the course of an experiment" (`y ~ trial_number`). The term **"longitudinal"** is commonly used to refer to any data in which repeated measurements are taken over a continuous domain. This opened up the potential for observations to be unevenly spaced, or missing at certain points. 
 
-We've talked about how **"longitudinal"** is the term commonly used to refer to any data in which repeated measurements are taken over a continuous domain. This opens up the potential for observations to be unevenly spaced, or missing at certain points. It also, as will be the focus of this week, opens the door to thinking about how many effects of interest are likely to display **non-linear patterns**. These exercises focus on including higher-order polynomials in the multi-level model to capture non-linearity. 
+It also, as will be the focus of this week, opens the door to thinking about how many effects of interest may display patterns that are **non-linear**. There are lots of techniques to try and summarise non-linear trajectories, and here we are going to focus on the method of including higher-order polynomials as predcitors.  
   
 # Linear vs Non-Linear
 
-```{r include=F}
-res <- MASS::mcycle %>%
-  rename(y=accel,x=times) %>% filter(x>20) %>% lm(y~x,.) %>% broom::tidy() %>% mutate(across(estimate:statistic,~round(.,2)))
+Forget about multilevel models for a little while, as we can think about this in the single level world.  
+
+Suppose we had collected the data on `r nrow(syndat)` children, and measured the number of pathways in their brains ("synaptic density"), see @fig-dfeg. We wanted to fit a model to predict synaptic density based on the values of age.  
+
+```{r}
+#| label: fig-dfeg
+#| fig-cap: "A clearly non-linear pattern"
+#| fig.height: 3.5
+# syndat <- read_csv("https://uoepsy.github.io/data/msmr_synapticdens.csv")
+# TODO
+ggplot(syndat, aes(x=age,y=syndens))+
+  geom_point(size=2)+
+  labs(x="Age (years)",y="Synaptic Density")
 ```
 
-<div style="display:inline-block;width:45%;margin:5px;vertical-align:middle">
-Suppose we had collected the data in Figure \@ref(fig:mcycle), and we wanted to fit a model to predict $y$ based on the values of $x$.  
+We'll use our old friend linear regression, $y = b_0 + b_1 \cdot x + \varepsilon$.  
 
-Let's use our old friend linear regression, $y = \beta_0 + \beta_1(x) + \varepsilon$.  
-
-We'll get out some estimated coefficients, some standard errors, and some p-values:  
-
-- The intercept:  
-  $\beta_0$ = `r res[1,2]`, SE = `r res[1,3]`, p < .001  
-- The estimated coefficient of x:  
-  $\beta_1$ = `r res[2,2]`, SE = `r res[2,3]`, p < .001   
-
-Job done? Clearly not - we need only overlay model upon raw data (Figure \@ref(fig:mcycle3)) to see we are missing some key parts of the pattern.  
-</div>
-<div style="display:inline-block;width:45%;margin:5px;vertical-align:middle">
-```{r mcycle, echo=FALSE, fig.cap = "A clearly non-linear pattern"}
-MASS::mcycle %>%
-  rename(y=accel,x=times) %>% filter(x>20) %>%
-  ggplot(.,aes(x=x,y=y))+
-  geom_point(size=2)
-```
-```{r mcycle3, echo=FALSE, fig.asp=.7,fig.cap="Uh-oh... "}
-MASS::mcycle %>%
-  rename(y=accel,x=times) %>% filter(x>20) %>% 
-  lm(y~x,.) %>%
-  sjPlot::plot_model(type="pred", show.data = TRUE) -> p0
-p0$x
+```{r}
+linmod <- lm(syndens ~ age, data = syndat)
 ```
 
-</div>  
+:::: {.columns}
+::: {.column width="60%"}
 
-:::statbox
-**Thoughts about Model + Error**  
 
-All our work here is in aim of making models of the world.  
+We'll get out some estimated coefficients, some $t$ statistics, and some p-values:  
 
-1. Models are just models. They are simplifications, and so they don't perfectly fit to the observed world (indeed, how well a model fits to the world is often our metric for comparing models).  
-2. $y - \widehat{y}$. Our observed data minus our model predicted values (i.e. in linear regression our "residuals") reflect everything that we don't account for in our model
-3. In an ideal world, our model accounts for all the systematic relationships, and what is left over (our residuals) is just randomness. If our model is mis-specified, or misses out something systematic, then our residuals will reflect this. 
-4. We check for this by examining how much like randomness the residuals appear to be (zero mean, normally distributed, constant variance, i.i.d ("independent and identically distributed") - i.e., what gets referred to as the "assumptions"). 
-5. We will **never** know whether our residuals contain only randomness, because we can never observe *everything*. 
+- The intercept: $b_0$ = `r res[1,2]`, t(`r nrow(syndat)-2`)=`r res[1,4]`, p < .001  
+- The estimated coefficient of x: $b_1$ = `r res[2,2]`, t(`r nrow(syndat)-2`)=`r res[1,4]`, p < .001   
 
-<h/>
+Job done? Clearly not - we need only overlay model upon raw data (@fig-dfeg2) to see we are missing some key parts of the pattern.  
+
+:::
+::: {.column width="40%"}
+
+```{r}
+#| label: fig-dfeg2
+#| fig-cap: "Uh-oh... "
+#| echo: false
+sjPlot::plot_model(linmod, type="pred", show.data = TRUE)[[1]] +
+  scale_y_continuous(breaks=c(0,3,6,9,12))+
+  scale_x_continuous(breaks=seq(0,30,10))+
+  labs(title="",x="Age (years)",y="Synaptic Density")
+```
+
+:::
+::::
+
+::: {.callout-note collapse="true"}
+#### We can see this in our residuals!!  
 
 Let's just do a quick `plot(model)` for some diagnostic plots of my linear model:
-```{r echo=FALSE, out.width = "100%"}
+```{r echo=c(2)}
 par(mfrow=c(2,2))
-MASS::mcycle %>%
-  rename(y=accel,x=times) %>% filter(x>20) %>%
-lm(y~x,.) %>% plot()
+plot(linmod)
 par(mfrow=c(1,1))
 ```
 
-Does it look like the residuals are independently distributed? Not really. 
-We need to find some way of incorporating the non-linear relationship between y and x into our model. 
+Does it look like the residuals are independently and identically distributed? Not really. We can see that the residuals do not have a constant mean of zero across the fitted values. This makes sense, because the line is below all of the points for people 5 years old, and then it's above all the points when $age<3$ and $age>15$. We need to find some way of incorporating the clearly non-linear relationship between the two variables into our model. 
 
 :::
 
 
 # What is a polynomial?  
 
-:::statbox
+For many purposes, extending the linear model to include higher-order terms can allow us to usefully summarise a non-linear relationships between two variables. For instance, fitting models with linear and quadratic terms ($y$ = $b_0 + b_1 \cdot x \ + b_2 \cdot x^2 + \varepsilon$) and extending these to cubic ($y$ = $b_0 + b_1 \cdot x \ + b_2 \cdot x^2 + b_3 \cdot x^3 + \varepsilon$) (or beyond), may aid in modelling nonlinear patterns, as in @fig-dfeg3
+
+```{r}
+#| label: fig-dfeg3
+#| out-width: "100%"
+#| fig-height: 3.5
+#| fig-cap: "Linear, quadratic and cubic models fitted to the same dataset."
+#| echo: false
+p0 <- 
+  sjPlot::plot_model(lm(syndens~age,syndat), type="pred", show.data = TRUE)[[1]] +
+  scale_y_continuous(breaks=c(0,3,9,12))+
+  scale_x_continuous(breaks=seq(0,30,10))+
+  labs(title="",subtitle="y ~ x + e")
+
+p1 <- 
+  sjPlot::plot_model(lm(syndens~age+I(age^2),syndat), type="pred", show.data = TRUE)[[1]] +
+  scale_y_continuous(breaks=c(0,3,9,12))+
+  scale_x_continuous(breaks=seq(0,30,10))+
+  labs(title="",subtitle="y ~ x + x^2 + e")
+
+p2 <- 
+  sjPlot::plot_model(lm(syndens~age+I(age^2)+I(age^3),syndat), type="pred", show.data = TRUE)[[1]] +
+  scale_y_continuous(breaks=c(0,3,9,12))+
+  scale_x_continuous(breaks=seq(0,30,10))+
+  labs(title="",subtitle="y ~ x + x^2 + x^3 + e")
+
+
+p0 + p1 + p2 & theme_bw(base_size=12)
+```
+
+
+
+:::sticky
 Polynomials are mathematical expressions which involve a sum of powers. For instance:
 
 - $y = 4 + x + x^2$ is a second-order polynomial as the highest power of $x$ that appears is $x^2$  
 - $y = 9x + 2x^2 + 4x^3$ is a third-order polynomial as the highest power of $x$ that appears is $x^3$  
 - $y = x^6$ is a sixth-order polynomial as the highest power of $x$ that appears is $x^6$  
 
-:::
+::: {.callout-tip collapse="true"}
+#### How does a polynomial term capture non-linearity?   
 
-For our purposes, extending our model to include higher-order terms can fit non-linear relationships between two variables. For instance, fitting models with linear and quadratic terms ($y_i$ = $\beta_0 + \beta_1 x_{i} \ + \beta_2 x^2_i + \varepsilon_i$) and extending these to cubic ($y_i$ = $\beta_0 + \beta_1 x_{i} \ + \beta_2 x^2_i + \beta_3 x^3_i + \varepsilon_i$) (or beyond), may aid in modelling nonlinear patterns.
+Suppose we have the model $y = b_0 + b_1 \cdot x + \varepsilon$. 
+Let's take a sequence of values for $x$, and write out the model equation for the predicted values $\hat y$ from this model.  
 
-```{r echo=FALSE, out.width = "100%", fig.heigth = 4}
-MASS::mcycle %>%
-  rename(y=accel,x=times) %>% filter(x>20) %>% 
-  lm(y~x+I(x^2),.) %>%
-  sjPlot::plot_model(type="pred",show.data=TRUE) -> p
+We can see that for each row, the predicted value increases by $b_1$. In the column with example coefficients, each row increases by 1.  
 
-MASS::mcycle %>%
-  rename(y=accel,x=times) %>% filter(x>20) %>% 
-  lm(y~x+I(x^2)+I(x^3),.) %>% 
-  sjPlot::plot_model(type="pred",show.data=TRUE) -> p1
 
-p0$x + labs(title="",subtitle="y ~ x + e") +
-p$x + labs(title="",subtitle="y ~ x + x^2 + e") +
-p1$x + labs(title="",subtitle="y ~ x + x^2 + x^3 + e") & theme_bw(base_size=12)
+| x | predicted y | predicted y if e.g. $b_0=1$ and $b_1=1$ |
+| ---- | ---- | ---- |
+| 0 | $b_0 + b_1 \cdot 0$ | $1+1 \cdot 0 = 1$ |
+| 1 | $b_0 + b_1 \cdot 1$ | $1+1 \cdot 1 = 2$ |
+| 2 | $b_0 + b_1 \cdot 2$ | $1+1 \cdot 2 = 3$ |
+| 3 | $b_0 + b_1 \cdot 3$ | $1+1 \cdot 3 = 4$ |
+| ... | ... | ... |
+
+
+Now let's do the same for the model with the quadratic term in, $y = b_0 + b_1 \cdot x + b_2 \cdot x^2 + \varepsilon$.  
+We can see now that each row doesn't increase by the same amount! The increases are 2, 4, 6 for our example coefficients.  
+
+
+| x | predicted y | predicted y if e.g. $b_0=1$, $b_1=1$ and $b_2=1$ |
+| ---- | ---- | ---- |
+| 0 | $b_0 + b_1 \cdot 0 + b_2 \cdot 0^2$ | $1+1 \cdot 0 + 1 \cdot 0^2 = 1$ |
+| 1 | $b_0 + b_1 \cdot 1 + b_2 \cdot 1^2$ | $1+1 \cdot 1 + 1 \cdot 1^2 = 3$ |
+| 2 | $b_0 + b_1 \cdot 2 + b_2 \cdot 2^2$ | $1+1 \cdot 2 + 1 \cdot 2^2 = 7$ |
+| 3 | $b_0 + b_1 \cdot 3 + b_2 \cdot 3^2$ | $1+1 \cdot 3 + 1 \cdot 3^2 = 13$ |
+| ... | ... | ... |
+
+This is because the value of $x^2$ is bigger for bigger values of $x$. Hence the difference between predicted values of $y$ when $x=9$ and $x=10$ is much bigger than it is between $x=0$ and $x=1$.  
+
+You can see the linear and the quadratic lines we just talked about in the figure below:
+
+```{r}
+#| echo: false
+#| fig-height: 3.5
+ggplot(data.frame(x=0:5,y=1:6),aes(x=x,y=y))+
+  stat_function(geom="line",fun=function(.x) 1+1*.x, lwd=1,col="blue")+
+  stat_function(geom="line",fun=function(.x) 1+(1*.x)+(1*.x^2), lwd=1,col="green3")+
+  annotate(geom="label",label="y = 1 + 1*x", x=4,y=3,col="blue")+
+  annotate(geom="label",label="y = 1 + 1*x + 1*x^2", x=3.5,y=20,col="green3")
 ```
 
-:::statbox
-**What are we interested in here?**  
 
-As the order of polynomials increases, we tend to be less interested in these terms in our model. Linear change is the easiest to think about: are things going up over the course of $x$, or down? (or neither?). Quadratic change is the next most interesting, and it may help to think of this as the "rate of change". For instance, in the plot below, it is the quadratic term which differs between the two groups trajectories. 
+:::
+:::
 
+
+:::: {.columns}
+::: {.column width="50%"}
+As the order of polynomials increases, we tend to be less interested in these terms in our model. Linear change is the easiest to think about: are things going up? or down? (or neither?). Quadratic change is the next most interesting, and it may help to think of this as the "rate of change". For instance, in @fig-quad1, it is the quadratic term which differs between the two groups trajectories. 
+:::
+::: {.column width="10%"}
+:::
+::: {.column width="40%"}
 ```{r echo=FALSE}
+#| echo: false
+#| label: fig-quad1
+#| fig-cap: "Two lines for which the quadratic term differs" 
 x=1:10
 tibble(
   y=c(x*3, (x*1.1+(x^2)*.2)),
   xx=rep(x,2),
   g = rep(letters[1:2],each=10)
-) %>% ggplot(.,aes(x=xx,y=y,col=g))+geom_line()+
+) %>% ggplot(.,aes(x=xx,y=y,col=g))+geom_line(lwd=1)+
   labs(x="x")
 ```
+:::
+::::
 
-`r optbegin("Positive and negative quadratic terms",olabel=FALSE,toggle=params$TOGGLE)`
+::: {.callout-tip collapse="true"}
+#### Positive and negative coefficients for quadratic terms
+
+One thing to focus on is the sign of the quadratic coefficient. When a quadratic term is positive, the curve is $\cup$ shaped, and when it is negative, the curve is $\cap$ shaped. 
+To help illustrate, consider what each value from -10 to 10 is when squared (they're all positive, as in the RH side of @fig-quad3)
+
 ```{r quadfig, echo=FALSE}
+#| label: fig-quad3
+#| echo: false
+#| fig-cap: "Negative quadratic term (Left) and Positive quadratic term (Right) lead to curvatures that are either U shaped (positive) or inverted-U shaped (negative)"  
+#| fig-height: 3.5
 tibble(
   x = -10:10,
   y = x^2,
   y1 = -x^2
 ) %>% pivot_longer(y:y1) %>%
-  mutate(name = ifelse(name=="y","quadratic term is positive \n Y = X^2", "quadratic term is negative \n Y = -X^2")) %>%
+  mutate(name = ifelse(name=="y","quadratic term is positive \n y = 1*(x^2)", "quadratic term is negative \n y = -1*(x^2)")) %>%
   ggplot(.,aes(x=x,y=value,col=name)) +
-  geom_line()+
+  geom_line(lwd=1)+
   guides(col=FALSE)+
   facet_wrap(~name, scales="free_y")
 ```
 
-<!-- `r optbegin("Code to create plot", olabel=FALSE, toggle=params$TOGGLE)` -->
-<!-- ```{r eval=FALSE} -->
-<!-- tibble( -->
-<!--   x = -10:10, -->
-<!--   y = x^2, -->
-<!--   y1 = -x^2 -->
-<!-- ) %>% pivot_longer(y:y1) %>% -->
-<!--   mutate(name = ifelse(name=="y","quadratic term is positive \n Y = X^2", "quadratic term is negative \n Y = -X^2")) %>% -->
-<!--   ggplot(.,aes(x=x,y=value,col=name)) + -->
-<!--   geom_line()+ -->
-<!--   guides(col=FALSE)+ -->
-<!--   facet_wrap(~name, scales="free_y") -->
-<!-- ``` -->
-<!-- `r optend()` -->
-
-`r optend()`
 :::
 
 
 
 ## Raw Polynomials
 
-<div style="display:inline-block; width: 60%; vertical-align: top">
-There are two types of polynomial we can construct. "Raw" (or "Natural") polynomials are the straightforward ones you might be expecting the table to the right to be filled with.  
 
-These are simply the original values of the x variable to the power of 2, 3 and so on.  
-  
-We can quickly get these in R using the `poly()` function, with `raw = TRUE`.  
+There are two types of polynomial we can construct. "Raw" (or "Natural") polynomials are the straightforward ones that you would expect (example in the table below), where the original value of $x$ is squared/cubed. 
 
-If you want to create "raw" polynomials, make sure to specify `raw = TRUE` or you will not get what you want because the default behaviour is `raw = FALSE`.
-</div>
-<div style="display:inline-block; width: 30%;">
-<center>
-```{r echo=FALSE}
-MASS::mcycle %>%
-    rename(y=accel,x=times) %>% filter(x>20) -> df
-cbind(x=1:5,`x^2`=rep("?",5),`x^3`=rep("?",5)) %>% rbind("...") %>% 
-    kableExtra::kable() %>%
-    kableExtra::kable_styling(full_width = FALSE)
-```
-</center>
-</div>
+
+| $x$ | $x^2$ | $x^3$ |
+| ---- | ---- | ---- |
+| 1 | 1 | 1 |
+| 2 | 4 | 8 |
+| 3 | 9 | 27 |
+| 4 | 16 | 64 |
+| 5 | 25 | 125 |
+| ... | ... | ... |
+
+
+We can quickly get these in R using the `poly()` function. As we want to create "raw" polynomials, we need to make sure to specify `raw = TRUE` or we get something else (we'll talk about what they are in a second!).  
 
 ```{r}
 poly(1:10, degree = 3, raw=TRUE)
 ```
 
-
-<div style="background-color: #eafaff; border-radius: 5px; padding: 20px 20px 10px 20px; margin-top: 20px; margin-bottom: 20px;">
-**Raw polynomials are correlated**  
-
-With raw (or "natural") polynomials, the terms `poly1`, `poly2` and `poly3` are correlated.  
-Think think about why this might be - by definition, as $x^1$ increases, so will $x^2$, and so will $x^3$ and so on.  
-
-We can visualise them: 
+Let's now use these with our example data we had been plotting above.  
+First lets add new variables to the dataset, which are the polynomials of our $x$ variable:    
 ```{r}
-matplot(poly(1:10, 3, raw=T), type="l")
+syndat <- 
+  syndat |> 
+    mutate(
+      # poly1 is the first column
+      poly1 = poly(age, degree = 3, raw = TRUE)[,1],
+      # poly2 is the second
+      poly2 = poly(age, degree = 3, raw = TRUE)[,2],
+      # poly3 is the third
+      poly3 = poly(age, degree = 3, raw = TRUE)[,3]
+    )
 ```
-And measure the correlation coefficients:
+
+And now lets use them in our model as predictors:  
 ```{r}
-cor(poly(1:10, 3, raw=T)) %>% round(2)
+cubicmod <- lm(syndens ~ poly1 + poly2 + poly3, data = syndat)
 ```
 
-Why might this be a problem?  
-Well, this multicollinearity can lead to estimation problems, and means that our parameter estimates may change considerably depending upon what terms we include in our model, and it becomes more difficult to determine which ones are important, and what the effect sizes are.  
-Table \@ref(tab:rawpolytab) below shows the coefficients for models fitted to a randomly generated dataset, with `poly1`, `poly1+poly2`, and `poly1+poly2+poly3` as predictors (where `poly1`-`poly3` are **natural** polynomials). Notice that they change with the addition of each term.
-```{r rawpolytab, echo=FALSE}
-set.seed(754)
-df<-tibble(
-    x = 1:10,
-    y = x + 
-        rnorm(1, mean = 100) * (x) +
-        rnorm(1, mean = 0, sd = .01) * (x) ^ 2 +
-        rnorm(1, mean = -1) * (x) ^ 3 + 
-        rnorm(10)
-)
-df <- code_poly(df = df, predictor = 'x', poly.order = 3, orthogonal = FALSE, draw.poly = FALSE)
-full_join(
-    broom::tidy(lm(y~poly1, df))[,1:2] %>% 
-        #mutate(estimate = paste(round(estimate,2), c("*","**"))) %>% 
-        rename(`y~poly1` = estimate),
-    broom::tidy(lm(y~poly1+poly2, df))[,1:2] %>% 
-        #mutate(estimate = paste(round(estimate,2), c("*","***","***"))) %>% 
-        rename(`y~poly1+poly2` = estimate)
-) %>% full_join(.,
-                broom::tidy(lm(y~poly1+poly2+poly3, df))[,1:2] %>% 
-                    #mutate(estimate = paste(round(estimate,2), c("","***","","***"))) %>% 
-                    rename(`y~poly1+poly2+poly3` = estimate)
-) %>% mutate_if(is.numeric,~round(.,2)) %>% 
-    mutate_all(~ifelse(is.na(.), "-", .)) %>% 
-    kableExtra::kbl(caption = "Incremental addition of raw polynomial terms") %>%
-    kableExtra::kable_styling(full_width = FALSE)
-```
+::: {.callout-tip collapse="true"}
+#### other ways to get polynomials into the model
 
-</div>
-
-## Orthogonal Polynomials  
-
-"Orthogonal" polynomials are uncorrelated (hence the name). 
-We can get these for $x = 1,2,...,9,10$ using the following code:
+As we're working with raw polynomials, we could just do:  
 ```{r}
-poly(1:10, degree = 3, raw = FALSE)
+#| eval: false
+syndat |> 
+  mutate(
+    poly1 = age,
+    poly2 = age^2,
+    poly3 = age^3
+  )
 ```
-Notice that the first order term has been scaled, so instead of the values 1 to 10, we have values ranging from -0.5 to +0.5, centered on 0. 
 
+Or we could even just specify the calculations for each term _inside_ the call to `lm()`:
 ```{r}
-colMeans(poly(1:10, degree = 3, raw = FALSE)) %>%
-    round(2)
+#| eval: false
+lm(syndens ~ age + I(age^2) + I(age^3), data = syndat)
 ```
 
-As you can see from the output above, which computes the mean of each column, each predictor has mean 0, so they are mean-centred. __This is a key fact and will affect the interpretation of our predictors later on__.
-
-Think about what this means for $x^2$. It will be uncorrelated with $x$ (because $-0.5^2 = 0.5^2$)!  
+Or even use the `poly()` function:  
 ```{r}
-matplot(poly(1:10, 3, raw=F), type="l")
-```
-The correlations are zero!
-```{r}
-cor(poly(1:10, 3, raw=F)) %>% round(2)
+#| eval: false
+lm(syndens ~ poly(age, degree=3, raw=TRUE), data = syndat)
 ```
 
-We can then fit the same models `y~poly1`, `y~poly1+poly2`, and `y~poly1+poly2+poly3` as predictors (where `poly1`-`poly3` are now **orthogonal** polynomials), and see that estimated coefficients do not change between models: 
-```{r orthpolytab, echo=FALSE}
-df <- code_poly(df = df, predictor = 'x', poly.order = 3, orthogonal = TRUE, draw.poly = FALSE)
-full_join(
-    broom::tidy(lm(y~poly1, df))[,1:2] %>% 
-        #mutate(estimate = paste(round(estimate,2), c("","**"))) %>% 
-        rename(`y~poly1` = estimate),
-    broom::tidy(lm(y~poly1+poly2, df))[,1:2] %>% 
-        #mutate(estimate = paste(round(estimate,2), c("***","***","***"))) %>% 
-        rename(`y~poly1+poly2` = estimate)
-) %>% full_join(.,
-                broom::tidy(lm(y~poly1+poly2+poly3, df))[,1:2] %>% 
-                    #mutate(estimate = paste(round(estimate,2), c("***","***","***","***"))) %>% 
-                    rename(`y~poly1+poly2+poly3` = estimate)
-) %>% mutate_if(is.numeric,~round(.,2)) %>% 
-    mutate_all(~ifelse(is.na(.), "-", .)) %>% 
-    kableExtra::kable(caption = "Incremental addition of orthogonal polynomial terms") %>%
-    kableExtra::kable_styling(full_width = FALSE)
+:::
+::: {.callout-tip collapse="true"}
+#### A handy function from Dan
 
-```
-
-
-:::statbox
-**Remember what zero is!** 
-
-With orthogonal polynomials, you need to be careful about interpreting coefficients. For raw polynomials the intercept remains the y-intercept (i.e., where the line hits the y-axis). The higher order terms can then be thought of from that starting point - e.g., "where $x$ is 2, $\widehat{y}$ is $\beta_0 + \beta_1 \cdot 2 + \beta_2 \cdot 2^2 + \beta_3 \cdot 2^3 ...$".  
-<br>
-For orthogonal polynomials, the interpretation becomes more tricky. The intercept is the overall average of y, the linear predictor is the linear change pivoting around the mean of $x$ (rather than $x = 0$), the quadratic term corresponds to the steepness of the quadratic curvature ("how curvy is it?"), the cubic term to the steepness at the inflection points ("how wiggly is it?"), and so on. 
-
-::: 
-
-## Some useful code from Dan
-
-:::rtip
-
-It's possible to use `poly()` internally in fitting our linear model, if we want:  
-```{r eval=FALSE}
-lm(y ~ poly(x, 3, raw = T), data = df)
-```
-<br>
-Unfortunately, the coefficients will end up having long messy names `poly(x, 3, raw = T)[1]`, `poly(x, 3, raw = T)[2]` etc.   
-<br>
-It is probably nicer if we add the polynomials to our data itself. As it happens, Dan has provided a nice little function which attaches these as columns to our data, naming them `poly1`, `poly2`, etc. 
-```{r include=FALSE}
-set.seed(754)
-mydata<-tibble(
-  x = 1:10,
-  y = x + 
-  rnorm(1, mean = 100) * (x) +
-  rnorm(1, mean = 0, sd = .01) * (x) ^ 2 +
-  rnorm(1, mean = -1) * (x) ^ 3 + 
-  rnorm(10)
-) %>% rename(time=x)
-```
-
+Dan has a nice function that may be handy. It adds the polynomials to your dataset for you:  
 ```{r}
 # import Dan's code and make it available in our own R session
 # you must do this in every script you want to use this function
 source("https://uoepsy.github.io/msmr/functions/code_poly.R")
 
-mydata <- code_poly(df = mydata, predictor = 'time', poly.order = 3, 
+# TODO
+syndat <- read_csv("../../data/msmr_synapticdens.csv")
+syndat <- code_poly(df = syndat, predictor = 'age', poly.order = 3, 
                     orthogonal = FALSE, draw.poly = FALSE)
-head(mydata)
+head(syndat)
 ```
-
-Both will produce the same model output (but Dan's method produces these nice neat names for the coefficients!), and we can just put the terms into our model directly as `lm(y ~ poly1 + poly2 + poly3, data = mydata)`.  
-
-`r optbegin("Demonstration", olabel=F,toggle=params$TOGGLE)`
-```{r echo=FALSE}
-set.seed(4)
-df<-tibble(
-  x = 1:10,
-  y = x + 
-  rnorm(1, mean = 100) * (x) +
-  rnorm(1, mean = 0, sd = .01) * (x) ^ 2 +
-  rnorm(1, mean = -1) * (x) ^ 3 + 
-  rnorm(10)
-)
-```
-Our data:  
-```{r}
-head(df)
-```
-
-A messy model:  
-```{r}
-m.messy <- lm(y ~ poly(x, 3, raw=T), data = df)
-```
-
-```{r echo=FALSE}
-# broom::tidy(m.messy) %>% pander::pander()
-```
-
-```{r echo=FALSE}
-broom::tidy(m.messy) %>% gt::gt()
-```
-
-Dan's code, and a neat model:  
-
-```{r}
-df <- code_poly(df = df, predictor = 'x', poly.order = 3, 
-                orthogonal = FALSE, draw.poly = FALSE)
-mDan <- lm(y ~ poly1 + poly2 + poly3, data = df)
-```
-
-```{r echo=FALSE}
-# broom::tidy(mDan) %>% pander::pander()
-```
-
-```{r echo=FALSE}
-broom::tidy(mDan) %>% gt::gt()
-```
-
-`r optend()`
 :::
 
 
+Just to see it in action, let's take a look at the predicted values from our model.  
+Take for instance, the 9th row below. The predicted value of y (shown in the `.fitted` column) is:  
+$\hat y_9 = b_0 + b_1 \cdot x_9 + b_2 \cdot x^2_9 + b_3 \cdot x^3_9$  
+$\hat y_9 = b_0 + b_1 \cdot 2 + b_2 \cdot 4 + b_3 \cdot 8$  
+$\hat y_9 = -1.843 + 3.375 \cdot 2 + -0.332 \cdot 4 + 0.0097 \cdot 8$  
+$\hat y_9 = 3.66$.  
+```{r}
+library(broom)
+augment(cubicmod) 
+```
+
+If we plot the predictions with `poly1` on the x-axis (`poly1` is just the same as our `age` variable with a different name!), we can see that we are able to model a non-linear relationship between y and x (between synaptic density and age), via a combination of linear parameters!  
+```{r}
+#| label: fig-fittedcubic
+#| fig-cap: "a cubic model"  
+library(broom)
+augment(cubicmod, interval="confidence") |>
+  ggplot(aes(x=poly1))+
+  geom_point(aes(y=syndens),size=2,alpha=.3) + 
+  geom_line(aes(y=.fitted),col="darkorange") +
+  geom_ribbon(aes(ymin=.lower,ymax=.upper),fill="darkorange", alpha=.2)+
+  labs(x="age") # our x-axis, "poly1", is just age!  
+```
+
+Now lets look at our coefficients:   
+```{r}
+#| eval: false
+summary(cubicmod)
+```
+```
+...
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept) -1.842656   0.704193  -2.617   0.0109 *  
+poly1        3.375159   0.345570   9.767 1.06e-14 ***
+poly2       -0.331747   0.044664  -7.428 2.06e-10 ***
+poly3        0.009685   0.001614   6.001 7.79e-08 ***
+---
+```
+
+With polynomials the interpretation is a little tricky because we have 3 coefficients that together explain the curvy line we see in @fig-fittedcubic, and these coefficients are all dependent upon one another.  
+
+- `(Intercept)` = When all predictors are zero, i.e. the synaptic density at age 0.  
+- `poly1` coefficient = The instantaneous change in $y$ when $x=0$. 
+- `poly2` coefficient = Represents "rate of change of the rate of change" at $x=0$. In other words, the _curvature_ at $x=0$.  
+- `poly3` coefficient = Represents how the curvature is changing. It gets more abstract as the order of polynomials increase, so the easiest way to think about it is "the wiggliness"  
+
+I've tried to represent what each term adds in @fig-polycoef. The intercept is the purple point where age is zero. The `poly1` coefficient is represented by the dashed blue line - the tangent of the curve at age zero. The `poly2` coef, rperesented by the dashed green line, is how the angle of the blue line is changing at age zero. Finally, the `poly3` coefficient tells us how much this curvature is changing (which gets us to our dashed orange line).  
+
+Note that these interpretations are all dependent upon the others - e.g. the interpretation of `poly2` refers to how the angle of `poly1` is changing.  
+
+```{r}
+#| label: fig-polycoef
+#| echo: false
+#| fig-cap: "the instantaneous rate of change at x=0 (blue), the rate of change in the rate of change (i.e. curvature, green), and 'rate of change in rate of change in rate of change' (i.e. wiggliness, orange)"
+cc = coef(cubicmod)
+augment(cubicmod, interval="confidence") |>
+  ggplot(aes(x=poly1))+
+  geom_point(aes(y=syndens),size=2,alpha=.3) + 
+
+    stat_function(geom="line",fun=function(.x) cc[1]+(cc[2]*.x)+(cc[3]*.x^2)+(cc[4]*.x^3),
+                lty="dashed",col="darkorange",lwd=1)+  
+  stat_function(geom="line",fun=function(.x) cc[1]+(cc[2]*.x)+(cc[3]*.x^2),
+                lty="dashed",col="green4",lwd=1)+
+  geom_abline(intercept=cc[1],slope=cc[2],lty="dashed", col="blue",lwd=1)+
+  geom_point(x=0,y=cc[1],size=5,col="purple") + 
+  scale_x_continuous("age",limits=c(0,19))+
+  scale_y_continuous(limits=c(-4,12))
+```
+
+## Orthogonal Polynomials  
+
+The `poly()` function also enables us to compute "orthogonal polynomials". This is the same information as the raw polynomials, re-expressed into a set of __uncorrelated__ variables.  
+
+Raw polynomials are correlated, which is what results makes their interpretation depend upon one another. For example, if we take the numbers 1,2,3,4,5, then these numbers are _by definition_ correlated with their squares 1,4,9,16,25. As we increase from 1 to 5, we necessarily increase from 1 to 25.  
+However, if we first _center_ the set of numbers, so that 1,2,3,4,5 becomes -2,1,0,1,2, then their squares are 4,1,0,1,4 - they're not correlated!  
+
+Orthogonal polynomials essentially do this centering and scaling for $k$ degrees of polynomial terms.  
+
+:::: {.columns}
+::: {.column width="45%"}
+So while raw polynomials look like this:  
+```{r}
+#| fig-height: 2
+matplot(poly(1:10, 3, raw=T), type="l", lwd=2)
+```
+:::
+::: {.column width="10%"}
+:::
+::: {.column width="45%"}
+Orthogonal polynomials look like this:
+```{r}
+#| fig-height: 2
+matplot(poly(1:10, 3, raw=F), type="l", lwd=2)
+```
+:::
+::::
+
+This orthogonality allows us to essentially capture express the linear trend, curvature, and 'wiggliness' of the trajectory **independently** from one another, rather than relative to one another.  
+
+Ultimately, models using raw polynomials and using orthogonal polynomials are identical, but the coefficients we get out represent different things.
+
+Let's overwrite our `poly` variables with orthogonal polynomials, by setting `raw = FALSE`:  
+```{r}
+syndat <- 
+  syndat |> 
+    mutate(
+      poly1 = poly(age,degree = 3, raw=FALSE)[,1],
+      poly2 = poly(age,degree = 3, raw=FALSE)[,2],
+      poly3 = poly(age,degree = 3, raw=FALSE)[,3],
+    )
+```
+
+And fit our model:  
+```{r}
+#| eval: false
+Ocubicmod <- lm(syndens ~poly1+poly2+poly3,syndat)
+summary(Ocubicmod)
+```
+```{r}
+#| echo: false
+Ocubicmod <- lm(syndens ~poly1+poly2+poly3,syndat)
+```
+
+```
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   6.5917     0.1902  34.649  < 2e-16 ***
+poly1        12.9161     1.6365   7.892 2.88e-11 ***
+poly2       -14.3156     1.6365  -8.748 7.68e-13 ***
+poly3         9.8212     1.6365   6.001 7.79e-08 ***
+---
+```
+
+The interpretation of the estimates themselves are not really very tangible anymore, because the scaling of the orthogonal polynomials has lost a clear link back to "age".  
+
+As the polynomial terms are centered on the mean of age, the intercept is the estimated synaptic density at the mean age (the purple dot in @fig-polycoeforth). The `poly1`, `poly2` and `poly3` coefficient represent the independent overall linear trend, centered curvature, and "wiggliness" of the relationship between synaptic density and age (as shown in the blue, green and orange lines in @fig-polycoeforth respectively).  
+
+```{r}
+#| label: fig-polycoeforth
+#| fig-cap: "the independent rate of change (blue), curvature (green) and wiggliness (orange) of the y~x relationship"   
+#| echo: false
+Olinmod <- lm(syndens ~ poly1,syndat)
+Oquadmod <- lm(syndens ~ poly1+poly2,syndat)
+Ocubicmod <- lm(syndens ~poly1+poly2+poly3,syndat)
+
+Occ = coef(Olinmod)
+library(broom)
+augment(Olinmod, interval="confidence") |>
+  ggplot(aes(x=poly1))+
+  scale_y_continuous(limits=c(-4,12)) + 
+  geom_point(aes(y=syndens),size=2,alpha=.3) + 
+  geom_line(aes(y=predict(Olinmod)),lty="dashed",col="blue",lwd=1)+
+  geom_line(aes(y=predict(Oquadmod)),lty="dashed",col="green4",lwd=1)+
+  geom_line(aes(y=predict(Ocubicmod)),lty="dashed",col="darkorange",lwd=1)+
+  geom_point(x=0,y=coef(Ocubicmod)[1],size=5,col="purple")
+```
+
+## Raw vs Orthognal  
+
+The two models we have seen, one with raw polynomials, and one with orthogonal polynomials, are identical.  
+
+For proof, compare the two:  
+```{r}
+anova(
+  lm(syndens ~ poly(age, 3, raw = TRUE), data = syndat),
+  lm(syndens ~ poly(age, 3, raw = FALSE), data = syndat)
+)
+```
+
+So why would we choose one vs the other? 
+
+The main reason is if we are interested in evaluating things *relative to baseline*, in which case raw polynomials allow us to do just that. If we are instead interested in evaluating the trends **across** the timecourse, then we would want orthogonal polynomials. 
+
+Consider two examples:  
+
+:::: {.columns}
+::: {.column width="45%"}
+__Example 1__  
+
+A student advisor who meets with students as they start university wants to know about how happiness evolves over the course of students' year at univeristy, and wonders if this is different between introverted and extraverted individuals.  
+
+In this case, they would want *raw* polynomials, so that they can assess whether the two personality types differ when they first come to University, and how this is likely to evolve from that point.  
+```{r}
+#| echo: false
+tibble(
+  age = seq(1,4,.1),
+  int = .6*scale(age) + .3*(scale(age)^2),
+  ex =  1.5 + .5*scale(age) -.2*(scale(age)^2),
+) |> pivot_longer(int:ex) |>
+  mutate(personality = 
+           factor(name,levels=,c("ex","int"),
+                  labels=c("extravert","introvert"))) |>
+  ggplot(aes(x=age,y=value,col=personality))+
+  geom_line(lwd=1)+
+  labs(x="Year of Study at University", y="Happiness")+
+  scale_y_continuous(breaks=NULL)
+
+```
+:::
+::: {.column width="10%"}
+:::
+::: {.column width="45%"}
+__Example 2__  
+
+A company has four stores across the UK, and they want to know if the stores have differed in how variable their earnings have been across the year. 
+
+In this case, looking at change relative to month 1 isn't very useful. It would, for instance, tell us that the linear trend for store2's earnings is upwards, whereas the linear trend for store 1 is flat. This makes store2 look better.  
+If we used orthogonal polynomials instead, we would see that the linear trend for store 2 is actually *negative* compared to store1. 
+
+```{r}
+#| echo: false
+tibble(
+  month = seq(1,12,.3),
+  s1 = 1.4,#scale(month) + scale(month)^2,
+  s2 = 1.4 + .3*scale(month,center=F) + -.1*(scale(month)+1)^2 + -.2*scale(month,center=F)^3,
+  s3 = scale(month) + scale(month)^2
+) |> pivot_longer(s1:s3) |>
+  mutate(store=factor(name,levels=c("s1","s2","s3"),
+                      labels=c("store1","store2","store3"))) |>
+  ggplot(aes(x=month,y=value,col=store))+
+  geom_line(lwd=1)+
+  labs(x="Month",y="Earnings")+
+  scale_y_continuous(breaks=NULL)
+
+```
+
+:::
+::::
+
+:::sticky
+
+Raw? Orthogonal?  
+
+For non-linear relationships, a good plot is usually the most important thing!  
+
+:::
+
+# Polynomials and overfitting
+
+:::frame
+Two quotes
+
+"all models are wrong. some are useful." [(George Box, 1976)](https://www.tandfonline.com/doi/abs/10.1080/01621459.1976.10480949).  
+
+"...it does not seem helpful just to say that all models are wrong. The very word model implies simplification and idealization. The idea that complex physical, biological or sociological systems can be exactly described by a few formulae is patently absurd. The construction of idealized representations that capture important stable aspects of such systems is, however, a vital part of general scientific analysis and statistical models, especially substantive ones, do not seem essentially different from other kinds of model." (Sir David Cox, 1995).  
+
+:::
+
+
+# Example
+
+
+Do 
+
+
+chimp and orangutan's middle aged slump.  
+
+```{r}
+ss = 36460
+# ss = round(runif(1,1e3,1e6))
+set.seed(ss)
+n_groups = 200
+npgroup = rep(10,200)
+g = unlist(sapply(1:n_groups, function(x) rep(x,npgroup[x])))
+N = length(g)
+x = rep(1:10,200)
+b = sample(letters[1:2],n_groups,T,prob=c(.6,.4))
+b = b[g]
+res = MASS::mvrnorm(n=n_groups,
+                    mu=c(0,0),
+                    Sigma=diag(c(2,1))%*%matrix(c(1,.4,.4,1),nrow=2)%*%diag(c(2,1)))
+re0 = res[,1]
+re  = re0[g]
+rex = res[,2]
+re_x  = rex[g]
+poly1 = poly(x,2)[,1]
+poly2 = poly(x,2)[,2]
+lp = (0 + re) + (.2 + re_x)*poly1 + 
+  9*poly2 + 
+  .6*(b=="b") +
+  -6*(b=="b")*poly2
+y = lp + rnorm(N,0,1)
+df = data.frame(x = x,g=g, b=b,y=round(scale(y)[,1],1))
+
+mnames = unique(randomNames::randomNames(1e5,which="first"))
+
+df = df |>
+  transmute(
+    ape = mnames[g],
+    age = x,
+    species = as.character(factor(b, levels=letters[1:2],labels=c("human","orangutan"))),
+    happiness = scale(y)[,1]*2.4+5.7
+  ) |>
+  mutate(
+    timepoint = age,
+    age = case_when(
+      species=="human" ~ age*5+20,
+      TRUE ~ age*2.5 + 10)
+  )
+
+df |> filter(
+  ape %in% sample(unique(df$ape),12)
+) |>
+ggplot(aes(x=age,y=happiness))+
+  geom_point()+
+  geom_line(aes(group=ape,col=species))
+
+
+
+library(lme4)
+df <- df |> mutate(
+  poly1 = poly(timepoint,2,raw=F)[,1],
+  poly2 = poly(timepoint,2,raw=F)[,2],
+)
+m = lmer(happiness ~ 1 + (poly1+poly2)*species+(1+poly1+poly2|ape),df)
+summary(m)
+broom.mixed::augment(m) |>
+  ggplot(aes(x=round(poly1,2),y=.fitted,col=species))+
+  stat_summary(geom="pointrange",aes(y=happiness))+
+  stat_summary(geom="line")
+
+```
+
+
+
+```{r}
+df |> count(ape) |>
+  summary()
+```
+
+```{r}
+df |> group_by(species) |>
+  summarise(
+    n_apes = n_distinct(ape)
+  )
+```
+
+```{r}
+ggplot(df, aes(x=age,y=happiness))+
+  geom_line(aes(group=ape,col=species, alpha=.3)) +
+  facet_wrap(~species)
+```
+
+```{r}
+ggplot(df, aes(x=age,y=happiness, col=species))+
+  stat_summary(geom="pointrange")
+```
+
+```{r}
+library(lme4)
+df <- df |> mutate(
+  poly1 = poly(timepoint,2,raw=T)[,1],
+  poly2 = poly(timepoint,2,raw=T)[,2],
+)
+m1a = lmer(happiness ~ 1 + (poly1+poly2)* species+(1+poly1+poly2|ape),df)
+```
+
+```{r}
+broom.mixed::augment(m1a) |>
+  ggplot(aes(x=poly1,y=.fitted,col=species))+
+  stat_summary(geom="pointrange",aes(y=happiness))+
+  stat_summary(geom="line")
+```
+
+```{r}
+summary(m1a)
+```
 
 
