@@ -40,8 +40,10 @@ res <- broom::tidy(linmod) |> mutate(across(estimate:statistic,~round(.,2)))
 :::lo
 This reading:  
 
+- The basics of modelling non-linear change via polynomial terms. 
+- An example with MLM
 
-+ [Winter & Wieling, 2016](https://doi.org/10.1093/jole/lzv003)  
+For additional reading, [Winter & Wieling, 2016](https://doi.org/10.1093/jole/lzv003) is pretty good (mainly focus on sections 1-3)
 
 :::
 
@@ -60,8 +62,7 @@ Suppose we had collected the data on `r nrow(syndat)` children, and measured the
 #| label: fig-dfeg
 #| fig-cap: "A clearly non-linear pattern"
 #| fig.height: 3.5
-# syndat <- read_csv("https://uoepsy.github.io/data/msmr_synapticdens.csv")
-# TODO
+syndat <- read_csv("https://uoepsy.github.io/data/msmr_synapticdens.csv")
 ggplot(syndat, aes(x=age,y=syndens))+
   geom_point(size=2)+
   labs(x="Age (years)",y="Synaptic Density")
@@ -332,8 +333,7 @@ Dan has a nice function that may be handy. It adds the polynomials to your datas
 # you must do this in every script you want to use this function
 source("https://uoepsy.github.io/msmr/functions/code_poly.R")
 
-# TODO
-syndat <- read_csv("../../data/msmr_synapticdens.csv")
+syndat <- read_csv("https://uoepsy.github.io/data/msmr_synapticdens.csv")
 syndat <- code_poly(df = syndat, predictor = 'age', poly.order = 3, 
                     orthogonal = FALSE, draw.poly = FALSE)
 head(syndat)
@@ -579,27 +579,16 @@ For non-linear relationships, a good plot is usually the most important thing!
 
 :::
 
-# Polynomials and overfitting
+
+# Example in MLM
+
 
 :::frame
-Two quotes
+__Data: midlife_ape.csv__  
 
-"all models are wrong. some are useful." [(George Box, 1976)](https://www.tandfonline.com/doi/abs/10.1080/01621459.1976.10480949).  
-
-"...it does not seem helpful just to say that all models are wrong. The very word model implies simplification and idealization. The idea that complex physical, biological or sociological systems can be exactly described by a few formulae is patently absurd. The construction of idealized representations that capture important stable aspects of such systems is, however, a vital part of general scientific analysis and statistical models, especially substantive ones, do not seem essentially different from other kinds of model." (Sir David Cox, 1995).  
-
-:::
-
-
-# Example
-
-
-Do 
-
-
-chimp and orangutan's middle aged slump.  
 
 ```{r}
+#| include: false
 ss = 36460
 # ss = round(runif(1,1e3,1e6))
 set.seed(ss)
@@ -619,10 +608,11 @@ rex = res[,2]
 re_x  = rex[g]
 poly1 = poly(x,2)[,1]
 poly2 = poly(x,2)[,2]
-lp = (0 + re) + (.2 + re_x)*poly1 + 
+lp = (0 + re) + (3 + re_x)*poly1 + 
+  #+*poly1*(b=="b") +
   9*poly2 + 
   .6*(b=="b") +
-  -6*(b=="b")*poly2
+  -5.5*(b=="b")*poly2
 y = lp + rnorm(N,0,1)
 df = data.frame(x = x,g=g, b=b,y=round(scale(y)[,1],1))
 
@@ -630,84 +620,357 @@ mnames = unique(randomNames::randomNames(1e5,which="first"))
 
 df = df |>
   transmute(
-    ape = mnames[g],
+    apeID = mnames[g],
     age = x,
-    species = as.character(factor(b, levels=letters[1:2],labels=c("human","orangutan"))),
-    happiness = scale(y)[,1]*2.4+5.7
+    species = as.character(factor(b, levels=letters[1:2],labels=c("chimp","orangutan"))),
+    HiP = round(scale(y)[,1]*2.4+9.4,2)
   ) |>
   mutate(
     timepoint = age,
-    age = case_when(
-      species=="human" ~ age*5+20,
-      TRUE ~ age*2.5 + 10)
+    age = age*3 + 10
   )
 
-df |> filter(
-  ape %in% sample(unique(df$ape),12)
-) |>
-ggplot(aes(x=age,y=happiness))+
-  geom_point()+
-  geom_line(aes(group=ape,col=species))
 
 
-
-library(lme4)
-df <- df |> mutate(
-  poly1 = poly(timepoint,2,raw=F)[,1],
-  poly2 = poly(timepoint,2,raw=F)[,2],
-)
-m = lmer(happiness ~ 1 + (poly1+poly2)*species+(1+poly1+poly2|ape),df)
-summary(m)
-broom.mixed::augment(m) |>
-  ggplot(aes(x=round(poly1,2),y=.fitted,col=species))+
-  stat_summary(geom="pointrange",aes(y=happiness))+
-  stat_summary(geom="line")
+# library(lme4)
+# df <- df |> mutate(
+#   poly1 = poly(timepoint,2,raw=F)[,1],
+#   poly2 = poly(timepoint,2,raw=F)[,2],
+# )
+# m = lmer(HiP ~ 1 + (poly1+poly2)*species+(1+poly1+poly2|apeID),df)
+# summary(m)
+# broom.mixed::augment(m) |>
+#   ggplot(aes(x=round(poly1,2),y=.fitted,col=species))+
+#   stat_summary(geom="pointrange",aes(y=HiP))+
+#   stat_summary(geom="line")
+# 
+# write_csv(df, "../../data/midlife_ape.csv")
 
 ```
 
+Previous research has evidenced a notable dip in happiness for middle-aged humans. Interestingly, this phenomenon has even been observed in other primates, such as chimpanzees.  
 
+The present study is interested in examining whether the 'middle-age slump' happens to a similar extent for Orangutans as it does for Chimpanzees. 
+
+`r n_distinct(df$apeID)` apes (`r n_distinct(df$apeID[df$species=="chimp"])` Chimps and `r n_distinct(df$apeID[df$species=="orangutan"])` Orangutans) were included in the study. All apes were studied from early adulthood (10-12 years old for most great apes), and researchers administered the Happiness in Primates (HiP) scale to each participant every 3 years, up until the age of 40.  
+
+The data are available at [https://uoepsy.github.io/data/midlife_ape.csv](https://uoepsy.github.io/data/midlife_ape.csv){target="_blank"}.  
+
+The dataset has already been cleaned, and the researchers have confirmed that it includes `r n_distinct(df$apeID[df$species=="chimp"])` Chimps and `r n_distinct(df$apeID[df$species=="orangutan"])` Orangutans, and every ape has complete data (i.e. 10 rows for each ape). A data dictionary can be found in @tbl-midlifedict
 
 ```{r}
-df |> count(ape) |>
-  summary()
+#| echo: false
+#| label: tbl-midlifedict
+#| tbl-cap: "Data Dictionary: midlife_ape.csv"
+mlape <- read_csv("https://uoepsy.github.io/data/midlife_ape.csv")
+tibble(
+  variable=names(mlape),
+  description=c("Ape's Name (all names are chosen to be unique)",
+                "Age (in years) at assessment",
+                "Species (chimp v orangutan)",
+                "Happiness in Primate Scale (range 1 to 18)",
+                "Study visit (1 to 10)")
+) |> gt::gt()
 ```
 
-```{r}
-df |> group_by(species) |>
-  summarise(
-    n_apes = n_distinct(ape)
-  )
-```
+:::
+
+
+Initial plots are hard see when we plot a different line for each ape:  
 
 ```{r}
-ggplot(df, aes(x=age,y=happiness))+
-  geom_line(aes(group=ape,col=species, alpha=.3)) +
+mlape <- read_csv("https://uoepsy.github.io/data/midlife_ape.csv")
+
+ggplot(mlape, aes(x=age,y=HiP))+
+  geom_line(aes(group=apeID,col=species),alpha=.3) +
+  scale_color_manual(values=c("grey40","darkorange")) + 
   facet_wrap(~species)
 ```
 
-```{r}
-ggplot(df, aes(x=age,y=happiness, col=species))+
-  stat_summary(geom="pointrange")
-```
+What is often more useful for exploring is to plot the averages in y across values of x.  
+Here we can see some slight curvature - the chimps seem to have a notable dip in happiness at about 20 years old.  
 
 ```{r}
-library(lme4)
-df <- df |> mutate(
-  poly1 = poly(timepoint,2,raw=T)[,1],
-  poly2 = poly(timepoint,2,raw=T)[,2],
-)
-m1a = lmer(happiness ~ 1 + (poly1+poly2)* species+(1+poly1+poly2|ape),df)
-```
-
-```{r}
-broom.mixed::augment(m1a) |>
-  ggplot(aes(x=poly1,y=.fitted,col=species))+
-  stat_summary(geom="pointrange",aes(y=happiness))+
+ggplot(mlape, aes(x=age,y=HiP, col=species))+
+  scale_color_manual(values=c("grey40","darkorange")) + 
+  stat_summary(geom="pointrange")+
   stat_summary(geom="line")
 ```
 
+
+::: {.callout-tip collapse="true"}
+#### Note
+These plots can be misleading, especially in the event of missing data or incomplete trajectories.  For instance, suppose we had data on happy chimps when they are young and when they are old, but not in the middle of their lives. The average of all chimps at each data point would look non-linear!  
+
+This illusion would not fool our multilevel model, however, which estimates the average of the individual lines
+
 ```{r}
-summary(m1a)
+#| echo: false
+#| label: fig-missing
+#| fig-cap: "hypothetical: if happier apes have missing data in mid life, the average looks non-linear, even though for each ape it is linear!"
+#| out-width: "100%"
+#| fig-height: 3.5
+tibble(
+  g = rep(1:20,e=10),
+  g0 = rep(sort(rnorm(20)),e=10),
+  age = rep(seq(13,40,3),20),
+  HiP = 9 + g0 + rnorm(200,0,.05)
+) |> 
+  filter(!(g>15 & age>20 & age<35)) |>
+  filter(!(g>10 & g<=15 & age>25 & age<30))-> dd
+
+
+ggplot(dd, aes(x=age,y=HiP,group=g))+
+  geom_point(size=3,alpha=.3)+
+  geom_line(alpha=.3) +
+   labs(title="individual chimp lines") + 
+  
+ggplot(dd, aes(x=age,y=HiP))+
+  stat_summary(geom="pointrange")+
+  stat_summary(geom="line")+
+  labs(title="naive averages")
 ```
+
+
+:::
+
+
+> The present study is interested in examining whether the 'middle-age slump' happens to a similar extent for Orangutans as it does for Chimpanzees. 
+
+We're interested in the difference in curvature across adulthood between Chimps and Orangutans. This is a case where we're not hugely interested in some specific point in time, so orthogonal polynomials might be easier.  
+Both `age` and `timepoint` here contain the same information, so we can use either to create our polynomials:
+```{r}
+mlape <- mlape |> 
+  mutate(
+    poly1 = poly(timepoint,2,raw=F)[,1],
+    poly2 = poly(timepoint,2,raw=F)[,2],
+  )
+```
+
+And then we'll fit our model.  
+
+We know we're interested in the change in happiness across age, so our model is going to take the form: 
+```
+lmer(HiP ~ age ....
+```
+. But we've just said that we're interested in the curvature of this, so we're going to re-express `age` as the two parts, the linear and the quadratic:  
+```
+lmer(HiP ~ poly1 + poly2 ....
+```
+We're interested in the differences in the "hapiness ~ age" relationship between Orangutans and Chimps, so we can estimate species-differences in both aspects of the trajectroy (the linear and the quadratic).  
+```
+lmer(HiP ~ (poly1 + poly2) * species ....
+```
+this is equivalent to
+```
+lmer(HiP ~ poly1 + poly2 + species + 
+           poly1:species + poly2:species ....
+```
+
+Finally, we want to account for the variability in happiness due to random ape-to-ape differences (i.e. some are just happy, some are not).  
+```
+lmer(HiP ~ (poly1 + poly2) * species + 
+           (1 + ... | apeID), data = mlape)
+```
+
+Lastly, it's very likely that 'change over time' varies from ape-to-ape, so we want to allow the slopes of age to vary. We can allow one or both of the poly1 and poly2 terms to vary, so we'll start with both:  
+
+```{r}
+library(lme4)
+mod1 = lmer(HiP ~ 1 + (poly1+poly2)*species+
+            (1+poly1+poly2|apeID), 
+            data = mlape)
+```
+
+and it converges (hooray!). 
+
+Now let's plot the average value of happiness across time, alongside the average _predicted_ value.  
+
+```{r}
+broom.mixed::augment(mod1) |>
+  mutate(poly1 = round(poly1,4)) |>
+  ggplot(aes(x=poly1,y=.fitted,col=species))+
+  # the average value across time: 
+  stat_summary(geom="pointrange",aes(y=HiP))+
+  # the average model predicted value
+  stat_summary(geom="line") + 
+  scale_color_manual(values=c("grey40","darkorange"))
+```
+
+It looks like both species have a bit of curvature, and this may be more pronounced for chimps than for orangutans.  
+
+Let's look at our parameters to see:  
+```{r}
+# fitted with satterthwaite to get some p-values
+lmerTest::lmer(HiP ~ 1 + (poly1+poly2)*species+
+            (1+poly1+poly2|apeID), 
+            data = mlape) |>
+  summary()
+```
+```
+Fixed effects:
+                       Estimate Std. Error       df t value Pr(>|t|)    
+(Intercept)              9.1155     0.1955 198.0009  46.630  < 2e-16 ***
+poly1                    1.8796     1.5391 197.9811   1.221   0.2235    
+poly2                    9.4004     1.7454 197.9991   5.386 2.03e-07 ***
+speciesorangutan         0.6853     0.3035 198.0009   2.258   0.0250 *  
+poly1:speciesorangutan   0.1104     2.3892 197.9811   0.046   0.9632    
+poly2:speciesorangutan  -6.2718     2.7093 197.9991  -2.315   0.0216 *  
+```
+```{r}
+lmerTest::lmer(HiP ~ 1 + (poly1+poly2)*species+
+            (1+poly1+poly2|apeID), 
+            data = mlape) |>
+broom.mixed::tidy() |>
+  filter(effect=="fixed") |>
+  transmute(
+    term, est=round(estimate,2),
+    p = case_when(
+      p.value<.001 ~ "***",
+      p.value<.01 ~ "**",
+      p.value<.05 ~ "*",
+      TRUE ~ ""
+    ),
+    `what it tells us` = c(
+      "the average happiness at the average age is 9.11 (not hugely interesting).",
+      "there is no significant linear trend of happiness over time for Chimpanzees (you can kind of see this in our plot above - they more or less end where they started)",
+      "there *is* a significant curvature to the chimpanzees' happiness trajectory. Because this estimate is positive, that means we know it is u-shaped and not n-shaped - i.e. - Chimpanzees have a mid-life slump in happiness!",
+      "at the average age, Orangutans are happier than Chimpanzees.",
+      "the linear trend for Orangutans is not significantly different from the linear trend for Chimpanzees",
+      "the curvature for Orangutans is significantly different from the curvature for Chimpanzees. Because the estimate is negative, that means it is less u-shaped than the Chimpanzee line - i.e. Orangutans do not have as much of a mid-life slump as Chimps do!"
+    )
+  ) |> gt::gt()
+```
+
+
+As we have two groups, the parameters provide us with all the tests we need to identify "do species differ in the extent that they have a mid-life dip in happiness?"  
+But if we had $>2$ species and wanted to do test join "species differences", we could set up models for comparisons, i.e. allowing species to interact with different parts: 
+
+- `HiP ~ (poly1 + poly2)*species`
+    + species differ in their linear and quadratic trends
+- `HiP ~ poly1*species + poly2`
+    + species differ in their linear trend only
+- `HiP ~ poly1 + poly2 + species`
+    + species differ in their overall happiness, but not in change over age
+
+
+```{r}
+#| eval: false
+
+mod1 = lmer(HiP ~ 1 + poly(timepoint,2,raw=TRUE)*species+
+            (1+poly(timepoint,2,raw=TRUE)|apeID), 
+            data = mlape)
+effects::effect(term=c("species*timepoint"),mod=mod1, xlevels=40) |>
+  as.data.frame() |>
+  ggplot(aes(x=timepoint,y=fit,ymin=lower,ymax=upper,col=species))+
+  geom_line()+geom_ribbon(alpha=.2,aes(fill=species),col=NA)
+
+mod1 = lmer(HiP ~ 1 + poly(timepoint,2,raw=FALSE)*species+
+            (1+poly(timepoint,2,raw=FALSE)|apeID), 
+            data = mlape)
+effects::effect(term=c("species*timepoint"),mod=mod1, xlevels=40) |>
+  as.data.frame() |>
+  ggplot(aes(x=timepoint,y=fit,ymin=lower,ymax=upper,col=species))+
+  geom_line()+geom_ribbon(alpha=.2,aes(fill=species),col=NA)
+
+
+mod1 = lmer(HiP ~ 1 + (poly1+poly2)*species+
+            (1+poly1+poly2|apeID), 
+            data = mlape)
+
+pp1 <- bind_rows(poly(seq(1,10,length.out=50),2) |> as_tibble(),
+          poly(seq(1,10,length.out=50),2) |> as_tibble()
+          ) |>
+  mutate(species=rep(c("chimp","orangutan"),e=50))
+names(pp1) <-c("poly1","poly2","species")
+
+bts = bootMer(mod1,FUN=function(x) predict(x,newdata=pp1,re.form=NA),nsim=500)
+
+bts$t
+
+pp1$pred = predict(mod1, newdata=pp1,re.form=NA)
+pp1$lwr = apply(bts$t, 2, quantile, .025)
+pp1$upr = apply(bts$t, 2, quantile, .975)
+
+ggplot(pp1, aes(x=poly1,y=pred,ymin=lwr,ymax=upr,
+                col=species,fill=species))+
+  geom_line()+
+  geom_ribbon(alpha=.2)
+  
+
+
+```
+
+
+
+::: {.callout-caution collapse="true"}
+#### TIMTOWTDI 
+As always, **there is more than one way to do it (TIMTOWTDI)**  
+
+The approach we are learning about in this course is only one of many approaches to studying non-linearity. 
+Some alternatives, which you may come across in future work, are listed below.
+
+**Piecewise linear regression:** fit a linear model with cut point(s) along x (determine cut points by greatest reduction in mean squared error $\sigma$)
+```{r echo=FALSE, out.width="350px"}
+MASS::mcycle %>%
+  rename(y=accel,x=times) %>% filter(x>20) -> df
+breaks <- df$x[which(df$x >= 20 & df$x <= 40)]
+mse <- numeric(length(breaks))
+for(i in 1:length(breaks)){
+ piecewise1 <- lm(y ~ x*(x < breaks[i]) + x*(x>=breaks[i]),df)
+ mse[i] <- summary(piecewise1)[6]
+}
+mse <- as.numeric(mse)
+#breaks[which(mse==min(mse))]
+piecewise2 <- lm(y ~ x*(x <= 33) + x*(x > 33), df)
+df %>% mutate(
+  pred = predict(piecewise2),
+  se = predict(piecewise2,se.fit = T)$se
+) %>% 
+  ggplot(.,aes(x=x,y=pred))+
+  geom_line(aes(group=x>33),lwd=1)+
+  #geom_ribbon(aes(ymin=pred-(1.96*se),ymax=pred+(1.96*se),group=x>33),alpha=.2)+
+  geom_point(aes(y=y))+labs(y="y",title="Predicted values of y", subtitle="y ~ x*(x < 33) + x*(x > 33)")
+```
+
+**Piecewise polynomial** fit the model $y \sim x + x^2 + x^3$ to equal chunks of x.  
+
+```{r echo=FALSE, out.width="350px"}
+mod<-function(ddf){lm(y~poly(x,3), data=ddf)}
+
+df %>% mutate(pieces = cut(x,3)) %>% 
+  group_by(pieces) %>%
+  nest_legacy() %>%
+  mutate(
+    model = map(data, mod),
+    fit = map(model, ~fitted(.))
+  ) %>%
+  unnest_legacy(data,fit) %>%
+  ggplot(., aes(x=x))+
+  geom_point(aes(y=y))+
+  geom_line(aes(y=fit, col=pieces),lwd=1)+
+  theme_minimal() + guides(col=FALSE)+
+  labs(title="Predicted values of y",subtitle="y~ x + x^2 + x^3 for 3 cuts of x")
+```
+
+
+**Splines, penalised splines & GAMS** 
+
+This begins to open a huge can of worms, but if you foresee yourself needing these sort of tools, then Simon Wood, author of the **mgcv** R package for fitting generalised additive models (GAMS), has plenty of materials on [his webpage](https://www.maths.ed.ac.uk/~swood34/talks/snw-Koln.pdf) (Warning, these are fairly technical). There are also a reasonable number of tutorials [online which are really good](https://www.google.com/search?hl=&site=&q=gam+in+r+tutorial).  
+```{r echo=FALSE, out.width="350px"}
+library(mgcv)
+gam(y~s(x,bs="cr"),df, family="gaussian") -> m
+df %>% mutate(
+  pred = predict(m),
+  se = predict(m,se.fit = T)$se
+) %>% 
+  ggplot(.,aes(x=x,y=pred))+
+  geom_line(lwd=1)+
+  geom_ribbon(aes(ymin=pred-(1.96*se),ymax=pred+(1.96*se)),alpha=.2)+
+  geom_point(aes(y=y))+labs(y="y",title="Predicted values of y", subtitle="mgcv::gam(y ~ s(x, b = 'cr'))")
+```
+
+
+:::
 
 
