@@ -1505,47 +1505,9 @@ Both <code>age</code> and <code>timepoint</code> here contain the same informati
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>            (<span class="dv">1</span><span class="sc">+</span>poly1<span class="sc">+</span>poly2<span class="sc">|</span>apeID), </span>
 <span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> mlape) <span class="sc">|&gt;</span></span>
 <span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite's method [
-lmerModLmerTest]
-Formula: HiP ~ 1 + (poly1 + poly2) * species + (1 + poly1 + poly2 | apeID)
-   Data: mlape
-
-REML criterion at convergence: 6908.3
-
-Scaled residuals: 
-    Min      1Q  Median      3Q     Max 
--3.1222 -0.6175  0.0017  0.6340  3.2437 
-
-Random effects:
- Groups   Name        Variance Std.Dev. Corr     
- apeID    (Intercept)   4.346   2.085            
-          poly1        27.684   5.262   0.11     
-          poly2       106.925  10.340   0.10 0.52
- Residual               1.247   1.117            
-Number of obs: 2000, groups:  apeID, 200
-
+</div>
+<pre><code>...
 Fixed effects:
-                       Estimate Std. Error       df t value Pr(&gt;|t|)    
-(Intercept)              9.1155     0.1955 198.0036  46.630  &lt; 2e-16 ***
-poly1                    1.8796     1.5391 197.8908   1.221   0.2235    
-poly2                    9.4004     1.7453 197.9960   5.386 2.03e-07 ***
-speciesorangutan         0.6853     0.3035 198.0036   2.258   0.0250 *  
-poly1:speciesorangutan   0.1104     2.3892 197.8908   0.046   0.9632    
-poly2:speciesorangutan  -6.2718     2.7093 197.9960  -2.315   0.0216 *  
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Correlation of Fixed Effects:
-            (Intr) poly1  poly2  spcsrn ply1:s
-poly1        0.033                            
-poly2        0.054  0.090                     
-specisrngtn -0.644 -0.021 -0.035              
-ply1:spcsrn -0.021 -0.644 -0.058  0.033       
-ply2:spcsrn -0.035 -0.058 -0.644  0.054  0.090</code></pre>
-</div>
-</div>
-<pre><code>Fixed effects:
                        Estimate Std. Error       df t value Pr(&gt;|t|)    
 (Intercept)              9.1155     0.1955 198.0009  46.630  &lt; 2e-16 ***
 poly1                    1.8796     1.5391 197.9811   1.221   0.2235    
@@ -1554,28 +1516,6 @@ speciesorangutan         0.6853     0.3035 198.0009   2.258   0.0250 *
 poly1:speciesorangutan   0.1104     2.3892 197.9811   0.046   0.9632    
 poly2:speciesorangutan  -6.2718     2.7093 197.9991  -2.315   0.0216 *  </code></pre>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>lmerTest<span class="sc">::</span><span class="fu">lmer</span>(HiP <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (poly1<span class="sc">+</span>poly2)<span class="sc">*</span>species<span class="sc">+</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>            (<span class="dv">1</span><span class="sc">+</span>poly1<span class="sc">+</span>poly2<span class="sc">|</span>apeID), </span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> mlape) <span class="sc">|&gt;</span></span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>broom.mixed<span class="sc">::</span><span class="fu">tidy</span>() <span class="sc">|&gt;</span></span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(effect<span class="sc">==</span><span class="st">"fixed"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(</span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    term, <span class="at">est=</span><span class="fu">round</span>(estimate,<span class="dv">2</span>),</span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">p =</span> <span class="fu">case_when</span>(</span>
-<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>      p.value<span class="sc">&lt;</span>.<span class="dv">001</span> <span class="sc">~</span> <span class="st">"***"</span>,</span>
-<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>      p.value<span class="sc">&lt;</span>.<span class="dv">01</span> <span class="sc">~</span> <span class="st">"**"</span>,</span>
-<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>      p.value<span class="sc">&lt;</span>.<span class="dv">05</span> <span class="sc">~</span> <span class="st">"*"</span>,</span>
-<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">""</span></span>
-<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">what it tells us</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
-<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>      <span class="st">"the average happiness at the average age is 9.11 (not hugely interesting)."</span>,</span>
-<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">"there is no significant linear trend of happiness over time for Chimpanzees (you can kind of see this in our plot above - they more or less end where they started)"</span>,</span>
-<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>      <span class="st">"there *is* a significant curvature to the chimpanzees' happiness trajectory. Because this estimate is positive, that means we know it is u-shaped and not n-shaped - i.e. - Chimpanzees have a mid-life slump in happiness!"</span>,</span>
-<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>      <span class="st">"at the average age, Orangutans are happier than Chimpanzees."</span>,</span>
-<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>      <span class="st">"the linear trend for Orangutans is not significantly different from the linear trend for Chimpanzees"</span>,</span>
-<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a>      <span class="st">"the curvature for Orangutans is significantly different from the curvature for Chimpanzees. Because the estimate is negative, that means it is less u-shaped than the Chimpanzee line - i.e. Orangutans do not have as much of a mid-life slump as Chimps do!"</span></span>
-<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> gt<span class="sc">::</span><span class="fu">gt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 
 <div id="migjbwdoyo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
@@ -2076,47 +2016,6 @@ But if we had <span class="math inline">\(&gt;2\)</span> species and wanted to d
 <li>species differ in their overall happiness, but not in change over age</li>
 </ul></li>
 </ul>
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">=</span> <span class="fu">lmer</span>(HiP <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> <span class="fu">poly</span>(timepoint,<span class="dv">2</span>,<span class="at">raw=</span><span class="cn">TRUE</span>)<span class="sc">*</span>species<span class="sc">+</span></span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>            (<span class="dv">1</span><span class="sc">+</span><span class="fu">poly</span>(timepoint,<span class="dv">2</span>,<span class="at">raw=</span><span class="cn">TRUE</span>)<span class="sc">|</span>apeID), </span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> mlape)</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>effects<span class="sc">::</span><span class="fu">effect</span>(<span class="at">term=</span><span class="fu">c</span>(<span class="st">"species*timepoint"</span>),<span class="at">mod=</span>mod1, <span class="at">xlevels=</span><span class="dv">40</span>) <span class="sc">|&gt;</span></span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>timepoint,<span class="at">y=</span>fit,<span class="at">ymin=</span>lower,<span class="at">ymax=</span>upper,<span class="at">col=</span>species))<span class="sc">+</span></span>
-<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()<span class="sc">+</span><span class="fu">geom_ribbon</span>(<span class="at">alpha=</span>.<span class="dv">2</span>,<span class="fu">aes</span>(<span class="at">fill=</span>species),<span class="at">col=</span><span class="cn">NA</span>)</span>
-<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">=</span> <span class="fu">lmer</span>(HiP <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> <span class="fu">poly</span>(timepoint,<span class="dv">2</span>,<span class="at">raw=</span><span class="cn">FALSE</span>)<span class="sc">*</span>species<span class="sc">+</span></span>
-<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>            (<span class="dv">1</span><span class="sc">+</span><span class="fu">poly</span>(timepoint,<span class="dv">2</span>,<span class="at">raw=</span><span class="cn">FALSE</span>)<span class="sc">|</span>apeID), </span>
-<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> mlape)</span>
-<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>effects<span class="sc">::</span><span class="fu">effect</span>(<span class="at">term=</span><span class="fu">c</span>(<span class="st">"species*timepoint"</span>),<span class="at">mod=</span>mod1, <span class="at">xlevels=</span><span class="dv">40</span>) <span class="sc">|&gt;</span></span>
-<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
-<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>timepoint,<span class="at">y=</span>fit,<span class="at">ymin=</span>lower,<span class="at">ymax=</span>upper,<span class="at">col=</span>species))<span class="sc">+</span></span>
-<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()<span class="sc">+</span><span class="fu">geom_ribbon</span>(<span class="at">alpha=</span>.<span class="dv">2</span>,<span class="fu">aes</span>(<span class="at">fill=</span>species),<span class="at">col=</span><span class="cn">NA</span>)</span>
-<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">=</span> <span class="fu">lmer</span>(HiP <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (poly1<span class="sc">+</span>poly2)<span class="sc">*</span>species<span class="sc">+</span></span>
-<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>            (<span class="dv">1</span><span class="sc">+</span>poly1<span class="sc">+</span>poly2<span class="sc">|</span>apeID), </span>
-<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> mlape)</span>
-<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>pp1 <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(<span class="fu">poly</span>(<span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">10</span>,<span class="at">length.out=</span><span class="dv">50</span>),<span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>(),</span>
-<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a>          <span class="fu">poly</span>(<span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">10</span>,<span class="at">length.out=</span><span class="dv">50</span>),<span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
-<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a>          ) <span class="sc">|&gt;</span></span>
-<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">species=</span><span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"chimp"</span>,<span class="st">"orangutan"</span>),<span class="at">e=</span><span class="dv">50</span>))</span>
-<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(pp1) <span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"poly1"</span>,<span class="st">"poly2"</span>,<span class="st">"species"</span>)</span>
-<span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a>bts <span class="ot">=</span> <span class="fu">bootMer</span>(mod1,<span class="at">FUN=</span><span class="cf">function</span>(x) <span class="fu">predict</span>(x,<span class="at">newdata=</span>pp1,<span class="at">re.form=</span><span class="cn">NA</span>),<span class="at">nsim=</span><span class="dv">500</span>)</span>
-<span id="cb39-29"><a href="#cb39-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-30"><a href="#cb39-30" aria-hidden="true" tabindex="-1"></a>bts<span class="sc">$</span>t</span>
-<span id="cb39-31"><a href="#cb39-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-32"><a href="#cb39-32" aria-hidden="true" tabindex="-1"></a>pp1<span class="sc">$</span>pred <span class="ot">=</span> <span class="fu">predict</span>(mod1, <span class="at">newdata=</span>pp1,<span class="at">re.form=</span><span class="cn">NA</span>)</span>
-<span id="cb39-33"><a href="#cb39-33" aria-hidden="true" tabindex="-1"></a>pp1<span class="sc">$</span>lwr <span class="ot">=</span> <span class="fu">apply</span>(bts<span class="sc">$</span>t, <span class="dv">2</span>, quantile, .<span class="dv">025</span>)</span>
-<span id="cb39-34"><a href="#cb39-34" aria-hidden="true" tabindex="-1"></a>pp1<span class="sc">$</span>upr <span class="ot">=</span> <span class="fu">apply</span>(bts<span class="sc">$</span>t, <span class="dv">2</span>, quantile, .<span class="dv">975</span>)</span>
-<span id="cb39-35"><a href="#cb39-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-36"><a href="#cb39-36" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pp1, <span class="fu">aes</span>(<span class="at">x=</span>poly1,<span class="at">y=</span>pred,<span class="at">ymin=</span>lwr,<span class="at">ymax=</span>upr,</span>
-<span id="cb39-37"><a href="#cb39-37" aria-hidden="true" tabindex="-1"></a>                <span class="at">col=</span>species,<span class="at">fill=</span>species))<span class="sc">+</span></span>
-<span id="cb39-38"><a href="#cb39-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()<span class="sc">+</span></span>
-<span id="cb39-39"><a href="#cb39-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="at">alpha=</span>.<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">

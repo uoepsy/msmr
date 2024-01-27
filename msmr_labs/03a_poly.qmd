@@ -424,7 +424,7 @@ Orthogonal polynomials essentially do this centering and scaling for $k$ degrees
 ::: {.column width="45%"}
 So while raw polynomials look like this:  
 ```{r}
-#| fig-height: 2
+#| fig-height: 4
 matplot(poly(1:10, 3, raw=T), type="l", lwd=2)
 ```
 :::
@@ -433,7 +433,7 @@ matplot(poly(1:10, 3, raw=T), type="l", lwd=2)
 ::: {.column width="45%"}
 Orthogonal polynomials look like this:
 ```{r}
-#| fig-height: 2
+#| fig-height: 4
 matplot(poly(1:10, 3, raw=F), type="l", lwd=2)
 ```
 :::
@@ -801,6 +801,7 @@ It looks like both species have a bit of curvature, and this may be more pronoun
 
 Let's look at our parameters to see:  
 ```{r}
+#| eval: false
 # fitted with satterthwaite to get some p-values
 lmerTest::lmer(HiP ~ 1 + (poly1+poly2)*species+
             (1+poly1+poly2|apeID), 
@@ -808,6 +809,7 @@ lmerTest::lmer(HiP ~ 1 + (poly1+poly2)*species+
   summary()
 ```
 ```
+...
 Fixed effects:
                        Estimate Std. Error       df t value Pr(>|t|)    
 (Intercept)              9.1155     0.1955 198.0009  46.630  < 2e-16 ***
@@ -818,6 +820,7 @@ poly1:speciesorangutan   0.1104     2.3892 197.9811   0.046   0.9632
 poly2:speciesorangutan  -6.2718     2.7093 197.9991  -2.315   0.0216 *  
 ```
 ```{r}
+#| echo: false
 lmerTest::lmer(HiP ~ 1 + (poly1+poly2)*species+
             (1+poly1+poly2|apeID), 
             data = mlape) |>
@@ -856,6 +859,7 @@ But if we had $>2$ species and wanted to do test join "species differences", we 
 
 ```{r}
 #| eval: false
+#| echo: false
 
 mod1 = lmer(HiP ~ 1 + poly(timepoint,2,raw=TRUE)*species+
             (1+poly(timepoint,2,raw=TRUE)|apeID), 
