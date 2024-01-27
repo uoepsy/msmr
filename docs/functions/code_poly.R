@@ -69,8 +69,8 @@ code_poly <- function(df=NULL, predictor=NULL, poly.order=NULL, orthogonal=TRUE,
                             "Quartic", "Quintic", "Sextic")),
                    names_to = "Order")
     
-    poly.plot <- ggplot(df.poly.melt, aes(y=value, color=Order))+
-      aes_string(x=predictor)+
+    poly.plot <- ggplot(df.poly.melt, 
+                        aes(x = .data[[predictor]], y=value, color=Order))+
       geom_line()+
       xlab(paste0(predictor, "\n (raw predictor)"))+
       ylab("Transformed polynomial value")+
