@@ -56,22 +56,18 @@ code_poly <- function(df=NULL, predictor=NULL, poly.order=NULL, orthogonal=TRUE,
     # extract the polynomials from the df
     df.poly <- unique(df[c(predictor, paste("poly", 1:poly.order, sep=""))])
     
-    # gather from wide to long format
+    # intuitive level names for plot
+    better_names <- c(Linear = "poly1", Quadratic = "poly2", 
+                      Cubic = "poly3",  Quartic = "poly4", 
+                      Quintic = "poly5", Sextic = "poly6")
     
+    # pivot from wide to long format
     df.poly.melt <- df.poly  %>%
-      tidyr::gather(variable, value, -predictor)
-    
-    # Make level names intuitive for plot
-    #  don't bother with anything above 6th order.
-    levels(df.poly.melt$variable)[levels(df.poly.melt$variable)=="poly1"] <- "Linear"
-    levels(df.poly.melt$variable)[levels(df.poly.melt$variable)=="poly2"] <- "Quadratic"
-    levels(df.poly.melt$variable)[levels(df.poly.melt$variable)=="poly3"] <- "Cubic"
-    levels(df.poly.melt$variable)[levels(df.poly.melt$variable)=="poly4"] <- "Quartic"
-    levels(df.poly.melt$variable)[levels(df.poly.melt$variable)=="poly5"] <- "Quintic"
-    levels(df.poly.melt$variable)[levels(df.poly.melt$variable)=="poly6"] <- "Sextic"
-    
-    # Change some column names for the output
-    colnames(df.poly.melt)[colnames(df.poly.melt) == "variable"] <- "Order"
+      #tidyr::gather(variable, value, -predictor)
+      rename(any_of(better_names)) %>% 
+      pivot_longer(any_of(c("Linear", "Quadratic", "Cubic",
+                            "Quartic", "Quintic", "Sextic")),
+                   names_to = "Order")
     
     poly.plot <- ggplot(df.poly.melt, aes(y=value, color=Order))+
       aes_string(x=predictor)+
