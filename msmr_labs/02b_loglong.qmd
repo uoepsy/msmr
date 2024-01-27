@@ -277,6 +277,15 @@ glmer(solved ~ difficulty + status +
 ```
 Finally, it also makes sense that effects of problem-difficulty might vary by monkey (e.g., if Brianna is just really good at solving problems, problem-difficulty might not make much difference. Whereas if Jonathan is struggling with the easy problems, he's likely to really really struggle with the difficult ones!).  
 
+First, we'll relevel the difficulty variable so that the reference level is "easy":
+```{r}
+mstat <- mstat |> mutate(
+  difficulty = fct_relevel(factor(difficulty), "easy")
+)
+
+```
+
+and fit our model: 
 ```{r}
 mmod <- glmer(solved ~ difficulty + status + 
       (1 + difficulty | monkeyID),

@@ -1,0 +1,2421 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.340">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>MSMR - 3A: Polynomial Growth</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script>
+function toggle_visibility(id1, id2) {
+var e = document.getElementById(id1);
+var f = document.getElementById(id2);
+e.style.display = ((e.style.display!='none') ? 'none' : 'block');
+if(f.classList.contains('jk-circle-right')) {
+    f.classList.add('jk-circle-down')
+    f.classList.remove('jk-circle-right')
+} else {
+    f.classList.add('jk-circle-right')
+    f.classList.remove('jk-circle-down')
+}
+}
+</script>
+
+<!---<script src="https://kit.fontawesome.com/120b08a6f5.js" crossorigin="anonymous"></script>-->
+<link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet">
+<script src="site_libs/panelset-0.2.6/panelset.js"></script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03a_poly.html">Week 3</a></li><li class="breadcrumb-item"><a href="./03a_poly.html">3A: Polynomial Growth</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MSMR</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+ <span class="menu-text">Week 1</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01a_clustered.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">1A: Clustered Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01b_lmm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">1B: Linear Mixed Models/Multi-level Models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 1 Exercises: Intro to MLM</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+ <span class="menu-text">Week 2</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02a_inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">2A: Inference for MLM</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02b_loglong.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">2B: Logistic MLM | Longitudinal MLM</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 2 Exercises: Logistic and Longitudinal</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Week 3</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03a_poly.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">3A: Polynomial Growth</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+ <span class="menu-text">Additional Docs</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00_lm_assumpt.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">LM Troubleshooting</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lvp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Likelihood vs Probability</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#linear-vs-non-linear" id="toc-linear-vs-non-linear" class="nav-link active" data-scroll-target="#linear-vs-non-linear">Linear vs Non-Linear</a></li>
+  <li><a href="#what-is-a-polynomial" id="toc-what-is-a-polynomial" class="nav-link" data-scroll-target="#what-is-a-polynomial">What is a polynomial?</a>
+  <ul class="collapse">
+  <li><a href="#raw-polynomials" id="toc-raw-polynomials" class="nav-link" data-scroll-target="#raw-polynomials">Raw Polynomials</a></li>
+  <li><a href="#orthogonal-polynomials" id="toc-orthogonal-polynomials" class="nav-link" data-scroll-target="#orthogonal-polynomials">Orthogonal Polynomials</a></li>
+  <li><a href="#raw-vs-orthognal" id="toc-raw-vs-orthognal" class="nav-link" data-scroll-target="#raw-vs-orthognal">Raw vs Orthognal</a></li>
+  </ul></li>
+  <li><a href="#example-in-mlm" id="toc-example-in-mlm" class="nav-link" data-scroll-target="#example-in-mlm">Example in MLM</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">3A: Polynomial Growth</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<div class="lo">
+<p>This reading:</p>
+<ul>
+<li>The basics of modelling non-linear change via polynomial terms.</li>
+<li>An example with MLM</li>
+</ul>
+<p>For additional reading, <a href="https://doi.org/10.1093/jole/lzv003">Winter &amp; Wieling, 2016</a> is pretty good (mainly focus on sections 1-3)</p>
+</div>
+<p>We have already seen in the last couple of weeks that we can use MLM to study something ‘over the course of X’. This might be “over the course of adolescence” (i.e.&nbsp;<code>y ~ age</code>), or “over the course of an experiment” (<code>y ~ trial_number</code>). The term <strong>“longitudinal”</strong> is commonly used to refer to any data in which repeated measurements are taken over a continuous domain. This opened up the potential for observations to be unevenly spaced, or missing at certain points.</p>
+<p>It also, as will be the focus of this week, opens the door to thinking about how many effects of interest may display patterns that are <strong>non-linear</strong>. There are lots of techniques to try and summarise non-linear trajectories, and here we are going to focus on the method of including higher-order polynomials as predcitors.</p>
+<section id="linear-vs-non-linear" class="level1">
+<h1>Linear vs Non-Linear</h1>
+<p>Forget about multilevel models for a little while, as we can think about this in the single level world.</p>
+<p>Suppose we had collected the data on 74 children, and measured the number of pathways in their brains (“synaptic density”), see <a href="#fig-dfeg">Figure&nbsp;1</a>. We wanted to fit a model to predict synaptic density based on the values of age.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>syndat <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/msmr_synapticdens.csv"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(syndat, <span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>syndens))<span class="sc">+</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Age (years)"</span>,<span class="at">y=</span><span class="st">"Synaptic Density"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-dfeg" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/fig-dfeg-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;1: A clearly non-linear pattern</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>We’ll use our old friend linear regression, <span class="math inline">\(y = b_0 + b_1 \cdot x + \varepsilon\)</span>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>linmod <span class="ot">&lt;-</span> <span class="fu">lm</span>(syndens <span class="sc">~</span> age, <span class="at">data =</span> syndat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p>We’ll get out some estimated coefficients, some <span class="math inline">\(t\)</span> statistics, and some p-values:</p>
+<ul>
+<li>The intercept: <span class="math inline">\(b_0\)</span> = 4.39, t(72)=8.17, p &lt; .001<br>
+</li>
+<li>The estimated coefficient of x: <span class="math inline">\(b_1\)</span> = 0.3, t(72)=8.17, p &lt; .001</li>
+</ul>
+<p>Job done? Clearly not - we need only overlay model upon raw data (<a href="#fig-dfeg2">Figure&nbsp;2</a>) to see we are missing some key parts of the pattern.</p>
+</div><div class="column" style="width:40%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-dfeg2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/fig-dfeg2-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;2: Uh-oh…</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+We can see this in our residuals!!
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Let’s just do a quick <code>plot(model)</code> for some diagnostic plots of my linear model:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(linmod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Does it look like the residuals are independently and identically distributed? Not really. We can see that the residuals do not have a constant mean of zero across the fitted values. This makes sense, because the line is below all of the points for people 5 years old, and then it’s above all the points when <span class="math inline">\(age&lt;3\)</span> and <span class="math inline">\(age&gt;15\)</span>. We need to find some way of incorporating the clearly non-linear relationship between the two variables into our model.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="what-is-a-polynomial" class="level1">
+<h1>What is a polynomial?</h1>
+<p>For many purposes, extending the linear model to include higher-order terms can allow us to usefully summarise a non-linear relationships between two variables. For instance, fitting models with linear and quadratic terms (<span class="math inline">\(y\)</span> = <span class="math inline">\(b_0 + b_1 \cdot x \ + b_2 \cdot x^2 + \varepsilon\)</span>) and extending these to cubic (<span class="math inline">\(y\)</span> = <span class="math inline">\(b_0 + b_1 \cdot x \ + b_2 \cdot x^2 + b_3 \cdot x^3 + \varepsilon\)</span>) (or beyond), may aid in modelling nonlinear patterns, as in <a href="#fig-dfeg3">Figure&nbsp;3</a></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-dfeg3" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/fig-dfeg3-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;3: Linear, quadratic and cubic models fitted to the same dataset.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="sticky">
+<p>Polynomials are mathematical expressions which involve a sum of powers. For instance:</p>
+<ul>
+<li><span class="math inline">\(y = 4 + x + x^2\)</span> is a second-order polynomial as the highest power of <span class="math inline">\(x\)</span> that appears is <span class="math inline">\(x^2\)</span><br>
+</li>
+<li><span class="math inline">\(y = 9x + 2x^2 + 4x^3\)</span> is a third-order polynomial as the highest power of <span class="math inline">\(x\)</span> that appears is <span class="math inline">\(x^3\)</span><br>
+</li>
+<li><span class="math inline">\(y = x^6\)</span> is a sixth-order polynomial as the highest power of <span class="math inline">\(x\)</span> that appears is <span class="math inline">\(x^6\)</span></li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+How does a polynomial term capture non-linearity?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Suppose we have the model <span class="math inline">\(y = b_0 + b_1 \cdot x + \varepsilon\)</span>. Let’s take a sequence of values for <span class="math inline">\(x\)</span>, and write out the model equation for the predicted values <span class="math inline">\(\hat y\)</span> from this model.</p>
+<p>We can see that for each row, the predicted value increases by <span class="math inline">\(b_1\)</span>. In the column with example coefficients, each row increases by 1.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>x</th>
+<th>predicted y</th>
+<th>predicted y if e.g.&nbsp;<span class="math inline">\(b_0=1\)</span> and <span class="math inline">\(b_1=1\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td><span class="math inline">\(b_0 + b_1 \cdot 0\)</span></td>
+<td><span class="math inline">\(1+1 \cdot 0 = 1\)</span></td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td><span class="math inline">\(b_0 + b_1 \cdot 1\)</span></td>
+<td><span class="math inline">\(1+1 \cdot 1 = 2\)</span></td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td><span class="math inline">\(b_0 + b_1 \cdot 2\)</span></td>
+<td><span class="math inline">\(1+1 \cdot 2 = 3\)</span></td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td><span class="math inline">\(b_0 + b_1 \cdot 3\)</span></td>
+<td><span class="math inline">\(1+1 \cdot 3 = 4\)</span></td>
+</tr>
+<tr class="odd">
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+</tbody>
+</table>
+<p>Now let’s do the same for the model with the quadratic term in, <span class="math inline">\(y = b_0 + b_1 \cdot x + b_2 \cdot x^2 + \varepsilon\)</span>.<br>
+We can see now that each row doesn’t increase by the same amount! The increases are 2, 4, 6 for our example coefficients.</p>
+<table class="table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>x</th>
+<th>predicted y</th>
+<th>predicted y if e.g.&nbsp;<span class="math inline">\(b_0=1\)</span>, <span class="math inline">\(b_1=1\)</span> and <span class="math inline">\(b_2=1\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td><span class="math inline">\(b_0 + b_1 \cdot 0 + b_2 \cdot 0^2\)</span></td>
+<td><span class="math inline">\(1+1 \cdot 0 + 1 \cdot 0^2 = 1\)</span></td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td><span class="math inline">\(b_0 + b_1 \cdot 1 + b_2 \cdot 1^2\)</span></td>
+<td><span class="math inline">\(1+1 \cdot 1 + 1 \cdot 1^2 = 3\)</span></td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td><span class="math inline">\(b_0 + b_1 \cdot 2 + b_2 \cdot 2^2\)</span></td>
+<td><span class="math inline">\(1+1 \cdot 2 + 1 \cdot 2^2 = 7\)</span></td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td><span class="math inline">\(b_0 + b_1 \cdot 3 + b_2 \cdot 3^2\)</span></td>
+<td><span class="math inline">\(1+1 \cdot 3 + 1 \cdot 3^2 = 13\)</span></td>
+</tr>
+<tr class="odd">
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+</tbody>
+</table>
+<p>This is because the value of <span class="math inline">\(x^2\)</span> is bigger for bigger values of <span class="math inline">\(x\)</span>. Hence the difference between predicted values of <span class="math inline">\(y\)</span> when <span class="math inline">\(x=9\)</span> and <span class="math inline">\(x=10\)</span> is much bigger than it is between <span class="math inline">\(x=0\)</span> and <span class="math inline">\(x=1\)</span>.</p>
+<p>You can see the linear and the quadratic lines we just talked about in the figure below:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>As the order of polynomials increases, we tend to be less interested in these terms in our model. Linear change is the easiest to think about: are things going up? or down? (or neither?). Quadratic change is the next most interesting, and it may help to think of this as the “rate of change”. For instance, in <a href="#fig-quad1">Figure&nbsp;4</a>, it is the quadratic term which differs between the two groups trajectories.</p>
+</div><div class="column" style="width:10%;">
+
+</div><div class="column" style="width:40%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-quad1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/fig-quad1-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;4: Two lines for which the quadratic term differs</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Positive and negative coefficients for quadratic terms
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>One thing to focus on is the sign of the quadratic coefficient. When a quadratic term is positive, the curve is <span class="math inline">\(\cup\)</span> shaped, and when it is negative, the curve is <span class="math inline">\(\cap\)</span> shaped. To help illustrate, consider what each value from -10 to 10 is when squared (they’re all positive, as in the RH side of <a href="#fig-quad3">Figure&nbsp;5</a>)</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-quad3" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/fig-quad3-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;5: Negative quadratic term (Left) and Positive quadratic term (Right) lead to curvatures that are either U shaped (positive) or inverted-U shaped (negative)</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<section id="raw-polynomials" class="level2">
+<h2 class="anchored" data-anchor-id="raw-polynomials">Raw Polynomials</h2>
+<p>There are two types of polynomial we can construct. “Raw” (or “Natural”) polynomials are the straightforward ones that you would expect (example in the table below), where the original value of <span class="math inline">\(x\)</span> is squared/cubed.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th><span class="math inline">\(x\)</span></th>
+<th><span class="math inline">\(x^2\)</span></th>
+<th><span class="math inline">\(x^3\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>4</td>
+<td>8</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>9</td>
+<td>27</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>16</td>
+<td>64</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>25</td>
+<td>125</td>
+</tr>
+<tr class="even">
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+</tbody>
+</table>
+<p>We can quickly get these in R using the <code>poly()</code> function. As we want to create “raw” polynomials, we need to make sure to specify <code>raw = TRUE</code> or we get something else (we’ll talk about what they are in a second!).</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">poly</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="at">degree =</span> <span class="dv">3</span>, <span class="at">raw=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       1   2    3
+ [1,]  1   1    1
+ [2,]  2   4    8
+ [3,]  3   9   27
+ [4,]  4  16   64
+ [5,]  5  25  125
+ [6,]  6  36  216
+ [7,]  7  49  343
+ [8,]  8  64  512
+ [9,]  9  81  729
+[10,] 10 100 1000
+attr(,"degree")
+[1] 1 2 3
+attr(,"class")
+[1] "poly"   "matrix"</code></pre>
+</div>
+</div>
+<p>Let’s now use these with our example data we had been plotting above.<br>
+First lets add new variables to the dataset, which are the polynomials of our <span class="math inline">\(x\)</span> variable:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>syndat <span class="ot">&lt;-</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  syndat <span class="sc">|&gt;</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>      <span class="co"># poly1 is the first column</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">poly1 =</span> <span class="fu">poly</span>(age, <span class="at">degree =</span> <span class="dv">3</span>, <span class="at">raw =</span> <span class="cn">TRUE</span>)[,<span class="dv">1</span>],</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      <span class="co"># poly2 is the second</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">poly2 =</span> <span class="fu">poly</span>(age, <span class="at">degree =</span> <span class="dv">3</span>, <span class="at">raw =</span> <span class="cn">TRUE</span>)[,<span class="dv">2</span>],</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>      <span class="co"># poly3 is the third</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">poly3 =</span> <span class="fu">poly</span>(age, <span class="at">degree =</span> <span class="dv">3</span>, <span class="at">raw =</span> <span class="cn">TRUE</span>)[,<span class="dv">3</span>]</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And now lets use them in our model as predictors:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cubicmod <span class="ot">&lt;-</span> <span class="fu">lm</span>(syndens <span class="sc">~</span> poly1 <span class="sc">+</span> poly2 <span class="sc">+</span> poly3, <span class="at">data =</span> syndat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+other ways to get polynomials into the model
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>As we’re working with raw polynomials, we could just do:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>syndat <span class="sc">|&gt;</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">poly1 =</span> age,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">poly2 =</span> age<span class="sc">^</span><span class="dv">2</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">poly3 =</span> age<span class="sc">^</span><span class="dv">3</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Or we could even just specify the calculations for each term <em>inside</em> the call to <code>lm()</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(syndens <span class="sc">~</span> age <span class="sc">+</span> <span class="fu">I</span>(age<span class="sc">^</span><span class="dv">2</span>) <span class="sc">+</span> <span class="fu">I</span>(age<span class="sc">^</span><span class="dv">3</span>), <span class="at">data =</span> syndat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Or even use the <code>poly()</code> function:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(syndens <span class="sc">~</span> <span class="fu">poly</span>(age, <span class="at">degree=</span><span class="dv">3</span>, <span class="at">raw=</span><span class="cn">TRUE</span>), <span class="at">data =</span> syndat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+A handy function from Dan
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Dan has a nice function that may be handy. It adds the polynomials to your dataset for you:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import Dan's code and make it available in our own R session</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># you must do this in every script you want to use this function</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"https://uoepsy.github.io/msmr/functions/code_poly.R"</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>syndat <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/msmr_synapticdens.csv"</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>syndat <span class="ot">&lt;-</span> <span class="fu">code_poly</span>(<span class="at">df =</span> syndat, <span class="at">predictor =</span> <span class="st">'age'</span>, <span class="at">poly.order =</span> <span class="dv">3</span>, </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">orthogonal =</span> <span class="cn">FALSE</span>, <span class="at">draw.poly =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(syndat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+    age syndens age.Index poly1 poly2 poly3
+  &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1   0.1   0.615         1   0.1  0.01 0.001
+2   0.2   0.908         2   0.2  0.04 0.008
+3   0.6   0.1           3   0.6  0.36 0.216
+4   0.7   1.81          4   0.7  0.49 0.343
+5   0.9   1.44          5   0.9  0.81 0.729
+6   1     0.615         6   1    1    1    </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Just to see it in action, let’s take a look at the predicted values from our model.<br>
+Take for instance, the 9th row below. The predicted value of y (shown in the <code>.fitted</code> column) is:<br>
+<span class="math inline">\(\hat y_9 = b_0 + b_1 \cdot x_9 + b_2 \cdot x^2_9 + b_3 \cdot x^3_9\)</span><br>
+<span class="math inline">\(\hat y_9 = b_0 + b_1 \cdot 2 + b_2 \cdot 4 + b_3 \cdot 8\)</span><br>
+<span class="math inline">\(\hat y_9 = -1.843 + 3.375 \cdot 2 + -0.332 \cdot 4 + 0.0097 \cdot 8\)</span><br>
+<span class="math inline">\(\hat y_9 = 3.66\)</span>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">augment</span>(cubicmod) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 74 × 10
+   syndens poly1 poly2 poly3 .fitted  .resid   .hat .sigma   .cooksd .std.resid
+     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
+ 1   0.615   0.1  0.01 0.001 -1.51    2.12   0.170    1.62 0.104         1.42  
+ 2   0.908   0.2  0.04 0.008 -1.18    2.09   0.155    1.63 0.0886        1.39  
+ 3   0.1     0.6  0.36 0.216  0.0651  0.0349 0.109    1.65 0.0000155     0.0226
+ 4   1.81    0.7  0.49 0.343  0.361   1.45   0.0992   1.64 0.0240        0.933 
+ 5   1.44    0.9  0.81 0.729  0.933   0.510  0.0829   1.65 0.00239       0.326 
+ 6   0.615   1    1    1      1.21   -0.596  0.0759   1.65 0.00294      -0.379 
+ 7   0.615   1.6  2.56 4.10   2.75   -2.13   0.0465   1.63 0.0217       -1.33  
+ 8   0.310   1.7  2.89 4.91   2.98   -2.67   0.0433   1.62 0.0316       -1.67  
+ 9   1.21    2    4    8      3.66   -2.45   0.0361   1.62 0.0217       -1.52  
+10   2.19    2.1  4.41 9.26   3.87   -1.68   0.0343   1.64 0.00968      -1.04  
+# ℹ 64 more rows</code></pre>
+</div>
+</div>
+<p>If we plot the predictions with <code>poly1</code> on the x-axis (<code>poly1</code> is just the same as our <code>age</code> variable with a different name!), we can see that we are able to model a non-linear relationship between y and x (between synaptic density and age), via a combination of linear parameters!</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">augment</span>(cubicmod, <span class="at">interval=</span><span class="st">"confidence"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>poly1))<span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y=</span>syndens),<span class="at">size=</span><span class="dv">2</span>,<span class="at">alpha=</span>.<span class="dv">3</span>) <span class="sc">+</span> </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y=</span>.fitted),<span class="at">col=</span><span class="st">"darkorange"</span>) <span class="sc">+</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin=</span>.lower,<span class="at">ymax=</span>.upper),<span class="at">fill=</span><span class="st">"darkorange"</span>, <span class="at">alpha=</span>.<span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"age"</span>) <span class="co"># our x-axis, "poly1", is just age!  </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-fittedcubic" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/fig-fittedcubic-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;6: a cubic model</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Now lets look at our coefficients:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(cubicmod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<pre><code>...
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) -1.842656   0.704193  -2.617   0.0109 *  
+poly1        3.375159   0.345570   9.767 1.06e-14 ***
+poly2       -0.331747   0.044664  -7.428 2.06e-10 ***
+poly3        0.009685   0.001614   6.001 7.79e-08 ***
+---</code></pre>
+<p>With polynomials the interpretation is a little tricky because we have 3 coefficients that together explain the curvy line we see in <a href="#fig-fittedcubic">Figure&nbsp;6</a>, and these coefficients are all dependent upon one another.</p>
+<ul>
+<li><code>(Intercept)</code> = When all predictors are zero, i.e.&nbsp;the synaptic density at age 0.<br>
+</li>
+<li><code>poly1</code> coefficient = The instantaneous change in <span class="math inline">\(y\)</span> when <span class="math inline">\(x=0\)</span>.</li>
+<li><code>poly2</code> coefficient = Represents “rate of change of the rate of change” at <span class="math inline">\(x=0\)</span>. In other words, the <em>curvature</em> at <span class="math inline">\(x=0\)</span>.<br>
+</li>
+<li><code>poly3</code> coefficient = Represents how the curvature is changing. It gets more abstract as the order of polynomials increase, so the easiest way to think about it is “the wiggliness”</li>
+</ul>
+<p>I’ve tried to represent what each term adds in <a href="#fig-polycoef">Figure&nbsp;7</a>. The intercept is the purple point where age is zero. The <code>poly1</code> coefficient is represented by the dashed blue line - the tangent of the curve at age zero. The <code>poly2</code> coef, rperesented by the dashed green line, is how the angle of the blue line is changing at age zero. Finally, the <code>poly3</code> coefficient tells us how much this curvature is changing (which gets us to our dashed orange line).</p>
+<p>Note that these interpretations are all dependent upon the others - e.g.&nbsp;the interpretation of <code>poly2</code> refers to how the angle of <code>poly1</code> is changing.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-polycoef" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/fig-polycoef-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;7: the instantaneous rate of change at x=0 (blue), the rate of change in the rate of change (i.e.&nbsp;curvature, green), and ‘rate of change in rate of change in rate of change’ (i.e.&nbsp;wiggliness, orange)</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="orthogonal-polynomials" class="level2">
+<h2 class="anchored" data-anchor-id="orthogonal-polynomials">Orthogonal Polynomials</h2>
+<p>The <code>poly()</code> function also enables us to compute “orthogonal polynomials”. This is the same information as the raw polynomials, re-expressed into a set of <strong>uncorrelated</strong> variables.</p>
+<p>Raw polynomials are correlated, which is what results makes their interpretation depend upon one another. For example, if we take the numbers 1,2,3,4,5, then these numbers are <em>by definition</em> correlated with their squares 1,4,9,16,25. As we increase from 1 to 5, we necessarily increase from 1 to 25.<br>
+However, if we first <em>center</em> the set of numbers, so that 1,2,3,4,5 becomes -2,1,0,1,2, then their squares are 4,1,0,1,4 - they’re not correlated!</p>
+<p>Orthogonal polynomials essentially do this centering and scaling for <span class="math inline">\(k\)</span> degrees of polynomial terms.</p>
+<div class="columns">
+<div class="column" style="width:45%;">
+<p>So while raw polynomials look like this:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">matplot</span>(<span class="fu">poly</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">3</span>, <span class="at">raw=</span>T), <span class="at">type=</span><span class="st">"l"</span>, <span class="at">lwd=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:10%;">
+
+</div><div class="column" style="width:45%;">
+<p>Orthogonal polynomials look like this:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">matplot</span>(<span class="fu">poly</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">3</span>, <span class="at">raw=</span>F), <span class="at">type=</span><span class="st">"l"</span>, <span class="at">lwd=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>This orthogonality allows us to essentially capture express the linear trend, curvature, and ‘wiggliness’ of the trajectory <strong>independently</strong> from one another, rather than relative to one another.</p>
+<p>Ultimately, models using raw polynomials and using orthogonal polynomials are identical, but the coefficients we get out represent different things.</p>
+<p>Let’s overwrite our <code>poly</code> variables with orthogonal polynomials, by setting <code>raw = FALSE</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>syndat <span class="ot">&lt;-</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  syndat <span class="sc">|&gt;</span> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">poly1 =</span> <span class="fu">poly</span>(age,<span class="at">degree =</span> <span class="dv">3</span>, <span class="at">raw=</span><span class="cn">FALSE</span>)[,<span class="dv">1</span>],</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">poly2 =</span> <span class="fu">poly</span>(age,<span class="at">degree =</span> <span class="dv">3</span>, <span class="at">raw=</span><span class="cn">FALSE</span>)[,<span class="dv">2</span>],</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">poly3 =</span> <span class="fu">poly</span>(age,<span class="at">degree =</span> <span class="dv">3</span>, <span class="at">raw=</span><span class="cn">FALSE</span>)[,<span class="dv">3</span>],</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And fit our model:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>Ocubicmod <span class="ot">&lt;-</span> <span class="fu">lm</span>(syndens <span class="sc">~</span>poly1<span class="sc">+</span>poly2<span class="sc">+</span>poly3,syndat)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(Ocubicmod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<pre><code>Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)   6.5917     0.1902  34.649  &lt; 2e-16 ***
+poly1        12.9161     1.6365   7.892 2.88e-11 ***
+poly2       -14.3156     1.6365  -8.748 7.68e-13 ***
+poly3         9.8212     1.6365   6.001 7.79e-08 ***
+---</code></pre>
+<p>The interpretation of the estimates themselves are not really very tangible anymore, because the scaling of the orthogonal polynomials has lost a clear link back to “age”.</p>
+<p>As the polynomial terms are centered on the mean of age, the intercept is the estimated synaptic density at the mean age (the purple dot in <a href="#fig-polycoeforth">Figure&nbsp;8</a>). The <code>poly1</code>, <code>poly2</code> and <code>poly3</code> coefficient represent the independent overall linear trend, centered curvature, and “wiggliness” of the relationship between synaptic density and age (as shown in the blue, green and orange lines in <a href="#fig-polycoeforth">Figure&nbsp;8</a> respectively).</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-polycoeforth" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/fig-polycoeforth-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;8: the independent rate of change (blue), curvature (green) and wiggliness (orange) of the y~x relationship</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="raw-vs-orthognal" class="level2">
+<h2 class="anchored" data-anchor-id="raw-vs-orthognal">Raw vs Orthognal</h2>
+<p>The two models we have seen, one with raw polynomials, and one with orthogonal polynomials, are identical.</p>
+<p>For proof, compare the two:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(syndens <span class="sc">~</span> <span class="fu">poly</span>(age, <span class="dv">3</span>, <span class="at">raw =</span> <span class="cn">TRUE</span>), <span class="at">data =</span> syndat),</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lm</span>(syndens <span class="sc">~</span> <span class="fu">poly</span>(age, <span class="dv">3</span>, <span class="at">raw =</span> <span class="cn">FALSE</span>), <span class="at">data =</span> syndat)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Model 1: syndens ~ poly(age, 3, raw = TRUE)
+Model 2: syndens ~ poly(age, 3, raw = FALSE)
+  Res.Df    RSS Df   Sum of Sq F Pr(&gt;F)
+1     70 187.47                        
+2     70 187.47  0 -1.1369e-13         </code></pre>
+</div>
+</div>
+<p>So why would we choose one vs the other?</p>
+<p>The main reason is if we are interested in evaluating things <em>relative to baseline</em>, in which case raw polynomials allow us to do just that. If we are instead interested in evaluating the trends <strong>across</strong> the timecourse, then we would want orthogonal polynomials.</p>
+<p>Consider two examples:</p>
+<div class="columns">
+<div class="column" style="width:45%;">
+<p><strong>Example 1</strong></p>
+<p>A student advisor who meets with students as they start university wants to know about how happiness evolves over the course of students’ year at univeristy, and wonders if this is different between introverted and extraverted individuals.</p>
+<p>In this case, they would want <em>raw</em> polynomials, so that they can assess whether the two personality types differ when they first come to University, and how this is likely to evolve from that point.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:10%;">
+
+</div><div class="column" style="width:45%;">
+<p><strong>Example 2</strong></p>
+<p>A company has four stores across the UK, and they want to know if the stores have differed in how variable their earnings have been across the year.</p>
+<p>In this case, looking at change relative to month 1 isn’t very useful. It would, for instance, tell us that the linear trend for store2’s earnings is upwards, whereas the linear trend for store 1 is flat. This makes store2 look better.<br>
+If we used orthogonal polynomials instead, we would see that the linear trend for store 2 is actually <em>negative</em> compared to store1.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sticky">
+<p>Raw? Orthogonal?</p>
+<p>For non-linear relationships, a good plot is usually the most important thing!</p>
+</div>
+</section>
+</section>
+<section id="example-in-mlm" class="level1">
+<h1>Example in MLM</h1>
+<div class="frame">
+<p><strong>Data: midlife_ape.csv</strong></p>
+<p>Previous research has evidenced a notable dip in happiness for middle-aged humans. Interestingly, this phenomenon has even been observed in other primates, such as chimpanzees.</p>
+<p>The present study is interested in examining whether the ‘middle-age slump’ happens to a similar extent for Orangutans as it does for Chimpanzees.</p>
+<p>200 apes (117 Chimps and 83 Orangutans) were included in the study. All apes were studied from early adulthood (10-12 years old for most great apes), and researchers administered the Happiness in Primates (HiP) scale to each participant every 3 years, up until the age of 40.</p>
+<p>The data are available at <a href="https://uoepsy.github.io/data/midlife_ape.csv" target="_blank">https://uoepsy.github.io/data/midlife_ape.csv</a>.</p>
+<p>The dataset has already been cleaned, and the researchers have confirmed that it includes 117 Chimps and 83 Orangutans, and every ape has complete data (i.e.&nbsp;10 rows for each ape). A data dictionary can be found in <a href="#tbl-midlifedict">Table&nbsp;1</a></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="tbl-midlifedict" class="anchored">
+
+<div id="yuorywqdkd" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#yuorywqdkd table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#yuorywqdkd thead, #yuorywqdkd tbody, #yuorywqdkd tfoot, #yuorywqdkd tr, #yuorywqdkd td, #yuorywqdkd th {
+  border-style: none;
+}
+
+#yuorywqdkd p {
+  margin: 0;
+  padding: 0;
+}
+
+#yuorywqdkd .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#yuorywqdkd .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#yuorywqdkd .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#yuorywqdkd .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#yuorywqdkd .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#yuorywqdkd .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yuorywqdkd .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#yuorywqdkd .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#yuorywqdkd .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#yuorywqdkd .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#yuorywqdkd .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#yuorywqdkd .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#yuorywqdkd .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#yuorywqdkd .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#yuorywqdkd .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#yuorywqdkd .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#yuorywqdkd .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#yuorywqdkd .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#yuorywqdkd .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yuorywqdkd .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#yuorywqdkd .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#yuorywqdkd .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#yuorywqdkd .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yuorywqdkd .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#yuorywqdkd .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#yuorywqdkd .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yuorywqdkd .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yuorywqdkd .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#yuorywqdkd .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yuorywqdkd .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#yuorywqdkd .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yuorywqdkd .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#yuorywqdkd .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yuorywqdkd .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#yuorywqdkd .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yuorywqdkd .gt_left {
+  text-align: left;
+}
+
+#yuorywqdkd .gt_center {
+  text-align: center;
+}
+
+#yuorywqdkd .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#yuorywqdkd .gt_font_normal {
+  font-weight: normal;
+}
+
+#yuorywqdkd .gt_font_bold {
+  font-weight: bold;
+}
+
+#yuorywqdkd .gt_font_italic {
+  font-style: italic;
+}
+
+#yuorywqdkd .gt_super {
+  font-size: 65%;
+}
+
+#yuorywqdkd .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#yuorywqdkd .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#yuorywqdkd .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#yuorywqdkd .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#yuorywqdkd .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#yuorywqdkd .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#yuorywqdkd .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false"><caption>Table&nbsp;1:  <p>Data Dictionary: midlife_ape.csv</p> </caption>
+  <thead>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="variable">variable</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="description">description</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="variable" class="gt_row gt_left">apeID</td>
+<td headers="description" class="gt_row gt_left">Ape's Name (all names are chosen to be unique)</td></tr>
+    <tr><td headers="variable" class="gt_row gt_left">age</td>
+<td headers="description" class="gt_row gt_left">Age (in years) at assessment</td></tr>
+    <tr><td headers="variable" class="gt_row gt_left">species</td>
+<td headers="description" class="gt_row gt_left">Species (chimp v orangutan)</td></tr>
+    <tr><td headers="variable" class="gt_row gt_left">HiP</td>
+<td headers="description" class="gt_row gt_left">Happiness in Primate Scale (range 1 to 18)</td></tr>
+    <tr><td headers="variable" class="gt_row gt_left">timepoint</td>
+<td headers="description" class="gt_row gt_left">Study visit (1 to 10)</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Initial plots are hard see when we plot a different line for each ape:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>mlape <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/midlife_ape.csv"</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mlape, <span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>HiP))<span class="sc">+</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group=</span>apeID,<span class="at">col=</span>species),<span class="at">alpha=</span>.<span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values=</span><span class="fu">c</span>(<span class="st">"grey40"</span>,<span class="st">"darkorange"</span>)) <span class="sc">+</span> </span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>species)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>What is often more useful for exploring is to plot the averages in y across values of x.<br>
+Here we can see some slight curvature - the chimps seem to have a notable dip in happiness at about 20 years old.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mlape, <span class="fu">aes</span>(<span class="at">x=</span>age,<span class="at">y=</span>HiP, <span class="at">col=</span>species))<span class="sc">+</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values=</span><span class="fu">c</span>(<span class="st">"grey40"</span>,<span class="st">"darkorange"</span>)) <span class="sc">+</span> </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">geom=</span><span class="st">"pointrange"</span>)<span class="sc">+</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">geom=</span><span class="st">"line"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>These plots can be misleading, especially in the event of missing data or incomplete trajectories. For instance, suppose we had data on happy chimps when they are young and when they are old, but not in the middle of their lives. The average of all chimps at each data point would look non-linear!</p>
+<p>This illusion would not fool our multilevel model, however, which estimates the average of the individual lines</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-missing" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/fig-missing-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;9: hypothetical: if happier apes have missing data in mid life, the average looks non-linear, even though for each ape it is linear!</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>The present study is interested in examining whether the ‘middle-age slump’ happens to a similar extent for Orangutans as it does for Chimpanzees.</p>
+</blockquote>
+<p>We’re interested in the difference in curvature across adulthood between Chimps and Orangutans. This is a case where we’re not hugely interested in some specific point in time, so orthogonal polynomials might be easier.<br>
+Both <code>age</code> and <code>timepoint</code> here contain the same information, so we can use either to create our polynomials:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>mlape <span class="ot">&lt;-</span> mlape <span class="sc">|&gt;</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">poly1 =</span> <span class="fu">poly</span>(timepoint,<span class="dv">2</span>,<span class="at">raw=</span>F)[,<span class="dv">1</span>],</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">poly2 =</span> <span class="fu">poly</span>(timepoint,<span class="dv">2</span>,<span class="at">raw=</span>F)[,<span class="dv">2</span>],</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And then we’ll fit our model.</p>
+<p>We know we’re interested in the change in happiness across age, so our model is going to take the form:</p>
+<pre><code>lmer(HiP ~ age ....</code></pre>
+<p>. But we’ve just said that we’re interested in the curvature of this, so we’re going to re-express <code>age</code> as the two parts, the linear and the quadratic:</p>
+<pre><code>lmer(HiP ~ poly1 + poly2 ....</code></pre>
+<p>We’re interested in the differences in the “hapiness ~ age” relationship between Orangutans and Chimps, so we can estimate species-differences in both aspects of the trajectroy (the linear and the quadratic).</p>
+<pre><code>lmer(HiP ~ (poly1 + poly2) * species ....</code></pre>
+<p>this is equivalent to</p>
+<pre><code>lmer(HiP ~ poly1 + poly2 + species + 
+           poly1:species + poly2:species ....</code></pre>
+<p>Finally, we want to account for the variability in happiness due to random ape-to-ape differences (i.e.&nbsp;some are just happy, some are not).</p>
+<pre><code>lmer(HiP ~ (poly1 + poly2) * species + 
+           (1 + ... | apeID), data = mlape)</code></pre>
+<p>Lastly, it’s very likely that ‘change over time’ varies from ape-to-ape, so we want to allow the slopes of age to vary. We can allow one or both of the poly1 and poly2 terms to vary, so we’ll start with both:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">=</span> <span class="fu">lmer</span>(HiP <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (poly1<span class="sc">+</span>poly2)<span class="sc">*</span>species<span class="sc">+</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>            (<span class="dv">1</span><span class="sc">+</span>poly1<span class="sc">+</span>poly2<span class="sc">|</span>apeID), </span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> mlape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>and it converges (hooray!).</p>
+<p>Now let’s plot the average value of happiness across time, alongside the average <em>predicted</em> value.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>broom.mixed<span class="sc">::</span><span class="fu">augment</span>(mod1) <span class="sc">|&gt;</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">poly1 =</span> <span class="fu">round</span>(poly1,<span class="dv">4</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>poly1,<span class="at">y=</span>.fitted,<span class="at">col=</span>species))<span class="sc">+</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the average value across time: </span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">geom=</span><span class="st">"pointrange"</span>,<span class="fu">aes</span>(<span class="at">y=</span>HiP))<span class="sc">+</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># the average model predicted value</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">geom=</span><span class="st">"line"</span>) <span class="sc">+</span> </span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values=</span><span class="fu">c</span>(<span class="st">"grey40"</span>,<span class="st">"darkorange"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>It looks like both species have a bit of curvature, and this may be more pronounced for chimps than for orangutans.</p>
+<p>Let’s look at our parameters to see:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fitted with satterthwaite to get some p-values</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>lmerTest<span class="sc">::</span><span class="fu">lmer</span>(HiP <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (poly1<span class="sc">+</span>poly2)<span class="sc">*</span>species<span class="sc">+</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>            (<span class="dv">1</span><span class="sc">+</span>poly1<span class="sc">+</span>poly2<span class="sc">|</span>apeID), </span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> mlape) <span class="sc">|&gt;</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite's method [
+lmerModLmerTest]
+Formula: HiP ~ 1 + (poly1 + poly2) * species + (1 + poly1 + poly2 | apeID)
+   Data: mlape
+
+REML criterion at convergence: 6908.3
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.1222 -0.6175  0.0017  0.6340  3.2437 
+
+Random effects:
+ Groups   Name        Variance Std.Dev. Corr     
+ apeID    (Intercept)   4.346   2.085            
+          poly1        27.684   5.262   0.11     
+          poly2       106.925  10.340   0.10 0.52
+ Residual               1.247   1.117            
+Number of obs: 2000, groups:  apeID, 200
+
+Fixed effects:
+                       Estimate Std. Error       df t value Pr(&gt;|t|)    
+(Intercept)              9.1155     0.1955 198.0036  46.630  &lt; 2e-16 ***
+poly1                    1.8796     1.5391 197.8908   1.221   0.2235    
+poly2                    9.4004     1.7453 197.9960   5.386 2.03e-07 ***
+speciesorangutan         0.6853     0.3035 198.0036   2.258   0.0250 *  
+poly1:speciesorangutan   0.1104     2.3892 197.8908   0.046   0.9632    
+poly2:speciesorangutan  -6.2718     2.7093 197.9960  -2.315   0.0216 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Correlation of Fixed Effects:
+            (Intr) poly1  poly2  spcsrn ply1:s
+poly1        0.033                            
+poly2        0.054  0.090                     
+specisrngtn -0.644 -0.021 -0.035              
+ply1:spcsrn -0.021 -0.644 -0.058  0.033       
+ply2:spcsrn -0.035 -0.058 -0.644  0.054  0.090</code></pre>
+</div>
+</div>
+<pre><code>Fixed effects:
+                       Estimate Std. Error       df t value Pr(&gt;|t|)    
+(Intercept)              9.1155     0.1955 198.0009  46.630  &lt; 2e-16 ***
+poly1                    1.8796     1.5391 197.9811   1.221   0.2235    
+poly2                    9.4004     1.7454 197.9991   5.386 2.03e-07 ***
+speciesorangutan         0.6853     0.3035 198.0009   2.258   0.0250 *  
+poly1:speciesorangutan   0.1104     2.3892 197.9811   0.046   0.9632    
+poly2:speciesorangutan  -6.2718     2.7093 197.9991  -2.315   0.0216 *  </code></pre>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>lmerTest<span class="sc">::</span><span class="fu">lmer</span>(HiP <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (poly1<span class="sc">+</span>poly2)<span class="sc">*</span>species<span class="sc">+</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>            (<span class="dv">1</span><span class="sc">+</span>poly1<span class="sc">+</span>poly2<span class="sc">|</span>apeID), </span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> mlape) <span class="sc">|&gt;</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>broom.mixed<span class="sc">::</span><span class="fu">tidy</span>() <span class="sc">|&gt;</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(effect<span class="sc">==</span><span class="st">"fixed"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    term, <span class="at">est=</span><span class="fu">round</span>(estimate,<span class="dv">2</span>),</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">p =</span> <span class="fu">case_when</span>(</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>      p.value<span class="sc">&lt;</span>.<span class="dv">001</span> <span class="sc">~</span> <span class="st">"***"</span>,</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>      p.value<span class="sc">&lt;</span>.<span class="dv">01</span> <span class="sc">~</span> <span class="st">"**"</span>,</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>      p.value<span class="sc">&lt;</span>.<span class="dv">05</span> <span class="sc">~</span> <span class="st">"*"</span>,</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">""</span></span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">what it tells us</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>      <span class="st">"the average happiness at the average age is 9.11 (not hugely interesting)."</span>,</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">"there is no significant linear trend of happiness over time for Chimpanzees (you can kind of see this in our plot above - they more or less end where they started)"</span>,</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>      <span class="st">"there *is* a significant curvature to the chimpanzees' happiness trajectory. Because this estimate is positive, that means we know it is u-shaped and not n-shaped - i.e. - Chimpanzees have a mid-life slump in happiness!"</span>,</span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>      <span class="st">"at the average age, Orangutans are happier than Chimpanzees."</span>,</span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>      <span class="st">"the linear trend for Orangutans is not significantly different from the linear trend for Chimpanzees"</span>,</span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a>      <span class="st">"the curvature for Orangutans is significantly different from the curvature for Chimpanzees. Because the estimate is negative, that means it is less u-shaped than the Chimpanzee line - i.e. Orangutans do not have as much of a mid-life slump as Chimps do!"</span></span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> gt<span class="sc">::</span><span class="fu">gt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div id="migjbwdoyo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#migjbwdoyo table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#migjbwdoyo thead, #migjbwdoyo tbody, #migjbwdoyo tfoot, #migjbwdoyo tr, #migjbwdoyo td, #migjbwdoyo th {
+  border-style: none;
+}
+
+#migjbwdoyo p {
+  margin: 0;
+  padding: 0;
+}
+
+#migjbwdoyo .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#migjbwdoyo .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#migjbwdoyo .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#migjbwdoyo .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#migjbwdoyo .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#migjbwdoyo .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#migjbwdoyo .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#migjbwdoyo .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#migjbwdoyo .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#migjbwdoyo .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#migjbwdoyo .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#migjbwdoyo .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#migjbwdoyo .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#migjbwdoyo .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#migjbwdoyo .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#migjbwdoyo .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#migjbwdoyo .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#migjbwdoyo .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#migjbwdoyo .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#migjbwdoyo .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#migjbwdoyo .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#migjbwdoyo .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#migjbwdoyo .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#migjbwdoyo .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#migjbwdoyo .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#migjbwdoyo .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#migjbwdoyo .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#migjbwdoyo .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#migjbwdoyo .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#migjbwdoyo .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#migjbwdoyo .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#migjbwdoyo .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#migjbwdoyo .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#migjbwdoyo .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#migjbwdoyo .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#migjbwdoyo .gt_left {
+  text-align: left;
+}
+
+#migjbwdoyo .gt_center {
+  text-align: center;
+}
+
+#migjbwdoyo .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#migjbwdoyo .gt_font_normal {
+  font-weight: normal;
+}
+
+#migjbwdoyo .gt_font_bold {
+  font-weight: bold;
+}
+
+#migjbwdoyo .gt_font_italic {
+  font-style: italic;
+}
+
+#migjbwdoyo .gt_super {
+  font-size: 65%;
+}
+
+#migjbwdoyo .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#migjbwdoyo .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#migjbwdoyo .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#migjbwdoyo .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#migjbwdoyo .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#migjbwdoyo .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#migjbwdoyo .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="term">term</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="est">est</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="p">p</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="what it tells us">what it tells us</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="term" class="gt_row gt_left">(Intercept)</td>
+<td headers="est" class="gt_row gt_right">9.12</td>
+<td headers="p" class="gt_row gt_right">***</td>
+<td headers="what it tells us" class="gt_row gt_left">the average happiness at the average age is 9.11 (not hugely interesting).</td></tr>
+    <tr><td headers="term" class="gt_row gt_left">poly1</td>
+<td headers="est" class="gt_row gt_right">1.88</td>
+<td headers="p" class="gt_row gt_right"></td>
+<td headers="what it tells us" class="gt_row gt_left">there is no significant linear trend of happiness over time for Chimpanzees (you can kind of see this in our plot above - they more or less end where they started)</td></tr>
+    <tr><td headers="term" class="gt_row gt_left">poly2</td>
+<td headers="est" class="gt_row gt_right">9.40</td>
+<td headers="p" class="gt_row gt_right">***</td>
+<td headers="what it tells us" class="gt_row gt_left">there *is* a significant curvature to the chimpanzees' happiness trajectory. Because this estimate is positive, that means we know it is u-shaped and not n-shaped - i.e. - Chimpanzees have a mid-life slump in happiness!</td></tr>
+    <tr><td headers="term" class="gt_row gt_left">speciesorangutan</td>
+<td headers="est" class="gt_row gt_right">0.69</td>
+<td headers="p" class="gt_row gt_right">*</td>
+<td headers="what it tells us" class="gt_row gt_left">at the average age, Orangutans are happier than Chimpanzees.</td></tr>
+    <tr><td headers="term" class="gt_row gt_left">poly1:speciesorangutan</td>
+<td headers="est" class="gt_row gt_right">0.11</td>
+<td headers="p" class="gt_row gt_right"></td>
+<td headers="what it tells us" class="gt_row gt_left">the linear trend for Orangutans is not significantly different from the linear trend for Chimpanzees</td></tr>
+    <tr><td headers="term" class="gt_row gt_left">poly2:speciesorangutan</td>
+<td headers="est" class="gt_row gt_right">-6.27</td>
+<td headers="p" class="gt_row gt_right">*</td>
+<td headers="what it tells us" class="gt_row gt_left">the curvature for Orangutans is significantly different from the curvature for Chimpanzees. Because the estimate is negative, that means it is less u-shaped than the Chimpanzee line - i.e. Orangutans do not have as much of a mid-life slump as Chimps do!</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+</div>
+<p>As we have two groups, the parameters provide us with all the tests we need to identify “do species differ in the extent that they have a mid-life dip in happiness?”<br>
+But if we had <span class="math inline">\(&gt;2\)</span> species and wanted to do test join “species differences”, we could set up models for comparisons, i.e.&nbsp;allowing species to interact with different parts:</p>
+<ul>
+<li><code>HiP ~ (poly1 + poly2)*species</code>
+<ul>
+<li>species differ in their linear and quadratic trends</li>
+</ul></li>
+<li><code>HiP ~ poly1*species + poly2</code>
+<ul>
+<li>species differ in their linear trend only</li>
+</ul></li>
+<li><code>HiP ~ poly1 + poly2 + species</code>
+<ul>
+<li>species differ in their overall happiness, but not in change over age</li>
+</ul></li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">=</span> <span class="fu">lmer</span>(HiP <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> <span class="fu">poly</span>(timepoint,<span class="dv">2</span>,<span class="at">raw=</span><span class="cn">TRUE</span>)<span class="sc">*</span>species<span class="sc">+</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>            (<span class="dv">1</span><span class="sc">+</span><span class="fu">poly</span>(timepoint,<span class="dv">2</span>,<span class="at">raw=</span><span class="cn">TRUE</span>)<span class="sc">|</span>apeID), </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> mlape)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>effects<span class="sc">::</span><span class="fu">effect</span>(<span class="at">term=</span><span class="fu">c</span>(<span class="st">"species*timepoint"</span>),<span class="at">mod=</span>mod1, <span class="at">xlevels=</span><span class="dv">40</span>) <span class="sc">|&gt;</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>timepoint,<span class="at">y=</span>fit,<span class="at">ymin=</span>lower,<span class="at">ymax=</span>upper,<span class="at">col=</span>species))<span class="sc">+</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()<span class="sc">+</span><span class="fu">geom_ribbon</span>(<span class="at">alpha=</span>.<span class="dv">2</span>,<span class="fu">aes</span>(<span class="at">fill=</span>species),<span class="at">col=</span><span class="cn">NA</span>)</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">=</span> <span class="fu">lmer</span>(HiP <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> <span class="fu">poly</span>(timepoint,<span class="dv">2</span>,<span class="at">raw=</span><span class="cn">FALSE</span>)<span class="sc">*</span>species<span class="sc">+</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>            (<span class="dv">1</span><span class="sc">+</span><span class="fu">poly</span>(timepoint,<span class="dv">2</span>,<span class="at">raw=</span><span class="cn">FALSE</span>)<span class="sc">|</span>apeID), </span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> mlape)</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>effects<span class="sc">::</span><span class="fu">effect</span>(<span class="at">term=</span><span class="fu">c</span>(<span class="st">"species*timepoint"</span>),<span class="at">mod=</span>mod1, <span class="at">xlevels=</span><span class="dv">40</span>) <span class="sc">|&gt;</span></span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>timepoint,<span class="at">y=</span>fit,<span class="at">ymin=</span>lower,<span class="at">ymax=</span>upper,<span class="at">col=</span>species))<span class="sc">+</span></span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()<span class="sc">+</span><span class="fu">geom_ribbon</span>(<span class="at">alpha=</span>.<span class="dv">2</span>,<span class="fu">aes</span>(<span class="at">fill=</span>species),<span class="at">col=</span><span class="cn">NA</span>)</span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">=</span> <span class="fu">lmer</span>(HiP <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> (poly1<span class="sc">+</span>poly2)<span class="sc">*</span>species<span class="sc">+</span></span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>            (<span class="dv">1</span><span class="sc">+</span>poly1<span class="sc">+</span>poly2<span class="sc">|</span>apeID), </span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> mlape)</span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>pp1 <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(<span class="fu">poly</span>(<span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">10</span>,<span class="at">length.out=</span><span class="dv">50</span>),<span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>(),</span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a>          <span class="fu">poly</span>(<span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">10</span>,<span class="at">length.out=</span><span class="dv">50</span>),<span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a>          ) <span class="sc">|&gt;</span></span>
+<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">species=</span><span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"chimp"</span>,<span class="st">"orangutan"</span>),<span class="at">e=</span><span class="dv">50</span>))</span>
+<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(pp1) <span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">"poly1"</span>,<span class="st">"poly2"</span>,<span class="st">"species"</span>)</span>
+<span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a>bts <span class="ot">=</span> <span class="fu">bootMer</span>(mod1,<span class="at">FUN=</span><span class="cf">function</span>(x) <span class="fu">predict</span>(x,<span class="at">newdata=</span>pp1,<span class="at">re.form=</span><span class="cn">NA</span>),<span class="at">nsim=</span><span class="dv">500</span>)</span>
+<span id="cb39-29"><a href="#cb39-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-30"><a href="#cb39-30" aria-hidden="true" tabindex="-1"></a>bts<span class="sc">$</span>t</span>
+<span id="cb39-31"><a href="#cb39-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-32"><a href="#cb39-32" aria-hidden="true" tabindex="-1"></a>pp1<span class="sc">$</span>pred <span class="ot">=</span> <span class="fu">predict</span>(mod1, <span class="at">newdata=</span>pp1,<span class="at">re.form=</span><span class="cn">NA</span>)</span>
+<span id="cb39-33"><a href="#cb39-33" aria-hidden="true" tabindex="-1"></a>pp1<span class="sc">$</span>lwr <span class="ot">=</span> <span class="fu">apply</span>(bts<span class="sc">$</span>t, <span class="dv">2</span>, quantile, .<span class="dv">025</span>)</span>
+<span id="cb39-34"><a href="#cb39-34" aria-hidden="true" tabindex="-1"></a>pp1<span class="sc">$</span>upr <span class="ot">=</span> <span class="fu">apply</span>(bts<span class="sc">$</span>t, <span class="dv">2</span>, quantile, .<span class="dv">975</span>)</span>
+<span id="cb39-35"><a href="#cb39-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-36"><a href="#cb39-36" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pp1, <span class="fu">aes</span>(<span class="at">x=</span>poly1,<span class="at">y=</span>pred,<span class="at">ymin=</span>lwr,<span class="at">ymax=</span>upr,</span>
+<span id="cb39-37"><a href="#cb39-37" aria-hidden="true" tabindex="-1"></a>                <span class="at">col=</span>species,<span class="at">fill=</span>species))<span class="sc">+</span></span>
+<span id="cb39-38"><a href="#cb39-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()<span class="sc">+</span></span>
+<span id="cb39-39"><a href="#cb39-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="at">alpha=</span>.<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+TIMTOWTDI
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>As always, <strong>there is more than one way to do it (TIMTOWTDI)</strong></p>
+<p>The approach we are learning about in this course is only one of many approaches to studying non-linearity. Some alternatives, which you may come across in future work, are listed below.</p>
+<p><strong>Piecewise linear regression:</strong> fit a linear model with cut point(s) along x (determine cut points by greatest reduction in mean squared error <span class="math inline">\(\sigma\)</span>)</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/unnamed-chunk-40-1.png" class="img-fluid figure-img" width="350"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Piecewise polynomial</strong> fit the model <span class="math inline">\(y \sim x + x^2 + x^3\)</span> to equal chunks of x.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/unnamed-chunk-41-1.png" class="img-fluid figure-img" width="350"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Splines, penalised splines &amp; GAMS</strong></p>
+<p>This begins to open a huge can of worms, but if you foresee yourself needing these sort of tools, then Simon Wood, author of the <strong>mgcv</strong> R package for fitting generalised additive models (GAMS), has plenty of materials on <a href="https://www.maths.ed.ac.uk/~swood34/talks/snw-Koln.pdf">his webpage</a> (Warning, these are fairly technical). There are also a reasonable number of tutorials <a href="https://www.google.com/search?hl=&amp;site=&amp;q=gam+in+r+tutorial">online which are really good</a>.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="03a_poly_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid figure-img" width="350"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">© Copyright 2019-2024 <a href="https://www.ed.ac.uk/">The University of Edinburgh</a>. Site licensed under the <a href="https://www.gnu.org/licenses/agpl-3.0.en.html">GNU AGPLv3</a> license.</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>
