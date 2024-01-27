@@ -44,132 +44,203 @@ class: center, middle, inverse, title-slide
 This application of MLM is sometimes called "Growth Curve Analysis" (GCA)
 
 ---
-# Example: Target fixation during spoken word-to-picture matching (VWP)
+# Example: Word Learning
+
+Effect of working memory (high vs low) on L2 vocabulary acquisition (word learing)
 
 
 ```r
-load("./data/TargetFix.rda")
-ggplot(TargetFix, aes(Time, meanFix, color=Condition, fill=Condition)) +
-  stat_summary(fun=mean, geom="line") +
-  stat_summary(fun.data=mean_se, geom="ribbon", color=NA, alpha=0.3) +
-  theme_bw() + expand_limits(y=c(0,1)) +
-  labs(y="Fixation Proportion", x="Time since word onset (ms)")
+load("./data/WordLearnEx.rda")
+ggplot(WordLearnEx, aes(Session, Accuracy, color=WM)) +
+  stat_summary(fun.data = mean_se, geom="pointrange") +
+  stat_summary(fun = mean, geom="line") +
+  theme_bw() + expand_limits(y=c(0.5,1))
 ```
 
 ![](msmr_lec03_NonLinearLDA_files/figure-html/unnamed-chunk-1-1.png)&lt;!-- --&gt;
 
-Challenges:
-
-* Non-linear change over time
-* Within-subject `Condition`
-
 ---
-# Modeling non-linear change over time
-
-* Choosing a functional form
-   * Function must be adequate to data
-   * Dynamic consistency
-   * Prediction
-
---
-
-**Higher-order polynomials**
-
-*Orthogonal polynomials*
-
----
-# Function must be adequate to data
-![](msmr_lec03_NonLinearLDA_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
-
---
-
-Use `broom::augment()` to make a quick plot of residuals vs. fitted: 
+# Linear model
 
 
 ```r
-ggplot(augment(m), aes(.fitted, .resid)) + geom_point()
+m1 &lt;- lmer(Accuracy ~ Session*WM + (Session | Subject),
+           data = WordLearnEx, REML=F)
+sjPlot::tab_model(m1, show.re.var=F, show.icc=F, show.r2=F)
 ```
 
-For multilevel models use `broom.mixed::augment()`
+&lt;table style="border-collapse:collapse; border:none;"&gt;
+&lt;tr&gt;
+&lt;th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; "&gt;&amp;nbsp;&lt;/th&gt;
+&lt;th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; "&gt;Accuracy&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; "&gt;Predictors&lt;/td&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;Estimates&lt;/td&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;CI&lt;/td&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;p&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;(Intercept)&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.61&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.54&amp;nbsp;&amp;ndash;&amp;nbsp;0.67&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;Session&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.03&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.02&amp;nbsp;&amp;ndash;&amp;nbsp;0.04&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;WM [High]&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.05&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&amp;#45;0.04&amp;nbsp;&amp;ndash;&amp;nbsp;0.15&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.277&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;Session × WM [High]&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.00&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&amp;#45;0.01&amp;nbsp;&amp;ndash;&amp;nbsp;0.01&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.984&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;"&gt;N &lt;sub&gt;Subject&lt;/sub&gt;&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3"&gt;56&lt;/td&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;"&gt;Observations&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3"&gt;560&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;/table&gt;
+
+--
+Groups started and ended at the same level, linear model can't detect the subtle difference in learning rate. Need to model the curvature...
 
 ---
-# Two kinds of non-linearity
+# Quadratic model
 
-1. Non-linear in **variables** (Time): `\(Y_{ij} = \beta_{0i} + \beta_{1i} \cdot Time_{j} +  \beta_{2i} \cdot Time^2_{j} + \epsilon_{ij}\)`
-2. Non-linear in **parameters** (s): `\(Y = \frac{p-b}{1+exp(4 \cdot \frac{s}{p-b} \cdot (c-t))} + b\)`
+
+```r
+WordLearnEx$Session2 &lt;- WordLearnEx$Session^2
+m2 &lt;- lmer(Accuracy ~ (Session+Session2)*WM + (Session+Session2 | Subject),
+           data = WordLearnEx, REML=F)
+sjPlot::tab_model(m2, show.re.var = F, show.r2=F)
+```
+
+&lt;table style="border-collapse:collapse; border:none;"&gt;
+&lt;tr&gt;
+&lt;th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; "&gt;&amp;nbsp;&lt;/th&gt;
+&lt;th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; "&gt;Accuracy&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; "&gt;Predictors&lt;/td&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;Estimates&lt;/td&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;CI&lt;/td&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;p&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;(Intercept)&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.56&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.46&amp;nbsp;&amp;ndash;&amp;nbsp;0.65&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;Session&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.06&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.02&amp;nbsp;&amp;ndash;&amp;nbsp;0.09&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;0.001&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;Session2&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&amp;#45;0.00&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&amp;#45;0.01&amp;nbsp;&amp;ndash;&amp;nbsp;0.00&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.126&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;WM [High]&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&amp;#45;0.06&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&amp;#45;0.19&amp;nbsp;&amp;ndash;&amp;nbsp;0.08&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.389&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;Session × WM [High]&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.06&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.01&amp;nbsp;&amp;ndash;&amp;nbsp;0.10&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;0.023&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;Session2 × WM [High]&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&amp;#45;0.01&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&amp;#45;0.01&amp;nbsp;&amp;ndash;&amp;nbsp;-0.00&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;0.013&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;"&gt;N &lt;sub&gt;Subject&lt;/sub&gt;&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3"&gt;56&lt;/td&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;"&gt;Observations&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3"&gt;560&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;/table&gt;
+---
+# Quadratic model
+
+Linear term became significant after we added quadratic term?
 
 --
 
-* Dynamic Consistency: The model of the average is equal to the average of the individual models
-   * Recall: random effects must have a mean of 0
-   * Average of individual deviations is 0 
-   * So, the average of the individual models will have 0 deviation from the model of the average
 
---
+```r
+performance::check_collinearity(m2)
+```
 
-**Not true of some tempting functional forms**
+```
+## Model has interaction terms. VIFs might be inflated.
+##   You may check multicollinearity among predictors of a model without
+##   interaction terms.
+```
+
+```
+## # Check for Multicollinearity
+## 
+## Moderate Correlation
+## 
+##  Term  VIF     VIF 95% CI Increased SE Tolerance Tolerance 95% CI
+##    WM 5.28 [ 4.57,  6.14]         2.30      0.19     [0.16, 0.22]
+## 
+## High Correlation
+## 
+##         Term   VIF     VIF 95% CI Increased SE Tolerance Tolerance 95% CI
+##      Session 36.49 [31.08, 42.88]         6.04      0.03     [0.02, 0.03]
+##     Session2 36.49 [31.08, 42.88]         6.04      0.03     [0.02, 0.03]
+##   Session:WM 66.34 [56.43, 78.01]         8.14      0.02     [0.01, 0.02]
+##  Session2:WM 50.07 [42.61, 58.86]         7.08      0.02     [0.02, 0.02]
+```
 
 ---
-# Example of lack of dynamic consistency
-&lt;!-- Logistic power peak function (Scheepers, Keller, &amp; Lapata, 2008) fit to semantic competition data (Mirman &amp; Magnuson, 2009). --&gt;
+# Polynomial collinearity
 
-&lt;img src="./figs/dynamicConsistency3.png" width="55%" /&gt;
+&lt;img src="./figs/orth-poly.png" width="40%" /&gt;
 
---
-
-* Standard statistical inference assumes that the group average represents central tendency of individuals
-* For dynamically inconsistent models this is not true
-
---
-
-**Can't make inferences about central tendencies without dynamic consistency**
-
----
-# Prediction: Two kinds
 .pull-left[
-  **Fits: Statistical models**
-  
-  * Example: Mean and SD
-  * Describe the observed data
-  * No new predictions
-  * Not falsifiable
-]
+### Natural Polynomials
 
---
+* Correlated time terms
+* Very different scales
+]
 
 .pull-right[
-  **Forecasts: Theoretical models**
-  
-  * Example: Interactive Activation
-  * Match the observed data
-  * Makes new predictions
-  * Falsifiable
+### Orthogonal Polynomials
+
+* Uncorrelated time terms
+    * A version on variable centering
+* Same scale
+* Need to specify range and order
 ]
-
----
-# Using higher-order polynomials
-* &lt;span style="color:blue"&gt;Can model any curve shape&lt;/span&gt;
-* &lt;span style="color:blue"&gt;Dynamically consistent&lt;/span&gt;
-* &lt;span style="color:red"&gt;Bad at capturing asymptotic behaviour&lt;/span&gt;
-    * Try to avoid long flat sections
-    * Don't extrapolate
-
---
-
-**How to choose polynomial order?**
-
-* Curve shape
-* Statistical: include only terms that statistically improve model fit
-* Theoretical: include only terms that are predicted to matter
-
----
-# Natural vs. Orthogonal polynomials
-
-* Natural Polynomials: Correlated time terms
-* Orthogonal Polynomials: Uncorrelated time terms
-    + Need to specify range and order
-
-&lt;img src="./figs/orth-poly.png" width="60%" /&gt;
 
 ---
 # Interpreting orthogonal polynomial terms
@@ -193,6 +264,178 @@ Intercept ( `\(\beta_0\)` ): Overall average
 ]
 
 ---
+# Back to the example
+
+Need to create an orthogonal polynomial version of `Session`
+
+Helper function `code_poly` does this
+
+
+```r
+source("code_poly.R")
+# or from online version: source("https://uoepsy.github.io/msmr/functions/code_poly.R")
+WordLearnEx.gca &lt;- code_poly(WordLearnEx, predictor="Session", poly.order=2)
+```
+
+![](msmr_lec03_NonLinearLDA_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+
+---
+# New orth poly variables added to data frame
+
+
+```r
+summary(WordLearnEx.gca)
+```
+
+```
+##     Subject       WM         Session        Accuracy        Session2    
+##  244    : 10   Low :280   Min.   : 1.0   Min.   :0.000   Min.   :  1.0  
+##  253    : 10   High:280   1st Qu.: 3.0   1st Qu.:0.667   1st Qu.:  9.0  
+##  302    : 10              Median : 5.5   Median :0.833   Median : 30.5  
+##  303    : 10              Mean   : 5.5   Mean   :0.805   Mean   : 38.5  
+##  305    : 10              3rd Qu.: 8.0   3rd Qu.:1.000   3rd Qu.: 64.0  
+##  306    : 10              Max.   :10.0   Max.   :1.000   Max.   :100.0  
+##  (Other):500                                                            
+##  Session.Index      poly1            poly2       
+##  Min.   : 1.0   Min.   :-0.495   Min.   :-0.348  
+##  1st Qu.: 3.0   1st Qu.:-0.275   1st Qu.:-0.261  
+##  Median : 5.5   Median : 0.000   Median :-0.087  
+##  Mean   : 5.5   Mean   : 0.000   Mean   : 0.000  
+##  3rd Qu.: 8.0   3rd Qu.: 0.275   3rd Qu.: 0.174  
+##  Max.   :10.0   Max.   : 0.495   Max.   : 0.522  
+## 
+```
+
+---
+# Fit model with orthogonal predictors
+
+
+```r
+m2.orth &lt;- lmer(Accuracy ~ (poly1+poly2)*WM + 
+             (poly1+poly2 | Subject),
+           data = WordLearnEx.gca, REML=F)
+```
+&lt;table style="border-collapse:collapse; border:none;"&gt;
+&lt;tr&gt;
+&lt;th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; "&gt;&amp;nbsp;&lt;/th&gt;
+&lt;th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; "&gt;Accuracy&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; "&gt;Predictors&lt;/td&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;Estimates&lt;/td&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;CI&lt;/td&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;p&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;(Intercept)&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.78&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.74&amp;nbsp;&amp;ndash;&amp;nbsp;0.82&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;poly1&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.29&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.21&amp;nbsp;&amp;ndash;&amp;nbsp;0.36&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;poly2&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&amp;#45;0.05&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&amp;#45;0.12&amp;nbsp;&amp;ndash;&amp;nbsp;0.01&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.126&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;WM [High]&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.05&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&amp;#45;0.01&amp;nbsp;&amp;ndash;&amp;nbsp;0.11&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.085&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;poly1 × WM [High]&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.00&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&amp;#45;0.10&amp;nbsp;&amp;ndash;&amp;nbsp;0.11&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;0.984&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;poly2 × WM [High]&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&amp;#45;0.12&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&amp;#45;0.21&amp;nbsp;&amp;ndash;&amp;nbsp;-0.02&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;0.013&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;"&gt;N &lt;sub&gt;Subject&lt;/sub&gt;&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3"&gt;56&lt;/td&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;"&gt;Observations&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3"&gt;560&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;/table&gt;
+
+---
+# Plot model fit
+
+
+```r
+ggplot(augment(m2.orth), aes(poly1, Accuracy, color=WM)) +
+  stat_summary(fun.data = mean_se, geom="pointrange") +
+  stat_summary(aes(y=.fitted), fun = mean, geom="line") +
+  theme_bw(base_size=12) + expand_limits(y=c(0.5,1))
+```
+
+![](msmr_lec03_NonLinearLDA_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+
+---
+# What about more complex curve shapes?
+
+### Function must be adequate to data
+![](msmr_lec03_NonLinearLDA_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
+
+--
+
+Use `broom.mixed::augment()` to make a quick plot of residuals vs. fitted: 
+
+
+```r
+ggplot(augment(m), aes(.fitted, .resid)) + geom_point()
+```
+
+---
+# Using higher-order polynomials
+
+* &lt;span style="color:blue"&gt;Can model any curve shape&lt;/span&gt;
+    * But not practical for very complex curves: Use GAMMs or another modeling framework
+* &lt;span style="color:blue"&gt;Easy to implement in MLM framework (dynamically consistent, aka "collapsible")&lt;/span&gt;
+* &lt;span style="color:red"&gt;Bad at capturing asymptotic behaviour&lt;/span&gt;
+    * Try to avoid long flat sections
+    * Don't extrapolate
+
+--
+
+**How to choose polynomial order?**
+
+* Curve shape
+* Statistical: include only terms that statistically improve model fit
+* Theoretical: include only terms that are predicted to matter
+
+---
+# Example: Target fixation during spoken word-to-picture matching (VWP)
+
+.pull-left[
+
+```r
+load("./data/TargetFix.rda")
+```
+* More complex curve shape
+* Within-subject `Condition`
+]
+
+.pull-right[
+![](msmr_lec03_NonLinearLDA_files/figure-html/unnamed-chunk-13-1.png)&lt;!-- --&gt;
+]
+
+---
 # Random effects
 &lt;img src="./figs/RandomEffectsLinDemo.png" width="75%" /&gt;
 
@@ -207,11 +450,9 @@ Extend to polynomial terms: individual differences in "slope" (curvature) of qua
 If/when need to simplify random effects: consider which random effects are most expendable; that is, which individual differences are least important to your research questions or inferences.
 
 ---
-# Let's return to our example
+# Target fixation during spoken word-to-picure matching (VWP)
 
-Target fixation during spoken word-to-picure matching (VWP)
-
-![](msmr_lec03_NonLinearLDA_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+![](msmr_lec03_NonLinearLDA_files/figure-html/unnamed-chunk-14-1.png)&lt;!-- --&gt;
 
 ```
 ##     Subject         Time         timeBin   Condition     meanFix      
@@ -239,14 +480,14 @@ Create a 3rd-order orthogonal polynomial
 
 
 ```r
-source("code_poly.R")
 TargetFix.gca &lt;- code_poly(TargetFix, predictor="Time", poly.order=3)
 ```
 
-![](msmr_lec03_NonLinearLDA_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
-
+![](msmr_lec03_NonLinearLDA_files/figure-html/unnamed-chunk-15-1.png)&lt;!-- --&gt;
 ---
 # Prep for analysis
+
+Create a 3rd-order orthogonal polynomial
 
 
 ```r
@@ -279,7 +520,8 @@ m.full &lt;- lmer(meanFix ~ (poly1+poly2+poly3)*Condition + #fixed effects
 ```
 
 ```
-## boundary (singular) fit: see help('isSingular')
+## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, :
+## Model failed to converge with max|grad| = 0.00280522 (tol = 0.002, component 1)
 ```
 
 ```r
@@ -289,14 +531,14 @@ coef(summary(m.full))
 
 ```
 ##                      Estimate Std. Error    df   t value  Pr(&gt;|t|)
-## (Intercept)         0.4773228    0.01385 19.87 34.457856 3.383e-19
-## poly1               0.6385604    0.05994 17.27 10.654065 5.152e-09
-## poly2              -0.1095979    0.03849 19.99 -2.847535 9.954e-03
-## poly3              -0.0932612    0.02330 18.07 -4.001954 8.305e-04
-## ConditionLow       -0.0581122    0.01879 16.22 -3.093146 6.891e-03
-## poly1:ConditionLow  0.0003188    0.06579 15.70  0.004846 9.962e-01
-## poly2:ConditionLow  0.1635455    0.05393 19.08  3.032574 6.826e-03
-## poly3:ConditionLow -0.0020869    0.02705 16.67 -0.077163 9.394e-01
+## (Intercept)         0.4773228    0.01386 19.86 34.450610 3.462e-19
+## poly1               0.6385604    0.05993 17.29 10.655308 5.097e-09
+## poly2              -0.1095979    0.03849 19.98 -2.847254 9.964e-03
+## poly3              -0.0932612    0.02330 18.08 -4.002397 8.291e-04
+## ConditionLow       -0.0581122    0.01879 16.18 -3.091999 6.926e-03
+## poly1:ConditionLow  0.0003188    0.06580 15.70  0.004845 9.962e-01
+## poly2:ConditionLow  0.1635455    0.05393 19.06  3.032514 6.831e-03
+## poly3:ConditionLow -0.0020869    0.02705 16.67 -0.077160 9.394e-01
 ```
 
 ---
@@ -306,11 +548,11 @@ coef(summary(m.full))
 ggplot(TargetFix.gca, aes(Time, meanFix, color=Condition)) +
   stat_summary(fun.data=mean_se, geom="pointrange") +
   stat_summary(aes(y=fitted(m.full)), fun=mean, geom="line") +
-  theme_bw() + expand_limits(y=c(0,1)) +
+  theme_bw(base_size=12) + expand_limits(y=c(0,1)) +
   labs(y="Fixation Proportion", x="Time since word onset (ms)")
 ```
 
-![](msmr_lec03_NonLinearLDA_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
+![](msmr_lec03_NonLinearLDA_files/figure-html/unnamed-chunk-18-1.png)&lt;!-- --&gt;
 
 ---
 # The random effects
@@ -322,12 +564,12 @@ head(ranef(m.full)$"Subject")
 
 ```
 ##     (Intercept)    poly1      poly2     poly3
-## 708  -0.0001522  0.01085 -0.0035635 -0.004929
-## 712   0.0110222  0.10693 -0.0093253 -0.036517
-## 715   0.0113775  0.11482 -0.0109566 -0.039652
-## 720  -0.0020717 -0.01300 -0.0003714  0.003738
-## 722   0.0138362  0.16223 -0.0200919 -0.058180
-## 725  -0.0178395 -0.20733  0.0253549  0.074204
+## 708  -0.0001155  0.01084 -0.0035503 -0.004907
+## 712   0.0110129  0.10686 -0.0094179 -0.036523
+## 715   0.0113842  0.11471 -0.0110318 -0.039634
+## 720  -0.0020541 -0.01293 -0.0003802  0.003715
+## 722   0.0139054  0.16216 -0.0201988 -0.058159
+## 725  -0.0179260 -0.20721  0.0254773  0.074161
 ```
 ]
 
@@ -339,12 +581,12 @@ head(ranef(m.full)$"Subject:Condition")
 
 ```
 ##          (Intercept)    poly1    poly2    poly3
-## 708:High    0.012273 -0.13120 -0.12985  0.01515
-## 708:Low    -0.061222  0.17039  0.06228  0.01232
-## 712:High    0.021229  0.08290  0.02803  0.02002
-## 712:Low    -0.014453  0.04483  0.03255 -0.01730
-## 715:High    0.012361  0.05971  0.05517 -0.02500
-## 715:Low    -0.008687  0.10599  0.13031 -0.03948
+## 708:High    0.012238 -0.13120 -0.12985  0.01515
+## 708:Low    -0.061258  0.17041  0.06226  0.01230
+## 712:High    0.021239  0.08296  0.02812  0.02003
+## 712:Low    -0.014447  0.04490  0.03262 -0.01731
+## 715:High    0.012355  0.05981  0.05525 -0.02501
+## 715:Low    -0.008693  0.10609  0.13038 -0.03950
 ```
 ]
 
@@ -358,13 +600,13 @@ VarCorr(m.full)
 ```
 ##  Groups            Name        Std.Dev. Corr             
 ##  Subject:Condition (Intercept) 0.0405                    
-##                    poly1       0.1404   -0.43            
+##                    poly1       0.1405   -0.43            
 ##                    poly2       0.1124   -0.33  0.72      
 ##                    poly3       0.0417    0.13 -0.49 -0.43
 ##  Subject           (Intercept) 0.0124                    
-##                    poly1       0.1195    0.91            
-##                    poly2       0.0165   -0.42 -0.76      
-##                    poly3       0.0421   -0.85 -0.99  0.83
+##                    poly1       0.1194    0.91            
+##                    poly2       0.0166   -0.43 -0.76      
+##                    poly3       0.0421   -0.86 -0.99  0.83
 ##  Residual                      0.0438
 ```
 
@@ -387,8 +629,7 @@ m.left &lt;- lmer(meanFix ~ (poly1+poly2+poly3)*Condition + #fixed effects
 ```
 
 ```
-## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, :
-## Model failed to converge with max|grad| = 0.00339123 (tol = 0.002, component 1)
+## boundary (singular) fit: see help('isSingular')
 ```
 
 ```r
@@ -397,14 +638,14 @@ coef(summary(m.left))
 
 ```
 ##                      Estimate Std. Error     df   t value  Pr(&gt;|t|)
-## (Intercept)         0.4773228    0.01679  9.995 28.428492 6.810e-11
-## poly1               0.6385604    0.05146 10.005 12.409428 2.120e-07
-## poly2              -0.1095979    0.03719  9.987 -2.946831 1.463e-02
-## poly3              -0.0932612    0.02061 10.001 -4.524584 1.100e-03
-## ConditionLow       -0.0581122    0.02111  9.994 -2.752959 2.039e-02
-## poly1:ConditionLow  0.0003188    0.07481  9.985  0.004262 9.967e-01
-## poly2:ConditionLow  0.1635455    0.06278  9.982  2.605219 2.629e-02
-## poly3:ConditionLow -0.0020869    0.03332 10.685 -0.062623 9.512e-01
+## (Intercept)         0.4773228    0.01679  9.991 28.425276 6.858e-11
+## poly1               0.6385604    0.05146 10.005 12.409768 2.119e-07
+## poly2              -0.1095979    0.03718  9.993 -2.947552 1.461e-02
+## poly3              -0.0932612    0.02062  9.997 -4.523792 1.103e-03
+## ConditionLow       -0.0581122    0.02111  9.993 -2.753071 2.038e-02
+## poly1:ConditionLow  0.0003188    0.07479  9.993  0.004263 9.967e-01
+## poly2:ConditionLow  0.1635455    0.06274  9.998  2.606654 2.620e-02
+## poly3:ConditionLow -0.0020869    0.03334 10.669 -0.062597 9.512e-01
 ```
 
 ---
@@ -420,13 +661,13 @@ VarCorr(m.left)
 ```
 ##  Groups   Name               Std.Dev. Corr                                     
 ##  Subject  (Intercept)        0.0519                                            
-##           poly1              0.1569    0.17                                    
+##           poly1              0.1569    0.18                                    
 ##           poly2              0.1095   -0.29  0.03                              
 ##           poly3              0.0490   -0.28 -0.37  0.63                        
 ##           ConditionLow       0.0649   -0.89 -0.13  0.49  0.34                  
-##           poly1:ConditionLow 0.2286    0.38 -0.46 -0.63  0.10 -0.56            
-##           poly2:ConditionLow 0.1890    0.20  0.08 -0.81 -0.22 -0.43  0.74      
-##           poly3:ConditionLow 0.0861   -0.08 -0.40 -0.06 -0.47  0.06 -0.27 -0.43
+##           poly1:ConditionLow 0.2286    0.38 -0.46 -0.62  0.10 -0.56            
+##           poly2:ConditionLow 0.1889    0.20  0.08 -0.81 -0.22 -0.43  0.74      
+##           poly3:ConditionLow 0.0862   -0.08 -0.40 -0.07 -0.47  0.06 -0.27 -0.43
 ##  Residual                    0.0430
 ```
 
@@ -443,7 +684,7 @@ This random effect structure makes fewer assumptions:
 
 ---
 # Convergence problems
-&lt;span style="color:red"&gt;`Model failed to converge with max|grad| = 0.00930636 (tol = 0.002, component 1)`&lt;/span&gt;
+&lt;span style="color:red"&gt;`Model failed to converge with max|grad| = 0.00280522 (tol = 0.002, component 1)`&lt;/span&gt;
 
 --
 
@@ -478,7 +719,7 @@ Outcome ~ (poly1+poly2+poly3)*Condition + (poly1+poly2+poly3 || Subject)
 **Modeling non-linear change over time**
 
 * Choose an adequate functional form
-    + Polynomials are mathematically nice, but be careful with interpretation and extrapolation
+    + Polynomials are mathematically nice, but not practical for very complex curve shapes and be careful with extrapolation
 * Random effect structure
     + Keep it maximal, but be ready to deal with convergence problems
     + For within-subject variables: "left" side of pipe (random slopes) is more flexible, but requires more data to estimate; "right" side of pipe (nested) is a good alternative
@@ -489,7 +730,9 @@ Outcome ~ (poly1+poly2+poly3)*Condition + (poly1+poly2+poly3 || Subject)
 ]
 
 ---
-# Live R
+# Brief break
+
+## Next up: Live R
 
 Fixations are binary - a participant is either looking at the target object or they are not - so let's revisit the target fixation example, this time using logistic MLM to analyse the data.
     </textarea>
