@@ -733,24 +733,9 @@ explanations of each random slope
 </div>
 </div>
 </div>
+<p>And we can see in our summary that there is a lot of by-department variation - departments vary in their baseline stress levels with a standard deviation of 0.81, and within departments, participants vary in baseline stress scores with a standard deviation of 0.38.</p>
 <div class="cell" data-layout-align="center">
-<div class="cell-output cell-output-stdout">
-<pre><code>        grp        var1 var2         vcov sdcor
-1  dept:pid (Intercept) &lt;NA&gt;  0.147660835  0.38
-2  dept:pid         day &lt;NA&gt;  0.012142284  0.11
-3  dept:pid (Intercept)  day -0.001425462 -0.03
-4      dept (Intercept) &lt;NA&gt;  0.648410139  0.81
-5      dept         day &lt;NA&gt;  0.001979033  0.04
-6      dept        CBDY &lt;NA&gt;  0.055388009  0.24
-7      dept (Intercept)  day -0.006371711 -0.18
-8      dept (Intercept) CBDY  0.076132839  0.40
-9      dept         day CBDY -0.002270482 -0.22
-10 Residual        &lt;NA&gt; &lt;NA&gt;  0.129765472  0.36</code></pre>
-</div>
-</div>
-<p>And we can see in our summary that there is a lot of by-department variation - departments vary in their baseline stress levels with a standard deviation of -0.03, and within departments, participants vary in baseline stress scores with a standard deviation of 0.38.</p>
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mnest2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mnest2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <pre><code>...
 Random effects:
@@ -765,7 +750,7 @@ Number of obs: 1200, groups:  dept:pid, 240; dept, 12
 ...</code></pre>
 <p>Examining <code>ranef(mnest2)</code> now gives us a list of <code>dept:pid</code> random effects, and then of <code>dept</code> random effects. We can plot them using <code>dotplot.ranef.mer()</code>, as seen below. From these, we can see for instance, that the effect of <code>CBD</code> is more negative for Theology, and Sociology and Maths have higher slopes of <code>day</code>. These map with the plot of fitted values we saw in <a href="#fig-plotfitnest">Figure&nbsp;7</a> - the department lines are going up more Math and Sociology than in other departments, and in Theology the blue CBD line is much lower relative to the red control line than in other departments.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot.ranef.mer</span>(<span class="fu">ranef</span>(mnest2))<span class="sc">$</span>dept</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot.ranef.mer</span>(<span class="fu">ranef</span>(mnest2))<span class="sc">$</span>dept</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -780,8 +765,8 @@ Number of obs: 1200, groups:  dept:pid, 240; dept, 12
 <p>Forgetting about participants nested in departments, let’s return to our sample of 20 staff members from the Psychology department. In our initial study design, we had just one self report measure of stress each day for each person.<br>
 However, we might just as easily have taken more measurements. i.e.&nbsp;on Day 1, we could have recorded Martin’s stress levels 10 times. Furthermore, we could have used 10 different measurements of stress, rather than just a self-report measure. We could measure his cortisol levels, blood pressure, heart rate variability, give him different questionnaires, ask an informant like his son to report his stress, and so on. And we could have done the same for everybody.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>stresscross <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/stressweek_crossed.csv"</span>)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(stresscross)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>stresscross <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/stressweek_crossed.csv"</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(stresscross)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 6
   dept  pid   CBD   measure          day stress
@@ -802,11 +787,11 @@ However, we might just as easily have taken more measurements. i.e.&nbsp;on Day 
 <div class="cell" data-layout-align="center">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(stresscross, <span class="fu">aes</span>(<span class="at">x=</span>day, <span class="at">y=</span>stress, <span class="at">col=</span>CBD))<span class="sc">+</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#make a line for each measure</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group=</span>measure))<span class="sc">+</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>pid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(stresscross, <span class="fu">aes</span>(<span class="at">x=</span>day, <span class="at">y=</span>stress, <span class="at">col=</span>CBD))<span class="sc">+</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#make a line for each measure</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group=</span>measure))<span class="sc">+</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>pid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div id="fig-crosseg" class="quarto-figure quarto-figure-center anchored">
@@ -823,11 +808,11 @@ However, we might just as easily have taken more measurements. i.e.&nbsp;on Day 
 <div class="cell" data-layout-align="center">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(stresscross, <span class="fu">aes</span>(<span class="at">x=</span>day, <span class="at">y=</span>stress, <span class="at">col=</span>CBD))<span class="sc">+</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># make a line for each ppt</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group=</span>pid))<span class="sc">+</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>measure)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(stresscross, <span class="fu">aes</span>(<span class="at">x=</span>day, <span class="at">y=</span>stress, <span class="at">col=</span>CBD))<span class="sc">+</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># make a line for each ppt</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group=</span>pid))<span class="sc">+</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>measure)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div id="fig-crosseg1" class="quarto-figure quarto-figure-center anchored">
@@ -843,29 +828,29 @@ However, we might just as easily have taken more measurements. i.e.&nbsp;on Day 
 <p>We can fit a model that therefore accounts for the by-participant variation (“things vary between participants”) <em>and</em> the by-measure variation (“things vary between measures”).</p>
 <p>So a model might look something like this:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># re-center 'day' so the intercept is day 1</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>stresscross<span class="sc">$</span>day <span class="ot">&lt;-</span> stresscross<span class="sc">$</span>day<span class="dv">-1</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>mcross <span class="ot">&lt;-</span> <span class="fu">lmer</span>(stress <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> day <span class="sc">*</span> CBD <span class="sc">+</span> </span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                (<span class="dv">1</span> <span class="sc">+</span> day <span class="sc">*</span> CBD <span class="sc">|</span> measure) <span class="sc">+</span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>                (<span class="dv">1</span> <span class="sc">+</span> day <span class="sc">|</span> pid), <span class="at">data =</span> stresscross)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># re-center 'day' so the intercept is day 1</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>stresscross<span class="sc">$</span>day <span class="ot">&lt;-</span> stresscross<span class="sc">$</span>day<span class="dv">-1</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>mcross <span class="ot">&lt;-</span> <span class="fu">lmer</span>(stress <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> day <span class="sc">*</span> CBD <span class="sc">+</span> </span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>                (<span class="dv">1</span> <span class="sc">+</span> day <span class="sc">*</span> CBD <span class="sc">|</span> measure) <span class="sc">+</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>                (<span class="dv">1</span> <span class="sc">+</span> day <span class="sc">|</span> pid), <span class="at">data =</span> stresscross)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Note that just as with the nested example above, we can have different random slopes for measures vs those for participants, depending upon what effects can vary given the study design.</p>
 <p>As before, removing the interaction in the random effects achieves model convergence:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>mcross2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(stress <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> day <span class="sc">*</span> CBD <span class="sc">+</span> </span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>                (<span class="dv">1</span> <span class="sc">+</span> day <span class="sc">+</span> CBD <span class="sc">|</span> measure) <span class="sc">+</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                (<span class="dv">1</span> <span class="sc">+</span> day <span class="sc">|</span> pid), <span class="at">data =</span> stresscross)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>mcross2 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(stress <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> day <span class="sc">*</span> CBD <span class="sc">+</span> </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                (<span class="dv">1</span> <span class="sc">+</span> day <span class="sc">+</span> CBD <span class="sc">|</span> measure) <span class="sc">+</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                (<span class="dv">1</span> <span class="sc">+</span> day <span class="sc">|</span> pid), <span class="at">data =</span> stresscross)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>And again we might plot our fitted values either of the ways we plotted our initial data in <a href="#fig-crosseg">Figure&nbsp;8</a> above, only with the <code>.fitted</code> values obtained from the <code>augment()</code> function:</p>
 <div class="cell" data-layout-align="center">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">augment</span>(mcross2) <span class="sc">|&gt;</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>day, <span class="at">y=</span>.fitted, <span class="at">col=</span>CBD))<span class="sc">+</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>()<span class="sc">+</span></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group=</span>pid))<span class="sc">+</span></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>measure)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">augment</span>(mcross2) <span class="sc">|&gt;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>day, <span class="at">y=</span>.fitted, <span class="at">col=</span>CBD))<span class="sc">+</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group=</span>pid))<span class="sc">+</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>measure)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -878,7 +863,7 @@ However, we might just as easily have taken more measurements. i.e.&nbsp;on Day 
 <p>Our random effect variances show the estimated variance in different terms (the intercept, slopes of day, effect of CBD) between participants, and between measures.<br>
 From the below it is possible to see, for instance, that there is considerable variability between how measures respond to CBD (they vary in the effect of CBD on stress with a standard deviation of 0.53)</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mcross2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mcross2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <pre><code>...
 Random effects:
@@ -893,7 +878,7 @@ Number of obs: 1000, groups:  pid, 20; measure, 10
 ...</code></pre>
 <p>Again, our dotplots of random effects help to also show this picture. We can see that the measures of “blood pressure”, “alpha-amylase”, “cortisol”, and “HRV” all have more effects of CBD that are more negative. We can see this in our plot of fitted values - these measures look like CBD vs control differnce is greater than in other measures.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot.ranef.mer</span>(<span class="fu">ranef</span>(mcross2))<span class="sc">$</span>measure</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot.ranef.mer</span>(<span class="fu">ranef</span>(mcross2))<span class="sc">$</span>measure</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
