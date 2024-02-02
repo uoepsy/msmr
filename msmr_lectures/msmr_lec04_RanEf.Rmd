@@ -47,8 +47,6 @@ style_mono_accent(
 ) 
 ```
 
-<!-- <img src="./figs/msmr-attendance-w4.png"/> -->
-
 ---
 # Turtles all the way down
 
@@ -254,7 +252,7 @@ m3 <- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
 #  Math Active Learning: 3-level model
 
 ```{r echo=FALSE}
-gt(tidy(m3)) %>% 
+gt(tidy(m3, effects="fixed")) %>% 
   tab_style(
     style = list(cell_fill(color = "yellow")),
     locations = cells_body(rows = str_detect(term, "ClassSize")) 
@@ -316,8 +314,9 @@ Omitting random slopes tends to make models anti-conservative (inflates rates of
 
 When there are only a few observational units (e.g., 3 schools), estimating random effects is very difficult (esp. random slopes) and can produce unreliable fixed effect estimates. Over-parameterised random effect structures should be simplified.
 
----
-<!-- <img src="./figs/CareersWithR.png"/> -->
+--
+### Questions?
+
 ---
 # Crossed random effects
 
@@ -459,7 +458,7 @@ Note the random slopes:
 ---
 # A multilevel modeling approach 
 ```{r}
-gt(tidy(mod_ps))
+gt(tidy(mod_ps, effects="fixed"))
 ```
 
 ---
@@ -480,8 +479,8 @@ efx
 ```{r, fig.width=5, fig.height=4, message=FALSE}
 ggplot(efx, aes(Condition, fit, color=Prob_Type)) + 
   geom_point(size=3) + 
-  geom_linerange(aes(ymin=fit-se, ymax=fit+se), size=2) +
-  geom_linerange(aes(ymin=lower, ymax=upper), size=1) +
+  geom_linerange(aes(ymin=fit-se, ymax=fit+se), linewidth=2) +
+  geom_linerange(aes(ymin=lower, ymax=upper), linewidth=1) +
   theme_bw() + labs(y="Response Time", color="Problem\nType")
 ```
 
@@ -559,4 +558,18 @@ These are just kinds of MLM and the principles from other lectures also apply to
 * use logistic regression for binary outcomes
 
 ---
-# Live R
+# Short Break
+
+## Up next: Live R
+
+44 participants across 4 groups (between-subjects) were tested 5 times (waves) in 11 domains. In each wave of testing, each domain received a score on a 20-point scale and a set of several questions, which could be answered correctly or incorrectly.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.width=12, fig.height=4}
+load("./data/group_tx.RData")
+
+ggplot(group_tx, aes(Wave, Score, color=Domain)) +
+  facet_wrap(~ Group, nrow=1) +
+  stat_summary(fun.data=mean_se, geom="pointrange") +
+  stat_smooth(method="lm", se=F)
+```
+
