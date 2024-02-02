@@ -1,0 +1,615 @@
+---
+title: "Week 4 Exercises: Nested and Crossed"
+params: 
+    SHOW_SOLS: FALSE
+    TOGGLE: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+source('assets/setup.R')
+library(xaringanExtra)
+library(tidyverse)
+library(patchwork)
+library(ggdist)
+xaringanExtra::use_panelset()
+qcounter <- function(){
+  if(!exists("qcounter_i")){
+    qcounter_i <<- 1
+  }else{
+    qcounter_i <<- qcounter_i + 1
+  }
+  qcounter_i
+}
+library(lme4)
+```
+
+
+
+
+
+
+# Treatment
+
+```{r}
+library(tidyverse)
+simm2<-function(seed=NULL,b0=0,b1=1,b2=1,z0=1,z1=1,e=1){
+  if(!is.null(seed)){
+    set.seed(seed)
+  }
+  n_groups = round(runif(1,1,15))*2
+  npg = 5
+  g = rep(1:n_groups, e = 5)      # the group identifier
+  x = rep(1:5,n_groups)
+  b = rep(0:1,e=n_groups/2)
+  b = b[g]
+  re0 = rnorm(n_groups, sd = z0)  # random intercepts
+  re  = re0[g]
+  rex = rnorm(n_groups, sd = z1)  # random effects
+  re_x  = rex[g]
+  lp = (b0 + re) + (b1 + re_x)*x + b2*x*b 
+  y = rnorm(length(g), mean = lp, sd = e) # create a continuous target variable
+  # y_bin = rbinom(N, size = 1, prob = plogis(lp)) # create a binary target variable
+  data.frame(x, b=factor(b), g=factor(g), y)
+}
+big = tibble(
+    school = 1:30,
+    int = rnorm(30,15,1),
+    sl = rnorm(30,-.7,1),
+    intr = rnorm(30,-1,1),
+    z0 = runif(30,.5,2),
+    z1 = runif(30,.5,2),
+    e = runif(30,.5,2)
+  )
+  big = big |> mutate(
+    data = pmap(list(int,sl,intr,z0,z1,e), ~simm2(b0=..1,b1=..2,b2=..3,z0=..4,z1=..5,e=..6))
+  ) |> unnest(data)
+library(lme4)  
+  m = lmer(y~x*b+(1+x*b|school)+(1+x|school:g),big)
+  sjPlot::plot_model(m,type="int")  
+```
+
+
+
+:::frame
+__Data: Psychoeducation Treatment Effects__
+  
+This is synthetic data from a randomised controlled trial, in which 5 therapists randomly assigned participants to control or treatment group and monitored the participants' anxiety levels over time. There was a baseline test, then 6 weeks of treatment, with test sessions every week (7 total sessions).
+
+The following code will load in your R session an object already called `tx` with the data:  
+
+```{r}
+load(url("https://uoepsy.github.io/msmr/data/tx.Rdata"))
+```
+
+You can find a data dictionary below:
+```{r, echo=FALSE}
+tibble(
+    variable = names(tx),
+    description = c("Whether the participant is in the Treatment or Control group","Session number (1-7)","Therapist Identifier (A, B, C, D or E", "Score on test (Mean = 0.63, SD = 0.15)","Participant Identifier. Labels take the form <Therapist>_<Group>_<Participant number>. For instance, if Therapist A's 6th Participant is in the Treatment group, then their label is A_treatment_6")
+) %>% 
+    kableExtra::kbl() %>%
+    kableExtra::kable_styling(full_width = FALSE)
+```
+
+:::
+
+`r qbegin("A1")`
+Load and visualise the data. Does it look like the treatment had an effect on the performance score?
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r message=FALSE}
+ggplot(tx, aes(session, Score, color=group)) +
+  stat_summary(fun.data = mean_se, geom="pointrange") +
+  stat_smooth() +
+  theme_classic()
+```
+
+Just for fun, let's add on the individual participant scores, and also make a plot for each therapist. 
+```{r message=FALSE}
+ggplot(tx, aes(session, Score, color=group)) +
+  stat_summary(fun.data = mean_se, geom = "pointrange") +
+  stat_smooth() +
+  theme_classic() +
+  geom_line(aes(group = PID), alpha = .2) + 
+  facet_wrap(~therapist)
+```
+`r solend()` 
+
+`r qbegin("A2")`
+Test whether the treatment had an effect using multilevel modelling.  
+Try to fit the **maximal** model.  
+Does it converge? Is it singular?  
+
+Consider these questions when you're designing your model(s) and use your answers to motivate your model design and interpretation of results:  
+
+- What have we randomly sampled here? 
+  - We have randomly sampled some therapists, and within them have random sampled some participants. Each participant then has a sample of observations.   
+- What are the levels of nesting? How should that be reflected in the random effect structure?  
+  - Each participant is associated with just one therapist. Participants are nested within therapists.  
+- What is the shape of change over time? Do you need polynomials to model this shape? If yes, what order polynomials? 
+  - Looks like linear change, don't need polynomials. And it doesn't look like there are any baseline differences.    
+  
+- We are wanting to examine how time (`session`) varies between treatment groups (`group`), so we want an interaction `session * group` in the model. Participants have multiple sessions, but belong to only one group. Therapists have multiple sessions _and_ participants in different groups. 
+- Do we want to allow the same effects to vary by participants and by therapists?  
+  - If so, we can specify `(1 + .... | therapist/PID)`. 
+  - If not, and we want to have some effects vary by therapist but _not_ by participant (or vice versa), then we will need to specify these separately.  
+- Do the participants have labels that uniquely associate them with one higher up group (i.e., one therapist?).     
+  - If so, we can have `(1..... | PID) + (1.... | therapist)`. 
+  - If not, then we need to tell the model that patients are nested in therapists, and have `(1..... | therapist:PID) + (1.... | therapist)`.  
+
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+library(lme4)
+
+# start with maximal model
+m1 <- lmer(Score ~ session * group + 
+             (1 + session | PID) + 
+             (1 + session * group | therapist),
+           data=tx,
+           control = lmerControl(optimizer="bobyqa"))
+
+isSingular(m1)
+```
+
+`r solend()` 
+
+
+
+`r qbegin("A3")`
+Try adjusting your model by removing random effects or correlations, examine the model again, and so on..  
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+VarCorr(m1)
+```
+There's a correlation of exactly -1 between the random intercepts and slopes for therapists, and the standard deviation estimate for `session|therapist` is pretty small. Let's remove it. 
+```{r}
+m2 <- lmer(Score ~ session * group + 
+             (1 + session | PID) + 
+             (1 + group | therapist),
+           data=tx,
+           control = lmerControl(optimizer="bobyqa"))
+VarCorr(m2)
+m2a <- lmer(Score ~ session * group + 
+             (1 + session | PID) + 
+             (1 | therapist),
+           data=tx,
+           control = lmerControl(optimizer="bobyqa"))
+VarCorr(m2a)
+```
+It now looks like estimates for random intercepts for therapists is now 0. If we remove this, our model finally is non-singular:
+```{r}
+m3 <- lmer(Score ~ session * group + 
+             (1 + session | PID),
+           data=tx,
+           control = lmerControl(optimizer="bobyqa"))
+
+summary(m3)
+```
+Lastly, it's then a good idea to check that the parameter estimates and SE are not radically different across these models (they are virtually identical)
+```{r}
+# extract and column bind the fixed effect estimates
+cbind(
+  summary(m1)$coefficients[,1],
+  summary(m2)$coefficients[,1],
+  summary(m2a)$coefficients[,1],
+  summary(m3)$coefficients[,1]
+)
+# extract and column bind the fixed effect SEs
+cbind(
+  summary(m1)$coefficients[,2],
+  summary(m2)$coefficients[,2],
+  summary(m2a)$coefficients[,2],
+  summary(m3)$coefficients[,2]
+)
+```
+`r solend()` 
+
+
+
+`r qbegin('A4: Optional')`
+
+Try the code below to use the `allFit()` function to fit your final model with all the available optimizers.^[If you have an older version of `lme4`, then `allFit()` might not be directly available, and you will need to run the following: `source(system.file("utils", "allFit.R", package="lme4"))`.]  
+  
++ You might need to install the `dfoptim` package to get one of the optimizers  
+
+
+```{r eval=FALSE}
+sumfits <- allFit(yourmodel)
+summary(sumfits)
+```
+`r qend()` 
+
+
+
+
+
+# Test Enhanced Learning
+
+TODO switch to logistic
+
+:::frame
+__Data: Test-enhanced learning__  
+
+An experiment was run to conceptually replicate "test-enhanced learning" (Roediger & Karpicke, 2006): two groups of 25 participants were presented with material to learn. One group studied the material twice (`StudyStudy`), the other group studied the material once then did a test (`StudyTest`). Recall was tested immediately (one minute) after the learning session and one week later. The recall tests were composed of 175 items identified by a keyword (`Test_word`). One of the researchers' questions concerned how test-enhanced learning influences time-to-recall. 
+
+The critical (replication) prediction is that the `StudyStudy` group should perform somewhat better on the immediate recall test, but the `StudyTest` group will retain the material better and thus perform better on the 1-week follow-up test.
+
+The following code loads the data into your R environment by creating a variable called `tel`:
+
+```{r eval=F}
+load(url("https://uoepsy.github.io/data/testenhancedlearning.RData"))
+```
+
+```{r echo=FALSE} 
+load(url("https://uoepsy.github.io/data/testenhancedlearning.RData"))
+tibble(
+  variable=names(tel),
+  description=c("Unique Participant Identifier", "Group denoting whether the participant studied the material twice (StudyStudy), or studied it once then did a test (StudyTest)","Time of recall test ('min' = Immediate, 'week' = One week later)","Word being recalled (175 different test words)","Whether or not the word was correctly recalled","Time to recall word (milliseconds)")
+) %>% 
+    kableExtra::kbl() %>%
+    kableExtra::kable_styling(full_width = FALSE)
+```
+
+:::
+
+
+`r qbegin("B1")`
+Load and plot the data. Does it look like the effect was replicated?
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+We have a choice to make - whether we focus on recall time or on the correct responses. The choice is yours to make! 
+
+You can make use of `stat_summary()` again! 
+```{r, eval=T}
+ggplot(tel, aes(Delay, Rtime, col=Group)) + 
+  stat_summary(fun.data=mean_se, geom="pointrange")+
+  theme_light()
+```
+It's more work, but some people might rather calculate the numbers and then plot them directly. It does just the same thing: 
+```{r}
+tel %>% 
+  group_by(Delay, Group) %>%
+  summarise(
+    mean = mean(Rtime),
+    se = sd(Rtime)/sqrt(n())
+  ) %>%
+  ggplot(., aes(x=Delay, col = Group)) +
+  geom_pointrange(aes(y=mean, ymin=mean-se, ymax=mean+se))+
+  theme_light() +
+  labs(y = "Response Time (ms)")
+```
+That looks like test-enhanced learning to me!  
+
+
+Let's also do it quickly for the proportion of correct responses:
+```{r, eval=T}
+ggplot(tel, aes(Delay, Correct, col=Group)) + 
+  stat_summary(fun.data=mean_se, geom="pointrange")+
+  theme_light()
+```
+
+`r solend()` 
+
+
+
+`r qbegin("B2")`
+Test the critical hypothesis using a mixed-effects model. Fit the maximal random effect structure supported by the experimental design.  
+
+Some questions to consider:  
+  
++ There are two outcomes to consider here: recall time, and accuracy. Which will you use? (Feel free to fit models to both!)
++ Item accuracy is a binary variable. If you choose this as your outcome variable here, what kind of model will you use?  
++ We can expect variability across subjects (some people are better at learning than others) and across items (some of the recall items are harder than others). How should this be represented in the random effects?
+
++ If a model takes ages to fit, you might want to cancel it by pressing the escape key. It is normal for complex models to take time, but for the purposes of this task, give up after a couple of minutes, and try simplifying your model.  
+
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+:::imp
+We're going to use recall time as our outcome here. For our purposes here, there is no specific reason to choose one over the other. If this were your own research project you would likely model both, because they will represent different aspects of the recall process.  
+
+__Remember__ - as research designs get more complex, there are an ever-increasing number of different viable and defensible approaches that we might take in analysing the data. The solutions provided here are not "_the_ answer", they are simply "_an_ answer". 
+:::
+
+This one will probably take a little bit of time:
+```{r}
+m <- lmer(Rtime ~ Delay*Group +
+             (1 + Delay | Subject_ID) +
+             (1 + Delay * Group | Test_word),
+           data=tel, control=lmerControl(optimizer = "bobyqa"))
+```
+`r solend()` 
+
+`r qbegin("B3")`
+The model with maximal random effects will probably not converge, or will obtain a singular fit. Simplify the model until you achieve convergence.  
+<br>
+What we're aiming to do here is to follow [Barr et al.'s](https://doi.org/10.1016/j.jml.2012.11.001) advice of defining our maximal model and then removing only the terms to allow a non-singular fit.  
+<br>
+**Note:** This strategy - starting with the maximal random effects structure and removing terms until obtaining model convergence, is just *one* approach, and there are drawbacks (see [Matuschek et al., 2017](https://doi.org/10.1016/j.jml.2017.01.001)). There is no consensus on what approach is best (see `?isSingular`).  
+<br>
+<br>
+*Tip:* you can look at the variance estimates and correlations easily by using the `VarCorr()` function. What jumps out?  
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+There's a correlation of 0.972 for the by-word interaction random effect:
+```{r}
+VarCorr(m)
+```
+
+lets remove the interaction in the by-word random effects:
+```{r}
+m1 <- lmer(Rtime ~ Delay*Group +
+             (1 + Delay | Subject_ID) +
+             (1 + Delay + Group | Test_word),
+           data=tel, control=lmerControl(optimizer = "bobyqa"))
+VarCorr(m1)
+isSingular(m1)
+```
+We still have a singular fit here. Thinking about the study, if we are going to remove __one__ of the by-testword random effects (`Delay` or `Group`), which one do we consider to be more theoretically justified? Is the effect of Delay likely to vary by test-words? More so than the effect of group is likely to vary by test-words? Quite possibly - there's no obvious reason for _certain_ words to be more memorable for people in one group vs another. But there is reason for words to vary in the effect that delay of one week has - how familiar a word is will likely influence the amount to which a week's delay has on recall.   
+
+Let's remove the by-testword random effect of group. 
+```{r}
+m2 <- lmer(Rtime ~ Delay*Group +
+             (1 + Delay | Subject_ID) +
+             (1 + Delay | Test_word),
+           data=tel, control=lmerControl(optimizer = "bobyqa"))
+isSingular(m2)
+VarCorr(m2)
+```
+Hooray, the model converged! 
+```{r}
+summary(m2)
+```
+`r solend()` 
+
+`r qbegin("B4")`
+Load the **effects** package, and try running this code:
+```{r echo=F}
+library(effects)
+ef <- as.data.frame(effect("Delay:Group", m2))
+```
+```{r eval=F}
+library(effects)
+ef <- as.data.frame(effect("Delay:Group", model))
+```
+
+What is `ef`? and how can you use it to plot the model-estimated condition means and variability?
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+ggplot(ef, aes(Delay, fit, color=Group)) + 
+  geom_pointrange(aes(ymax=upper, ymin=lower), position=position_dodge(width = 0.2))+
+  theme_classic() # just for a change :)
+```
+
+`r solend()`
+
+`r qbegin("B5")`
+Can we get a similar plot using `plot_model()` from the __sjPlot__ package? 
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+library(sjPlot)
+plot_model(m2, type="int")
+```
+
+`r solend()`
+ 
+
+`r qbegin("B6")`
+What should we do with this information? How can we apply test-enhanced learning to learning R and statistics?
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+You'll get the benefits of test-enhanced learning if you try yourself before looking at the solutions! If you don't test yourself, you're more likely to forget it in the long run. 
+`r solend()` 
+
+
+# Vocab Development
+
+:::frame
+__Data: Naming__ 
+
+74 children from 10 schools were administered the full Picture Vocab Test (PVT) on a yearly basis for 5 years to examine development of vocabulary. Five of the schools taught lessons in a bilingual setting with English as one of the languages, and the remaining five schools taught in monolingual English.  
+
+The data is available at [https://uoepsy.github.io/data/pvt_bilingual.csv](https://uoepsy.github.io/data/pvt_bilingual.csv).  
+
+```{r echo=FALSE}
+pvt <- read_csv("../../data/bntmono.csv") |>
+  mutate(
+    isBilingual = ifelse(mlhome==0,1,0),
+    PVT = BNT60,
+    year = schoolyear +7
+  )
+childnames = randomNames::randomNames(5e2,which.names="first")
+pvt$child = childnames[as.numeric(factor(pvt$child_id))]
+pvt <- pvt |> select(school_id, isBilingual, child, year, PVT)
+# write_csv(pvt, "../../data/pvt_bilingual.csv")
+tibble(variable = names(pvt),
+       description = c("School Identifier","Whether the school is bilingual (1) or monolingual (0)","Child Name","","Year of School","Score on the Picture Vocab Test (PVT). Scores range 0 to 60")
+) %>% gt::gt()
+```
+
+:::
+
+`r qbegin(qcounter())`
+Let's start by thinking about our clustering - we'd like to know how much of the variance in PVT scores is due to the clustering of data within children, who are themselves within schools. One easy way of assessing this is to fit an _intercept only_ model, which has the appropriate random effect structure.  
+
+Using the model below, calculate the proportion of variance attributable to the clustering of data within children within schools.  
+
+```{r}
+pvt_null <- lmer(PVT ~ 1 +  (1 | school_id/child), data = pvt)
+```
+
+::: {.callout-tip collapse="true"}
+#### Hints
+the random intercept variances are the building blocks here. There are no predictors in this model, so all the variance in the outcome gets attributed to either school-level nesting, child-level nesting, or else is lumped into the residual.   
+:::
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+# pvt <- read_csv("../../data/bntmono.csv")
+pvt_null <- lmer(PVT ~ 1 +  (1 | school_id/child), data = pvt)
+summary(pvt_null)
+```
+
+```{r}
+#| echo: false
+vcres = VarCorr(pvt_null) |> as.data.frame()
+vcres = round(vcres$vcov,2)
+```
+
+
+
+As we can see from `summary(bnt_null)`, the random intercept variances are `r vcres[1]` for child-level, `r vcres[2]` for school-level, and the residual variance is `r vcres[3]`.  
+
+So child level differences account for $\frac{`r vcres[1]`}{`r paste0(vcres,collapse=" + ")`} = `r round(vcres[1]/sum(vcres),2)`$ of the variance in PVT scores, and child & school differences together account for $\frac{`r paste0(vcres[1:2],collapse=" + ")`}{`r paste0(vcres,collapse=" + ")`} = `r round(sum(vcres[1:2])/sum(vcres),2)`$ of the variance.  
+
+<!-- We can calculate this directly using the model estimates if we want, but sometimes doing it by hand is more straightforward.   -->
+
+<!-- ```{r} -->
+<!-- as.data.frame(VarCorr(bnt_null)) %>% -->
+<!--   select(grp, vcov) %>%  -->
+<!--   mutate( -->
+<!--     prop_var = vcov / sum(vcov), -->
+<!--     prop_var2 = cumsum(prop_var) -->
+<!--   ) -->
+<!-- ``` -->
+
+`r solend()`
+
+fit model
+
+plot resid v fitted
+
+
+
+
+
+
+
+
+`r qbegin(qcounter())`
+How does vocab develop over childrens' schooling, and does this differ between bilingual vs monolingual schools?  
+
+Fit a model that examines this
+Fit a model examining the interaction between the effects of school year and mono/bilingual teaching on word retrieval (via BNT test), with random intercepts only for children and schools.  
+
+::: {.callout-tip collapse="true"}
+#### Hints
+make sure your variables are of the right type first - e.g. numeric, factor etc  
+:::
+  
+  
+Examine the fit and consider your model assumptions, and assess what might be done to improve the model in order to make better statistical inferences. 
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+This is a quick way to make a set of variables factors:  
+```{r}
+bnt <- bnt %>% mutate(across(c(mlhome, school_id, child_id), factor))
+```
+
+And now let's fit our model: 
+```{r}
+bntm0 <- lmer(BNT60 ~ schoolyear * mlhome + (1 | school_id/child_id), data = bnt)
+```
+
+Residuals don't look zero mean:
+```{r}
+plot(bntm0, type=c("p","smooth"))
+```
+
+It looks a little like, compared to our model (black lines below) the children's scores (coloured lines) are more closely clustered together when they start school, and then they are more spread out by the end of the study. 
+The fact that we're fitting the same slope for each child is restricting us here, so we should try fitting random effects of schoolyear. 
+```{r}
+library(broom.mixed)
+augment(bntm0) %>%
+  ggplot(aes(x=schoolyear, col=child_id)) + 
+  geom_point(aes(y = BNT60))+
+  geom_path(aes(y = BNT60))+
+  geom_path(aes(y = .fitted), col="black", alpha=.3)+
+  guides(col="none")+
+  facet_wrap(~school_id)
+```
+
+
+```{r}
+bntm1 <- lmer(BNT60 ~ schoolyear * mlhome + (1 + schoolyear | school_id/child_id), data = bnt)
+plot(bntm1, type=c("p","smooth"))
+```
+Much better!  
+
+`r solend()`
+
+`r qbegin("6")`
+Using a method of your choosing, conduct inferences (i.e. obtain p-values or confidence intervals) from your final model and write up the results. 
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+We'll use case-based bootstrapping for a demonstration, but other methods would be appropriate here. We have a large sample of children (74), each with 5 observations. However, we only have 10 schools. A standard likelihood ratio test using `anova(model1, model2)` might not be preferable here.  
+
+This took quite a while to run: 
+```{r eval=F}
+library(lmeresampler)
+bntm1BS <- bootstrap(bntm1, .f=fixef, type = "case", B = 2000, resample = c(FALSE,TRUE,FALSE))
+confint(bntm1BS, type = "basic")
+```
+```{r echo=FALSE}
+library(lmeresampler)
+load("data/bntbs.rdata")
+confint(bntm1BS, type = "basic")
+```
+
+```{r include=F}
+res <- confint(bntm1BS, type = "basic")
+res[,2:4]<-round(res[,2:4],2)
+res
+```
+
+:::int
+
+Multilevel level linear regression was used to investigate childrens' development of word retrieval over 5 years of school, and whether development was dependent upon the school teaching classes monolingually or bilingually. 
+Initial evaluation of the intercept-only model indicated that the clustering of multiple observations from children within schools accounted for 39.7% of the variance in scores on the Boston Naming Task (BNT60, range 0 to 60).
+BNT60 scores were modelled with fixed effects of school year (1-5) and monolingual teaching (bilingual vs monolingual, treatment coded with bilingual as the reference level). Random intercepts and slopes of school year were included for schools and for children nested within schools. The model was fitting with maximum likelihood estimation using the default optimiser from the **lme4** package (Bates et al., 2015).  
+95% Confidence for fixed effect estimates were constructed by case-based bootstrapping with 2000 bootstraps in which children, (but neither observations within children nor the schools within which children were nested) were resampled. 
+Results indicated that children's scores on the BNT60 increased over the 5 years in which they were studied, with children from bilingual schools increasing in scores by `r res[2,2]` ([`r paste(unlist(res[2,3:4]),collapse=" -- ")`]) every school year. There was a significant interaction between mono/bilingual schools and changes over the school year, with children from monolingual schools increasing `r res[4,2]` ([`r paste(unlist(res[4,3:4]),collapse=" -- ")`]) less than those from bilingual schools for every additional year of school. Full model results can be found in Table 1. 
+
+:::
+
+Table 1
+```{r echo=FALSE, results="asis"}
+predlab <- c("Intercept","School Year","MonolingualSchool [1]","School Year:MonolingualSchool [1]")
+names(predlab) <- names(fixef(bntm1))
+mytab <- tab_model(bntm1,show.p = F, string.ci="95% CI<br>bootstrap",
+                   pred.labels = predlab)
+bsci <- confint(bntm1BS, type = "perc")
+replacewiththis <- paste0(round(bsci$lower,2), "&nbsp;&ndash;&nbsp;", round(bsci$upper,2))
+mytab$page.content <- gsub("4.22\\&nbsp\\;\\&ndash\\;\\&nbsp\\;8.31", replacewiththis[1], mytab$page.content)
+mytab$page.content <- gsub("4.86\\&nbsp\\;\\&ndash\\;\\&nbsp\\;7.88", replacewiththis[2], mytab$page.content)
+mytab$page.content <- gsub("-2.74\\&nbsp\\;\\&ndash\\;\\&nbsp\\;3.02", replacewiththis[3], mytab$page.content)
+mytab$page.content <- gsub("-4.74\\&nbsp\\;\\&ndash\\;\\&nbsp\\;-0.47", replacewiththis[4], mytab$page.content)
+cat(mytab$page.content)
+```
+
+```{r}
+library(effects)
+as.data.frame(effect("schoolyear:mlhome",bntm1)) %>%
+  ggplot(., aes(x=schoolyear,y=fit,col=mlhome))+
+  geom_pointrange(aes(ymin=lower,ymax=upper))+
+  scale_color_manual(NULL,labels=c("Bilingual","Monolingual"),values=c("tomato1","navyblue"))+
+  labs(x="- School Year -", y="BNT-60")
+```
+
+
+`r solend()`
+
+
+
