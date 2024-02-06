@@ -128,9 +128,7 @@ if(f.classList.contains('jk-circle-right')) {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
-      MSMR
-      </li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./04a_ranef.html">Week 4</a></li><li class="breadcrumb-item"><a href="./04ex.html">Week 4 Exercises: Nested and Crossed</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -238,13 +236,13 @@ if(f.classList.contains('jk-circle-right')) {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
  <span class="menu-text">Week 4</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./04a_ranef.html" class="sidebar-item-text sidebar-link">
@@ -253,7 +251,7 @@ if(f.classList.contains('jk-circle-right')) {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./04ex.html" class="sidebar-item-text sidebar-link">
+  <a href="./04ex.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Week 4 Exercises: Nested and Crossed</span></a>
   </div>
 </li>
@@ -546,12 +544,7 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-4" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-4', 'sol-start-4')">
-Solution
-</button>
-</div>
-<div id="sol-body-4" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p>Here’s the overall picture. The average score on the GAD7 at each visit gets more and more different between the two groups. The treatment looks effective..</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(geduc_long, <span class="fu">aes</span>(<span class="at">x =</span> visit, <span class="at">y =</span> GAD, <span class="at">col =</span> group)) <span class="sc">+</span></span>
@@ -559,7 +552,7 @@ Solution
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="04exBURKS_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<p><img src="04ex_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
 </figure>
 </div>
 </div>
@@ -573,7 +566,7 @@ There’s clear variability between therapists in how well the treatment worked.
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="04exBURKS_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<p><img src="04ex_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -590,11 +583,11 @@ Question 3
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-5" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-5', 'sol-start-5')">
+<button id="sol-start-4" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-4', 'sol-start-4')">
 1 - fixed effects
 </button>
 </div>
-<div id="sol-body-5" class="solution-body" style="display: none;">
+<div id="sol-body-4" class="solution-body" style="display: none;">
 <p>We want to know if how anxiety (<code>GAD</code>) changes over time (<code>visit</code>) is different between treatment and control (<code>group</code>).</p>
 <p>Hopefully this should hopefully come as no surprise<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> - it’s an interaction!</p>
 <div class="cell" data-layout-align="center">
@@ -606,11 +599,11 @@ Question 3
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-6" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-6', 'sol-start-6')">
+<button id="sol-start-5" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-5', 'sol-start-5')">
 2 - grouping structure
 </button>
 </div>
-<div id="sol-body-6" class="solution-body" style="display: none;">
+<div id="sol-body-5" class="solution-body" style="display: none;">
 <p>We have multiple observations for each of the 520 patients, and those patients are nested within 30 therapists.</p>
 <p>Note that in our data, the patient variable does not uniquely specify the individual patients. i.e.&nbsp;patient “1” from therapist “OT” is a different person from patient “1” from therapist “ND”. To correctly group the observations into different patients (and not ‘patient numbers’), we need to have <code>therapist:patient</code>.</p>
 <p>So we capture therapist-level differences in <code>( ... | therapist)</code> and the patients-within-therapist-level differences in <code>( ... | therapist:patient)</code>:</p>
@@ -624,11 +617,11 @@ Question 3
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-7" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-7', 'sol-start-7')">
+<button id="sol-start-6" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-6', 'sol-start-6')">
 3 - random effects
 </button>
 </div>
-<div id="sol-body-7" class="solution-body" style="display: none;">
+<div id="sol-body-6" class="solution-body" style="display: none;">
 <p>Note that each patient can change differently in their anxiety levels over time - i.e.&nbsp;the slope of <code>visit</code> could vary by participant.</p>
 <p>Likewise, some therapists could have patients who change differently from patients from another therapist, so <code>visit|therapist</code> can be included.</p>
 <p>Each patient is in one of the two groups - they’re <em>either</em> treatment <em>or</em> control. So we can’t say that “differences in anxiety due to treatment varies between patients”, because for any one patient the “difference in anxiety due to treatment” is not defined in our study design.</p>
@@ -661,12 +654,7 @@ Question 4
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-8" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-8', 'sol-start-8')">
-Solution
-</button>
-</div>
-<div id="sol-body-8" class="solution-body" style="display: none;">
+<div style="display:none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>modelA <span class="ot">&lt;-</span> <span class="fu">lmer</span>(GAD <span class="sc">~</span> visit<span class="sc">*</span>group <span class="sc">+</span> </span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>               (<span class="dv">1</span><span class="sc">+</span>visit<span class="sc">*</span>group<span class="sc">|</span>therapist)<span class="sc">+</span></span>
@@ -707,12 +695,7 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-9" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-9', 'sol-start-9')">
-Solution
-</button>
-</div>
-<div id="sol-body-9" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p>It would be best to go to one of the therapists <code>WG</code>, <code>EQ</code>, or <code>EI</code>…</p>
 <p>Why? These therapists all have the most negative slope of visit:</p>
 <div class="cell" data-layout-align="center">
@@ -720,7 +703,7 @@ Solution
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="04exBURKS_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<p><img src="04ex_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
 </figure>
 </div>
 </div>
@@ -738,7 +721,7 @@ Question 6
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="04exBURKS_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<p><img src="04ex_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
 </figure>
 </div>
 </div>
@@ -770,12 +753,7 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-10" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-10', 'sol-start-10')">
-Solution
-</button>
-</div>
-<div id="sol-body-10" class="solution-body" style="display: none;">
+<div style="display:none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effects)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom.mixed)</span>
@@ -793,7 +771,7 @@ Solution
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="04exBURKS_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<p><img src="04ex_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
 </figure>
 </div>
 </div>
@@ -885,12 +863,7 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-11" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-11', 'sol-start-11')">
-Solution
-</button>
-</div>
-<div id="sol-body-11" class="solution-body" style="display: none;">
+<div style="display:none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">url</span>(<span class="st">"https://uoepsy.github.io/data/testenhancedlearning.RData"</span>))</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -900,7 +873,7 @@ Solution
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="04exBURKS_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<p><img src="04ex_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
 </figure>
 </div>
 </div>
@@ -941,11 +914,11 @@ Hints
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-12" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-12', 'sol-start-12')">
+<button id="sol-start-7" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-7', 'sol-start-7')">
 1 - maximal model
 </button>
 </div>
-<div id="sol-body-12" class="solution-body" style="display: none;">
+<div id="sol-body-7" class="solution-body" style="display: none;">
 <p>We have a <strong>crossed</strong> random effect structure here. Each participant was tested on every word, and each word was seen by every participant.</p>
 <p>Subjects were tested at both the <code>min</code> and <code>week</code>, so <code>Delay|Subject_ID</code> can be included (some people might retain the items better than others).<br>
 Likewise the words were seen at both <code>min</code> and <code>week</code>, and some words might be more easy to retain than others (<code>Delay|Test_word</code>).</p>
@@ -976,11 +949,11 @@ Warning message:<br> In checkConv(attr(opt, “derivs”), opt$par, ctrl = contr
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-13" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-13', 'sol-start-13')">
+<button id="sol-start-8" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-8', 'sol-start-8')">
 2 - Removing Delay*Group|Test_word
 </button>
 </div>
-<div id="sol-body-13" class="solution-body" style="display: none;">
+<div id="sol-body-8" class="solution-body" style="display: none;">
 <p>Lets remove the interaction in the by-word random effects.<br>
 This one took about 5 minutes…</p>
 <div class="cell" data-layout-align="center">
@@ -1007,11 +980,11 @@ Warning message:<br> In checkConv(attr(opt, “derivs”), opt$par, ctrl = contr
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-14" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-14', 'sol-start-14')">
+<button id="sol-start-9" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-9', 'sol-start-9')">
 3 - Removing Group|Test_word
 </button>
 </div>
-<div id="sol-body-14" class="solution-body" style="display: none;">
+<div id="sol-body-9" class="solution-body" style="display: none;">
 <p>We still have a singular fit here. Thinking about the study, if we are going to remove <strong>one</strong> of the by-testword random effects (<code>Delay</code> or <code>Group</code>), which one do we consider to be more theoretically justified? Is the effect of Delay likely to vary by test-words? More so than the effect of group is likely to vary by test-words?<br>
 Quite possibly - it’s reasonable to think that some words will be more easily retained over a week than others, but I can’t come up with a reason to think why <code>StudyTest</code> vs <code>StudyStudy</code> would have a different effect for some words than others.</p>
 <p>Let’s remove the by-testword random effect of group.</p>
@@ -1052,11 +1025,11 @@ Why did we not get a warning message?</p>
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-15" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-15', 'sol-start-15')">
+<button id="sol-start-10" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-10', 'sol-start-10')">
 4 - Removing Delay|Test_word
 </button>
 </div>
-<div id="sol-body-15" class="solution-body" style="display: none;">
+<div id="sol-body-10" class="solution-body" style="display: none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>mod4 <span class="ot">&lt;-</span> <span class="fu">glmer</span>(Correct <span class="sc">~</span> Delay<span class="sc">*</span>Group <span class="sc">+</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>             (<span class="dv">1</span> <span class="sc">+</span> Delay <span class="sc">|</span> Subject_ID) <span class="sc">+</span></span>
@@ -1084,34 +1057,34 @@ Why did we not get a warning message?</p>
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-16" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-16', 'sol-start-16')">
+<button id="sol-start-11" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-11', 'sol-start-11')">
 5 - Comparisons
 </button>
 </div>
-<div id="sol-body-16" class="solution-body" style="display: none;">
+<div id="sol-body-11" class="solution-body" style="display: none;">
 <p>In the process of getting to our final model, we’ve just fitted quite a few models that didn’t converge. We definitely don’t want to do anything with these models (i.e.&nbsp;we shouldn’t report them or use them in model comparisons etc).</p>
 <p>However, it can sometimes be useful to just check how estimates of fixed effects and their standard errors differ across these models. More often than not, this simply provides us with reassurance that the removal of random effects hasn’t actually had too much of an impact on anything we’re going to conduct inferences on.</p>
 <p>For instance, in all these models, the fixed effects estimates are all pretty similar, suggesting that they’ve all found similar estimates of these parameters which have been largely invariant to our refinement of the random effects.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 
-<div id="pnvosrhwkd" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#pnvosrhwkd table {
+<div id="qxewqqjxrv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#qxewqqjxrv table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#pnvosrhwkd thead, #pnvosrhwkd tbody, #pnvosrhwkd tfoot, #pnvosrhwkd tr, #pnvosrhwkd td, #pnvosrhwkd th {
+#qxewqqjxrv thead, #qxewqqjxrv tbody, #qxewqqjxrv tfoot, #qxewqqjxrv tr, #qxewqqjxrv td, #qxewqqjxrv th {
   border-style: none;
 }
 
-#pnvosrhwkd p {
+#qxewqqjxrv p {
   margin: 0;
   padding: 0;
 }
 
-#pnvosrhwkd .gt_table {
+#qxewqqjxrv .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1137,12 +1110,12 @@ Why did we not get a warning message?</p>
   border-left-color: #D3D3D3;
 }
 
-#pnvosrhwkd .gt_caption {
+#qxewqqjxrv .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#pnvosrhwkd .gt_title {
+#qxewqqjxrv .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1154,7 +1127,7 @@ Why did we not get a warning message?</p>
   border-bottom-width: 0;
 }
 
-#pnvosrhwkd .gt_subtitle {
+#qxewqqjxrv .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1166,7 +1139,7 @@ Why did we not get a warning message?</p>
   border-top-width: 0;
 }
 
-#pnvosrhwkd .gt_heading {
+#qxewqqjxrv .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1178,13 +1151,13 @@ Why did we not get a warning message?</p>
   border-right-color: #D3D3D3;
 }
 
-#pnvosrhwkd .gt_bottom_border {
+#qxewqqjxrv .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#pnvosrhwkd .gt_col_headings {
+#qxewqqjxrv .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1199,7 +1172,7 @@ Why did we not get a warning message?</p>
   border-right-color: #D3D3D3;
 }
 
-#pnvosrhwkd .gt_col_heading {
+#qxewqqjxrv .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1219,7 +1192,7 @@ Why did we not get a warning message?</p>
   overflow-x: hidden;
 }
 
-#pnvosrhwkd .gt_column_spanner_outer {
+#qxewqqjxrv .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1231,15 +1204,15 @@ Why did we not get a warning message?</p>
   padding-right: 4px;
 }
 
-#pnvosrhwkd .gt_column_spanner_outer:first-child {
+#qxewqqjxrv .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#pnvosrhwkd .gt_column_spanner_outer:last-child {
+#qxewqqjxrv .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#pnvosrhwkd .gt_column_spanner {
+#qxewqqjxrv .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1251,11 +1224,11 @@ Why did we not get a warning message?</p>
   width: 100%;
 }
 
-#pnvosrhwkd .gt_spanner_row {
+#qxewqqjxrv .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#pnvosrhwkd .gt_group_heading {
+#qxewqqjxrv .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1281,7 +1254,7 @@ Why did we not get a warning message?</p>
   text-align: left;
 }
 
-#pnvosrhwkd .gt_empty_group_heading {
+#qxewqqjxrv .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1296,15 +1269,15 @@ Why did we not get a warning message?</p>
   vertical-align: middle;
 }
 
-#pnvosrhwkd .gt_from_md > :first-child {
+#qxewqqjxrv .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#pnvosrhwkd .gt_from_md > :last-child {
+#qxewqqjxrv .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#pnvosrhwkd .gt_row {
+#qxewqqjxrv .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1323,7 +1296,7 @@ Why did we not get a warning message?</p>
   overflow-x: hidden;
 }
 
-#pnvosrhwkd .gt_stub {
+#qxewqqjxrv .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1336,7 +1309,7 @@ Why did we not get a warning message?</p>
   padding-right: 5px;
 }
 
-#pnvosrhwkd .gt_stub_row_group {
+#qxewqqjxrv .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1350,15 +1323,15 @@ Why did we not get a warning message?</p>
   vertical-align: top;
 }
 
-#pnvosrhwkd .gt_row_group_first td {
+#qxewqqjxrv .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#pnvosrhwkd .gt_row_group_first th {
+#qxewqqjxrv .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#pnvosrhwkd .gt_summary_row {
+#qxewqqjxrv .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1368,16 +1341,16 @@ Why did we not get a warning message?</p>
   padding-right: 5px;
 }
 
-#pnvosrhwkd .gt_first_summary_row {
+#qxewqqjxrv .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#pnvosrhwkd .gt_first_summary_row.thick {
+#qxewqqjxrv .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#pnvosrhwkd .gt_last_summary_row {
+#qxewqqjxrv .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1387,7 +1360,7 @@ Why did we not get a warning message?</p>
   border-bottom-color: #D3D3D3;
 }
 
-#pnvosrhwkd .gt_grand_summary_row {
+#qxewqqjxrv .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1397,7 +1370,7 @@ Why did we not get a warning message?</p>
   padding-right: 5px;
 }
 
-#pnvosrhwkd .gt_first_grand_summary_row {
+#qxewqqjxrv .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1407,7 +1380,7 @@ Why did we not get a warning message?</p>
   border-top-color: #D3D3D3;
 }
 
-#pnvosrhwkd .gt_last_grand_summary_row_top {
+#qxewqqjxrv .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1417,11 +1390,11 @@ Why did we not get a warning message?</p>
   border-bottom-color: #D3D3D3;
 }
 
-#pnvosrhwkd .gt_striped {
+#qxewqqjxrv .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#pnvosrhwkd .gt_table_body {
+#qxewqqjxrv .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1430,7 +1403,7 @@ Why did we not get a warning message?</p>
   border-bottom-color: #D3D3D3;
 }
 
-#pnvosrhwkd .gt_footnotes {
+#qxewqqjxrv .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1444,7 +1417,7 @@ Why did we not get a warning message?</p>
   border-right-color: #D3D3D3;
 }
 
-#pnvosrhwkd .gt_footnote {
+#qxewqqjxrv .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1453,7 +1426,7 @@ Why did we not get a warning message?</p>
   padding-right: 5px;
 }
 
-#pnvosrhwkd .gt_sourcenotes {
+#qxewqqjxrv .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1467,7 +1440,7 @@ Why did we not get a warning message?</p>
   border-right-color: #D3D3D3;
 }
 
-#pnvosrhwkd .gt_sourcenote {
+#qxewqqjxrv .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1475,63 +1448,63 @@ Why did we not get a warning message?</p>
   padding-right: 5px;
 }
 
-#pnvosrhwkd .gt_left {
+#qxewqqjxrv .gt_left {
   text-align: left;
 }
 
-#pnvosrhwkd .gt_center {
+#qxewqqjxrv .gt_center {
   text-align: center;
 }
 
-#pnvosrhwkd .gt_right {
+#qxewqqjxrv .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#pnvosrhwkd .gt_font_normal {
+#qxewqqjxrv .gt_font_normal {
   font-weight: normal;
 }
 
-#pnvosrhwkd .gt_font_bold {
+#qxewqqjxrv .gt_font_bold {
   font-weight: bold;
 }
 
-#pnvosrhwkd .gt_font_italic {
+#qxewqqjxrv .gt_font_italic {
   font-style: italic;
 }
 
-#pnvosrhwkd .gt_super {
+#qxewqqjxrv .gt_super {
   font-size: 65%;
 }
 
-#pnvosrhwkd .gt_footnote_marks {
+#qxewqqjxrv .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#pnvosrhwkd .gt_asterisk {
+#qxewqqjxrv .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#pnvosrhwkd .gt_indent_1 {
+#qxewqqjxrv .gt_indent_1 {
   text-indent: 5px;
 }
 
-#pnvosrhwkd .gt_indent_2 {
+#qxewqqjxrv .gt_indent_2 {
   text-indent: 10px;
 }
 
-#pnvosrhwkd .gt_indent_3 {
+#qxewqqjxrv .gt_indent_3 {
   text-indent: 15px;
 }
 
-#pnvosrhwkd .gt_indent_4 {
+#qxewqqjxrv .gt_indent_4 {
   text-indent: 20px;
 }
 
-#pnvosrhwkd .gt_indent_5 {
+#qxewqqjxrv .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1585,12 +1558,7 @@ Question 9
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-17" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-17', 'sol-start-17')">
-Solution
-</button>
-</div>
-<div id="sol-body-17" class="solution-body" style="display: none;">
+<div style="display:none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effects)</span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>effplot <span class="ot">&lt;-</span> <span class="fu">effect</span>(<span class="st">"Delay:Group"</span>, mod4) <span class="sc">|&gt;</span></span>
@@ -1603,7 +1571,7 @@ Solution
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="04exBURKS_files/figure-html/unnamed-chunk-39-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<p><img src="04ex_files/figure-html/unnamed-chunk-39-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
 </figure>
 </div>
 </div>
@@ -1640,11 +1608,11 @@ Delayweek:GroupStudyTest 2.1734992 1.7894502 2.6399723</code></pre>
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-18" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-18', 'sol-start-18')">
+<button id="sol-start-12" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-12', 'sol-start-12')">
 Solution
 </button>
 </div>
-<div id="sol-body-18" class="solution-body" style="display: none;">
+<div id="sol-body-12" class="solution-body" style="display: none;">
 <p>We’ll get the benefits of test-enhanced learning if we try these exercises before looking at any of the solutions that are visible! If we don’t test ourselves, we’re more likely to forget it in the long run.</p>
 </div>
 <p class="solution-end">
@@ -1770,7 +1738,7 @@ Fixed effects:
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="04exBURKS_files/figure-html/unnamed-chunk-46-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<p><img src="04ex_files/figure-html/unnamed-chunk-46-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
 </figure>
 </div>
 </div>
@@ -1836,7 +1804,7 @@ Fixed effects:
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="04exBURKS_files/figure-html/unnamed-chunk-50-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<p><img src="04ex_files/figure-html/unnamed-chunk-50-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
 </figure>
 </div>
 </div>
