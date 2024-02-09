@@ -64,7 +64,7 @@ while(TRUE){
   # 
   # sjPlot::plot_model(m,type="pred",terms=c("x [all]","b"))
   
-childnames = randomNames::randomNames(5e2,which.names="first")
+childnames = randomNames::randomNames(1e4,which.names="first")
 bigwrite = big |> transmute(
   child = childnames[as.numeric(paste0(school,g))],
   school=paste0("School ", school),
