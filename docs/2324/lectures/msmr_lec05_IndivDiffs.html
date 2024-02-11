@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Week 5: Individual Differences</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Dan Mirman" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# <b>Week 5: Individual Differences</b>
+]
+.subtitle[
+## Multivariate Statistics and Methodology using R (MSMR)<br><br>
+]
+.author[
+### Dan Mirman
+]
+.institute[
+### Department of Psychology<br>The University of Edinburgh
+]
+
+---
+
+
+
+
+
+
+# Individual differences
+
+**Individual differences provide an additional level of analysis for understanding phenomena**
+
+--
+
+* At a group level, a treatment works better than a placebo, but why does it work better for some people than for others?
+* People solve easy problems faster than hard problems, but why are some people a lot faster on the easy problems and other people only a little faster?
+
+--
+
+t-test and ANOVA methods treat individual differences as noise
+
+Multilevel models provide two ways to quantify and analyse individual differences
+
+1. Add individual differences as **fixed effects**
+2. Quantify individual differences using **random effects**
+
+---
+# Individual differences can be added as fixed effects
+
+Example: USA National Youth Survey longitudinal data on tolerance for deviant behaviour, exposure to deviant behaviour, and gender. Subset of 16 subjects printed in Willett (1997, Table 11.1). (`DeviantBehavior`)
+
+`Tolerance` was measured by asking whether it is wrong for someone their age to: 
+
+* cheat on tests
+* purposely destroy property of others
+* hit or threaten someone without reason
+* use alcohol
+* use marijuana
+* sell hard drugs
+* steal something worth less than $5
+* steal something worth more than $50
+* break into a building or vehicle to steal
+
+---
+# Tolerance for deviant behaviour
+
+
+```r
+load("./data/DeviantBehavior.RData")
+summary(DeviantBehavior)
+```
+
+```
+##      SubjID      Gender      Exposure          Age       Tolerance   
+##  S0009  : 5   Female:45   Min.   :0.810   Min.   :11   Min.   :1.00  
+##  S0045  : 5   Male  :35   1st Qu.:0.922   1st Qu.:12   1st Qu.:1.22  
+##  S0268  : 5               Median :1.145   Median :13   Median :1.50  
+##  S0314  : 5               Mean   :1.191   Mean   :13   Mean   :1.62  
+##  S0442  : 5               3rd Qu.:1.395   3rd Qu.:14   3rd Qu.:1.99  
+##  S0514  : 5               Max.   :1.990   Max.   :15   Max.   :3.46  
+##  (Other):50
+```
+
+![](msmr_lec05_IndivDiffs_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
+
+---
+## Research question 1
+
+**Does tolerance increase with age and is it modulated by gender?**
+
+
+```r
+DeviantBehavior$Age0 &lt;- DeviantBehavior$Age - 11 #adjust Age so 0 is start of study
+# fit model
+m.base &lt;- lmer(Tolerance ~ Age0*Gender + (Age0 | SubjID),
+                 contrasts=list(Gender="contr.sum"), data=DeviantBehavior)
+```
+<div id="lsczogqthz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#lsczogqthz table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#lsczogqthz thead, #lsczogqthz tbody, #lsczogqthz tfoot, #lsczogqthz tr, #lsczogqthz td, #lsczogqthz th {
+  border-style: none;
+}
+
+#lsczogqthz p {
+  margin: 0;
+  padding: 0;
+}
+
+#lsczogqthz .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#lsczogqthz .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#lsczogqthz .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#lsczogqthz .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#lsczogqthz .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#lsczogqthz .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#lsczogqthz .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#lsczogqthz .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#lsczogqthz .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#lsczogqthz .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#lsczogqthz .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#lsczogqthz .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#lsczogqthz .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#lsczogqthz .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#lsczogqthz .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#lsczogqthz .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#lsczogqthz .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#lsczogqthz .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#lsczogqthz .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lsczogqthz .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#lsczogqthz .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#lsczogqthz .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#lsczogqthz .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lsczogqthz .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#lsczogqthz .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#lsczogqthz .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#lsczogqthz .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lsczogqthz .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#lsczogqthz .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#lsczogqthz .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#lsczogqthz .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#lsczogqthz .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#lsczogqthz .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lsczogqthz .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#lsczogqthz .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#lsczogqthz .gt_left {
+  text-align: left;
+}
+
+#lsczogqthz .gt_center {
+  text-align: center;
+}
+
+#lsczogqthz .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#lsczogqthz .gt_font_normal {
+  font-weight: normal;
+}
+
+#lsczogqthz .gt_font_bold {
+  font-weight: bold;
+}
+
+#lsczogqthz .gt_font_italic {
+  font-style: italic;
+}
+
+#lsczogqthz .gt_super {
+  font-size: 65%;
+}
+
+#lsczogqthz .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#lsczogqthz .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#lsczogqthz .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#lsczogqthz .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#lsczogqthz .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#lsczogqthz .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#lsczogqthz .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="effect">effect</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="term">term</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="estimate">estimate</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="std.error">std.error</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="statistic">statistic</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="df">df</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="p.value">p.value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">(Intercept)</td>
+<td headers="estimate" class="gt_row gt_right">1.358063</td>
+<td headers="std.error" class="gt_row gt_right">0.07766</td>
+<td headers="statistic" class="gt_row gt_right">17.48646</td>
+<td headers="df" class="gt_row gt_right">14</td>
+<td headers="p.value" class="gt_row gt_right">6.585e-11</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">Age0</td>
+<td headers="estimate" class="gt_row gt_right">0.134881</td>
+<td headers="std.error" class="gt_row gt_right">0.04409</td>
+<td headers="statistic" class="gt_row gt_right">3.05932</td>
+<td headers="df" class="gt_row gt_right">14</td>
+<td headers="p.value" class="gt_row gt_right">8.491e-03</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">Gender1</td>
+<td headers="estimate" class="gt_row gt_right">-0.002508</td>
+<td headers="std.error" class="gt_row gt_right">0.07766</td>
+<td headers="statistic" class="gt_row gt_right">-0.03229</td>
+<td headers="df" class="gt_row gt_right">14</td>
+<td headers="p.value" class="gt_row gt_right">9.747e-01</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">Age0:Gender1</td>
+<td headers="estimate" class="gt_row gt_right">-0.032548</td>
+<td headers="std.error" class="gt_row gt_right">0.04409</td>
+<td headers="statistic" class="gt_row gt_right">-0.73823</td>
+<td headers="df" class="gt_row gt_right">14</td>
+<td headers="p.value" class="gt_row gt_right">4.726e-01</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+
+Significant increase with age, no significant effects of gender
+
+---
+## Research question 2
+
+**Is this modulated by exposure to deviant behavior?**
+
+`Exposure` scale is not clear and other effects would be estimated at `Exposure=0`, which is not an attested value. 
+
+If we center `Exposure`, its effects and the effects of other predictors will be easier to interpret.
+
+
+```r
+# center Exposure, but do not re-scale it
+DeviantBehavior$Exposure.center &lt;- scale(DeviantBehavior$Exposure, scale=FALSE)
+```
+
+--
+
+Fit the full model
+
+
+```r
+m.exp1 &lt;- lmer(Tolerance ~ Age0*Gender*Exposure.center + (Age0 | SubjID), 
+               data=DeviantBehavior, contrasts=list(Gender="contr.sum"))
+```
+
+---
+
+
+```r
+gt(tidy(m.exp1, effects="fixed"))
+```
+
+<div id="fiokoenagv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#fiokoenagv table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#fiokoenagv thead, #fiokoenagv tbody, #fiokoenagv tfoot, #fiokoenagv tr, #fiokoenagv td, #fiokoenagv th {
+  border-style: none;
+}
+
+#fiokoenagv p {
+  margin: 0;
+  padding: 0;
+}
+
+#fiokoenagv .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#fiokoenagv .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#fiokoenagv .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#fiokoenagv .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#fiokoenagv .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#fiokoenagv .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fiokoenagv .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#fiokoenagv .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#fiokoenagv .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#fiokoenagv .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#fiokoenagv .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#fiokoenagv .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#fiokoenagv .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#fiokoenagv .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#fiokoenagv .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#fiokoenagv .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#fiokoenagv .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#fiokoenagv .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#fiokoenagv .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fiokoenagv .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#fiokoenagv .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#fiokoenagv .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#fiokoenagv .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fiokoenagv .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#fiokoenagv .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#fiokoenagv .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fiokoenagv .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fiokoenagv .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#fiokoenagv .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fiokoenagv .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#fiokoenagv .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fiokoenagv .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#fiokoenagv .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fiokoenagv .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#fiokoenagv .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fiokoenagv .gt_left {
+  text-align: left;
+}
+
+#fiokoenagv .gt_center {
+  text-align: center;
+}
+
+#fiokoenagv .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#fiokoenagv .gt_font_normal {
+  font-weight: normal;
+}
+
+#fiokoenagv .gt_font_bold {
+  font-weight: bold;
+}
+
+#fiokoenagv .gt_font_italic {
+  font-style: italic;
+}
+
+#fiokoenagv .gt_super {
+  font-size: 65%;
+}
+
+#fiokoenagv .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#fiokoenagv .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#fiokoenagv .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#fiokoenagv .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#fiokoenagv .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#fiokoenagv .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#fiokoenagv .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="effect">effect</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="term">term</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="estimate">estimate</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="std.error">std.error</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="statistic">statistic</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="df">df</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="p.value">p.value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">(Intercept)</td>
+<td headers="estimate" class="gt_row gt_right">1.3275208</td>
+<td headers="std.error" class="gt_row gt_right">0.07314</td>
+<td headers="statistic" class="gt_row gt_right">18.149194</td>
+<td headers="df" class="gt_row gt_right">12</td>
+<td headers="p.value" class="gt_row gt_right">4.321e-10</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">Age0</td>
+<td headers="estimate" class="gt_row gt_right">0.1560293</td>
+<td headers="std.error" class="gt_row gt_right">0.03492</td>
+<td headers="statistic" class="gt_row gt_right">4.468382</td>
+<td headers="df" class="gt_row gt_right">12</td>
+<td headers="p.value" class="gt_row gt_right">7.678e-04</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">Gender1</td>
+<td headers="estimate" class="gt_row gt_right">0.0005686</td>
+<td headers="std.error" class="gt_row gt_right">0.07314</td>
+<td headers="statistic" class="gt_row gt_right">0.007774</td>
+<td headers="df" class="gt_row gt_right">12</td>
+<td headers="p.value" class="gt_row gt_right">9.939e-01</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">Exposure.center</td>
+<td headers="estimate" class="gt_row gt_right">0.0118906</td>
+<td headers="std.error" class="gt_row gt_right">0.25093</td>
+<td headers="statistic" class="gt_row gt_right">0.047387</td>
+<td headers="df" class="gt_row gt_right">12</td>
+<td headers="p.value" class="gt_row gt_right">9.630e-01</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">Age0:Gender1</td>
+<td headers="estimate" class="gt_row gt_right">-0.0592137</td>
+<td headers="std.error" class="gt_row gt_right">0.03492</td>
+<td headers="statistic" class="gt_row gt_right">-1.695769</td>
+<td headers="df" class="gt_row gt_right">12</td>
+<td headers="p.value" class="gt_row gt_right">1.157e-01</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">Age0:Exposure.center</td>
+<td headers="estimate" class="gt_row gt_right">0.3853247</td>
+<td headers="std.error" class="gt_row gt_right">0.11979</td>
+<td headers="statistic" class="gt_row gt_right">3.216692</td>
+<td headers="df" class="gt_row gt_right">12</td>
+<td headers="p.value" class="gt_row gt_right">7.400e-03</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">Gender1:Exposure.center</td>
+<td headers="estimate" class="gt_row gt_right">0.4837387</td>
+<td headers="std.error" class="gt_row gt_right">0.25093</td>
+<td headers="statistic" class="gt_row gt_right">1.927815</td>
+<td headers="df" class="gt_row gt_right">12</td>
+<td headers="p.value" class="gt_row gt_right">7.788e-02</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">Age0:Gender1:Exposure.center</td>
+<td headers="estimate" class="gt_row gt_right">-0.2857552</td>
+<td headers="std.error" class="gt_row gt_right">0.11979</td>
+<td headers="statistic" class="gt_row gt_right">-2.385486</td>
+<td headers="df" class="gt_row gt_right">12</td>
+<td headers="p.value" class="gt_row gt_right">3.442e-02</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+
+* Significant main effect of **Age**
+* Significant interactions: **Age-by-Exposure** and **Age-by-Gender-by-Exposure**
+
+---
+# How to plot the three-way interaction?
+
+The three-way Age-by-Gender-by-Exposure interaction is a relationship among four variables (Tolerance for deviant behaviour, Exposure to deviant behaviour, Age, and Gender), three of which are continuous variables. **This is hard to visualize.**
+
+To make it easier to visualize, can split the `Exposure` into levels
+
+--
+
+Option 1: Median split
+
+```r
+DeviantBehavior$ExposureMedSpl &lt;- ifelse(
+  DeviantBehavior$Exposure &gt;= median(DeviantBehavior$Exposure), "High", "Low")
+```
+
+---
+
+
+```r
+ggplot(DeviantBehavior, aes(Age, Tolerance, color=ExposureMedSpl)) + 
+  facet_wrap(~ Gender) + 
+  stat_summary(fun=mean, geom="point", size=3) +
+  stat_summary(fun.data=mean_se, geom="errorbar", width=0.2) + 
+  stat_summary(aes(y=fitted(m.exp1)), fun=mean, geom="line") +
+  labs(x="Age", y="Tolerance for deviant behavior", 
+       color="Exposure\n(Median Split)") + 
+  theme_bw() 
+```
+
+![](msmr_lec05_IndivDiffs_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+
+Adolescents with higher Exposure to deviant behaviour tend to have increased Tolerance for deviant behaviour as they get older, and more so for males than females.
+
+---
+# How to plot the three-way interaction?
+
+Option 2: tertile split provides a little more info than median split
+
+
+```r
+# define break points
+b &lt;- quantile(DeviantBehavior$Exposure, probs=seq(0, 1, by=1/3)) 
+# split continuous predictor and provide level labels
+DeviantBehavior$Exposure3 &lt;- cut(DeviantBehavior$Exposure, 
+                                 breaks=b, include.lowest=T, 
+                                 labels=c("Low", "Medium", "High"))
+```
+
+---
+
+```r
+ggplot(DeviantBehavior, aes(Age, Tolerance, color=Exposure3)) + 
+  facet_wrap(~ Gender) + 
+  stat_summary(fun=mean, geom="point", size=3) + 
+  stat_summary(fun.data=mean_se, geom="errorbar", width=0.2) + 
+  stat_summary(aes(y=fitted(m.exp1)), fun=mean, geom="line") +
+  labs(x="Age", y="Tolerance for deviant behavior", 
+       color="Exposure\n(Tertiles)") + 
+  theme_bw() 
+```
+
+![](msmr_lec05_IndivDiffs_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
+
+**Warning**: reviewers and readers may get confused about whether your *model* used continuous or categorical predictors, so you will need to be extra clear about this in your write-up.
+
+---
+# Quantify individual differences using random effects
+
+.pull-left[
+### A simple example
+
+&lt;img src="./figs/IndivDiffsDemo.png" width="75%" /&gt;
+]
+
+.pull-right[
+**Random effects provide a way to quantify individual effect sizes in the context of a model of overall group performance**:
+
+Participant A: `\(\zeta_{A1} - \zeta_{A0} = 1 - (-1) = 2\)`
+
+Participant B: `\(\zeta_{B1} - \zeta_{B0} = (-1) - 1 = -2\)`
+]
+
+---
+# Example 
+Data (Made-up): Effect of school mental health services on educational achievement (`EducMH`)
+
+
+```r
+load("./data/EducMH.RData")
+summary(EducMH)
+```
+
+```
+##        ID           Condition        Year           SDQ            Math      
+##  101    :   6   Control  :540   Min.   :2009   Min.   : 6.6   Min.   : 81.7  
+##  102    :   6   Treatment:540   1st Qu.:2010   1st Qu.:16.2   1st Qu.:147.5  
+##  103    :   6                   Median :2012   Median :17.9   Median :165.1  
+##  104    :   6                   Mean   :2012   Mean   :17.9   Mean   :164.8  
+##  105    :   6                   3rd Qu.:2013   3rd Qu.:19.6   3rd Qu.:181.2  
+##  106    :   6                   Max.   :2014   Max.   :33.8   Max.   :259.3  
+##  (Other):1044                                  NA's   :540
+```
+
+* `Condition` = Treatment (students who received mental health services) vs. Control (academically matched group of students who did not receive services)
+* `SDQ` = Strengths and Difficulties Questionnaire: a brief behavioural screening for mental health, only available for Treatment group. Lower scores are better (Total difficulties).
+* `Math` = Score on standardised math test
+
+---
+
+
+```r
+ggplot(EducMH, aes(Year, Math, color=Condition, fill=Condition)) + 
+  stat_summary(fun=mean, geom="line") + 
+  stat_summary(fun.data=mean_se, geom="ribbon", color=NA, alpha=0.3) + 
+  labs(y="Math Achievement Score") + theme_bw(base_size=12) + 
+  scale_color_manual(values=c("red", "blue")) + 
+  scale_fill_manual(values=c("red", "blue"))
+```
+
+![](msmr_lec05_IndivDiffs_files/figure-html/unnamed-chunk-13-1.png)&lt;!-- --&gt;
+
+**Question 1**: Did the school mental health services improve academic achievement? That is, did the two groups differ on math achievement at baseline and over the 6 years of the study?
+
+**Question 2**: For the treatment group, was individual-level improvement in mental health associated with improvement in math scores?
+
+---
+# Question 1
+
+**Did the school mental health services improve academic achievement? That is, did the two groups differ on math achievement at baseline and over the 6 years of the study?**
+
+
+```r
+# adjust time variable to have a sensible intercept
+EducMH$Time &lt;- EducMH$Year - 2009
+# fit the models
+m.base &lt;- lmer(Math ~ Time + (Time | ID), data=EducMH, REML=F)
+m.0 &lt;- lmer(Math ~ Time + Condition + (Time | ID), data=EducMH, REML=F)
+m.1 &lt;- lmer(Math ~ Time*Condition + (Time | ID), data=EducMH, REML=F)
+```
+
+---
+# Question 1
+
+**Did the school mental health services improve academic achievement? That is, did the two groups differ on math achievement at baseline and over the 6 years of the study?**
+
+Compare the models
+
+
+```r
+anova(m.base, m.0, m.1)
+```
+
+```
+## Data: EducMH
+## Models:
+## m.base: Math ~ Time + (Time | ID)
+## m.0: Math ~ Time + Condition + (Time | ID)
+## m.1: Math ~ Time * Condition + (Time | ID)
+##        npar  AIC  BIC logLik deviance Chisq Df Pr(&gt;Chisq)   
+## m.base    6 7847 7876  -3917     7835                       
+## m.0       7 7848 7883  -3917     7834  0.15  1     0.6947   
+## m.1       8 7843 7883  -3914     7827  7.02  1     0.0081 **
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+
+There was no group difference overall, but there was a group difference on slope. That is, math achievement increased more quickly in the Treatment group.
+
+---
+
+```r
+gt(tidy(m.1))
+```
+
+<div id="yfmygljrhi" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#yfmygljrhi table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#yfmygljrhi thead, #yfmygljrhi tbody, #yfmygljrhi tfoot, #yfmygljrhi tr, #yfmygljrhi td, #yfmygljrhi th {
+  border-style: none;
+}
+
+#yfmygljrhi p {
+  margin: 0;
+  padding: 0;
+}
+
+#yfmygljrhi .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#yfmygljrhi .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#yfmygljrhi .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#yfmygljrhi .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#yfmygljrhi .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#yfmygljrhi .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yfmygljrhi .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#yfmygljrhi .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#yfmygljrhi .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#yfmygljrhi .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#yfmygljrhi .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#yfmygljrhi .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#yfmygljrhi .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#yfmygljrhi .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#yfmygljrhi .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#yfmygljrhi .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#yfmygljrhi .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#yfmygljrhi .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#yfmygljrhi .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yfmygljrhi .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#yfmygljrhi .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#yfmygljrhi .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#yfmygljrhi .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yfmygljrhi .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#yfmygljrhi .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#yfmygljrhi .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yfmygljrhi .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yfmygljrhi .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#yfmygljrhi .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yfmygljrhi .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#yfmygljrhi .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yfmygljrhi .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#yfmygljrhi .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yfmygljrhi .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#yfmygljrhi .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yfmygljrhi .gt_left {
+  text-align: left;
+}
+
+#yfmygljrhi .gt_center {
+  text-align: center;
+}
+
+#yfmygljrhi .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#yfmygljrhi .gt_font_normal {
+  font-weight: normal;
+}
+
+#yfmygljrhi .gt_font_bold {
+  font-weight: bold;
+}
+
+#yfmygljrhi .gt_font_italic {
+  font-style: italic;
+}
+
+#yfmygljrhi .gt_super {
+  font-size: 65%;
+}
+
+#yfmygljrhi .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#yfmygljrhi .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#yfmygljrhi .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#yfmygljrhi .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#yfmygljrhi .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#yfmygljrhi .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#yfmygljrhi .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="effect">effect</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="group">group</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="term">term</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="estimate">estimate</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="std.error">std.error</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="statistic">statistic</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="df">df</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="p.value">p.value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="group" class="gt_row gt_left">NA</td>
+<td headers="term" class="gt_row gt_left">(Intercept)</td>
+<td headers="estimate" class="gt_row gt_right">149.29737</td>
+<td headers="std.error" class="gt_row gt_right">2.0295</td>
+<td headers="statistic" class="gt_row gt_right">73.5636</td>
+<td headers="df" class="gt_row gt_right">180</td>
+<td headers="p.value" class="gt_row gt_right">3.006e-136</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="group" class="gt_row gt_left">NA</td>
+<td headers="term" class="gt_row gt_left">Time</td>
+<td headers="estimate" class="gt_row gt_right">5.21577</td>
+<td headers="std.error" class="gt_row gt_right">0.3737</td>
+<td headers="statistic" class="gt_row gt_right">13.9560</td>
+<td headers="df" class="gt_row gt_right">180</td>
+<td headers="p.value" class="gt_row gt_right">1.776e-30</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="group" class="gt_row gt_left">NA</td>
+<td headers="term" class="gt_row gt_left">ConditionTreatment</td>
+<td headers="estimate" class="gt_row gt_right">1.33710</td>
+<td headers="std.error" class="gt_row gt_right">2.8701</td>
+<td headers="statistic" class="gt_row gt_right">0.4659</td>
+<td headers="df" class="gt_row gt_right">180</td>
+<td headers="p.value" class="gt_row gt_right">6.419e-01</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="group" class="gt_row gt_left">NA</td>
+<td headers="term" class="gt_row gt_left">Time:ConditionTreatment</td>
+<td headers="estimate" class="gt_row gt_right">1.41412</td>
+<td headers="std.error" class="gt_row gt_right">0.5285</td>
+<td headers="statistic" class="gt_row gt_right">2.6755</td>
+<td headers="df" class="gt_row gt_right">180</td>
+<td headers="p.value" class="gt_row gt_right">8.149e-03</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">ran_pars</td>
+<td headers="group" class="gt_row gt_left">ID</td>
+<td headers="term" class="gt_row gt_left">sd__(Intercept)</td>
+<td headers="estimate" class="gt_row gt_right">18.86595</td>
+<td headers="std.error" class="gt_row gt_right">NA</td>
+<td headers="statistic" class="gt_row gt_right">NA</td>
+<td headers="df" class="gt_row gt_right">NA</td>
+<td headers="p.value" class="gt_row gt_right">NA</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">ran_pars</td>
+<td headers="group" class="gt_row gt_left">ID</td>
+<td headers="term" class="gt_row gt_left">cor__(Intercept).Time</td>
+<td headers="estimate" class="gt_row gt_right">0.09138</td>
+<td headers="std.error" class="gt_row gt_right">NA</td>
+<td headers="statistic" class="gt_row gt_right">NA</td>
+<td headers="df" class="gt_row gt_right">NA</td>
+<td headers="p.value" class="gt_row gt_right">NA</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">ran_pars</td>
+<td headers="group" class="gt_row gt_left">ID</td>
+<td headers="term" class="gt_row gt_left">sd__Time</td>
+<td headers="estimate" class="gt_row gt_right">3.31043</td>
+<td headers="std.error" class="gt_row gt_right">NA</td>
+<td headers="statistic" class="gt_row gt_right">NA</td>
+<td headers="df" class="gt_row gt_right">NA</td>
+<td headers="p.value" class="gt_row gt_right">NA</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">ran_pars</td>
+<td headers="group" class="gt_row gt_left">Residual</td>
+<td headers="term" class="gt_row gt_left">sd__Observation</td>
+<td headers="estimate" class="gt_row gt_right">5.31090</td>
+<td headers="std.error" class="gt_row gt_right">NA</td>
+<td headers="statistic" class="gt_row gt_right">NA</td>
+<td headers="df" class="gt_row gt_right">NA</td>
+<td headers="p.value" class="gt_row gt_right">NA</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+
+---
+# Question 2
+
+**For the treatment group, was individual-level improvement in mental health associated with improvement in math scores?**
+
+First make a plot of what we're interested in: the treatment group's change in the SDQ over time showing both group mean (black line with error bars) and individual variability (grey lines)
+
+![](msmr_lec05_IndivDiffs_files/figure-html/unnamed-chunk-17-1.png)&lt;!-- --&gt;
+
+Within the treatment group, there is not an overall change in mental health (SDQ), but it looks like there is lots of variability in response to the mental health services. Some people responded really well (big decreases in difficulties on SDQ), some people didn't respond well (increased difficulties according to SDQ).
+
+--
+
+We want to know whether this variability is associated with variability in improved math achievement.
+
+---
+# Analysis strategy
+
+1. Build separate models for change in SDQ and change in Math scores over time
+2. Use random effects to quantify individual differences in change over time for the two scores
+3. Test the correlation between change in SDQ and in Math achievement (and make a scatterplot showing this).
+
+---
+# Analysis
+
+1. Build separate models for change in SDQ and change in Math scores over time
+
+
+```r
+m.math &lt;- lmer(Math ~ Time + (Time | ID), 
+               data=subset(EducMH, Condition == "Treatment"), REML=F)
+m.sdq &lt;- lmer(SDQ ~ Time + (Time | ID), 
+              data=subset(EducMH, Condition == "Treatment"), REML=F)
+```
+
+---
+# Analysis
+
+1. Build separate models for change in SDQ and change in Math scores over time
+2. Use random effects to quantify individual differences in change over time for the two scores
+
+
+```r
+source("get_ranef.R") # get_ranef() will extract the named random effect and clean them up a bit
+re.math &lt;- get_ranef(m.math, "ID")
+re.sdq &lt;- get_ranef(m.sdq, "ID")
+# merge() will combine those into one data frame, but needs some help because the variable names are all the same
+re &lt;- merge(re.math, re.sdq, by="ID", suffixes = c(".math", ".sdq"))
+summary(re)
+```
+
+```
+##       ID            Intercept.math     Time.math      Intercept.sdq    
+##  Length:90          Min.   :-59.50   Min.   :-3.372   Min.   :-2.0326  
+##  Class :character   1st Qu.: -9.85   1st Qu.:-0.733   1st Qu.:-0.7895  
+##  Mode  :character   Median : -0.01   Median : 0.118   Median : 0.0341  
+##                     Mean   :  0.00   Mean   : 0.000   Mean   : 0.0000  
+##                     3rd Qu.: 11.48   3rd Qu.: 0.694   3rd Qu.: 0.6024  
+##                     Max.   : 57.64   Max.   : 2.747   Max.   : 3.0828  
+##     Time.sdq      
+##  Min.   :-2.4951  
+##  1st Qu.:-0.7468  
+##  Median : 0.0989  
+##  Mean   : 0.0000  
+##  3rd Qu.: 0.5482  
+##  Max.   : 3.0944
+```
+
+```r
+head(re)
+```
+
+```
+##    ID Intercept.math Time.math Intercept.sdq Time.sdq
+## 1 201         0.8412 -1.542050       -0.9793   0.8381
+## 2 202         9.6071  0.029529        0.5728   0.3952
+## 3 203       -14.6657 -0.573849        0.5872   1.1176
+## 4 204        -3.5781 -0.290299       -0.8056   0.4423
+## 5 205         2.1411 -0.852670        0.4991   0.8463
+## 6 206        31.4592  0.006922        0.2029   0.6119
+```
+
+---
+# Analysis
+
+1. Build separate models for change in SDQ and change in Math scores over time
+2. Use random effects to quantify individual differences in change over time for the two scores
+3. Test the correlation between change in SDQ and in Math achievement (and make a scatterplot showing this).
+
+
+```r
+cor.test(re$Time.math, re$Time.sdq)
+```
+
+```
+## 
+## 	Pearson's product-moment correlation
+## 
+## data:  re$Time.math and re$Time.sdq
+## t = -11, df = 88, p-value &lt;2e-16
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.8455 -0.6749
+## sample estimates:
+##     cor 
+## -0.7739
+```
+
+Strong correlation ( `\(r = -0.77, p &lt; 0.0001\)` ) indicating that response to mental health intervention (decreased difficulties) was associated with larger increases in math achievement. Note that the key quantities here are **slopes**. That is, the **rate** of decreased mental health difficulties is associated with a higher **rate** of math achievement.
+
+---
+# Analysis
+
+1. Build separate models for change in SDQ and change in Math scores over time
+2. Use random effects to quantify individual differences in change over time for the two scores
+3. Test the correlation between change in SDQ and in Math achievement (and **make a scatterplot showing this**).
+
+
+```r
+ggplot(re, aes(Time.math, Time.sdq)) + geom_point() + stat_smooth(method="lm") + 
+  labs(x="Relative Rate of Increase in\nMath Score", 
+       y="Relative Rate of Decrease in\nSDQ Total Difficulties Score") + 
+  theme_bw(base_size=12)
+```
+
+![](msmr_lec05_IndivDiffs_files/figure-html/unnamed-chunk-21-1.png)&lt;!-- --&gt;
+
+---
+# Why use random effects instead of individual models?
+
+.pull-left[
+&lt;img src="./figs/shrinkage-plot-1.png" width="75%"/&gt;
+
+http://tjmahr.github.io/plotting-partial-pooling-in-mixed-effects-models/
+]
+
+.pull-right[
+An individual's performance (on the math test, on the SDQ) is their actual level plus some noise. 
+
+Individual models (no pooling) don't make that distinction, so you have a noisy estimate of individual differences. 
+
+Multilevel models reduce the noise component using the mean and variance of the rest of the group (partial pooling). **This produces a better estimate of true individual differences.**
+
+See also: Efron, B. &amp; Morris, C. (1977). Stein's Paradox in Statistics. Scientific American, 236:5, 119-127.
+]
+
+---
+# A word of warning
+
+This approach to quantifying individual differences is sometimes called **"Best Linear Unbiased Predictors"** (BLUPs)
+
+They are **estimates**; like all estimates, they are made with some degree of error. But this error is not carried forward into the individual difference analysis, which can produce false positives.
+
+.pull-left[
+![](msmr_lec05_IndivDiffs_files/figure-html/unnamed-chunk-22-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+Multivariate models provide an alternative approach to modeling data with multiple outcomes (e.g., Math and SDQ scores).
+]
+
+---
+# Key points
+
+.pull-left[
+* Individual differences provide deeper insights into group-level phenomena
+* Can assess them by adding them to the multilevel model
+* Dividing a continuous variable into levels can help to visualise complex interactions
+]
+.pull-right[
+* Random effects provide a useful way to quantify individual differences in the context of a group-level model
+* Partial pooling / shrinkage improves individual difference estimates
+* But be careful about using these in subsequent analyses without considering the uncertainly associated with those estimates
+]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
