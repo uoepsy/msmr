@@ -107,7 +107,7 @@ You might think of this as the variance in school intercepts (width of purple di
 library(ggdist)
 library(distributional)
 library(patchwork)
-neststress <- read_csv("../../data/stressweek_nested.csv")
+neststress <- read_csv("https://uoepsy.github.io/data/stressweek_nested.csv")
 neststress$school = paste0("School ",as.numeric(factor(neststress$dept)))
 neststress$day<-neststress$day-1
 neststress$stress<-neststress$stress+neststress$day*.1
@@ -256,7 +256,7 @@ __in the `summary()` output of a multilevel model, immediately beneath the rando
 
 ```{r}
 #| include: false
-dfcr <- read_csv("../../data/stressweek_crossed.csv") |>
+dfcr <- read_csv("https://uoepsy.github.io/data/stressweek_crossed.csv") |>
   mutate(day=day-1,
          pid = paste0("PPT_",as.numeric(factor(pid))),
          task = paste0("Task_",as.numeric(factor(measure)))
@@ -380,7 +380,7 @@ Suppose, for instance, that we conducted an experiment on a sample of 20 staff m
 
 We can see our data here:  
 ```{r}
-psychstress <- read_csv("../../data/stressweek1.csv")
+psychstress <- read_csv("https://uoepsy.github.io/data/stressweek1.csv")
 head(psychstress)
 ```
 
@@ -433,7 +433,7 @@ summary(m2level)
 Let's suppose that instead of simply sampling 20 staff members from the Psychology department, we instead went out and sampled lots of people from different departments across the University. The dataset below contains not just our 20 Psychology staff members, but also data from 220 other people from departments such as History, Philosophy, Art, etc..  
 
 ```{r}
-neststress <- read_csv("../../data/stressweek_nested.csv")
+neststress <- read_csv("https://uoepsy.github.io/data/stressweek_nested.csv")
 head(neststress)
 ```
 
@@ -523,10 +523,9 @@ augment(mnest2) |>
 #| echo: false
 rr = VarCorr(mnest2) |> as.data.frame()
 rr$sdcor = round(rr$sdcor,2)
-rr
 ```
 
-And we can see in our summary that there is a lot of by-department variation - departments vary in their baseline stress levels with a standard deviation of `r rr[3,5]`, and within departments, participants vary in baseline stress scores with a standard deviation of `r rr[1,5]`. 
+And we can see in our summary that there is a lot of by-department variation - departments vary in their baseline stress levels with a standard deviation of `r rr[4,5]`, and within departments, participants vary in baseline stress scores with a standard deviation of `r rr[1,5]`. 
 
 ```{r}
 #| eval: false
@@ -558,7 +557,7 @@ Forgetting about participants nested in departments, let's return to our sample 
 However, we might just as easily have taken more measurements. i.e. on Day 1, we could have recorded Martin's stress levels 10 times. Furthermore, we could have used 10 different measurements of stress, rather than just a self-report measure. We could measure his cortisol levels, blood pressure, heart rate variability, give him different questionnaires, ask an informant like his son to report his stress, and so on. And we could have done the same for everybody.  
 
 ```{r}
-stresscross <- read_csv("../../data/stressweek_crossed.csv")
+stresscross <- read_csv("https://uoepsy.github.io/data/stressweek_crossed.csv")
 head(stresscross)
 ```
 

@@ -1,7 +1,7 @@
 ---
 title: "Week 3 Exercises: Non-Linear Change"
 params: 
-    SHOW_SOLS: FALSE
+    SHOW_SOLS: TRUE
     TOGGLE: TRUE
 editor_options: 
   chunk_output_type: console
@@ -563,9 +563,9 @@ Take a piece of paper, and based on your interpretation for the previous questio
 
 ```{r}
 #| echo: false
-pp1 <- bind_rows(poly(seq(1,10,length.out=50),2,raw=T) |> as_tibble(),
-                 poly(seq(1,10,length.out=50),2,raw=T) |> as_tibble(),
-                 poly(seq(1,10,length.out=50),2,raw=T) |> as_tibble()
+pp1 <- bind_rows(poly(seq(0,9,length.out=50),2,raw=T) |> as_tibble(),
+                 poly(seq(0,9,length.out=50),2,raw=T) |> as_tibble(),
+                 poly(seq(0,9,length.out=50),2,raw=T) |> as_tibble()
           ) |>
   mutate(Task=rep(c("cADL","sADL","Memory"),e=50))
 names(pp1) <-c("poly1","poly2","Task")
@@ -577,6 +577,7 @@ pp1$upr = apply(bts$t, 2, quantile, .975)
 ggplot(pp1, aes(x=poly1,y=pred,ymin=lwr,ymax=upr,
                 col=Task,fill=Task))+
   geom_line(lwd=1)+
+  scale_x_continuous(breaks=0:9)+
   # geom_ribbon(alpha=.2)+
   NULL
 ```

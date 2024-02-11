@@ -971,7 +971,9 @@ _(in our example, Level-1 = children, Level-2 = Schools)._
 
 Consider, for example, if we want to investigate whether the relationship between children's motivation levels and their grades is different depending upon the source of school funding (private vs state).  
 
-Addressing such questions simply requires a more complex fixed effect structure (specifically the interaction between `motiv` and `funding` (private vs state).    
+Addressing such questions requires a different fixed effect structure in order to allow us to test the relevant estimate of interest. Specifically here we need the interaction between `motiv` and `funding` (private vs state).    
+
+Note that this interaction is 'cross-level'! It allows us to ask whether something about children (the `grade~motiv` relationship) depends upon something about the school they're in (funding type).  
 
 ```{r}
 smod3 <- lmer(grade ~ motiv * funding + (1 + motiv | schoolid), 
