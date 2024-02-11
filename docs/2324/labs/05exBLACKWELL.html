@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -272,7 +306,13 @@ if(f.classList.contains('jk-circle-right')) {
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#differences-in-chimp-cognition" id="toc-differences-in-chimp-cognition" class="nav-link active" data-scroll-target="#differences-in-chimp-cognition">Differences in Chimp Cognition</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -294,11 +334,517 @@ if(f.classList.contains('jk-circle-right')) {
 
 </header>
 
+<section id="differences-in-chimp-cognition" class="level1">
+<h1>Differences in Chimp Cognition</h1>
+<div class="frame">
+<p><strong>Dataset: chimpcogdiff.csv</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>ccd <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../../data/chimpcogdiff.csv"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>ccdape <span class="ot">&lt;-</span> ccd <span class="sc">|&gt;</span> <span class="fu">count</span>(zoo,apID)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>While previous research has suggested that Chimpanzee cognitive ability is relatively stable across adulthood, less is known about the characteristics of chimpanzees that are associated with better cognitive performance and problem solving skills. The present research is interested in ascertaining whether a chimpanzee’s level of dominance is associated with differences in cognitive ability, and whether this depends on the size of the enclosure in which a chimpanzee lives (i.e.&nbsp;whether dominance is associated with cognition to different extent depending on whether they live with a small number of other Chimpanzees, or live with a larger number).</p>
+<p>These data are from a study of 130 adult chimpanzees studied across 13 research centers at zoos in the UK and Europe. Each chimpanzee was assessed on the “PCOG” - a measure of primate cognitive ability - on 3 occasions. Many of the participating chimpanzees took part in various research projects during their adolescence, and this has likely led to differences in both dominance and performance on these types of tasks.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+
+<div id="imdqeawiyl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#imdqeawiyl table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#imdqeawiyl thead, #imdqeawiyl tbody, #imdqeawiyl tfoot, #imdqeawiyl tr, #imdqeawiyl td, #imdqeawiyl th {
+  border-style: none;
+}
+
+#imdqeawiyl p {
+  margin: 0;
+  padding: 0;
+}
+
+#imdqeawiyl .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#imdqeawiyl .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#imdqeawiyl .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#imdqeawiyl .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#imdqeawiyl .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#imdqeawiyl .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#imdqeawiyl .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#imdqeawiyl .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#imdqeawiyl .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#imdqeawiyl .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#imdqeawiyl .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#imdqeawiyl .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#imdqeawiyl .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#imdqeawiyl .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#imdqeawiyl .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#imdqeawiyl .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#imdqeawiyl .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#imdqeawiyl .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#imdqeawiyl .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#imdqeawiyl .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#imdqeawiyl .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#imdqeawiyl .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#imdqeawiyl .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#imdqeawiyl .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#imdqeawiyl .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#imdqeawiyl .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#imdqeawiyl .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#imdqeawiyl .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#imdqeawiyl .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#imdqeawiyl .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#imdqeawiyl .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#imdqeawiyl .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#imdqeawiyl .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#imdqeawiyl .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#imdqeawiyl .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#imdqeawiyl .gt_left {
+  text-align: left;
+}
+
+#imdqeawiyl .gt_center {
+  text-align: center;
+}
+
+#imdqeawiyl .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#imdqeawiyl .gt_font_normal {
+  font-weight: normal;
+}
+
+#imdqeawiyl .gt_font_bold {
+  font-weight: bold;
+}
+
+#imdqeawiyl .gt_font_italic {
+  font-style: italic;
+}
+
+#imdqeawiyl .gt_super {
+  font-size: 65%;
+}
+
+#imdqeawiyl .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#imdqeawiyl .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#imdqeawiyl .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#imdqeawiyl .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#imdqeawiyl .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#imdqeawiyl .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#imdqeawiyl .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="variable">variable</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="description">description</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="variable" class="gt_row gt_left">zoo</td>
+<td headers="description" class="gt_row gt_left">Zoo Name</td></tr>
+    <tr><td headers="variable" class="gt_row gt_left">zoo_loc</td>
+<td headers="description" class="gt_row gt_left">Zoo Location (UK or EU)</td></tr>
+    <tr><td headers="variable" class="gt_row gt_left">prev_ppt</td>
+<td headers="description" class="gt_row gt_left">Whether or not the chimpanzee took part in research during adolescence</td></tr>
+    <tr><td headers="variable" class="gt_row gt_left">enclosure_size</td>
+<td headers="description" class="gt_row gt_left">Size of enclosure in which the chimpanzee lives (enclosures tend to vary in the exact number of chimps living there, so these have been categorised as either 'small' or 'big' enclosures)</td></tr>
+    <tr><td headers="variable" class="gt_row gt_left">apID</td>
+<td headers="description" class="gt_row gt_left">Name of the chimpanzee</td></tr>
+    <tr><td headers="variable" class="gt_row gt_left">age</td>
+<td headers="description" class="gt_row gt_left">Age (in years) of the chimpanzee</td></tr>
+    <tr><td headers="variable" class="gt_row gt_left">DOM</td>
+<td headers="description" class="gt_row gt_left">Dominance Trait (Z-scored)</td></tr>
+    <tr><td headers="variable" class="gt_row gt_left">PCOG</td>
+<td headers="description" class="gt_row gt_left">Score on PCOG (scores range 0-35)</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+</div>
+</div>
 <div class="question-begin">
 Question 1
 </div>
 <div class="question-body">
-<p>conduct an analysis to address the research aims!</p>
+<p>Conduct an analysis to address the research aims!</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hints
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li>We have 3 observations per chimpanzee, and multiple chimps for each zoo.<br>
+</li>
+<li>Given the study background, why might it be a good idea to control for whether or not the chimps have taken part in research during adolescence?</li>
+</ul>
+</div>
+</div>
+</div>
 </div>
 <p class="question-end">
 </p>
@@ -308,7 +854,51 @@ Solution
 </button>
 </div>
 <div id="sol-body-1" class="solution-body" style="display: none;">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">=</span> <span class="fu">lmer</span>(PCOG <span class="sc">~</span> zoo_loc <span class="sc">+</span> age <span class="sc">+</span> prev_ppt <span class="sc">+</span> DOM<span class="sc">*</span>enclosure_size <span class="sc">+</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>            (<span class="dv">1</span> <span class="sc">+</span> DOM  <span class="sc">|</span> zoo) <span class="sc">+</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>            (<span class="dv">1</span> <span class="sc">|</span> zoo<span class="sc">:</span>apID), <span class="at">data =</span> ccd)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed model fit by REML ['lmerMod']
+Formula: PCOG ~ zoo_loc + age + prev_ppt + DOM * enclosure_size + (1 +  
+    DOM | zoo) + (1 | zoo:apID)
+   Data: ccd
 
+REML criterion at convergence: 2014.8
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-2.42554 -0.57997 -0.02473  0.57839  2.51056 
+
+Random effects:
+ Groups   Name        Variance Std.Dev. Corr 
+ zoo:apID (Intercept) 5.4422   2.3329        
+ zoo      (Intercept) 5.7002   2.3875        
+          DOM         0.8068   0.8982   -0.07
+ Residual             7.4488   2.7293        
+Number of obs: 381, groups:  zoo:apID, 127; zoo, 13
+
+Fixed effects:
+                        Estimate Std. Error t value
+(Intercept)             20.33408    2.54178   8.000
+zoo_locUK               -0.22450    1.68686  -0.133
+age                      0.01865    0.02859   0.652
+prev_pptY               -3.62970    1.84618  -1.966
+DOM                     -0.69610    1.18244  -0.589
+enclosure_sizesmall     -3.93405    1.96458  -2.002
+DOM:enclosure_sizesmall -1.68222    0.86636  -1.942
+
+Correlation of Fixed Effects:
+            (Intr) z_lcUK age    prv_pY DOM    encls_
+zoo_locUK   -0.633                                   
+age         -0.297 -0.029                            
+prev_pptY   -0.402 -0.055  0.104                     
+DOM         -0.356 -0.044  0.093  0.784              
+enclsr_szsm -0.762  0.513  0.004 -0.028  0.027       
+DOM:nclsr_s  0.114  0.006 -0.078 -0.111 -0.612 -0.050</code></pre>
+</div>
+</div>
 </div>
 <p class="solution-end">
 </p>
@@ -316,7 +906,7 @@ Solution
 Question 2
 </div>
 <div class="question-body">
-<p>check the assumptions of your model</p>
+<p>Check the assumptions of your model</p>
 </div>
 <p class="question-end">
 </p>
@@ -326,7 +916,59 @@ Solution
 </button>
 </div>
 <div id="sol-body-2" class="solution-body" style="display: none;">
-
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05exBLACKWELL_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(m1,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">form =</span> <span class="fu">sqrt</span>(<span class="fu">abs</span>(<span class="fu">resid</span>(.))) <span class="sc">~</span> <span class="fu">fitted</span>(.),</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">type =</span> <span class="fu">c</span>(<span class="st">"p"</span>,<span class="st">"smooth"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05exBLACKWELL_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">ranef</span>(m1)<span class="sc">$</span><span class="st">`</span><span class="at">zoo:apID</span><span class="st">`</span>[,<span class="dv">1</span>]);<span class="fu">qqline</span>(<span class="fu">ranef</span>(m1)<span class="sc">$</span><span class="st">`</span><span class="at">zoo:apID</span><span class="st">`</span>[,<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05exBLACKWELL_files/figure-html/unnamed-chunk-5-3.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">ranef</span>(m1)<span class="sc">$</span>zoo[,<span class="dv">1</span>]);<span class="fu">qqline</span>(<span class="fu">ranef</span>(m1)<span class="sc">$</span>zoo[,<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05exBLACKWELL_files/figure-html/unnamed-chunk-5-4.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">ranef</span>(m1)<span class="sc">$</span>zoo[,<span class="dv">2</span>]);<span class="fu">qqline</span>(<span class="fu">ranef</span>(m1)<span class="sc">$</span>zoo[,<span class="dv">2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05exBLACKWELL_files/figure-html/unnamed-chunk-5-5.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">check_predictions</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05exBLACKWELL_files/figure-html/unnamed-chunk-5-6.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
 </div>
 <p class="solution-end">
 </p>
@@ -334,7 +976,7 @@ Solution
 Question 3
 </div>
 <div class="question-body">
-<p>check the extent to which your results may be sensitive to certain influential Xs or XXs.</p>
+<p>Check the extent to which your results may be sensitive to certain influential Xs or XXs.</p>
 </div>
 <p class="question-end">
 </p>
@@ -344,7 +986,36 @@ Solution
 </button>
 </div>
 <div id="sol-body-3" class="solution-body" style="display: none;">
-
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(HLMdiag)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>inf1 <span class="ot">&lt;-</span> <span class="fu">hlm_influence</span>(m1,<span class="at">level=</span><span class="dv">1</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot_diag</span>(inf1<span class="sc">$</span>cooksd, <span class="at">cutoff=</span><span class="st">"internal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05exBLACKWELL_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>inf2 <span class="ot">&lt;-</span> <span class="fu">hlm_influence</span>(m1,<span class="at">level=</span><span class="st">"zoo:apID"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot_diag</span>(inf2<span class="sc">$</span>cooksd, <span class="at">cutoff=</span><span class="st">"internal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05exBLACKWELL_files/figure-html/unnamed-chunk-6-2.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>inf3 <span class="ot">&lt;-</span> <span class="fu">hlm_influence</span>(m1,<span class="at">level=</span><span class="st">"zoo"</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot_diag</span>(inf3<span class="sc">$</span>cooksd, <span class="at">cutoff=</span><span class="st">"internal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="05exBLACKWELL_files/figure-html/unnamed-chunk-6-3.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
 </div>
 <p class="solution-end">
 </p>
@@ -372,7 +1043,7 @@ Question 5
 <div class="question-body">
 <p>Write a short explanation of your methods</p>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -381,7 +1052,7 @@ Hints
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ul>
 <li>explain transformations to the data prior to modelling</li>
@@ -412,9 +1083,9 @@ Solution
 Question 6
 </div>
 <div class="question-body">
-<p>write a short summary of your results, along with suitable visualisations and tables</p>
+<p>Write a short summary of your results, along with suitable visualisations and tables</p>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -423,7 +1094,7 @@ Hints
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ul>
 <li>if model comparisons were conducted, provide results and what they mean<br>
@@ -452,6 +1123,7 @@ Solution
 </p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

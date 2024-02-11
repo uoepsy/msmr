@@ -1,0 +1,253 @@
+---
+title: "Week 5 Exercises: Assumptions, Diagnostics, Writing up"
+params: 
+    SHOW_SOLS: TRUE
+    TOGGLE: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+source('assets/setup.R')
+library(xaringanExtra)
+library(tidyverse)
+library(patchwork)
+library(ggdist)
+xaringanExtra::use_panelset()
+qcounter <- function(){
+  if(!exists("qcounter_i")){
+    qcounter_i <<- 1
+  }else{
+    qcounter_i <<- qcounter_i + 1
+  }
+  qcounter_i
+}
+library(lme4)
+```
+
+# Video game agression and the dark triad 
+
+:::frame
+__Dataset: NGV.csv__  
+
+These data are from an experiment designed to investigate how the realism of video games is associated with more/less unnecessarily aggressive gameplay, and whether this differs depending upon a) the playing mode (playing on a screen vs VR headset), and b) individual differences in the 'dark triad' personality traits.  
+
+The experiment involved playing 10 levels of a game in which the objective was to escape a maze. Various obstacles and other characters were present throughout the maze, and players could interact with these by side-stepping or jumping over them, or by pushing or shooting at them. All of these actions took the same amount of effort to complete (pressing a button), and each one achieved the same end (moving beyond the obstacle and being able to continue through the maze).  
+
+Each participant completed all 10 levels twice, once in which all characters were presented as cartoons, and once in which all characters were presented as realistic humans and animals. The layout of the level was identical in both, the only difference being the depiction of objects and characters. For each participant, these 20 levels ($2 \times 10$ mazes) were presented in a random order. Half of the participants played via a screen, and the other half played via a VR headset. For each level played, we have a record of "needless game violence" (NGV) which was calculated via the number of aggressive (pushing/shooting) actions taken (+0.5 for every action that missed an object, +1 for every action aimed at an inanimate object, and +2 for every action aimed at an animate character).  
+Prior to the experiment, each participant completed the Short Dark Triad 3 (SD-3), which measures the three traits of machiavellianism, narcissism, and psychopathy.  
+
+```{r}
+#| echo: false
+ngv <- read_csv("../../data/ngv.csv")
+tibble(
+  variable=names(ngv),
+  description=c(
+    "Participant number",
+    "Maze level (1 to 20)",
+    "Whether the objects and characters in the level were presented as 'cartoon' or as 'realistic'",
+    "Whether the participant played via a screen or with a VR headset",
+    "Psycopathy Trait from SD-3 (score 1-5)",
+    "Narcissism Trait from SD-3 (score 1-5)",
+    "Machiavellianism Trait from SD-3 (score 1-5)",
+    "Needless Game Violence metric"
+  )
+) |> gt::gt()
+```
+
+
+
+:::
+
+`r qbegin(qcounter())`
+Conduct an analysis to address the research aims!  
+
+
+::: {.callout-tip collapse="true"}
+#### Hints
+
+- There's a lot to unpack in the research aim: _"how the realism of video games is associated with more/less unnecessarily aggressive gameplay, and whether this differs depending upon a) the playing mode (playing on a screen vs VR headset), and b) individual differences in the 'dark triad' personality traits."_    
+
+
+:::
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+m1 = lmer(NGV ~ character * (mode + P + M + N) + 
+            (1 + character | PID) + 
+            (1 + mode | level), data = ngv)
+summary(m1)
+```
+
+```{r}
+library(parameters)
+model_parameters(m1, ci_method="kr") |> print_html()
+```
+
+
+
+`r solend()`
+
+`r qbegin(qcounter())`
+Check the assumptions of your model
+
+
+::: {.callout-tip collapse="true"}
+#### Hints
+
+We have a multilevel model, so we have assumptions at multiple levels! See [5A#mlm-assumptions-diagnostics](05a_assump.html#mlm-assumptions-diagnostics){target="_blank"}.  
+
+Be careful - QQplots with few datapoints can make things look weirder than they are - try a histogram too 
+
+
+:::
+
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+plot(m1)
+plot(m1,
+     form = sqrt(abs(resid(.))) ~ fitted(.),
+     type = c("p","smooth"))
+```
+
+```{r echo=c(2,3,4,5)}
+par(mfrow=c(2,2))
+qqnorm(ranef(m1)$PID[,1],main="1|PID");qqline(ranef(m1)$PID[,1])
+qqnorm(ranef(m1)$PID[,2],main="character|PID");qqline(ranef(m1)$PID[,2])
+qqnorm(ranef(m1)$level[,1],main="1|level");qqline(ranef(m1)$level[,1])
+qqnorm(ranef(m1)$level[,2],main="mode|level");qqline(ranef(m1)$level[,2])
+par(mfrow=c(1,1))
+```
+```{r echo=c(2,3,4,5)}
+par(mfrow=c(2,2))
+hist(ranef(m1)$PID[,1],main="1|PID")
+hist(ranef(m1)$PID[,2],main="character|PID")
+hist(ranef(m1)$level[,1],main="1|level")
+hist(ranef(m1)$level[,2],main="mode|level")
+par(mfrow=c(1,1))
+```
+
+```{r}
+library(performance)
+check_predictions(m1)
+```
+
+`r solend()`
+
+`r qbegin(qcounter())`
+Check the extent to which your results may be sensitive to certain influential observations, or participants, or levels!  
+
+
+::: {.callout-tip collapse="true"}
+#### Hints
+
+See [5A #influence](05a_assump.html#influence){target="_blank"} for two packages that can assess influence. 
+
+:::
+
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+library(HLMdiag)
+inf1 <- hlm_influence(m1,level=1)
+dotplot_diag(inf1$cooksd, cutoff="internal")
+inf2 <- hlm_influence(m1,level="PID")
+dotplot_diag(inf2$cooksd, index=inf2$PID, cutoff="internal")
+inf3 <- hlm_influence(m1,level="level")
+dotplot_diag(inf3$cooksd, cutoff="internal")
+```
+
+
+`r solend()`
+
+
+`r qbegin(qcounter())`
+Write a short description of the sample data.  
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+
+`r solend()`
+
+
+`r qbegin(qcounter())`
+Write a short explanation of your methods
+
+
+::: {.callout-tip collapse="true"}
+#### Hints
+
+- explain any transformations to the data prior to modelling
+- explain the model(s) fitted and how they address the research aims
+- describe any actions taken as a result of non-convergence
+- what estimation method was used (ML, REML)? What software (including version and packages)? What optimiser? 
+- if degrees of freedom were used, what kind? If not, how are inferences conducted?  
+- what assumptions of the model were checked, and what was the outcome?
+
+
+:::
+
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+`r solend()`
+
+
+`r qbegin(qcounter())`
+Write a short summary of your results, along with suitable visualisations and tables
+
+
+::: {.callout-tip collapse="true"}
+#### Hints
+
+- if model comparisons were conducted, provide results and what they mean  
+- present and interpret fixed effects estimates that are relevant to the research aim.  
+- discuss random effect estimates - does the relevant effect vary a lot between clusters?  
+- was the sensitivty of the results to influential observations/clusters assessed? if so, what did you find?
+
+
+:::
+
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+library(effects)
+
+plotp <- effect("character*P",mod=m1,xlevels=list(P=c(1,2,3,4,5))) |> as.data.frame()
+
+ggplot(data = ngv, aes(x=character,col=factor(P)))+
+  geom_jitter(aes(y=NGV),alpha=.2,height=0) +
+  geom_pointrange(data=plotp, aes(y=fit,ymin=lower,ymax=upper),
+                  position=position_dodge(width = .2))+
+  scale_color_viridis_d("Psychopathy",option="C",direction = -1)+
+  theme_dark()
+```
+
+```{r}
+plotm <- effect("character*M",mod=m1,xlevels=list(M=c(1,2,3,4,5))) |> as.data.frame()
+ggplot(data = ngv, aes(x=character,col=factor(M)))+
+  geom_jitter(aes(y=NGV),alpha=.1,height=0) +
+  geom_pointrange(data=plotm, aes(y=fit,ymin=lower,ymax=upper),
+                  position=position_dodge(width = .2))+
+  scale_color_viridis_d("Machiavellianism",option="C",direction = -1)+
+  theme_dark()
+
+```
+
+
+`r solend()`
+
+
+

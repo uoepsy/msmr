@@ -27,28 +27,103 @@ qcounter <- function(){
 library(lme4)
 ```
 
+# Differences in Chimp Cognition  
 
+:::frame
+__Dataset: chimpcogdiff.csv__  
+
+```{r}
+ccd <- read_csv("../../data/chimpcogdiff.csv")
+ccdape <- ccd |> count(zoo,apID)
+```
+
+While previous research has suggested that Chimpanzee cognitive ability is relatively stable across adulthood, less is known about the characteristics of chimpanzees that are associated with better cognitive performance and problem solving skills. The present research is interested in ascertaining whether a chimpanzee's level of dominance is associated with differences in cognitive ability, and whether this depends on the size of the enclosure in which a chimpanzee lives (i.e. whether dominance is associated with cognition to different extent depending on whether they live with a small number of other Chimpanzees, or live with a larger number).  
+
+These data are from a study of `r nrow(ccdape)` adult chimpanzees studied across `r length(unique(ccdape$zoo))` research centers at zoos in the UK and Europe. Each chimpanzee was assessed on the "PCOG" - a measure of primate cognitive ability - on 3 occasions. Many of the participating chimpanzees took part in various research projects during their adolescence, and this has likely led to differences in both dominance and performance on these types of tasks.  
+
+```{r}
+#| echo: false
+tibble(
+  variable=names(ccd),
+  description=c(
+    "Zoo Name",
+    "Zoo Location (UK or EU)",
+    "Whether or not the chimpanzee took part in research during adolescence",
+    "Size of enclosure in which the chimpanzee lives (enclosures tend to vary in the exact number of chimps living there, so these have been categorised as either 'small' or 'big' enclosures)",
+    "Name of the chimpanzee",
+    "Age (in years) of the chimpanzee",
+    "Dominance Trait (Z-scored)",
+    "Score on PCOG (scores range 0-35)"
+  )
+) |> gt::gt()
+```
+
+
+:::
 
 `r qbegin(qcounter())`
-conduct an analysis to address the research aims!  
+Conduct an analysis to address the research aims!  
+
+
+::: {.callout-tip collapse="true"}
+#### Hints
+
+- We have 3 observations per chimpanzee, and multiple chimps for each zoo.  
+- Given the study background, why might it be a good idea to control for whether or not the chimps have taken part in research during adolescence? 
+
+:::
 
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+m1 = lmer(PCOG ~ zoo_loc + age + prev_ppt + DOM*enclosure_size + 
+            (1 + DOM  | zoo) +
+            (1 | zoo:apID), data = ccd)
+summary(m1)
+```
+
 
 `r solend()`
 
 `r qbegin(qcounter())`
-check the assumptions of your model
+Check the assumptions of your model
+
+
+
 
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+plot(m1)
+plot(m1,
+     form = sqrt(abs(resid(.))) ~ fitted(.),
+     type = c("p","smooth"))
+qqnorm(ranef(m1)$`zoo:apID`[,1]);qqline(ranef(m1)$`zoo:apID`[,1])
+qqnorm(ranef(m1)$zoo[,1]);qqline(ranef(m1)$zoo[,1])
+qqnorm(ranef(m1)$zoo[,2]);qqline(ranef(m1)$zoo[,2])
+
+library(performance)
+check_predictions(m1)
+```
 
 `r solend()`
 
 `r qbegin(qcounter())`
-check the extent to which your results may be sensitive to certain influential Xs or XXs. 
+Check the extent to which your results may be sensitive to certain influential Xs or XXs. 
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+library(HLMdiag)
+inf1 <- hlm_influence(m1,level=1)
+dotplot_diag(inf1$cooksd, cutoff="internal")
+inf2 <- hlm_influence(m1,level="zoo:apID")
+dotplot_diag(inf2$cooksd, cutoff="internal")
+inf3 <- hlm_influence(m1,level="zoo")
+dotplot_diag(inf3$cooksd, cutoff="internal")
+```
+
 
 `r solend()`
 
@@ -90,7 +165,7 @@ Write a short explanation of your methods
 
 
 `r qbegin(qcounter())`
-write a short summary of your results, along with suitable visualisations and tables
+Write a short summary of your results, along with suitable visualisations and tables
 
 
 ::: {.callout-tip collapse="true"}
