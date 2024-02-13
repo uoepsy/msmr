@@ -16,9 +16,9 @@ R = matrix(c(1,.5,.4,
              .5,1,.2,
              .4,.2,1),nrow=3)
 SD3 = MASS::mvrnorm(length(g), mu = c(2.9,2.9,2.1),Sigma=diag(S)%*%R%*%diag(S))
-dtM = pmax(1,pmin(5,SD3[,1]))
-dtN = pmax(1,pmin(5,SD3[,2]))
-dtP = pmax(1,pmin(5,SD3[,3]))
+dtM = pmax(1,pmin(5,SD3[,1]))[g]
+dtN = pmax(1,pmin(5,SD3[,2]))[g]
+dtP = pmax(1,pmin(5,SD3[,3]))[g]
 
 
 re0 = rnorm(n_groups, sd = 3)[g]
@@ -28,8 +28,8 @@ rex1 = rnorm(n_groups, sd = 2)[g]
 lp = (0 + re0) + (-4 + rex1)*(char==2) + 
   -1.4*(mode==2) +
   -.6*(char==2 & mode==2) + 
-  1.2*dtM + .63*dtP + 1*dtP*(char==2) +
-  .37*dtM*(char==2) + 
+  2.28*dtM + 2.1*dtP + 1*dtP*(char==2) +
+  .77*dtM*(char==2) + 
   .7*(level==3) + -.7*(level==5) + .6*(level==2 & mode==2) +
   -.8*(level==2 & mode==1)
   
@@ -43,6 +43,7 @@ lmer(y ~char*(mode+dtP+dtN+dtM) + (1+char|g)+(1+mode|level),df) |> summary()
 
 df |> transmute(
   PID = paste0("ppt_",g),
+  age = round(runif(1e3,18,48)[g]),
   level = paste0("level",level),
   character = factor(char, labels=c("cartoon","realistic")),
   mode = factor(mode, labels=c("Screen","VR")),
@@ -54,8 +55,41 @@ df |> transmute(
 
 df |> ggplot(aes(x=character,y=NGV,col=mode))+geom_jitter(height=0)
 
-lmer(NGV ~ character*(mode+P+M+N) + (1+character|PID) + (1+mode|level),df) |> sjPlot::tab_model()
+# lmer(NGV ~ character*(mode+P+M+N) + (1+character|PID) + (1+mode|level),df) |> sjPlot::tab_model()
 #lmer(NGV ~ character*mode*(P+M+N) + (1+character|PID) + (1+mode|level),df) |> sjPlot::plot_model(type="int")
 
-write_csv(df,"../../data/NGV.csv")
+ngv <- df
 
+# impossible
+ngv$P[ngv$PID== sample(unique(ngv$PID), 1)] <- 0
+ngv$N[ngv$PID== sample(unique(ngv$PID), 1)] <- 7
+ngv$age[ngv$PID %in% sample(unique(ngv$PID), 3)] <- -99
+
+# psycho
+psycho = sample(unique(ngv$PID), 1)
+ngv[ngv$PID == psycho, c("P","M","N")] <- c(5,5,5)
+ngv[ngv$PID == psycho, "NGV"] <- ngv[ngv$PID == psycho, "NGV"]*2
+
+
+set.seed(3433)
+# calm
+ngv$NGV[ngv$PID== sample(unique(ngv$PID), 1)] <- rbinom(20,1,.05)
+# unclear
+ngv$NGV[ngv$PID== sample(unique(ngv$PID), 1)] <- 0
+
+
+
+ngv <- ngv |> 
+  filter(N>=1 & N<=5) |>
+  filter(P>=1) |>
+  filter(age>0)
+
+
+#ngv <- read_csv("../../data/ngv.csv")
+m1 = lmer(NGV ~ character * (mode + P + M + N) + 
+            (1 + character | PID) + 
+            (1 + mode | level), data = ngv)
+summary(m1,correlation=F)
+sjPlot::tab_model(m1)
+
+write_csv(ngv,"../../data/NGV.csv")
