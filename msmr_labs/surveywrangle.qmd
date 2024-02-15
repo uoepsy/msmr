@@ -1,0 +1,176 @@
+---
+title: "Data wrangling for surveys & questionnaires"
+author: "hello"
+params: 
+    SHOW_SOLS: TRUE
+    TOGGLE: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+source('assets/setup.R')
+library(xaringanExtra)
+library(tidyverse)
+library(patchwork)
+xaringanExtra::use_panelset()
+```
+
+Questionnaire data often comes to us in 'wide' format, which is often how we want it for many of the analytical methods we use with questionnaire data. However, working with data in the wide format comes with some specific challenges that generally arise because we have lots and lots of variables. 
+
+Below we will walk through some of the common ways we want to wrangle and clean questionnaire data.  
+
+
+# column names
+
+Very often, the data might come to us with huge long names that correspond to the question being asked.  
+For instance: 
+```{r}
+survdat <- read_csv("data/surveywrangle.csv") |> mutate(ppt = 1:n())
+survdat <- survdat[,c(60,3:52)]
+names(survdat) <- gsub("Describe yourself as you generally are now, not as you wish to be in the future. Describe yourself as you honestly see yourself, in relation to other people you know of the same age and sex as you are. Remember that responses are anonymised. Please indicate the accuracy for each statement in how it describes you.  ","",names(survdat))
+head(survdat)
+```
+
+Often, we want our variables to have some easier names to work with, e.g. "q1", "q2" etc.  
+
+Because it's often important to keep track of what each question actually asks, it can be useful to create a little dictionary to map our new variable names to the current names.  
+
+In our data, we have a variable called `ppt`, and then 50 variables corresponding to 50 different questions.  
+What I plan to do is rename them to `ppt`, `q1`, `q2`, ..., `q50`.  
+```{r}
+datadict <- 
+  tibble(
+    # these are my proposed new names
+    variable = c("ppt", paste0("q", 1:50)),
+    # current names
+    question = names(survdat)
+  )
+head(datadict)
+```
+
+If we want to, we can write this to a .csv file so that we can keep it somewhere useful.
+```{r}
+#| eval: false
+write_csv(datadict, file = "survey_dictionary.csv")
+```
+
+Now we have created our record, we can actually change the names of the variables:  
+```{r}
+names(survdat) <- c("ppt", paste0("q", 1:50))
+head(survdat)
+```
+
+# replacing values and recoding
+
+First things first, all of the questions are scored on a 5 point likert^[Technically this is pronounced "LICK-URT" and not "LIE-KURT". It's named after [Dr Rensis Likert](https://en.wikipedia.org/wiki/Rensis_Likert){target="_blank"}, and that's how he pronounced his name!] scale. 
+
+The data has come out of whatever questionnaire software we used and it's showing the chosen response for each question in words, e.g. "`r survdat$q1[6]`. But we are going to to treat them as numbers. 
+You might be shouting at the screen here that by turning these words into numbers we're about to turn a set of ordered categories into an interval scale. Is "Accurate" really 2 x "Moderately Accurate"? 
+
+some statisticians might maintain that ordinal data is simply __not__ continuous, so we should never treat it as such. In psychology, much research using SEM centers around questionnaire data, which lends itself to *likert* data (for instance, "strongly agree","agree","neither agree nor disagree","disagree","strongly disagree"). An often used rule of thumb, is that likert data with $\geq 5$ levels can be treated as if they are continuous without unduly influencing results (see [Johnson, D.R., & Creech, J.C. (1983). Ordinal measures in multiple indicator models: A simulation study of categorization error](https://discovered.ed.ac.uk/permalink/f/1s15qcp/TN_cdi_crossref_primary_10_2307_2095231)).  
+
+```{r}
+#| echo: false
+tibble(
+response = c("Very Inaccurate","Moderately Inaccurate","Neither Accurate nor Inaccurate","Moderately Accurate","Very Accurate"),
+score = c(1:5)
+) %>% gt::gt()
+```
+
+let's see how we can do it for one question first: 
+the `recode()` function can be very useful, but there are lots of other approaches
+
+
+
+::::panelset
+:::panel
+#### recode
+
+
+```{r}
+survdat %>% 
+  mutate(
+    q3 = recode(q3, 
+                "Very Inaccurate" = 1,
+                "Moderately Inaccurate" = 2,
+                "Neither Accurate nor Inaccurate" = 3,
+                "Moderately Accurate" = 4,
+                "Very Accurate" = 5)
+  )
+```
+:::
+:::panel
+#### ifelse
+much more cumbersome as it requires multiple nested ifelse statements:
+also, to ensure that anyhing that isn't one of the 5 valid response options gets to be an NA, we have the final "else" specifying that if it's none of the prespecified options, make it an NA
+```{r}
+survdat %>% 
+  mutate(
+    q3 = ifelse(q3 == "Very Inaccurate", 1,
+                ifelse(q3 == "Moderately Inaccurate", 2, 
+                       ifelse( q3 == "Neither Accurate nor Inaccurate", 3, 
+                               ifelse(q3 == "Moderately Accurate", 4, 
+                                      ifelse(q3 == "Very Accurate", 5, NA)))))
+  )
+```
+:::
+
+:::panel
+#### case_when
+
+the final entry here `TRUE ~ NA_real_` is a bit like saying "and if it is anything else, make it an NA". 
+- note we need to specify the _type_ of NA - i.e. because we are making all of the entries numbers, it needs to be NA_real_. If were were making them characters, it would need to be NA_character
+```{r}
+survdat %>% 
+  mutate(
+    q3 = case_when(
+      q3 == "Very Inaccurate" ~ 1,
+      q3 == "Moderately Inaccurate" ~ 2,
+      q3 == "Neither Accurate nor Inaccurate" ~ 3,
+      q3 == "Moderately Accurate" ~ 4,
+      q3 == "Very Accurate" ~ 5,
+      TRUE ~ NA_real_
+    )
+  )
+```
+:::
+
+
+::::
+
+## reverse coding
+
+tidyverse
+base
+
+
+
+# applying the same operation across variables
+
+tidyverse
+mutate(across())
+base
+apply(df,2,fun)
+
+check!
+
+
+
+
+# rowwise metrics
+
+counting NAs
+
+
+# row scoring
+
+rowsums rowmeans
+NAs
+
+link reliability
+
+
+

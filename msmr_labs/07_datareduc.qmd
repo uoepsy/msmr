@@ -1,0 +1,268 @@
+---
+title: "7A: Wide Data, PCA and EFA"
+params: 
+    SHOW_SOLS: FALSE
+    TOGGLE: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+source('assets/setup.R')
+library(xaringanExtra)
+library(tidyverse)
+library(patchwork)
+xaringanExtra::use_panelset()
+library(lme4)
+library(broom.mixed)
+```
+
+
+:::lo
+This reading:  
+
+- working with wide data
+- data reduction techniques: PCA and EFA
+
+:::
+
+
+# Working with wide data
+
+copy in stuff from standalone pages
+
+
+# PCA
+
+- the goal of PCA
+  - pca cov vs cor
+- the math (either rewrite or remove)
+- pca in R
+- doing PCA
+- the output  
+- methods for evaluating number of components
+- extracting and using component scores
+
+# EFA
+
+- the goal of EFA
+  - often multiple times and comparing solutions
+  - rotation vs the orthogonality of PCA
+  - this brings indeterminacy.
+  - factor scores must be estimated, rather than extracted
+- methods of evaluating number of components
+- doing EFA
+  - the output
+- estimating factor scores
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+::: {.callout-note collapse="true"}
+#### The goal of PCA  
+
+The goal of principal component analysis (PCA) is to find a _smaller_ number of uncorrelated variables which are linear combinations of the original ( _many_ ) variables and explain most of the variation in the data.
+
+Take a moment to think about the various constructs that you are often interested in as a researcher. This might be anything from personality traits, to language proficiency, social identity, anxiety etc. 
+How we measure such constructs is a very important consideration for research. The things we're interested in are very rarely the things we are *directly* measuring. 
+
+Consider how we might assess levels of anxiety or depression. Can we ever directly measure anxiety? ^[Even if we cut open someone's brain, it's unclear what we would be looking for in order to 'measure' it. It is unclear whether anxiety even exists as a physical thing, or rather if it is simply the overarching concept we apply to a set of behaviours and feelings]. More often than not, we measure these things using questionnaire based methods, to capture the multiple dimensions of the thing we are trying to assess. Twenty questions all measuring different aspects of anxiety are (we hope) going to correlate with one another if they are capturing some commonality (the construct of "anxiety"). But they introduce a problem for us, which is how to deal with 20 variables that represent (in broad terms) the same thing. How can we assess "effects on anxiety", rather than "effects on anxiety q1 + effects on anxiety q2 + ...", etc.  
+
+This leads us to the idea of *reducing the dimensionality of our data*. Can we capture a reasonable amount of the information from our 20 questions in a smaller number of variables? 
+
+:::
+
+
+
+::: {.callout-caution collapse="true"}
+#### Optional: (some of) the math behind it  
+
+Doing data reduction can feel a bit like magic, and in part that's just because it's quite complicated. 
+
+**The intuition**  
+
+One way we might construct a square matrix that is symmetric along the diagonal is to compute the product of a vector $\mathbf{f}$ with its transpose $\mathbf{f'}$:  
+$$
+\begin{equation*}
+\mathbf{f} = 
+\begin{bmatrix}
+0.60 \\ 
+0.77 \\
+0.69 \\
+0.83 \\
+0.60 \\
+0.88 \\
+\end{bmatrix} 
+\qquad 
+\mathbf{f} \mathbf{f'} = 
+\begin{bmatrix}
+0.60 \\ 
+0.77 \\
+0.69 \\
+0.83 \\
+0.60 \\
+0.88 \\
+\end{bmatrix} 
+\begin{bmatrix}
+0.60, 0.77, 0.69, 0.83, 0.60, 0.88 \\
+\end{bmatrix} 
+\qquad = \qquad
+\begin{bmatrix}
+0.30, 0.42, 0.36, 0.48, 0.30, 0.54 \\
+0.38, 0.54, 0.46, 0.62, 0.38, 0.69 \\
+0.34, 0.48, 0.41, 0.55, 0.34, 0.62 \\
+0.42, 0.58, 0.50, 0.66, 0.42, 0.75 \\
+0.30, 0.42, 0.36, 0.48, 0.30, 0.54 \\
+0.44, 0.62, 0.53, 0.70, 0.44, 0.79 \\
+\end{bmatrix} 
+\end{equation*} 
+$$
+
+The difference between this an a correlation matrix is that in the correlation matrix the diagonal has values of 1 (the correlation of a variable with itself is 1).  and lets call it **R**.
+$$
+\begin{equation*}
+\mathbf{R} = 
+\begin{bmatrix}
+1.00, 0.42, 0.36, 0.48, 0.30, 0.54 \\
+0.38, 1.00, 0.46, 0.62, 0.38, 0.69 \\
+0.34, 0.48, 1.00, 0.55, 0.34, 0.62 \\
+0.42, 0.58, 0.50, 1.00, 0.42, 0.75 \\
+0.30, 0.42, 0.36, 0.48, 1.00, 0.54 \\
+0.44, 0.62, 0.53, 0.70, 0.44, 1.00 \\
+\end{bmatrix} 
+\end{equation*} 
+$$
+
+PCA is about trying to determine the vector **f** which gets close to generating the correlation matrix **R**. It's a bit like unscrambling eggs!  
+
+We start by expressing the correlation matrix $R$ as the product of a matrix $C$ and it's inverse $C'$, where $\mathbf{C}$ are our "principal components" - a set of orthogonal vectors that together can reproduce the correlation matrix.  
+$\mathbf{R = CC'}$.  
+
+<!-- If $n$ is number of variables in $R$, then $i^{th}$ component $C_i$ is the linear sum of each variable multiplied by some weighting:   -->
+<!-- $$ -->
+<!-- C_i = \sum_{j=1}^{n}w_{ij}x_{j} -->
+<!-- $$ -->
+
+**How do we find $C$?**
+
+This is where "eigen decomposition" comes in.  
+For the $n \times n$ correlation matrix $\mathbf{R}$, there is an **eigenvector** $x_i$ that solves the equation 
+$$
+\mathbf{x_i R} = \lambda_i \mathbf{x_i}
+$$
+Where the vector multiplied by the correlation matrix is equal to some **eigenvalue** $\lambda_i$ multiplied by that vector.  
+We can write this without subscript $i$ as: 
+$$
+\begin{align}
+& \mathbf{R X} = \mathbf{X \lambda} \\
+& \text{where:} \\
+& \mathbf{R} = \text{correlation matrix} \\
+& \mathbf{X} = \text{matrix of eigenvectors} \\
+& \mathbf{\lambda} = \text{vector of eigenvalues}
+\end{align}
+$$
+the vectors which make up $\mathbf{X}$ must be orthogonal [($\mathbf{XX' = I}$)](https://miro.medium.com/max/700/1*kyg5XbrY1AOB946IE5nWWg.png), which means that $\mathbf{R = X \lambda X'}$
+ 
+We can actually do this in R manually. 
+Creating a correlation matrix:  
+```{r}
+# lets create a correlation matrix, as the product of ff'
+f <- c(.5,.7,.6,.8,.5,.9)
+R <- f %*% t(f)
+#give rownames and colnames
+rownames(R)<-colnames(R)<-paste0("V",seq(1:6))
+#constrain diagonals to equal 1
+diag(R)<-1
+R
+```
+
+Eigen Decomposition
+```{r}
+# do eigen decomposition
+e <- eigen(R)
+print(e, digits=2)
+```
+
+The eigenvectors are orthogonal ($\mathbf{XX' = I}$):
+```{r}
+round(e$vectors %*% t(e$vectors),2)
+```
+
+The Principal Components $\mathbf{C}$ are the eigenvectors scaled by the square root of the eigenvalues:
+```{r}
+#eigenvectors
+e$vectors
+#scaled by sqrt of eigenvalues
+diag(sqrt(e$values))
+
+C <- e$vectors %*% diag(sqrt(e$values))
+C
+```
+
+And we can reproduce our correlation matrix, because $\mathbf{R = CC'}$. 
+```{r}
+C %*% t(C)
+```
+
+Now lets imagine we only consider 1 principal component.  
+We can do this with the `principal()` function: 
+```{r}
+library(psych)
+pc1<-principal(R, nfactors = 1, covar = FALSE, rotate = 'none')
+pc1
+```
+
+Look familiar? It looks like the first component we computed manually. The first column of $\mathbf{C}$:
+```{r}
+cbind(pc1$loadings, C=C[,1])
+```
+We can now ask "how well does this component (on its own) recreate our correlation matrix?" 
+```{r}
+C[,1] %*% t(C[,1])
+```
+It looks close, but not quite. How much not quite? Measurably so!
+```{r}
+R - (C[,1] %*% t(C[,1]))
+```
+
+Notice the values on the diagonals of $\mathbf{c_1}\mathbf{c_1}'$.
+```{r}
+diag(C[,1] %*% t(C[,1]))
+```
+These aren't 1, like they are in $R$. But they are proportional: this is the amount of variance in each observed variable that is explained by this first component. Sound familiar? 
+```{r}
+pc1$communality
+```
+And likewise the 1 minus these is the unexplained variance:  
+```{r}
+1 - diag(C[,1] %*% t(C[,1]))
+pc1$uniquenesses
+```
+
+:::
+
+
+
+
+
+
+
+
