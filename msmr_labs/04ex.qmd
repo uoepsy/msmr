@@ -730,13 +730,79 @@ Write up your results.
 
 
 `r qend()`
-`r solbegin(show=FALSE, toggle=params$TOGGLE)`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 
-
+Let's read in the data:  
 ```{r}
 pvt <- read_csv("https://uoepsy.github.io/data/pvt_bilingual.csv")
 ```
 
+We have 30 distinct schools:
+```{r}
+n_distinct(pvt$school)
+```
+
+And 418 distinct children. Is that right?  
+```{r}
+n_distinct(pvt$child)
+```
+
+Given that the `pvt$child` variable is just the first name of the child, it's entirely likely that there will be, for instance more than one "Martin".  
+
+This says that there are 487!  
+```{r}
+pvt |> count(school, child) |> nrow()
+```
+
+But wait... we could _still_ have issues. What if there were 2 "Martin"s at the same school??
+```{r}
+pvt |> 
+  # count the school-children groups
+  count(school, child) |> 
+  # arrange the output so that the highest 
+  # values of the 'n' column are at the top
+  arrange(desc(n))
+```
+
+Aha! There are 7 cases where schools have two children of the same name. Remember that each child was measured at 7 timepoints. We shouldn't have people with 14!  
+
+If we actually _look_ at the data, we'll see that it is very neatly organised, with each child's data together. This means that we could feasibly make an educated guess that, e.g., the "Jackson" from "School 3" in rows 155-161 is different from the "Jackson" from "School 3" at rows 190-196. 
+
+Because of the ordering of our data, we can do something like this:  
+```{r}
+pvt <- 
+  pvt |>
+  # group by the school and child
+  group_by(school, child) |>
+  mutate(
+    # make a new variable which counts from 1 to 
+    # the number of rows for each school-child
+    n_obs = 1:n()
+  ) |>
+  # ungroup the data
+  ungroup() |>
+  mutate(
+    # change it so that if the n_obs is >7, the 
+    # child becomes "[name] 2", to indicate they're the second
+    # child with that name
+    child = ifelse(n_obs>7, paste0(child," 2"), child)
+  )
+```
+
+Now we have 494!  
+```{r}
+pvt |> count(school, child) |> nrow()
+```
+
+And nobody has anything other than 7 observations!
+```{r}
+pvt |> count(school, child) |>
+  filter(n != 7)
+```
+
+Phew!  
+
+Okay, let's just fit an intercept-only model:  
 ```{r}
 # pvt <- read_csv("../../data/bntmono.csv")
 pvt_null <- lmer(PVT ~ 1 +  (1 | school/child), data = pvt)
@@ -754,7 +820,7 @@ As we can see from `summary(bnt_null)`, the random intercept variances are `r vc
 
 So child level differences account for $\frac{`r vcres[1]`}{`r paste0(vcres,collapse=" + ")`} = `r round(vcres[1]/sum(vcres),2)`$ of the variance in PVT scores, and child & school differences together account for $\frac{`r paste0(vcres[1:2],collapse=" + ")`}{`r paste0(vcres,collapse=" + ")`} = `r round(sum(vcres[1:2])/sum(vcres),2)`$ of the variance.
 
-here's an initial plot:
+Here's an initial plot too:
 
 ```{r}
 ggplot(pvt, aes(x=age,y=PVT,col=factor(isBilingual)))+
@@ -762,11 +828,11 @@ ggplot(pvt, aes(x=age,y=PVT,col=factor(isBilingual)))+
   stat_summary(geom="line")
 ```
 
-orthogonal polynomials for me.
-i feel like either would be fine here. 
-nothing explicit from the study background about stuff at baseline. There's the stuff about the plateau at 7 or 8, but we can get that from the model plots. orthogonal will allow us to compare the trajectories overall (their linear trend, the 'curviness' and 'wiggliness').  
+I feel like either raw or orthogonal polynomials would be fine here - there's nothing explicit from the study background about stuff "at baseline". There's the stuff about the plateau at 7 or 8, but we can get that from the model plots. Orthogonal will allow us to compare the trajectories overall (their linear trend, the 'curviness' and 'wiggliness').  
 
-I've gone for poly3 here because the plot above shows a bit of an S-shape for the bilinguals. 
+An additional benefit of orthogonal polynomials is that we are less likely to get singular fits when we include polynomial terms in our random effects. Remember, raw polynomials are correlated, so often the by-participant variances in raw poly terms are highly correlated. 
+
+I've gone for 3 degrees of polynomials here because the plot above shows a bit of an S-shape for the bilinguals. 
 
 ```{r}
 pvt <- pvt |> mutate(
@@ -777,7 +843,8 @@ pvt <- pvt |> mutate(
 )
 ```
 
-these models do not converge:  
+These models do not converge.  
+I've tried to preserve the by-child random effects of time, because while I think Schools probably _do_ vary, School's all teach the same curriculum, whereas there's _a lot_ of varied things that can influence a child's vocabulary, both in and out of school  
 ```{r}
 #| eval: false
 mod1 <- lmer(PVT ~ 1 + (poly1 + poly2 + poly3) * isBilingual + 
@@ -791,30 +858,32 @@ mod2 <- lmer(PVT ~ 1 + (poly1 + poly2 + poly3) * isBilingual +
      data = pvt)
 
 mod3 <- lmer(PVT ~ 1 + (poly1 + poly2 + poly3) * isBilingual + 
-       (1 + isBilingual * (poly1 + poly2) | school) +
+       (1 + isBilingual * poly1 + poly2 + poly3 | school) +
        (1 + (poly1 + poly2 + poly3) | school:child),
      data = pvt)
 
 mod4 <- lmer(PVT ~ 1 + (poly1 + poly2 + poly3) * isBilingual + 
-       (1 + isBilingual * (poly1) + poly2 | school) +
+       (1 + isBilingual + poly1 + poly2 + poly3 | school) +
        (1 + (poly1 + poly2 + poly3) | school:child),
      data = pvt)
 
 mod5 <- lmer(PVT ~ 1 + (poly1 + poly2 + poly3) * isBilingual + 
-       (1 + isBilingual * (poly1) | school) +
+       (1 + isBilingual + poly1 + poly3 | school) +
        (1 + (poly1 + poly2 + poly3) | school:child),
      data = pvt)
+# relative to the variance in time slopes, there's v little by-school variance in bilingual differences in vocab
 
 mod6 <- lmer(PVT ~ 1 + (poly1 + poly2 + poly3) * isBilingual + 
-       (1 + isBilingual + poly1 | school) +
+       (1 + poly1 + poly2 +  poly3 | school) +
        (1 + (poly1 + poly2 + poly3) | school:child),
      data = pvt)
+# looks like curvature doesn't vary between schools much as linear and wiggliness 
 ```
 
 this one does! 
 ```{r}
 mod7 <- lmer(PVT ~ 1 + (poly1 + poly2 + poly3) * isBilingual + 
-       (1 + poly1 | school) +
+       (1 + poly1 + poly3 | school) +
        (1 + (poly1 + poly2 + poly3) | school:child),
      data = pvt)
 ```
@@ -824,56 +893,121 @@ mod7 <- lmer(PVT ~ 1 + (poly1 + poly2 + poly3) * isBilingual +
 library(broom.mixed)
 augment(mod7) |> 
   mutate(
-    poly1 = round(poly1, 3) # because of rounding errors make plot weird
+    poly1 = round(poly1, 3) # because of rounding errors that make plot weird
   ) |>
   ggplot(aes(x=poly1,col=isBilingual))+
   stat_summary(geom="pointrange",aes(y=PVT))+
   stat_summary(geom="line", aes(y=.fitted))
 ```
 
+refitted with lmerTest:  
 ```{r}
-#| eval: false
-preddat <-
-  tibble(
-    poly1 = pvt$poly1[1:7],
-    poly2 = pvt$poly2[1:7],
-    poly3 = pvt$poly3[1:7],
-    isBilingual="0",
-    school = ".",
-    child = "."
-  )
-library(merTools)
-preddat <- wiggle(preddat, varlist = "isBilingual", list(c("0","1")))
-#or:
-# preddat <- bind_rows(
-#   preddat,
-#   preddat |> mutate(isBilingual="1")
-# )
+mod7 <- lmerTest::lmer(PVT ~ 1 + (poly1 + poly2 + poly3) * isBilingual + 
+       (1 + poly1 + poly3 | school) +
+       (1 + (poly1 + poly2 + poly3) | school:child),
+     data = pvt)
 
-bind_cols(preddat, 
-          predictInterval(merMod = mod7, newdata = preddat,
-                          level = 0.95, n.sims = 2000,
-                          stat = "mean", type="linear.prediction",
-                          include.resid.var = FALSE)
-          ) |>
-  ggplot(aes(x=poly1,y=fit,ymin=lwr,ymax=upr,
-             col=isBilingual,fill=isBilingual))+
-  geom_line()+
-  geom_ribbon(alpha=.2)
-
-
-# pp1 <- preddat
-# bts = bootMer(mod7,FUN=function(x) predict(x,newdata=pp1,re.form=NA),nsim=10)
-# pp1$pred = predict(mod7, newdata=pp1,re.form=NA)
-# pp1$lwr = apply(bts$t, 2, quantile, .025)
-# pp1$upr = apply(bts$t, 2, quantile, .975)
-# ggplot(pp1, aes(x=poly1,y=pred,ymin=lwr,ymax=upr,
-#                 col=isBilingual,fill=isBilingual))+
-#   geom_line(lwd=1)+
-#   geom_ribbon(alpha=.2)+
-#   NULL
-
+summary(mod7)
 ```
+
+```{r}
+#| echo: false
+mm <- lmerTest::lmer(PVT ~ 1 + (poly1 + poly2 + poly3) * isBilingual + 
+       (1 + poly1 + poly3 | school) +
+       (1 + (poly1 + poly2 + poly3) | school:child),
+     data = pvt)
+
+tidy(mm) |> filter(effect=="fixed") |> transmute(
+  term,
+  est = round(estimate,2),
+  p = ifelse(p.value<.05,"*",""),
+  interpretation = c(
+    "average vocab score at the mean age (for monolingual)",
+    "vocab increases over time (for monolingual children)",
+    "the increase in vocab becomes more gradual (for monolingual children)",
+    "no significant wiggliness to vocab trajectory of the average monolingual child",
+    "average vocab score at mean age is lower for bilingual vs monolingual children",
+    "no significant difference in linear trend of vocab for bilingual vs monolingual",
+    "curvature for vocab trajectory of bilingual children significantly differs from that of monolinguals",
+    "wiggliness for vocab trajectory of bilingual children significantly differs from that of monolinguals"
+  )
+) |> gt::gt()
+```
+
+From the random effects, we get even more information!  
+School's vary in the average child vocab score at mean age with an SD of 4.5.  More school level variation in linear trends than in curvature. Schools with higher vocab scores at the mean age tend to have lower linear increase, and also a more negative curvature.  
+Within schools, children vary in the vocab scores at mean age with an SD of 5.9. Lots of child-level variation in curvature and linear increases, slightly less variation in wiggliness. 
+
+```{r}
+VarCorr(mod7)
+```
+
+
+
+<!-- ::: {.callout-caution collapse="true"} -->
+<!-- #### optional extra: plotting uncertainty of fixed effects -->
+
+<!-- We've seen a few times that taking all the fitted values and averaging can give us the trajectories. But we've also seen that this can cause issues if we have missing data, or unbalanced designs. We have also had to use things like the __effects__ package to show uncertainty in the fixed effects estimates, because this is not the same as the standard errors around the average fitted values.   -->
+
+<!-- Another option instead of the __effects__ package (harder to make work with polynomials), is to use lots and lots of predictions from the model.   -->
+
+<!-- In USMR, we often visualised our model in a 3 step process: -->
+
+<!-- 1. make a little dataframe across the values that we want to plot -->
+<!-- 2. use `broom::augment(model, newdata = plotdata, interval = "confidence")` to add some predictions and confidence intervals.   -->
+<!-- 3. plot!   -->
+
+<!-- We can use this same logic in multilevel models, but step 2 is a little different.   -->
+
+
+<!-- First we make a little dataframe.   -->
+<!-- Because the actual estimation of orthogonal polynomials can depend on the number of values we're putting in (`poly(4:10, 2)` does not give the same scaling as `poly(c(4:10,4:10),2)`), it's best to just capture the polynomials that we actually fitted our model to.   -->
+<!-- So here we get the first 7 rows of each poly1, because those correspond to our polynomials that we fitted the model to.   -->
+<!-- ```{r} -->
+<!-- plotdat <- -->
+<!--   tibble( -->
+<!--     age = 4:10, -->
+<!--     poly1 = pvt$poly1[1:7], -->
+<!--     poly2 = pvt$poly2[1:7], -->
+<!--     poly3 = pvt$poly3[1:7], -->
+<!--     isBilingual = "0", -->
+<!--     school = ".", -->
+<!--     child = "." -->
+<!--   ) -->
+<!-- ``` -->
+
+<!-- We're going to have to give it _some_ values for `school` and for `child`, but we don't want to predict for any specific school or child that is in our dataset.  -->
+<!-- By setting these to something like ".", that doesn't occur in our data, we can estimate based on the fixed coefficients only.   -->
+
+<!-- Note that currently `isBilingual` is set to 0, but we want to plot for the bilinguals too, so we'll need to duplicate our `plotdat` object:    -->
+<!-- ```{r} -->
+<!-- plotdat <- -->
+<!--   bind_rows( -->
+<!--     plotdat, -->
+<!--     plotdat |> mutate(isBilingual=1) -->
+<!--   ) -->
+<!-- ``` -->
+
+<!-- Finally, the __merTools__ package has the `predictInterval` function that can get us some intervals   -->
+<!-- ```{r} -->
+<!-- library(merTools) -->
+
+<!-- bind_cols( -->
+<!--   plotdat,  -->
+<!--   predictInterval(merMod = mod7, newdata = plotdat, -->
+<!--                   level = 0.95, n.sims = 2000, -->
+<!--                   include.resid.var = FALSE) -->
+<!--           ) |> -->
+<!--   ggplot(aes(x=poly1,y=fit,ymin=lwr,ymax=upr, -->
+<!--              col=isBilingual,fill=isBilingual))+ -->
+<!--   geom_line()+ -->
+<!--   geom_ribbon(alpha=.2) -->
+<!-- ``` -->
+
+<!-- ::: -->
+
+
+
 
 `r solend()`
 
