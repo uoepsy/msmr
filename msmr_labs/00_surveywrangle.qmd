@@ -1,11 +1,10 @@
 ---
-title: "Data wrangling for surveys & questionnaires"
-author: "hello"
+title: "Data Wrangling for Surveys & Questionnaires"
 params: 
     SHOW_SOLS: TRUE
     TOGGLE: TRUE
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 
 ```{r}
@@ -28,6 +27,8 @@ Below we will walk through some of the common ways we want to wrangle and clean 
 Very often, the data might come to us with huge long names that correspond to the question being asked.  
 For instance: 
 ```{r}
+#| eval: false
+#| echo: false
 survdat <- read_csv("data/surveywrangle.csv") |> mutate(ppt = 1:n())
 survdat <- survdat[,c(60,3:52)]
 names(survdat) <- gsub("Describe yourself as you generally are now, not as you wish to be in the future. Describe yourself as you honestly see yourself, in relation to other people you know of the same age and sex as you are. Remember that responses are anonymised. Please indicate the accuracy for each statement in how it describes you.  ","",names(survdat))
@@ -35,8 +36,13 @@ survdat$age = round(runif(nrow(survdat),20,29))
 survdat$height = round(rnorm(nrow(survdat),168,12))
 survdat$height[3]<-NA
 survdat <- survdat |> relocate(age,height,.after=ppt)
+# write_csv(survdat, file="../../data/surveywrangle.csv")
+```
+```{r}
+survdat <- read_csv("https://uoepsy.github.io/data/surveywrangle.csv")
 head(survdat)
 ```
+
 
 Often, we want our variables to have some easier names to work with, e.g. "q1", "q2" etc.  
 
@@ -87,9 +93,11 @@ You might be shouting at the screen here that by turning these words into number
 Let's push on and see how we can do this sort of recoding.  
 First we'll do it for just one variable. As always in R, there are lots of ways to do the same thing. All of these approaches follows an if-else type logic - "if we have 'moderately inaccurate', make it '2', and if we have 'very inaccurate, make it 1, and if ... ".  
 
+
 ::::panelset
 :::panel
-#### `ifelse()`  
+#### ifelse()  
+
 This is the most cumbersome way to do this logic as it requires multiple nested ifelse statements.  
 To ensure that anything that isn't one of the 5 valid response options gets to be an NA, we have the final "else" specifying that if it's none of the prespecified options, make it an NA
 ```{r}
@@ -123,7 +131,7 @@ survdat |>
 ```
 :::
 :::panel
-#### `case_match()`
+#### case_match()
 
 The `ifelse()` and `case_when()` functions are much more generalised - we can say "if x is 1 make it 1, and if y is 2 make it 0, and if z is ... ".  
 
@@ -185,7 +193,7 @@ There are various ways to do this, but the two main ones are by utilising __tidy
 
 ::::panelset
 :::panel
-#### `across()`
+#### across()
 
 The `across()` function works inside other tidyverse functions like `summarise()` and `mutate()`, and allows us to do the same operation across a set of columns.  
 
@@ -239,7 +247,7 @@ survdat |>
 
 :::
 :::panel
-#### apply
+#### apply()
 
 Base R (the non-tidyverse stuff) has some really useful functions of the `apply()` family, that can allow us to do the same thing (apply an operation across a set of columns).  
 
@@ -330,7 +338,7 @@ apply(survdat[,4:53], 2, recodemysurvey)
 :::
 
 
-# reverse coding
+# Reverse coding
 
 It's very common for questionnaires to have a combination of questions for a construct, some of which are positively phrased and some which are negatively phrased. The idea here is to avoid introducing biases such as a bias to agree more than to disagree.   
 
@@ -371,7 +379,7 @@ neg_items
 #### using `across()`
 ```{r}
 survdat |> 
-  mutate(across(neg_items,~6-.))
+  mutate(across(all_of(neg_items),~6-.))
 ```
 
 :::
@@ -387,17 +395,91 @@ survdat
 ::::
 
 
-# rowwise metrics
+# Row scoring  
 
-counting NAs
+Very often, people want to calculate a scale score. For instance, if people responded to each of 7 questions for a scale of generalised anxiety, then we would want to calculate a 'generalised anxiety score' by adding up their responses 5+1+2+4+4+3+5 = 24.  
+
+There are handy functions that can do quick row scoring: `rowSums()` and `rowMeans()`.  
+
+For instance, to calculate each person's (each row of our data is a person) sum of the questions 1 to 5, we can use any of:  
+```{r}
+#| eval: false
+# tidyverse
+survdat |> select(q1:q5) |> rowSums()
+# indexing:
+rowSums(survdat[,c("q1","q2","q3","q4","q5")])
+# concise indexing
+rowSums(survdat[, paste0("q",1:5)])
+```
+```{r}
+#| echo: false
+rowSums(survdat[, paste0("q",1:5)])
+```
+
+From the [inventory page of the IPIP](https://ipip.ori.org/new_ipip-50-item-scale.htm){target="_blank"}, we can see that the questions are ordered such that questions 1, 6, 11, ..., all correspond to Extraversion, questions 2, 7, 12, ... all correspond to Agreeableness, and so on.  
+
+We can use things like `seq()` to capture the relevant numbers of each question:
+```{r}
+# sequence from 1 to 50 in steps of 5
+seq(1,50,5) 
+# sequence from 1 to 50 in steps of 5
+seq(2,50,5) 
+```
 
 
-# row scoring
+Which means we can get the scores for each personality trait using something such as: 
 
-rowsums rowmeans
-NAs
+```{r}
+survdat$extr <- rowSums(survdat[, paste0("q",seq(1,50,5))])
+survdat$agree <- rowSums(survdat[, paste0("q",seq(2,50,5))])
+survdat$consc <- rowSums(survdat[, paste0("q",seq(3,50,5))])
+survdat$emot_s <- rowSums(survdat[, paste0("q",seq(4,50,5))])
+survdat$imagin <- rowSums(survdat[, paste0("q",seq(5,50,5))])
+```
 
-link reliability
+And we can quickly examine all our scale scores:  
+```{r}
+library(psych)
+survdat |> 
+  select(extr:imagin) |>
+  pairs.panels()
+```
+
+# More Rowwise Stuff
+
+We can also find out useful information for each row about things like how much missingness there is:  
+```{r}
+# is.na will turn all NA entries to "TRUE", and all non-missing values to FALSE. 
+# then we sum them up across the rows and it will give us how many NAs are in each row, across the 50 questions!  
+rowSums( is.na( survdat[, paste0("q",1:50)] ) )
+```
+
+
+Occasionally, you might find that you want to do row-wise operations that don't have easy functions like `rowSums`. 
+In these cases, the tidyverse function `rowwise()` can be useful in that it applies an operation to one row at a time: 
+
+```{r}
+survdat |> 
+  rowwise() |>
+  mutate(
+    # find the minimum score given for each row
+    maxscore = min(across(q1:q50)), 
+    # put the column after the height column
+    .after = height
+  )
+```
+
+Alternatively, `apply()` to the rescue again!  
+`MARGIN = 1` here applies the operation across rows:  
+```{r}
+apply(survdat[,paste0("q",1:50)], MARGIN = 1, FUN = min)
+```
+
+
+
+
+
+
 
 
 

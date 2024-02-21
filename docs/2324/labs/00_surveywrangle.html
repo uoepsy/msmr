@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="hello">
 
-<title>MSMR - Data wrangling for surveys &amp; questionnaires</title>
+<title>MSMR - Data Wrangling for Surveys &amp; Questionnaires</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -126,9 +125,7 @@ if(f.classList.contains('jk-circle-right')) {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
-      MSMR
-      </li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./00_lm_assumpt.html">Additional Docs</a></li><li class="breadcrumb-item"><a href="./00_surveywrangle.html">Data Wrangling for Surveys &amp; Questionnaires</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -288,13 +285,13 @@ if(f.classList.contains('jk-circle-right')) {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true">
  <span class="menu-text">Additional Docs</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./00_lm_assumpt.html" class="sidebar-item-text sidebar-link">
@@ -305,6 +302,12 @@ if(f.classList.contains('jk-circle-right')) {
   <div class="sidebar-item-container"> 
   <a href="./lvp.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Likelihood vs Probability</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00_surveywrangle.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Data Wrangling for Surveys &amp; Questionnaires</span></a>
   </div>
 </li>
       </ul>
@@ -322,9 +325,9 @@ if(f.classList.contains('jk-circle-right')) {
   <li><a href="#variable-names" id="toc-variable-names" class="nav-link active" data-scroll-target="#variable-names">Variable names</a></li>
   <li><a href="#variable-recoding" id="toc-variable-recoding" class="nav-link" data-scroll-target="#variable-recoding">Variable recoding</a></li>
   <li><a href="#applying-the-same-operation-across-variables" id="toc-applying-the-same-operation-across-variables" class="nav-link" data-scroll-target="#applying-the-same-operation-across-variables">Applying the same operation across variables</a></li>
-  <li><a href="#reverse-coding" id="toc-reverse-coding" class="nav-link" data-scroll-target="#reverse-coding">reverse coding</a></li>
-  <li><a href="#rowwise-metrics" id="toc-rowwise-metrics" class="nav-link" data-scroll-target="#rowwise-metrics">rowwise metrics</a></li>
-  <li><a href="#row-scoring" id="toc-row-scoring" class="nav-link" data-scroll-target="#row-scoring">row scoring</a></li>
+  <li><a href="#reverse-coding" id="toc-reverse-coding" class="nav-link" data-scroll-target="#reverse-coding">Reverse coding</a></li>
+  <li><a href="#row-scoring" id="toc-row-scoring" class="nav-link" data-scroll-target="#row-scoring">Row scoring</a></li>
+  <li><a href="#more-rowwise-stuff" id="toc-more-rowwise-stuff" class="nav-link" data-scroll-target="#more-rowwise-stuff">More Rowwise Stuff</a></li>
   </ul>
 </nav>
     </div>
@@ -333,19 +336,13 @@ if(f.classList.contains('jk-circle-right')) {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Data wrangling for surveys &amp; questionnaires</h1>
+<h1 class="title">Data Wrangling for Surveys &amp; Questionnaires</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>hello </p>
-          </div>
-  </div>
     
   
     
@@ -361,24 +358,18 @@ if(f.classList.contains('jk-circle-right')) {
 <p>Very often, the data might come to us with huge long names that correspond to the question being asked.<br>
 For instance:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/surveywrangle.csv"</span>) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">ppt =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>())</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>survdat <span class="ot">&lt;-</span> survdat[,<span class="fu">c</span>(<span class="dv">60</span>,<span class="dv">3</span><span class="sc">:</span><span class="dv">52</span>)]</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(survdat) <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"Describe yourself as you generally are now, not as you wish to be in the future. Describe yourself as you honestly see yourself, in relation to other people you know of the same age and sex as you are. Remember that responses are anonymised. Please indicate the accuracy for each statement in how it describes you.  "</span>,<span class="st">""</span>,<span class="fu">names</span>(survdat))</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>survdat<span class="sc">$</span>age <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">runif</span>(<span class="fu">nrow</span>(survdat),<span class="dv">20</span>,<span class="dv">29</span>))</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>survdat<span class="sc">$</span>height <span class="ot">=</span> <span class="fu">round</span>(<span class="fu">rnorm</span>(<span class="fu">nrow</span>(survdat),<span class="dv">168</span>,<span class="dv">12</span>))</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>survdat<span class="sc">$</span>height[<span class="dv">3</span>]<span class="ot">&lt;-</span><span class="cn">NA</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>survdat <span class="ot">&lt;-</span> survdat <span class="sc">|&gt;</span> <span class="fu">relocate</span>(age,height,<span class="at">.after=</span>ppt)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(survdat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/surveywrangle.csv"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(survdat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 53
     ppt   age height `[I am the life of the party.]` [I feel little concern fo…¹
-  &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;                           &lt;chr&gt;                      
-1     1    28    151 Moderately Accurate             Very Inaccurate            
-2     2    25    158 Neither Accurate nor Inaccurate Moderately Inaccurate      
-3     3    23     NA Very Inaccurate                 Very Inaccurate            
-4     4    25    165 Very Inaccurate                 Moderately Inaccurate      
-5     5    21    160 Very Inaccurate                 Very Inaccurate            
-6     6    20    180 Moderately Accurate             Very Inaccurate            
+  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;                           &lt;chr&gt;                      
+1     1    22    168 Moderately Accurate             Very Inaccurate            
+2     2    29    186 Neither Accurate nor Inaccurate Moderately Inaccurate      
+3     3    24     NA Very Inaccurate                 Very Inaccurate            
+4     4    26    175 Very Inaccurate                 Moderately Inaccurate      
+5     5    28    182 Very Inaccurate                 Very Inaccurate            
+6     6    27    159 Moderately Accurate             Very Inaccurate            
 # ℹ abbreviated name: ¹​`[I feel little concern for others.]`
 # ℹ 48 more variables: `[I am always prepared.]` &lt;chr&gt;,
 #   `[I get stressed out easily.]` &lt;chr&gt;, `[I have a rich vocabulary.]` &lt;chr&gt;,
@@ -425,13 +416,13 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 53
     ppt   age height q1    q2    q3    q4    q5    q6    q7    q8    q9    q10  
-  &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
-1     1    28    151 Mode… Very… Mode… Mode… Neit… Mode… Mode… Mode… Mode… Neit…
-2     2    25    158 Neit… Mode… Mode… Neit… Mode… Mode… Mode… Mode… Neit… Neit…
-3     3    23     NA Very… Very… Neit… Mode… Mode… Mode… Mode… Neit… Mode… Very…
-4     4    25    165 Very… Mode… Mode… Mode… Very… Mode… Mode… Mode… Mode… Mode…
-5     5    21    160 Very… Very… Neit… Mode… Mode… Very… Neit… Neit… Mode… Mode…
-6     6    20    180 Mode… Very… Mode… Very… Very… Neit… Mode… Very… Neit… Mode…
+  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+1     1    22    168 Mode… Very… Mode… Mode… Neit… Mode… Mode… Mode… Mode… Neit…
+2     2    29    186 Neit… Mode… Mode… Neit… Mode… Mode… Mode… Mode… Neit… Neit…
+3     3    24     NA Very… Very… Neit… Mode… Mode… Mode… Mode… Neit… Mode… Very…
+4     4    26    175 Very… Mode… Mode… Mode… Very… Mode… Mode… Mode… Mode… Mode…
+5     5    28    182 Very… Very… Neit… Mode… Mode… Very… Neit… Neit… Mode… Mode…
+6     6    27    159 Mode… Very… Mode… Very… Very… Neit… Mode… Very… Neit… Mode…
 # ℹ 40 more variables: q11 &lt;chr&gt;, q12 &lt;chr&gt;, q13 &lt;chr&gt;, q14 &lt;chr&gt;, q15 &lt;chr&gt;,
 #   q16 &lt;chr&gt;, q17 &lt;chr&gt;, q18 &lt;chr&gt;, q19 &lt;chr&gt;, q20 &lt;chr&gt;, q21 &lt;chr&gt;,
 #   q22 &lt;chr&gt;, q23 &lt;chr&gt;, q24 &lt;chr&gt;, q25 &lt;chr&gt;, q26 &lt;chr&gt;, q27 &lt;chr&gt;,
@@ -449,23 +440,23 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 
-<div id="fxlylrpbtl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#fxlylrpbtl table {
+<div id="aclqhpdqhe" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#aclqhpdqhe table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#fxlylrpbtl thead, #fxlylrpbtl tbody, #fxlylrpbtl tfoot, #fxlylrpbtl tr, #fxlylrpbtl td, #fxlylrpbtl th {
+#aclqhpdqhe thead, #aclqhpdqhe tbody, #aclqhpdqhe tfoot, #aclqhpdqhe tr, #aclqhpdqhe td, #aclqhpdqhe th {
   border-style: none;
 }
 
-#fxlylrpbtl p {
+#aclqhpdqhe p {
   margin: 0;
   padding: 0;
 }
 
-#fxlylrpbtl .gt_table {
+#aclqhpdqhe .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -491,12 +482,12 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-left-color: #D3D3D3;
 }
 
-#fxlylrpbtl .gt_caption {
+#aclqhpdqhe .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#fxlylrpbtl .gt_title {
+#aclqhpdqhe .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -508,7 +499,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-bottom-width: 0;
 }
 
-#fxlylrpbtl .gt_subtitle {
+#aclqhpdqhe .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -520,7 +511,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-top-width: 0;
 }
 
-#fxlylrpbtl .gt_heading {
+#aclqhpdqhe .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -532,13 +523,13 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-right-color: #D3D3D3;
 }
 
-#fxlylrpbtl .gt_bottom_border {
+#aclqhpdqhe .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#fxlylrpbtl .gt_col_headings {
+#aclqhpdqhe .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -553,7 +544,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-right-color: #D3D3D3;
 }
 
-#fxlylrpbtl .gt_col_heading {
+#aclqhpdqhe .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -573,7 +564,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   overflow-x: hidden;
 }
 
-#fxlylrpbtl .gt_column_spanner_outer {
+#aclqhpdqhe .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -585,15 +576,15 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   padding-right: 4px;
 }
 
-#fxlylrpbtl .gt_column_spanner_outer:first-child {
+#aclqhpdqhe .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#fxlylrpbtl .gt_column_spanner_outer:last-child {
+#aclqhpdqhe .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#fxlylrpbtl .gt_column_spanner {
+#aclqhpdqhe .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -605,11 +596,11 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   width: 100%;
 }
 
-#fxlylrpbtl .gt_spanner_row {
+#aclqhpdqhe .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#fxlylrpbtl .gt_group_heading {
+#aclqhpdqhe .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -635,7 +626,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   text-align: left;
 }
 
-#fxlylrpbtl .gt_empty_group_heading {
+#aclqhpdqhe .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -650,15 +641,15 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   vertical-align: middle;
 }
 
-#fxlylrpbtl .gt_from_md > :first-child {
+#aclqhpdqhe .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#fxlylrpbtl .gt_from_md > :last-child {
+#aclqhpdqhe .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#fxlylrpbtl .gt_row {
+#aclqhpdqhe .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -677,7 +668,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   overflow-x: hidden;
 }
 
-#fxlylrpbtl .gt_stub {
+#aclqhpdqhe .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -690,7 +681,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   padding-right: 5px;
 }
 
-#fxlylrpbtl .gt_stub_row_group {
+#aclqhpdqhe .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -704,15 +695,15 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   vertical-align: top;
 }
 
-#fxlylrpbtl .gt_row_group_first td {
+#aclqhpdqhe .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#fxlylrpbtl .gt_row_group_first th {
+#aclqhpdqhe .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#fxlylrpbtl .gt_summary_row {
+#aclqhpdqhe .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -722,16 +713,16 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   padding-right: 5px;
 }
 
-#fxlylrpbtl .gt_first_summary_row {
+#aclqhpdqhe .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#fxlylrpbtl .gt_first_summary_row.thick {
+#aclqhpdqhe .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#fxlylrpbtl .gt_last_summary_row {
+#aclqhpdqhe .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -741,7 +732,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-bottom-color: #D3D3D3;
 }
 
-#fxlylrpbtl .gt_grand_summary_row {
+#aclqhpdqhe .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -751,7 +742,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   padding-right: 5px;
 }
 
-#fxlylrpbtl .gt_first_grand_summary_row {
+#aclqhpdqhe .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -761,7 +752,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-top-color: #D3D3D3;
 }
 
-#fxlylrpbtl .gt_last_grand_summary_row_top {
+#aclqhpdqhe .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -771,11 +762,11 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-bottom-color: #D3D3D3;
 }
 
-#fxlylrpbtl .gt_striped {
+#aclqhpdqhe .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#fxlylrpbtl .gt_table_body {
+#aclqhpdqhe .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -784,7 +775,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-bottom-color: #D3D3D3;
 }
 
-#fxlylrpbtl .gt_footnotes {
+#aclqhpdqhe .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -798,7 +789,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-right-color: #D3D3D3;
 }
 
-#fxlylrpbtl .gt_footnote {
+#aclqhpdqhe .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -807,7 +798,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   padding-right: 5px;
 }
 
-#fxlylrpbtl .gt_sourcenotes {
+#aclqhpdqhe .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -821,7 +812,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-right-color: #D3D3D3;
 }
 
-#fxlylrpbtl .gt_sourcenote {
+#aclqhpdqhe .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -829,63 +820,63 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   padding-right: 5px;
 }
 
-#fxlylrpbtl .gt_left {
+#aclqhpdqhe .gt_left {
   text-align: left;
 }
 
-#fxlylrpbtl .gt_center {
+#aclqhpdqhe .gt_center {
   text-align: center;
 }
 
-#fxlylrpbtl .gt_right {
+#aclqhpdqhe .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#fxlylrpbtl .gt_font_normal {
+#aclqhpdqhe .gt_font_normal {
   font-weight: normal;
 }
 
-#fxlylrpbtl .gt_font_bold {
+#aclqhpdqhe .gt_font_bold {
   font-weight: bold;
 }
 
-#fxlylrpbtl .gt_font_italic {
+#aclqhpdqhe .gt_font_italic {
   font-style: italic;
 }
 
-#fxlylrpbtl .gt_super {
+#aclqhpdqhe .gt_super {
   font-size: 65%;
 }
 
-#fxlylrpbtl .gt_footnote_marks {
+#aclqhpdqhe .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#fxlylrpbtl .gt_asterisk {
+#aclqhpdqhe .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#fxlylrpbtl .gt_indent_1 {
+#aclqhpdqhe .gt_indent_1 {
   text-indent: 5px;
 }
 
-#fxlylrpbtl .gt_indent_2 {
+#aclqhpdqhe .gt_indent_2 {
   text-indent: 10px;
 }
 
-#fxlylrpbtl .gt_indent_3 {
+#aclqhpdqhe .gt_indent_3 {
   text-indent: 15px;
 }
 
-#fxlylrpbtl .gt_indent_4 {
+#aclqhpdqhe .gt_indent_4 {
   text-indent: 20px;
 }
 
-#fxlylrpbtl .gt_indent_5 {
+#aclqhpdqhe .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -920,7 +911,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
 First we’ll do it for just one variable. As always in R, there are lots of ways to do the same thing. All of these approaches follows an if-else type logic - “if we have ‘moderately inaccurate’, make it ‘2’, and if we have ’very inaccurate, make it 1, and if …”.</p>
 <div class="panelset">
 <section id="ifelse" class="level4 panel">
-<h4 class="anchored" data-anchor-id="ifelse"><code>ifelse()</code></h4>
+<h4 class="anchored" data-anchor-id="ifelse">ifelse()</h4>
 <p>This is the most cumbersome way to do this logic as it requires multiple nested ifelse statements.<br>
 To ensure that anything that isn’t one of the 5 valid response options gets to be an NA, we have the final “else” specifying that if it’s none of the prespecified options, make it an NA</p>
 <div class="cell" data-layout-align="center">
@@ -935,17 +926,17 @@ To ensure that anything that isn’t one of the 5 valid response options gets to
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 76 × 53
      ppt   age height    q1 q2         q3    q4    q5    q6    q7    q8    q9   
-   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
- 1     1    28    151     4 Very Inac… Mode… Mode… Neit… Mode… Mode… Mode… Mode…
- 2     2    25    158     3 Moderatel… Mode… Neit… Mode… Mode… Mode… Mode… Neit…
- 3     3    23     NA     1 Very Inac… Neit… Mode… Mode… Mode… Mode… Neit… Mode…
- 4     4    25    165     1 Moderatel… Mode… Mode… Very… Mode… Mode… Mode… Mode…
- 5     5    21    160     1 Very Inac… Neit… Mode… Mode… Very… Neit… Neit… Mode…
- 6     6    20    180     4 Very Inac… Mode… Very… Very… Neit… Mode… Very… Neit…
- 7     7    27    140     2 Very Inac… Mode… Very… Mode… Mode… Mode… Mode… Neit…
- 8     8    28    167     2 Neither A… Very… Very… Neit… Neit… Mode… Very… Very…
- 9     9    22    163     3 Moderatel… Very… Very… Very… Neit… Very… Neit… Neit…
-10    10    25    163     3 Very Inac… Mode… Mode… Mode… Neit… Mode… Mode… Mode…
+   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+ 1     1    22    168     4 Very Inac… Mode… Mode… Neit… Mode… Mode… Mode… Mode…
+ 2     2    29    186     3 Moderatel… Mode… Neit… Mode… Mode… Mode… Mode… Neit…
+ 3     3    24     NA     1 Very Inac… Neit… Mode… Mode… Mode… Mode… Neit… Mode…
+ 4     4    26    175     1 Moderatel… Mode… Mode… Very… Mode… Mode… Mode… Mode…
+ 5     5    28    182     1 Very Inac… Neit… Mode… Mode… Very… Neit… Neit… Mode…
+ 6     6    27    159     4 Very Inac… Mode… Very… Very… Neit… Mode… Very… Neit…
+ 7     7    27    149     2 Very Inac… Mode… Very… Mode… Mode… Mode… Mode… Neit…
+ 8     8    23    178     2 Neither A… Very… Very… Neit… Neit… Mode… Very… Very…
+ 9     9    28    176     3 Moderatel… Very… Very… Very… Neit… Very… Neit… Neit…
+10    10    26    192     3 Very Inac… Mode… Mode… Mode… Neit… Mode… Mode… Mode…
 # ℹ 66 more rows
 # ℹ 41 more variables: q10 &lt;chr&gt;, q11 &lt;chr&gt;, q12 &lt;chr&gt;, q13 &lt;chr&gt;, q14 &lt;chr&gt;,
 #   q15 &lt;chr&gt;, q16 &lt;chr&gt;, q17 &lt;chr&gt;, q18 &lt;chr&gt;, q19 &lt;chr&gt;, q20 &lt;chr&gt;,
@@ -974,17 +965,17 @@ To ensure that anything that isn’t one of the 5 valid response options gets to
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 76 × 53
      ppt   age height    q1 q2         q3    q4    q5    q6    q7    q8    q9   
-   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
- 1     1    28    151     4 Very Inac… Mode… Mode… Neit… Mode… Mode… Mode… Mode…
- 2     2    25    158     3 Moderatel… Mode… Neit… Mode… Mode… Mode… Mode… Neit…
- 3     3    23     NA     1 Very Inac… Neit… Mode… Mode… Mode… Mode… Neit… Mode…
- 4     4    25    165     1 Moderatel… Mode… Mode… Very… Mode… Mode… Mode… Mode…
- 5     5    21    160     1 Very Inac… Neit… Mode… Mode… Very… Neit… Neit… Mode…
- 6     6    20    180     4 Very Inac… Mode… Very… Very… Neit… Mode… Very… Neit…
- 7     7    27    140     2 Very Inac… Mode… Very… Mode… Mode… Mode… Mode… Neit…
- 8     8    28    167     2 Neither A… Very… Very… Neit… Neit… Mode… Very… Very…
- 9     9    22    163     3 Moderatel… Very… Very… Very… Neit… Very… Neit… Neit…
-10    10    25    163     3 Very Inac… Mode… Mode… Mode… Neit… Mode… Mode… Mode…
+   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+ 1     1    22    168     4 Very Inac… Mode… Mode… Neit… Mode… Mode… Mode… Mode…
+ 2     2    29    186     3 Moderatel… Mode… Neit… Mode… Mode… Mode… Mode… Neit…
+ 3     3    24     NA     1 Very Inac… Neit… Mode… Mode… Mode… Mode… Neit… Mode…
+ 4     4    26    175     1 Moderatel… Mode… Mode… Very… Mode… Mode… Mode… Mode…
+ 5     5    28    182     1 Very Inac… Neit… Mode… Mode… Very… Neit… Neit… Mode…
+ 6     6    27    159     4 Very Inac… Mode… Very… Very… Neit… Mode… Very… Neit…
+ 7     7    27    149     2 Very Inac… Mode… Very… Mode… Mode… Mode… Mode… Neit…
+ 8     8    23    178     2 Neither A… Very… Very… Neit… Neit… Mode… Very… Very…
+ 9     9    28    176     3 Moderatel… Very… Very… Very… Neit… Very… Neit… Neit…
+10    10    26    192     3 Very Inac… Mode… Mode… Mode… Neit… Mode… Mode… Mode…
 # ℹ 66 more rows
 # ℹ 41 more variables: q10 &lt;chr&gt;, q11 &lt;chr&gt;, q12 &lt;chr&gt;, q13 &lt;chr&gt;, q14 &lt;chr&gt;,
 #   q15 &lt;chr&gt;, q16 &lt;chr&gt;, q17 &lt;chr&gt;, q18 &lt;chr&gt;, q19 &lt;chr&gt;, q20 &lt;chr&gt;,
@@ -996,7 +987,7 @@ To ensure that anything that isn’t one of the 5 valid response options gets to
 </div>
 </section>
 <section id="case_match" class="level4 panel">
-<h4 class="anchored" data-anchor-id="case_match"><code>case_match()</code></h4>
+<h4 class="anchored" data-anchor-id="case_match">case_match()</h4>
 <p>The <code>ifelse()</code> and <code>case_when()</code> functions are much more generalised - we can say “if x is 1 make it 1, and if y is 2 make it 0, and if z is …”.</p>
 <p>However, in the task at hand, all of our “if” questions apply to the value of the same variable. The <code>case_match()</code> function is perfectly designed for this:</p>
 <div class="cell" data-layout-align="center">
@@ -1012,17 +1003,17 @@ To ensure that anything that isn’t one of the 5 valid response options gets to
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 76 × 53
      ppt   age height    q1 q2         q3    q4    q5    q6    q7    q8    q9   
-   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
- 1     1    28    151     4 Very Inac… Mode… Mode… Neit… Mode… Mode… Mode… Mode…
- 2     2    25    158     3 Moderatel… Mode… Neit… Mode… Mode… Mode… Mode… Neit…
- 3     3    23     NA     1 Very Inac… Neit… Mode… Mode… Mode… Mode… Neit… Mode…
- 4     4    25    165     1 Moderatel… Mode… Mode… Very… Mode… Mode… Mode… Mode…
- 5     5    21    160     1 Very Inac… Neit… Mode… Mode… Very… Neit… Neit… Mode…
- 6     6    20    180     4 Very Inac… Mode… Very… Very… Neit… Mode… Very… Neit…
- 7     7    27    140     2 Very Inac… Mode… Very… Mode… Mode… Mode… Mode… Neit…
- 8     8    28    167     2 Neither A… Very… Very… Neit… Neit… Mode… Very… Very…
- 9     9    22    163     3 Moderatel… Very… Very… Very… Neit… Very… Neit… Neit…
-10    10    25    163     3 Very Inac… Mode… Mode… Mode… Neit… Mode… Mode… Mode…
+   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+ 1     1    22    168     4 Very Inac… Mode… Mode… Neit… Mode… Mode… Mode… Mode…
+ 2     2    29    186     3 Moderatel… Mode… Neit… Mode… Mode… Mode… Mode… Neit…
+ 3     3    24     NA     1 Very Inac… Neit… Mode… Mode… Mode… Mode… Neit… Mode…
+ 4     4    26    175     1 Moderatel… Mode… Mode… Very… Mode… Mode… Mode… Mode…
+ 5     5    28    182     1 Very Inac… Neit… Mode… Mode… Very… Neit… Neit… Mode…
+ 6     6    27    159     4 Very Inac… Mode… Very… Very… Neit… Mode… Very… Neit…
+ 7     7    27    149     2 Very Inac… Mode… Very… Mode… Mode… Mode… Mode… Neit…
+ 8     8    23    178     2 Neither A… Very… Very… Neit… Neit… Mode… Very… Very…
+ 9     9    28    176     3 Moderatel… Very… Very… Very… Neit… Very… Neit… Neit…
+10    10    26    192     3 Very Inac… Mode… Mode… Mode… Neit… Mode… Mode… Mode…
 # ℹ 66 more rows
 # ℹ 41 more variables: q10 &lt;chr&gt;, q11 &lt;chr&gt;, q12 &lt;chr&gt;, q13 &lt;chr&gt;, q14 &lt;chr&gt;,
 #   q15 &lt;chr&gt;, q16 &lt;chr&gt;, q17 &lt;chr&gt;, q18 &lt;chr&gt;, q19 &lt;chr&gt;, q20 &lt;chr&gt;,
@@ -1067,7 +1058,7 @@ To ensure that anything that isn’t one of the 5 valid response options gets to
 <p>There are various ways to do this, but the two main ones are by utilising <strong>tidyverse</strong>’s <code>across()</code> function, or by using the Base R <code>apply()</code> function.</p>
 <div class="panelset">
 <section id="across" class="level4 panel">
-<h4 class="anchored" data-anchor-id="across"><code>across()</code></h4>
+<h4 class="anchored" data-anchor-id="across">across()</h4>
 <p>The <code>across()</code> function works inside other tidyverse functions like <code>summarise()</code> and <code>mutate()</code>, and allows us to do the same operation across a set of columns.</p>
 <p>The syntax is (with either summarise or mutate):</p>
 <div class="cell" data-layout-align="center">
@@ -1086,7 +1077,7 @@ These all do the same:</p>
 <pre><code># A tibble: 1 × 3
     ppt   age height
   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
-1  38.5  24.2     NA</code></pre>
+1  38.5  24.3     NA</code></pre>
 </div>
 </div>
 <p>Note that we get an NA in the mean heights, because there is an NA in the data. So we need to specify that <code>na.rm=TRUE</code> when using the <code>mean()</code> function.<br>
@@ -1107,7 +1098,7 @@ Caused by error in `mean.default()`:
 <pre><code># A tibble: 1 × 3
     ppt   age height
   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
-1  38.5  24.2   169.</code></pre>
+1  38.5  24.3   169.</code></pre>
 </div>
 </div>
 <p>Using this syntax, we can apply the recoding we have seen above, but do it for all of the variables from <code>q1</code> to <code>q50</code>. All at once. like magic!<br>
@@ -1125,17 +1116,17 @@ Note, we’re not summarising here (i.e.&nbsp;we’re not summarising down into 
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 76 × 53
      ppt   age height    q1    q2    q3    q4    q5    q6    q7    q8    q9
-   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
- 1     1    28    151     4     1     4     4     3     2     4     4     4
- 2     2    25    158     3     2     4     3     4     2     4     2     3
- 3     3    23     NA     1     1     3     2     2     4     4     3     4
- 4     4    25    165     1     2     4     4     5     2     4     4     2
- 5     5    21    160     1     1     3     4     4     5     3     3     2
- 6     6    20    180     4     1     2     1     1     3     4     1     3
- 7     7    27    140     2     1     4     5     4     4     4     4     3
- 8     8    28    167     2     3     5     5     3     3     2     1     1
- 9     9    22    163     3     2     5     5     5     3     5     3     3
-10    10    25    163     3     1     4     4     4     3     4     4     4
+   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1     1    22    168     4     1     4     4     3     2     4     4     4
+ 2     2    29    186     3     2     4     3     4     2     4     2     3
+ 3     3    24     NA     1     1     3     2     2     4     4     3     4
+ 4     4    26    175     1     2     4     4     5     2     4     4     2
+ 5     5    28    182     1     1     3     4     4     5     3     3     2
+ 6     6    27    159     4     1     2     1     1     3     4     1     3
+ 7     7    27    149     2     1     4     5     4     4     4     4     3
+ 8     8    23    178     2     3     5     5     3     3     2     1     1
+ 9     9    28    176     3     2     5     5     5     3     5     3     3
+10    10    26    192     3     1     4     4     4     3     4     4     4
 # ℹ 66 more rows
 # ℹ 41 more variables: q10 &lt;dbl&gt;, q11 &lt;dbl&gt;, q12 &lt;dbl&gt;, q13 &lt;dbl&gt;, q14 &lt;dbl&gt;,
 #   q15 &lt;dbl&gt;, q16 &lt;dbl&gt;, q17 &lt;dbl&gt;, q18 &lt;dbl&gt;, q19 &lt;dbl&gt;, q20 &lt;dbl&gt;,
@@ -1147,7 +1138,7 @@ Note, we’re not summarising here (i.e.&nbsp;we’re not summarising down into 
 </div>
 </section>
 <section id="apply" class="level4 panel">
-<h4 class="anchored" data-anchor-id="apply">apply</h4>
+<h4 class="anchored" data-anchor-id="apply">apply()</h4>
 <p>Base R (the non-tidyverse stuff) has some really useful functions of the <code>apply()</code> family, that can allow us to do the same thing (apply an operation across a set of columns).</p>
 <p>For <code>apply()</code>, we give it an object like a dataframe, and we give it the dimension that we wish to perform the operation over. If we choose 1, it will do it for each row, and if we choose 2, it will do it for each column.<br>
 So if we want the mean of the first 3 columns:</p>
@@ -1155,7 +1146,7 @@ So if we want the mean of the first 3 columns:</p>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(survdat[,<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="at">MARGIN=</span><span class="dv">2</span>, <span class="at">FUN=</span>mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     ppt      age   height 
-38.50000 24.18421       NA </code></pre>
+38.50000 24.28947       NA </code></pre>
 </div>
 </div>
 <p>Much like with <code>across()</code>, this doesn’t work because <code>mean()</code> now wants x explicitly given:</p>
@@ -1170,7 +1161,7 @@ So if we want the mean of the first 3 columns:</p>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(survdat[,<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="at">MARGIN=</span><span class="dv">2</span>, <span class="at">FUN=</span><span class="cf">function</span>(x) <span class="fu">mean</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      ppt       age    height 
- 38.50000  24.18421 168.68000 </code></pre>
+ 38.50000  24.28947 169.36000 </code></pre>
 </div>
 </div>
 <p>(it’s actually just convention that people use <code>function(x)</code>. we could use <code>function(kermit) mean(kermit, na.rm=TRUE)</code> and it would still work!)</p>
@@ -1190,17 +1181,17 @@ So if we want the mean of the first 3 columns:</p>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 76 × 53
      ppt   age height    q1    q2    q3    q4    q5    q6    q7    q8    q9
-   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
- 1     1    28    151     4     1     4     4     3     2     4     4     4
- 2     2    25    158     3     2     4     3     4     2     4     2     3
- 3     3    23     NA     1     1     3     2     2     4     4     3     4
- 4     4    25    165     1     2     4     4     5     2     4     4     2
- 5     5    21    160     1     1     3     4     4     5     3     3     2
- 6     6    20    180     4     1     2     1     1     3     4     1     3
- 7     7    27    140     2     1     4     5     4     4     4     4     3
- 8     8    28    167     2     3     5     5     3     3     2     1     1
- 9     9    22    163     3     2     5     5     5     3     5     3     3
-10    10    25    163     3     1     4     4     4     3     4     4     4
+   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1     1    22    168     4     1     4     4     3     2     4     4     4
+ 2     2    29    186     3     2     4     3     4     2     4     2     3
+ 3     3    24     NA     1     1     3     2     2     4     4     3     4
+ 4     4    26    175     1     2     4     4     5     2     4     4     2
+ 5     5    28    182     1     1     3     4     4     5     3     3     2
+ 6     6    27    159     4     1     2     1     1     3     4     1     3
+ 7     7    27    149     2     1     4     5     4     4     4     4     3
+ 8     8    23    178     2     3     5     5     3     3     2     1     1
+ 9     9    28    176     3     2     5     5     5     3     5     3     3
+10    10    26    192     3     1     4     4     4     3     4     4     4
 # ℹ 66 more rows
 # ℹ 41 more variables: q10 &lt;dbl&gt;, q11 &lt;dbl&gt;, q12 &lt;dbl&gt;, q13 &lt;dbl&gt;, q14 &lt;dbl&gt;,
 #   q15 &lt;dbl&gt;, q16 &lt;dbl&gt;, q17 &lt;dbl&gt;, q18 &lt;dbl&gt;, q19 &lt;dbl&gt;, q20 &lt;dbl&gt;,
@@ -1252,7 +1243,7 @@ optional: more complex functions
 </div>
 </section>
 <section id="reverse-coding" class="level1">
-<h1>reverse coding</h1>
+<h1>Reverse coding</h1>
 <p>It’s very common for questionnaires to have a combination of questions for a construct, some of which are positively phrased and some which are negatively phrased. The idea here is to avoid introducing biases such as a bias to agree more than to disagree.</p>
 <p>Take, for instance, <code>q1</code> and <code>q6</code> in our data, which are both measuring Extraversion:</p>
 <div class="cell" data-layout-align="center">
@@ -1283,17 +1274,17 @@ We can just subtract the value from 6!</p>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 76 × 53
      ppt   age height    q1    q2    q3    q4    q5    q6    q7    q8    q9
-   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
- 1     1    28    151     4     1     4     4     3     4     4     4     4
- 2     2    25    158     3     2     4     3     4     4     4     2     3
- 3     3    23     NA     1     1     3     2     2     2     4     3     4
- 4     4    25    165     1     2     4     4     5     4     4     4     2
- 5     5    21    160     1     1     3     4     4     1     3     3     2
- 6     6    20    180     4     1     2     1     1     3     4     1     3
- 7     7    27    140     2     1     4     5     4     2     4     4     3
- 8     8    28    167     2     3     5     5     3     3     2     1     1
- 9     9    22    163     3     2     5     5     5     3     5     3     3
-10    10    25    163     3     1     4     4     4     3     4     4     4
+   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1     1    22    168     4     1     4     4     3     4     4     4     4
+ 2     2    29    186     3     2     4     3     4     4     4     2     3
+ 3     3    24     NA     1     1     3     2     2     2     4     3     4
+ 4     4    26    175     1     2     4     4     5     4     4     4     2
+ 5     5    28    182     1     1     3     4     4     1     3     3     2
+ 6     6    27    159     4     1     2     1     1     3     4     1     3
+ 7     7    27    149     2     1     4     5     4     2     4     4     3
+ 8     8    23    178     2     3     5     5     3     3     2     1     1
+ 9     9    28    176     3     2     5     5     5     3     5     3     3
+10    10    26    192     3     1     4     4     4     3     4     4     4
 # ℹ 66 more rows
 # ℹ 41 more variables: q10 &lt;dbl&gt;, q11 &lt;dbl&gt;, q12 &lt;dbl&gt;, q13 &lt;dbl&gt;, q14 &lt;dbl&gt;,
 #   q15 &lt;dbl&gt;, q16 &lt;dbl&gt;, q17 &lt;dbl&gt;, q18 &lt;dbl&gt;, q19 &lt;dbl&gt;, q20 &lt;dbl&gt;,
@@ -1319,21 +1310,21 @@ Let’s find a way to capture those. <code>seq(2,38,2)</code> will give us a seq
 <h4 class="anchored" data-anchor-id="using-across">using <code>across()</code></h4>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> </span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(neg_items,<span class="sc">~</span><span class="dv">6</span><span class="sc">-</span>.))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(neg_items),<span class="sc">~</span><span class="dv">6</span><span class="sc">-</span>.))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 76 × 53
      ppt   age height    q1    q2    q3    q4    q5    q6    q7    q8    q9
-   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
- 1     1    28    151     4     5     4     2     3     4     4     2     4
- 2     2    25    158     3     4     4     3     4     4     4     4     3
- 3     3    23     NA     1     5     3     4     2     2     4     3     4
- 4     4    25    165     1     4     4     2     5     4     4     2     2
- 5     5    21    160     1     5     3     2     4     1     3     3     2
- 6     6    20    180     4     5     2     5     1     3     4     5     3
- 7     7    27    140     2     5     4     1     4     2     4     2     3
- 8     8    28    167     2     3     5     1     3     3     2     5     1
- 9     9    22    163     3     4     5     1     5     3     5     3     3
-10    10    25    163     3     5     4     2     4     3     4     2     4
+   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1     1    22    168     4     5     4     2     3     4     4     2     4
+ 2     2    29    186     3     4     4     3     4     4     4     4     3
+ 3     3    24     NA     1     5     3     4     2     2     4     3     4
+ 4     4    26    175     1     4     4     2     5     4     4     2     2
+ 5     5    28    182     1     5     3     2     4     1     3     3     2
+ 6     6    27    159     4     5     2     5     1     3     4     5     3
+ 7     7    27    149     2     5     4     1     4     2     4     2     3
+ 8     8    23    178     2     3     5     1     3     3     2     5     1
+ 9     9    28    176     3     4     5     1     5     3     5     3     3
+10    10    26    192     3     5     4     2     4     3     4     2     4
 # ℹ 66 more rows
 # ℹ 41 more variables: q10 &lt;dbl&gt;, q11 &lt;dbl&gt;, q12 &lt;dbl&gt;, q13 &lt;dbl&gt;, q14 &lt;dbl&gt;,
 #   q15 &lt;dbl&gt;, q16 &lt;dbl&gt;, q17 &lt;dbl&gt;, q18 &lt;dbl&gt;, q19 &lt;dbl&gt;, q20 &lt;dbl&gt;,
@@ -1352,17 +1343,17 @@ Let’s find a way to capture those. <code>seq(2,38,2)</code> will give us a seq
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 76 × 53
      ppt   age height    q1    q2    q3    q4    q5    q6    q7    q8    q9
-   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
- 1     1    28    151     4     5     4     2     3     4     4     2     4
- 2     2    25    158     3     4     4     3     4     4     4     4     3
- 3     3    23     NA     1     5     3     4     2     2     4     3     4
- 4     4    25    165     1     4     4     2     5     4     4     2     2
- 5     5    21    160     1     5     3     2     4     1     3     3     2
- 6     6    20    180     4     5     2     5     1     3     4     5     3
- 7     7    27    140     2     5     4     1     4     2     4     2     3
- 8     8    28    167     2     3     5     1     3     3     2     5     1
- 9     9    22    163     3     4     5     1     5     3     5     3     3
-10    10    25    163     3     5     4     2     4     3     4     2     4
+   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1     1    22    168     4     5     4     2     3     4     4     2     4
+ 2     2    29    186     3     4     4     3     4     4     4     4     3
+ 3     3    24     NA     1     5     3     4     2     2     4     3     4
+ 4     4    26    175     1     4     4     2     5     4     4     2     2
+ 5     5    28    182     1     5     3     2     4     1     3     3     2
+ 6     6    27    159     4     5     2     5     1     3     4     5     3
+ 7     7    27    149     2     5     4     1     4     2     4     2     3
+ 8     8    23    178     2     3     5     1     3     3     2     5     1
+ 9     9    28    176     3     4     5     1     5     3     5     3     3
+10    10    26    192     3     5     4     2     4     3     4     2     4
 # ℹ 66 more rows
 # ℹ 41 more variables: q10 &lt;dbl&gt;, q11 &lt;dbl&gt;, q12 &lt;dbl&gt;, q13 &lt;dbl&gt;, q14 &lt;dbl&gt;,
 #   q15 &lt;dbl&gt;, q16 &lt;dbl&gt;, q17 &lt;dbl&gt;, q18 &lt;dbl&gt;, q19 &lt;dbl&gt;, q20 &lt;dbl&gt;,
@@ -1375,14 +1366,121 @@ Let’s find a way to capture those. <code>seq(2,38,2)</code> will give us a seq
 </section>
 </div>
 </section>
-<section id="rowwise-metrics" class="level1">
-<h1>rowwise metrics</h1>
-<p>counting NAs</p>
-</section>
 <section id="row-scoring" class="level1">
-<h1>row scoring</h1>
-<p>rowsums rowmeans NAs</p>
-<p>link reliability</p>
+<h1>Row scoring</h1>
+<p>Very often, people want to calculate a scale score. For instance, if people responded to each of 7 questions for a scale of generalised anxiety, then we would want to calculate a ‘generalised anxiety score’ by adding up their responses 5+1+2+4+4+3+5 = 24.</p>
+<p>There are handy functions that can do quick row scoring: <code>rowSums()</code> and <code>rowMeans()</code>.</p>
+<p>For instance, to calculate each person’s (each row of our data is a person) sum of the questions 1 to 5, we can use any of:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tidyverse</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> <span class="fu">select</span>(q1<span class="sc">:</span>q5) <span class="sc">|&gt;</span> <span class="fu">rowSums</span>()</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="co"># indexing:</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rowSums</span>(survdat[,<span class="fu">c</span>(<span class="st">"q1"</span>,<span class="st">"q2"</span>,<span class="st">"q3"</span>,<span class="st">"q4"</span>,<span class="st">"q5"</span>)])</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="co"># concise indexing</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="fu">rowSums</span>(survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 18 18 15 16 15 17 16 14 18 18 17  8 16 13 11 14 16 18 20 17 13 16 14 17 17
+[26] 18 19 14 16 12 18 20 18 17 15 15  7 12 15 15 19 17 22 20 20 19 16 14 17 10
+[51] 15 18 19 17 10 19 16 12 22 16 12 15 14 19  9  9 17 20 15 17 19 16 18 16 13
+[76] 14</code></pre>
+</div>
+</div>
+<p>From the <a href="https://ipip.ori.org/new_ipip-50-item-scale.htm" target="_blank">inventory page of the IPIP</a>, we can see that the questions are ordered such that questions 1, 6, 11, …, all correspond to Extraversion, questions 2, 7, 12, … all correspond to Agreeableness, and so on.</p>
+<p>We can use things like <code>seq()</code> to capture the relevant numbers of each question:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sequence from 1 to 50 in steps of 5</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">50</span>,<span class="dv">5</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]  1  6 11 16 21 26 31 36 41 46</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sequence from 1 to 50 in steps of 5</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">seq</span>(<span class="dv">2</span>,<span class="dv">50</span>,<span class="dv">5</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]  2  7 12 17 22 27 32 37 42 47</code></pre>
+</div>
+</div>
+<p>Which means we can get the scores for each personality trait using something such as:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>survdat<span class="sc">$</span>extr <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">50</span>,<span class="dv">5</span>))])</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>survdat<span class="sc">$</span>agree <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="fu">seq</span>(<span class="dv">2</span>,<span class="dv">50</span>,<span class="dv">5</span>))])</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>survdat<span class="sc">$</span>consc <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="fu">seq</span>(<span class="dv">3</span>,<span class="dv">50</span>,<span class="dv">5</span>))])</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>survdat<span class="sc">$</span>emot_s <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="fu">seq</span>(<span class="dv">4</span>,<span class="dv">50</span>,<span class="dv">5</span>))])</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>survdat<span class="sc">$</span>imagin <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="fu">seq</span>(<span class="dv">5</span>,<span class="dv">50</span>,<span class="dv">5</span>))])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And we can quickly examine all our scale scores:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> </span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(extr<span class="sc">:</span>imagin) <span class="sc">|&gt;</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pairs.panels</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="00_surveywrangle_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="more-rowwise-stuff" class="level1">
+<h1>More Rowwise Stuff</h1>
+<p>We can also find out useful information for each row about things like how much missingness there is:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># is.na will turn all NA entries to "TRUE", and all non-missing values to FALSE. </span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="co"># then we sum them up across the rows and it will give us how many NAs are in each row, across the 50 questions!  </span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rowSums</span>( <span class="fu">is.na</span>( survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>)] ) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0
+[39] 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</code></pre>
+</div>
+</div>
+<p>Occasionally, you might find that you want to do row-wise operations that don’t have easy functions like <code>rowSums</code>. In these cases, the tidyverse function <code>rowwise()</code> can be useful in that it applies an operation to one row at a time:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> </span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">|&gt;</span></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># find the minimum score given for each row</span></span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">maxscore =</span> <span class="fu">min</span>(<span class="fu">across</span>(q1<span class="sc">:</span>q50)), </span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># put the column after the height column</span></span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">.after =</span> height</span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 76 × 59
+# Rowwise: 
+     ppt   age height maxscore    q1    q2    q3    q4    q5    q6    q7    q8
+   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1     1    22    168        1     4     5     4     2     3     4     4     2
+ 2     2    29    186        2     3     4     4     3     4     4     4     4
+ 3     3    24     NA        1     1     5     3     4     2     2     4     3
+ 4     4    26    175        1     1     4     4     2     5     4     4     2
+ 5     5    28    182        1     1     5     3     2     4     1     3     3
+ 6     6    27    159        1     4     5     2     5     1     3     4     5
+ 7     7    27    149        1     2     5     4     1     4     2     4     2
+ 8     8    23    178        1     2     3     5     1     3     3     2     5
+ 9     9    28    176        1     3     4     5     1     5     3     5     3
+10    10    26    192        1     3     5     4     2     4     3     4     2
+# ℹ 66 more rows
+# ℹ 47 more variables: q9 &lt;dbl&gt;, q10 &lt;dbl&gt;, q11 &lt;dbl&gt;, q12 &lt;dbl&gt;, q13 &lt;dbl&gt;,
+#   q14 &lt;dbl&gt;, q15 &lt;dbl&gt;, q16 &lt;dbl&gt;, q17 &lt;dbl&gt;, q18 &lt;dbl&gt;, q19 &lt;dbl&gt;,
+#   q20 &lt;dbl&gt;, q21 &lt;dbl&gt;, q22 &lt;dbl&gt;, q23 &lt;dbl&gt;, q24 &lt;dbl&gt;, q25 &lt;dbl&gt;,
+#   q26 &lt;dbl&gt;, q27 &lt;dbl&gt;, q28 &lt;dbl&gt;, q29 &lt;dbl&gt;, q30 &lt;dbl&gt;, q31 &lt;dbl&gt;,
+#   q32 &lt;dbl&gt;, q33 &lt;dbl&gt;, q34 &lt;dbl&gt;, q35 &lt;dbl&gt;, q36 &lt;dbl&gt;, q37 &lt;dbl&gt;,
+#   q38 &lt;dbl&gt;, q39 &lt;dbl&gt;, q40 &lt;dbl&gt;, q41 &lt;dbl&gt;, q42 &lt;dbl&gt;, q43 &lt;dbl&gt;, …</code></pre>
+</div>
+</div>
+<p>Alternatively, <code>apply()</code> to the rescue again!<br>
+<code>MARGIN = 1</code> here applies the operation across rows:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(survdat[,<span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>)], <span class="at">MARGIN =</span> <span class="dv">1</span>, <span class="at">FUN =</span> min)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]  1  2  1  1  1  1  1  1  1  1 NA  1  1  1 NA  1  1  1  2  1  1  1  1  1  1
+[26]  1  1  1  2 NA  1  1  1  1  1  1  1  1  1  1  2  2  2  2  1  1  1 NA  1  1
+[51]  1  1  2  1  1  1  1  1  1  1  1  1  1  1  1  1  2  1  2  1  1  1  1  1  1
+[76]  1</code></pre>
+</div>
+</div>
 
 
 </section>
