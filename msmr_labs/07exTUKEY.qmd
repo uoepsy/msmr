@@ -460,34 +460,34 @@ jobperf |> select(name, PC2) |>
 
 # Conduct Problems  
 
+
+
 :::frame
 __Data: Conduct Problems__  
 
 A researcher is developing a new brief measure of Conduct Problems. She has collected data from n=450 adolescents on 10 items, which cover the following behaviours:  
 
-1. Stealing
-1. Lying
-1. Skipping school
-1. Vandalism
 1. Breaking curfew
-1. Threatening others
+1. Vandalism
+1. Skipping school
 1. Bullying
 1. Spreading malicious rumours
-1. Using a weapon 
 1. Fighting
+1. Lying
+1. Using a weapon 
+1. Stealing
+1. Threatening others
 
-Your task is to use the dimension reduction techniques you learned about in the lecture to help inform how to organise the items she has developed into subscales.  
 
-The data can be found at [https://uoepsy.github.io/data/conduct_probs.csv](https://uoepsy.github.io/data/conduct_probs.csv){target="_blank"} 
+Our task is to use the dimension reduction techniques we learned about in the lecture to help inform how to organise the items she has developed into subscales.  
+
+The data can be found at [https://uoepsy.github.io/data/conduct_probs_scale.csv](https://uoepsy.github.io/data/conduct_probs_scale.csv){target="_blank"} 
 
 :::
 
 `r qbegin(qcounter())`
 Read in the dataset.  
-Create a correlation matrix for *the items*.  
-Inspect the items to check their suitability for exploratory factor analysis.   
-
-Alongside looking at the correlation matrix, below are a couple of additional ways to do this.  
+Create a correlation matrix for *the items*, and inspect the items to check their suitability for exploratory factor analysis (below are a couple of ways we can do this).  
 
 
 ::: {.callout-note collapse="true"}
@@ -546,25 +546,31 @@ These are Kaiser's corresponding adjectives suggested for each level of the KMO:
 `r qend()` 
 `r solbegin(show=params$SHOW, toggle=params$TOGGLE)`
 ```{r}
-library(psych)
-df <- read.csv("https://uoepsy.github.io/data/conduct_probs.csv")
+cpdata <- read.csv("../../data/conduct_probs_scale.csv")
 # discard the first column
-df <- df[,-1]
-
-ggcorrplot(cor(df))
-
-cortest.bartlett(cor(df), n=450)
-
-KMO(df)  
-
-pairs.panels(df)
+cpdata <- cpdata[,-1]
 ```
 
-Alternatively, if you want a ggplot based approach:
-```{r message=FALSE}
-library(GGally)
-ggpairs(data=df, diag=list(continuous="density"), axisLabels="show")
+Here's a correlation matrix. There's no obvious blocks of items here, but we can see that there are some fairly high correlations, as well as some weaker ones. All are positive.  
+```{r}
+ggcorrplot(cor(cpdata))
 ```
+
+The Bartlett's test comes out with a p-value of 0 (which isn't possible, but it's been rounded for some reason). This suggests that we reject the null of this test (that our correlation matrix is proportional to the identity matrix). This is good. It basically means "we have some non-zero correlations"!  
+```{r}
+cortest.bartlett(cor(cpdata), n=450)
+```
+
+The overall sampling adequacy is 0.87, which is pretty good! (or rather, which is 'meritorious'!).  MSA for all items is >.8
+```{r}
+KMO(cpdata)  
+```
+
+Finally, all the relationships here look fairly linear:
+```{r}
+pairs.panels(cpdata)
+```
+
 `r solend()`
 
 
@@ -575,21 +581,44 @@ This question can be answered in the same way as we did above for PCA - use a sc
 
 You can use `fa.parallel(data, fa = "both")` to conduct both parallel analysis and view the scree plot!   
 `r qend()` 
-`r solbegin(show=params$SHOW, toggle=params$TOGGLE)`
-TODO 
+
+`r solbegin(label="Scree", slabel=F, show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+The scree plot shows a kink at 3, which suggests retaining 2 components. 
 ```{r}
-fa.parallel(df, fa = "fa")
+scree(cpdata)
 ```
-In this case the scree plot has a kink at the third factor, so we probably want to retain 2 factors.  
-  
-We can conduct the MAP test using `VSS(data)`.
-```{r}
-VSS(df, plot = FALSE, n = ncol(df))$map
-```
-The MAP test suggests retaining 2 factors.  
+
 `r solend()`
+`r solbegin(label="MAP", slabel=F, show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+The MAP suggests retaining 2 factors. I'm just extracting the actuall `map` values here to save having to show all the other output. We can see that the 2nd entry is the smallest: 
+```{r}
+VSS(cpdata, plot = FALSE, n = ncol(cpdata))$map
+```
 
 
+`r solend()`
+`r solbegin(label="Parallel Analysis", slabel=F, show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+Parallel analysis suggests 2 factors as well:
+```{r}
+fa.parallel(cpdata, fa = "both")
+```
+
+`r solend()`
+`r solbegin(label="Making a decision", slabel=F, show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+Again, a quite clear picture that 2 factors is preferred:  
+```{r}
+#| echo: false
+tibble(
+  guides = c("Scree","MAP","Parallel Analysis"),
+  suggestion = rep(2,3)
+) |> gt::gt()
+```
+
+`r solend()`
 
 `r qbegin(qcounter())`
 Use the function `fa()` from the **psych** package to conduct and EFA to extract 2 factors (this is what *we* suggest based on the various tests above, but *you* might feel differently - the ideal number of factors is subjective!). Use a suitable rotation (`rotate = ?`) and extraction method (`fm = ?`).  
@@ -602,7 +631,7 @@ myfa <- fa(data, nfactors = ?, rotate = ?, fm = ?)
 ::: {.callout-tip collapse="true"}
 #### Hints
 
-Would you expect factors to correlate? If so, you'll need an oblique rotation.  
+Would you expect factors to be correlated? If so, you'll want an oblique rotation.  
 
 :::
 
@@ -612,7 +641,7 @@ Would you expect factors to correlate? If so, you'll need an oblique rotation.
 `r solbegin(show=params$SHOW, toggle=params$TOGGLE)`
 For example, you could choose an oblimin rotation to allow factors to correlate and use minres as the extraction method.  
 ```{r}
-conduct_efa <- fa(df, nfactors=2, rotate='oblimin', fm="minres")
+conduct_efa <- fa(cpdata, nfactors=2, rotate='oblimin', fm="minres")
 ```
 `r solend()`
 
@@ -642,9 +671,20 @@ You can find a quick guide to reading the `fa` output here: [efa_output.pdf](htt
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 
-TODO
+Things look pretty good here. Each item has a clear primary loading on to one of the factors, and the complexity for all items is 1 (meaning they're clearly link to just one of the factors). The `h2` column is showing that the 2 factor solution is explaining 39%+ of the variance in each item.  Both factors are well determined, having a at least 3 salient loadings.  
 
+The 2 factors together explain 57% of the variance in the data - both factors explain a similar amount (29% for factor 1, 28% for factor 2). 
 
+We can also see that there is a moderate correlation between the two factors. Use of an oblique rotation was appropriate - if the correlation had been very weak, then it might not have differed much from if we used an orthogonal rotation.  
+
+```{r}
+#| eval: false
+conduct_efa
+```
+```{r}
+#| echo: false
+.pp(conduct_efa, l=list(1:28))
+```
 
 
 `r solend()`
@@ -672,24 +712,13 @@ You can inspect the loadings using:
 ```{r}
 print(conduct_efa$loadings, sort=TRUE)
 ```
-We can see that the first five items have high loadings for one factor and the second five items have high loadings for the other.  
+We can see that, ordered like this, we have five items that have high loadings for one factor and another five items that have high loadings for the other.  
   
-The first five items all have in common that they are non-aggressive forms of conduct problems, while the last five items are all aggressive behaviours. We could, therefore, label our factors: ‘non-aggressive’ and ‘aggressive’ conduct problems.
+The five items for factor 1 all have in common that they are non-aggressive forms of conduct problems. The five items for factor 2 are all more aggressive behaviours. We could, therefore, label our factors: ‘non-aggressive’ and ‘aggressive’ conduct problems.
 `r solend()`
 
 `r qbegin(qcounter())`
-How correlated are your factors?  
-
-`r qend()` 
-`r solbegin(show=params$SHOW, toggle=params$TOGGLE)`
-```{r}
-conduct_efa$Phi
-```
-We can see here that there is a moderate correlation between the two factors. An oblique rotation is appropriate here. If it was a weak correlation, then it wouldn't be differing much from if we used an orthogonal rotation.  
-`r solend()`
-
-`r qbegin(qcounter())`
-Compare your three differen solutions: 
+Compare your three different solutions: 
 
 1) your current solution from the previous questions
 2) one where you fit 1 more factor
@@ -716,7 +745,19 @@ We're looking here to assess:
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 
-TODO
+The 1-factor model explains 39% of the variance (as opposed to the 57% explained by the 2 factor solution), and all items load fairly high on the factor. The downside here is that we're not discerning between different types of conduct problems that we did in the 2 factor solution.  
+```{r}
+conduct_1 <- fa(cpdata, nfactors=1, fm="minres")
+conduct_1
+```
+
+The 3-factor model explains 60% of the variance (only 3% more than the 2-factor model). Notably, the third factor is not very clearly defined - it only has 1 salient loading (possibly 2 if we consider the 0.3 to be salient, but that item is primarily loaded on the 2nd factor). 
+```{r}
+conduct_3 <- fa(cpdata, nfactors=3, rotate='oblimin', fm="minres")
+conduct_3
+```
+
+
 
 `r solend()`
 
@@ -754,7 +795,12 @@ The factor loadings are provided in @tbl-loadingtab^[You should provide the tabl
 #| tbl-cap: "Factor Loadings"
 loadings = unclass(conduct_efa$loadings)
 loadings = round(loadings, 3)
+loadings = loadings[order(loadings[,1],decreasing = T),]
 loadings[abs(loadings) < 0.3] = NA
+loadings[!is.na(loadings[,2]),] <- 
+  loadings[!is.na(loadings[,2]),][
+    order(loadings[!is.na(loadings[,2]),2],decreasing = T),
+  ]
 options(knitr.kable.NA = '')
 knitr::kable(loadings, digits = 2)
 ```

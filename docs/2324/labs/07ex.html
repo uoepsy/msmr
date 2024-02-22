@@ -125,9 +125,7 @@ if(f.classList.contains('jk-circle-right')) {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
-      MSMR
-      </li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./07ex.html">Week 7</a></li><li class="breadcrumb-item"><a href="./07ex.html">Week 7 Exercises: PCA &amp; EFA</a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -287,13 +285,30 @@ if(f.classList.contains('jk-circle-right')) {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
- <span class="menu-text">Additional Docs</span></a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false" aria-label="Toggle section">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true">
+ <span class="menu-text">Week 7</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07ex.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Week 7 Exercises: PCA &amp; EFA</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+ <span class="menu-text">Additional Docs</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./00_lm_assumpt.html" class="sidebar-item-text sidebar-link">
@@ -1942,28 +1957,26 @@ We could do this with <code>cbind()</code>, or <code>bind_cols()</code>,</p>
 <p><strong>Data: Conduct Problems</strong></p>
 <p>A researcher is developing a new brief measure of Conduct Problems. She has collected data from n=450 adolescents on 10 items, which cover the following behaviours:</p>
 <ol type="1">
-<li>Stealing</li>
-<li>Lying</li>
-<li>Skipping school</li>
-<li>Vandalism</li>
 <li>Breaking curfew</li>
-<li>Threatening others</li>
+<li>Vandalism</li>
+<li>Skipping school</li>
 <li>Bullying</li>
 <li>Spreading malicious rumours</li>
-<li>Using a weapon</li>
 <li>Fighting</li>
+<li>Lying</li>
+<li>Using a weapon</li>
+<li>Stealing</li>
+<li>Threatening others</li>
 </ol>
-<p>Your task is to use the dimension reduction techniques you learned about in the lecture to help inform how to organise the items she has developed into subscales.</p>
-<p>The data can be found at <a href="https://uoepsy.github.io/data/conduct_probs.csv" target="_blank">https://uoepsy.github.io/data/conduct_probs.csv</a></p>
+<p>Our task is to use the dimension reduction techniques we learned about in the lecture to help inform how to organise the items she has developed into subscales.</p>
+<p>The data can be found at <a href="https://uoepsy.github.io/data/conduct_probs_scale.csv" target="_blank">https://uoepsy.github.io/data/conduct_probs_scale.csv</a></p>
 </div>
 <div class="question-begin">
 Question 7
 </div>
 <div class="question-body">
 <p>Read in the dataset.<br>
-Create a correlation matrix for <em>the items</em>.<br>
-Inspect the items to check their suitability for exploratory factor analysis.</p>
-<p>Alongside looking at the correlation matrix, below are a couple of additional ways to do this.</p>
+Create a correlation matrix for <em>the items</em>, and inspect the items to check their suitability for exploratory factor analysis (below are a couple of ways we can do this).</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -2053,20 +2066,24 @@ Kaiser, Meyer, Olkin Measure of Sampling Adequacy
 </p>
 <div style="display:none;">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"https://uoepsy.github.io/data/conduct_probs.csv"</span>)</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co"># discard the first column</span></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df[,<span class="sc">-</span><span class="dv">1</span>]</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcorrplot</span>(<span class="fu">cor</span>(df))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>cpdata <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../../data/conduct_probs_scale.csv"</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co"># discard the first column</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>cpdata <span class="ot">&lt;-</span> cpdata[,<span class="sc">-</span><span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here’s a correlation matrix. There’s no obvious blocks of items here, but we can see that there are some fairly high correlations, as well as some weaker ones. All are positive.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcorrplot</span>(<span class="fu">cor</span>(cpdata))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="07ex_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<p><img src="07ex_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cortest.bartlett</span>(<span class="fu">cor</span>(df), <span class="at">n=</span><span class="dv">450</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The Bartlett’s test comes out with a p-value of 0 (which isn’t possible, but it’s been rounded for some reason). This suggests that we reject the null of this test (that our correlation matrix is proportional to the identity matrix). This is good. It basically means “we have some non-zero correlations”!</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cortest.bartlett</span>(<span class="fu">cor</span>(cpdata), <span class="at">n=</span><span class="dv">450</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$chisq
 [1] 2237.533
@@ -2077,32 +2094,30 @@ $p.value
 $df
 [1] 45</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">KMO</span>(df)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The overall sampling adequacy is 0.87, which is pretty good! (or rather, which is ‘meritorious’!). MSA for all items is &gt;.8</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">KMO</span>(cpdata)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Kaiser-Meyer-Olkin factor adequacy
-Call: KMO(r = df)
+Call: KMO(r = cpdata)
 Overall MSA =  0.87
 MSA for each item = 
- item1  item2  item3  item4  item5  item6  item7  item8  item9 item10 
-  0.90   0.88   0.92   0.88   0.84   0.94   0.82   0.81   0.95   0.94 </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs.panels</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="07ex_files/figure-html/unnamed-chunk-22-2.png" class="img-fluid figure-img" style="width:80.0%"></p>
-</figure>
+   breaking_curfew          vandalism    skipping_school           bullying 
+              0.84               0.88               0.92               0.82 
+ spreading_rumours           fighting              lying       using_weapon 
+              0.81               0.94               0.88               0.95 
+          stealing threatening_others 
+              0.90               0.94 </code></pre>
 </div>
 </div>
-</div>
-<p>Alternatively, if you want a ggplot based approach:</p>
+<p>Finally, all the relationships here look fairly linear:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(<span class="at">data=</span>df, <span class="at">diag=</span><span class="fu">list</span>(<span class="at">continuous=</span><span class="st">"density"</span>), <span class="at">axisLabels=</span><span class="st">"show"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs.panels</span>(cpdata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="07ex_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<p><img src="07ex_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
 </figure>
 </div>
 </div>
@@ -2121,30 +2136,517 @@ Question 8
 <p class="question-end">
 </p>
 <div style="display:none;">
-<p>TODO</p>
+<p>The scree plot shows a kink at 3, which suggests retaining 2 components.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fa.parallel</span>(df, <span class="at">fa =</span> <span class="st">"fa"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">scree</span>(cpdata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="07ex_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<p><img src="07ex_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
 </figure>
 </div>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Parallel analysis suggests that the number of factors =  2  and the number of components =  NA </code></pre>
 </div>
 </div>
-<p>In this case the scree plot has a kink at the third factor, so we probably want to retain 2 factors.</p>
-<p>We can conduct the MAP test using <code>VSS(data)</code>.</p>
+<p class="solution-end">
+</p>
+<div style="display:none;">
+<p>The MAP suggests retaining 2 factors. I’m just extracting the actuall <code>map</code> values here to save having to show all the other output. We can see that the 2nd entry is the smallest:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">VSS</span>(df, <span class="at">plot =</span> <span class="cn">FALSE</span>, <span class="at">n =</span> <span class="fu">ncol</span>(df))<span class="sc">$</span>map</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">VSS</span>(cpdata, <span class="at">plot =</span> <span class="cn">FALSE</span>, <span class="at">n =</span> <span class="fu">ncol</span>(cpdata))<span class="sc">$</span>map</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] 0.10575332 0.03377130 0.05762202 0.10352974 0.14935664 0.25195168
  [7] 0.39743503 0.45518643 1.00000000         NA</code></pre>
 </div>
 </div>
-<p>The MAP test suggests retaining 2 factors.</p>
+</div>
+<p class="solution-end">
+</p>
+<div style="display:none;">
+<p>Parallel analysis suggests 2 factors as well:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fa.parallel</span>(cpdata, <span class="at">fa =</span> <span class="st">"both"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="07ex_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Parallel analysis suggests that the number of factors =  2  and the number of components =  2 </code></pre>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div style="display:none;">
+<p>Again, a quite clear picture that 2 factors is preferred:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+
+<div id="jorhmxkoqt" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#jorhmxkoqt table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#jorhmxkoqt thead, #jorhmxkoqt tbody, #jorhmxkoqt tfoot, #jorhmxkoqt tr, #jorhmxkoqt td, #jorhmxkoqt th {
+  border-style: none;
+}
+
+#jorhmxkoqt p {
+  margin: 0;
+  padding: 0;
+}
+
+#jorhmxkoqt .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#jorhmxkoqt .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#jorhmxkoqt .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#jorhmxkoqt .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#jorhmxkoqt .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#jorhmxkoqt .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jorhmxkoqt .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#jorhmxkoqt .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#jorhmxkoqt .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#jorhmxkoqt .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#jorhmxkoqt .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#jorhmxkoqt .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#jorhmxkoqt .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#jorhmxkoqt .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#jorhmxkoqt .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#jorhmxkoqt .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#jorhmxkoqt .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#jorhmxkoqt .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#jorhmxkoqt .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jorhmxkoqt .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#jorhmxkoqt .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#jorhmxkoqt .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#jorhmxkoqt .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jorhmxkoqt .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#jorhmxkoqt .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#jorhmxkoqt .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jorhmxkoqt .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jorhmxkoqt .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#jorhmxkoqt .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jorhmxkoqt .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#jorhmxkoqt .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jorhmxkoqt .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#jorhmxkoqt .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jorhmxkoqt .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#jorhmxkoqt .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jorhmxkoqt .gt_left {
+  text-align: left;
+}
+
+#jorhmxkoqt .gt_center {
+  text-align: center;
+}
+
+#jorhmxkoqt .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#jorhmxkoqt .gt_font_normal {
+  font-weight: normal;
+}
+
+#jorhmxkoqt .gt_font_bold {
+  font-weight: bold;
+}
+
+#jorhmxkoqt .gt_font_italic {
+  font-style: italic;
+}
+
+#jorhmxkoqt .gt_super {
+  font-size: 65%;
+}
+
+#jorhmxkoqt .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#jorhmxkoqt .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#jorhmxkoqt .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#jorhmxkoqt .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#jorhmxkoqt .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#jorhmxkoqt .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#jorhmxkoqt .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="guides">guides</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="suggestion">suggestion</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="guides" class="gt_row gt_left">Scree</td>
+<td headers="suggestion" class="gt_row gt_right">2</td></tr>
+    <tr><td headers="guides" class="gt_row gt_left">MAP</td>
+<td headers="suggestion" class="gt_row gt_right">2</td></tr>
+    <tr><td headers="guides" class="gt_row gt_left">Parallel Analysis</td>
+<td headers="suggestion" class="gt_row gt_right">2</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+</div>
+</div>
 </div>
 <p class="solution-end">
 </p>
@@ -2154,7 +2656,7 @@ Question 9
 <div class="question-body">
 <p>Use the function <code>fa()</code> from the <strong>psych</strong> package to conduct and EFA to extract 2 factors (this is what <em>we</em> suggest based on the various tests above, but <em>you</em> might feel differently - the ideal number of factors is subjective!). Use a suitable rotation (<code>rotate = ?</code>) and extraction method (<code>fm = ?</code>).</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>myfa <span class="ot">&lt;-</span> <span class="fu">fa</span>(data, <span class="at">nfactors =</span> ?, <span class="at">rotate =</span> ?, <span class="at">fm =</span> ?)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>myfa <span class="ot">&lt;-</span> <span class="fu">fa</span>(data, <span class="at">nfactors =</span> ?, <span class="at">rotate =</span> ?, <span class="at">fm =</span> ?)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
@@ -2168,7 +2670,7 @@ Hints
 </div>
 <div id="callout-12" class="callout-12-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Would you expect factors to correlate? If so, you’ll need an oblique rotation.</p>
+<p>Would you expect factors to be correlated? If so, you’ll want an oblique rotation.</p>
 </div>
 </div>
 </div>
@@ -2178,7 +2680,7 @@ Hints
 <div style="display:none;">
 <p>For example, you could choose an oblimin rotation to allow factors to correlate and use minres as the extraction method.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>conduct_efa <span class="ot">&lt;-</span> <span class="fu">fa</span>(df, <span class="at">nfactors=</span><span class="dv">2</span>, <span class="at">rotate=</span><span class="st">'oblimin'</span>, <span class="at">fm=</span><span class="st">"minres"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>conduct_efa <span class="ot">&lt;-</span> <span class="fu">fa</span>(cpdata, <span class="at">nfactors=</span><span class="dv">2</span>, <span class="at">rotate=</span><span class="st">'oblimin'</span>, <span class="at">fm=</span><span class="st">"minres"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <p class="solution-end">
@@ -2202,8 +2704,8 @@ Hints
 <div class="callout-body-container callout-body">
 <p>Just printing an <code>fa</code> object:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>myfa <span class="ot">&lt;-</span> <span class="fu">fa</span>(data, ..... )</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>myfa</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>myfa <span class="ot">&lt;-</span> <span class="fu">fa</span>(data, ..... )</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>myfa</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Will give you lots and lots of information.<br>
 You can extract individual parts using:</p>
@@ -2220,7 +2722,44 @@ You can extract individual parts using:</p>
 <p class="question-end">
 </p>
 <div style="display:none;">
-<p>TODO</p>
+<p>Things look pretty good here. Each item has a clear primary loading on to one of the factors, and the complexity for all items is 1 (meaning they’re clearly link to just one of the factors). The <code>h2</code> column is showing that the 2 factor solution is explaining 39%+ of the variance in each item. Both factors are well determined, having a at least 3 salient loadings.</p>
+<p>The 2 factors together explain 57% of the variance in the data - both factors explain a similar amount (29% for factor 1, 28% for factor 2).</p>
+<p>We can also see that there is a moderate correlation between the two factors. Use of an oblique rotation was appropriate - if the correlation had been very weak, then it might not have differed much from if we used an orthogonal rotation.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>conduct_efa</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>Factor Analysis using method =  minres
+Call: fa(r = cpdata, nfactors = 2, rotate = "oblimin", fm = "minres")
+Standardized loadings (pattern matrix) based upon correlation matrix
+                     MR1   MR2   h2   u2 com
+breaking_curfew    -0.04  0.87 0.73 0.27   1
+vandalism           0.06  0.68 0.50 0.50   1
+skipping_school    -0.02  0.68 0.45 0.55   1
+bullying            0.89  0.00 0.80 0.20   1
+spreading_rumours   0.92 -0.01 0.84 0.16   1
+fighting            0.67 -0.03 0.43 0.57   1
+lying               0.01  0.77 0.60 0.40   1
+using_weapon        0.63  0.09 0.45 0.55   1
+stealing            0.03  0.71 0.52 0.48   1
+threatening_others  0.63 -0.02 0.39 0.61   1
+
+                       MR1  MR2
+SS loadings           2.92 2.80
+Proportion Var        0.29 0.28
+Cumulative Var        0.29 0.57
+Proportion Explained  0.51 0.49
+Cumulative Proportion 0.51 1.00
+
+ With factor correlations of 
+     MR1  MR2
+MR1 1.00 0.43
+MR2 0.43 1.00
+
+Mean item complexity =  1</code></pre>
+</div>
+</div>
 </div>
 <p class="solution-end">
 </p>
@@ -2243,7 +2782,7 @@ Hints
 <div class="callout-body-container callout-body">
 <p>To sort the loadings, you can use</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(myfa<span class="sc">$</span>loadings, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(myfa<span class="sc">$</span>loadings, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -2254,21 +2793,21 @@ Hints
 <div style="display:none;">
 <p>You can inspect the loadings using:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(conduct_efa<span class="sc">$</span>loadings, <span class="at">sort=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(conduct_efa<span class="sc">$</span>loadings, <span class="at">sort=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Loadings:
-       MR1    MR2   
-item6   0.634       
-item7   0.890       
-item8   0.924       
-item9   0.629       
-item10  0.669       
-item1          0.706
-item2          0.772
-item3          0.681
-item4          0.676
-item5          0.872
+                   MR1    MR2   
+bullying            0.890       
+spreading_rumours   0.924       
+fighting            0.669       
+using_weapon        0.629       
+threatening_others  0.634       
+breaking_curfew            0.872
+vandalism                  0.676
+skipping_school            0.681
+lying                      0.772
+stealing                   0.706
 
                 MR1   MR2
 SS loadings    2.90 2.784
@@ -2276,8 +2815,8 @@ Proportion Var 0.29 0.278
 Cumulative Var 0.29 0.568</code></pre>
 </div>
 </div>
-<p>We can see that the first five items have high loadings for one factor and the second five items have high loadings for the other.</p>
-<p>The first five items all have in common that they are non-aggressive forms of conduct problems, while the last five items are all aggressive behaviours. We could, therefore, label our factors: ‘non-aggressive’ and ‘aggressive’ conduct problems.</p>
+<p>We can see that, ordered like this, we have five items that have high loadings for one factor and another five items that have high loadings for the other.</p>
+<p>The five items for factor 1 all have in common that they are non-aggressive forms of conduct problems. The five items for factor 2 are all more aggressive behaviours. We could, therefore, label our factors: ‘non-aggressive’ and ‘aggressive’ conduct problems.</p>
 </div>
 <p class="solution-end">
 </p>
@@ -2285,28 +2824,7 @@ Cumulative Var 0.29 0.568</code></pre>
 Question 12
 </div>
 <div class="question-body">
-<p>How correlated are your factors?</p>
-</div>
-<p class="question-end">
-</p>
-<div style="display:none;">
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>conduct_efa<span class="sc">$</span>Phi</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>          MR1       MR2
-MR1 1.0000000 0.4299169
-MR2 0.4299169 1.0000000</code></pre>
-</div>
-</div>
-<p>We can see here that there is a moderate correlation between the two factors. An oblique rotation is appropriate here. If it was a weak correlation, then it wouldn’t be differing much from if we used an orthogonal rotation.</p>
-</div>
-<p class="solution-end">
-</p>
-<div class="question-begin">
-Question 13
-</div>
-<div class="question-body">
-<p>Compare your three differen solutions:</p>
+<p>Compare your three different solutions:</p>
 <ol type="1">
 <li>your current solution from the previous questions</li>
 <li>one where you fit 1 more factor</li>
@@ -2342,12 +2860,114 @@ Hints
 <p class="question-end">
 </p>
 <div style="display:none;">
-<p>TODO</p>
+<p>The 1-factor model explains 39% of the variance (as opposed to the 57% explained by the 2 factor solution), and all items load fairly high on the factor. The downside here is that we’re not discerning between different types of conduct problems that we did in the 2 factor solution.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>conduct_1 <span class="ot">&lt;-</span> <span class="fu">fa</span>(cpdata, <span class="at">nfactors=</span><span class="dv">1</span>, <span class="at">fm=</span><span class="st">"minres"</span>)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>conduct_1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Factor Analysis using method =  minres
+Call: fa(r = cpdata, nfactors = 1, fm = "minres")
+Standardized loadings (pattern matrix) based upon correlation matrix
+                    MR1   h2   u2 com
+breaking_curfew    0.66 0.44 0.56   1
+vandalism          0.62 0.38 0.62   1
+skipping_school    0.55 0.30 0.70   1
+bullying           0.74 0.54 0.46   1
+spreading_rumours  0.75 0.56 0.44   1
+fighting           0.55 0.30 0.70   1
+lying              0.64 0.41 0.59   1
+using_weapon       0.62 0.38 0.62   1
+stealing           0.60 0.37 0.63   1
+threatening_others 0.52 0.27 0.73   1
+
+                MR1
+SS loadings    3.94
+Proportion Var 0.39
+
+Mean item complexity =  1
+Test of the hypothesis that 1 factor is sufficient.
+
+df null model =  45  with the objective function =  5.03 with Chi Square =  2237.53
+df of  the model are 35  and the objective function was  1.97 
+
+The root mean square of the residuals (RMSR) is  0.16 
+The df corrected root mean square of the residuals is  0.18 
+
+The harmonic n.obs is  450 with the empirical chi square  1010.36  with prob &lt;  2e-189 
+The total n.obs was  450  with Likelihood Chi Square =  875.46  with prob &lt;  3.6e-161 
+
+Tucker Lewis Index of factoring reliability =  0.506
+RMSEA index =  0.231  and the 90 % confidence intervals are  0.218 0.245
+BIC =  661.63
+Fit based upon off diagonal values = 0.86
+Measures of factor score adequacy             
+                                                   MR1
+Correlation of (regression) scores with factors   0.94
+Multiple R square of scores with factors          0.87
+Minimum correlation of possible factor scores     0.75</code></pre>
+</div>
+</div>
+<p>The 3-factor model explains 60% of the variance (only 3% more than the 2-factor model). Notably, the third factor is not very clearly defined - it only has 1 salient loading (possibly 2 if we consider the 0.3 to be salient, but that item is primarily loaded on the 2nd factor).</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>conduct_3 <span class="ot">&lt;-</span> <span class="fu">fa</span>(cpdata, <span class="at">nfactors=</span><span class="dv">3</span>, <span class="at">rotate=</span><span class="st">'oblimin'</span>, <span class="at">fm=</span><span class="st">"minres"</span>)</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>conduct_3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Factor Analysis using method =  minres
+Call: fa(r = cpdata, nfactors = 3, rotate = "oblimin", fm = "minres")
+Standardized loadings (pattern matrix) based upon correlation matrix
+                     MR1   MR2   MR3   h2   u2 com
+breaking_curfew    -0.01  0.63  0.30 0.72 0.28 1.4
+vandalism           0.08  0.22  0.64 0.68 0.32 1.3
+skipping_school     0.00  0.59  0.11 0.45 0.55 1.1
+bullying            0.89  0.09 -0.10 0.82 0.18 1.0
+spreading_rumours   0.92 -0.01  0.01 0.84 0.16 1.0
+fighting            0.67 -0.14  0.15 0.45 0.55 1.2
+lying               0.02  0.83 -0.05 0.66 0.34 1.0
+using_weapon        0.63  0.08  0.01 0.45 0.55 1.0
+stealing            0.04  0.72 -0.01 0.54 0.46 1.0
+threatening_others  0.63 -0.10  0.10 0.40 0.60 1.1
+
+                       MR1  MR2  MR3
+SS loadings           2.95 2.26 0.79
+Proportion Var        0.29 0.23 0.08
+Cumulative Var        0.29 0.52 0.60
+Proportion Explained  0.49 0.38 0.13
+Cumulative Proportion 0.49 0.87 1.00
+
+ With factor correlations of 
+     MR1  MR2  MR3
+MR1 1.00 0.40 0.28
+MR2 0.40 1.00 0.64
+MR3 0.28 0.64 1.00
+
+Mean item complexity =  1.1
+Test of the hypothesis that 3 factors are sufficient.
+
+df null model =  45  with the objective function =  5.03 with Chi Square =  2237.53
+df of  the model are 18  and the objective function was  0.03 
+
+The root mean square of the residuals (RMSR) is  0.01 
+The df corrected root mean square of the residuals is  0.01 
+
+The harmonic n.obs is  450 with the empirical chi square  3.36  with prob &lt;  1 
+The total n.obs was  450  with Likelihood Chi Square =  11.65  with prob &lt;  0.86 
+
+Tucker Lewis Index of factoring reliability =  1.007
+RMSEA index =  0  and the 90 % confidence intervals are  0 0.023
+BIC =  -98.32
+Fit based upon off diagonal values = 1
+Measures of factor score adequacy             
+                                                   MR1  MR2  MR3
+Correlation of (regression) scores with factors   0.96 0.93 0.84
+Multiple R square of scores with factors          0.92 0.86 0.71
+Minimum correlation of possible factor scores     0.84 0.72 0.41</code></pre>
+</div>
+</div>
 </div>
 <p class="solution-end">
 </p>
 <div class="question-begin">
-Question 14
+Question 13
 </div>
 <div class="question-body">
 <p>Drawing on your previous answers and conducting any additional analyses you believe would be necessary to identify an optimal factor structure for the 10 conduct problems, write a brief text that summarises your method and the results from your chosen optimal model.</p>
@@ -2389,54 +3009,54 @@ Hints
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">item1</td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;">0.71</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">item2</td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;">0.77</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">item3</td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;">0.68</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">item4</td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;">0.68</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">item5</td>
-<td style="text-align: right;"></td>
-<td style="text-align: right;">0.87</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">item6</td>
-<td style="text-align: right;">0.63</td>
-<td style="text-align: right;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">item7</td>
-<td style="text-align: right;">0.89</td>
-<td style="text-align: right;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">item8</td>
+<td style="text-align: left;">spreading_rumours</td>
 <td style="text-align: right;">0.92</td>
 <td style="text-align: right;"></td>
 </tr>
+<tr class="even">
+<td style="text-align: left;">bullying</td>
+<td style="text-align: right;">0.89</td>
+<td style="text-align: right;"></td>
+</tr>
 <tr class="odd">
-<td style="text-align: left;">item9</td>
+<td style="text-align: left;">fighting</td>
+<td style="text-align: right;">0.67</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">threatening_others</td>
+<td style="text-align: right;">0.63</td>
+<td style="text-align: right;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">using_weapon</td>
 <td style="text-align: right;">0.63</td>
 <td style="text-align: right;"></td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">item10</td>
-<td style="text-align: right;">0.67</td>
+<td style="text-align: left;">vandalism</td>
 <td style="text-align: right;"></td>
+<td style="text-align: right;">0.87</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">stealing</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;">0.77</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">lying</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;">0.71</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">skipping_school</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;">0.68</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">breaking_curfew</td>
+<td style="text-align: right;"></td>
+<td style="text-align: right;">0.68</td>
 </tr>
 </tbody>
 </table>
