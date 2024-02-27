@@ -1,0 +1,356 @@
+---
+title: "Week 8 Exercises: CFA"
+params: 
+    SHOW_SOLS: FALSE
+    TOGGLE: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+source('assets/setup.R')
+library(xaringanExtra)
+library(tidyverse)
+library(patchwork)
+xaringanExtra::use_panelset()
+qcounter <- function(){
+  if(!exists("qcounter_i")){
+    qcounter_i <<- 1
+  }else{
+    qcounter_i <<- qcounter_i + 1
+  }
+  qcounter_i
+}
+library(psych)
+```
+
+:::frame
+__New packages__  
+
+Make sure you have these packages installed:  
+
++ lavaan
++ semPlot
+
+:::
+
+::: {.callout-note collapse="true"}
+#### the language of diagrams
+
+It is common to think about confirmatory factor models (and structural equation models, which we will go on to learn about) in terms of the connections between variables when drawn on a whiteboard (*and* those that are left undrawn). By representing a theoretical model as paths to and from different variables, we open up a whole new way of thinking about how we model the world around us. These _"path diagrams"_ have different shapes and symbols to denote the covariances, regressions, observed variables and latent variables.  
+
+- **Observed variables** are represented by squares or rectangles. These are the named variables of interest which exist in our dataset - i.e. the ones which we have measured directly. 
+- **Latent variables** are represented as ovals/ellipses or circles. These are unobserved variables that we can only reason about and have not (or cannot) directly measured.  
+- **Covariances** are represented by double-headed arrows. In many diagrams these are curved.  
+- **Regressions** are shown by single headed arrows (e.g., an arrow from $x$ to $y$ for the path $y \sim x$). **Factor loadings** are also regression paths - specifying a factor structure is simply to say that some measured variables $y_1\,,\, ...\, ,\, y_k$ are each regressed onto some unmeasured factor(s). The formula $y_1 = \lambda_1 \cdot F + u_1$ looks an awful lot like $y = b \cdot x + \epsilon$, we just do not observe $F$!.  
+
+```{r}
+#| echo: false
+#| label: fig-diagsem
+#| fig-cap: "Path/SEM diagrams contain various shapes and symbols to represent different types of variable and the relationships between them."
+knitr::include_graphics("images/semdiag.png")
+```
+
+:::
+
+
+::: {.callout-note collapse="true"}
+#### PCA as a diagram
+
+PCA represented as a diagram. Note that the idea of a 'composite' requires us to use a special shape (the hexagon), but many people would just use a square.
+```{r}
+#| echo: false
+#| out-width: "100%"
+knitr::include_graphics("images/diag_pca.png")
+```
+
+
+::: {.callout-caution collapse="true"}
+#### optional: PCA in full
+
+Principal components sequentially capture the orthogonal (i.e., perpendicular) dimensions of the dataset with the most variance. The data reduction comes when we retain fewer components than we have dimensions in our original data. So if we were being pedantic, the diagram for PCA would look something like the diagram below. If the idea of 'dimensions' of a dataset is still a bit confusing, you can see a fun 3-dimensional explanation here: [PCA in 3D](00_pca.html){target="_blank"}
+
+```{r}
+#| echo: false
+#| out-width: "100%"
+knitr::include_graphics("images/diag_pca2.png")
+```
+
+:::
+
+:::
+::: {.callout-note collapse="true"}
+#### EFA as a diagram
+
+Exploratory Factor Analysis as a diagram has arrows going from the factors to the observed variables. Unlike PCA, we also have 'uniqueness' factors for each variable, representing the various stray causes that are specific to each variable. Sometimes, these uniqueness are represented by an arrow only, but they are technically themselves latent variables, and so can be drawn as circles. 
+
+```{r}
+#| echo: false
+#| out-width: "100%"
+knitr::include_graphics("images/diag_efa1.png")
+```
+
+When we apply a rotation to an EFA, we make it so that some loadings are smaller and some are higher - essentially creating a 'simple structure' (where each variable loads strongly on only one factor and weakly on all other factors). This structure simplifies the interpretation of factors, making them more distinct and easily understandable. With oblique rotations, we also allow factors to be correlated, as indicated by the double headed arrow between them in the diagram below
+
+```{r}
+#| echo: false
+#| out-width: "100%"
+knitr::include_graphics("images/diag_efa2.png")
+```
+
+:::
+::: {.callout-note collapse="true"}
+#### CFA as a diagram
+
+The diagram for a Confirmatory Factor Analysis model looks very similar to that of an exploratory factor analysis, but we now have the explicit absence of some arrows - i.e. a variable loads on to a specific factor (or factor**s** - we can have a variable that loads on multiple), and **not** on others.  
+
+Note that this is a change from the 'exploratory' nature of EFA, to a situation in which we are explicitly imposing a theoretical model on the data.  
+
+```{r}
+#| echo: false
+#| out-width: "100%"
+knitr::include_graphics("images/diag_cfa.png")
+```
+
+:::
+
+
+# conduct problems
+
+:::frame
+__Data: Conduct Problems Dataset2__  
+
+Last week we conducted an exploratory factor analysis of a dataset to try and identify an optimal factor structure for a new measure of conduct (i.e., antisocial behavioural) problems. This week, we'll conduct some confirmatory factor analyses (CFA) of the same inventory. 
+
+We have administered our measure to a new sample of n=600 adolescents. 
+
+We have re-ordered the questionnaire items to be grouped into the two types of behaviours:
+
+::::{.columns}
+:::{.column width="47.5%"}
+__Non-Aggressive Behaviours__  
+```{r}
+#| echo: false
+tibble(
+  type = rep(c("non-aggressive","aggressive"),e=5),
+  item = paste0("item ",1:10),
+  behaviour = c("Stealing","Lying","Skipping school","Vandalism","Breaking curfew","Threatening others","Bullying","Spreading malicious rumours","Using a weapon ","Fighting")
+) |> filter(grepl("non",type)) |> select(-type) |>
+  knitr::kable() |>
+  kableExtra::kable_styling(full_width = TRUE)
+```
+:::
+:::{.column width="5%"}
+:::
+:::{.column width="47.5%"}
+__Aggressive Behaviours__  
+```{r}
+#| echo: false
+tibble(
+  type = rep(c("non-aggressive","aggressive"),e=5),
+  item = paste0("item ",1:10),
+  behaviour = c("Stealing","Lying","Skipping school","Vandalism","Breaking curfew","Threatening others","Bullying","Spreading malicious rumours","Using a weapon ","Fighting")
+) |> filter(!grepl("non",type)) |> select(-type) |>
+  knitr::kable() |>
+  kableExtra::kable_styling(full_width = TRUE)
+```
+:::
+::::
+
+The data are available as a **.csv** at [https://uoepsy.github.io/data/conduct_problems_2.csv](https://uoepsy.github.io/data/conduct_problems_2.csv) 
+
+:::
+
+
+`r qbegin(qcounter())`
+Read in the data. Take a look at the correlation matrix.  
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+cp2 <- read_csv("https://uoepsy.github.io/data/conduct_problems_2.csv")
+
+cor(cp2)
+```
+
+Just from the visual, it looks like the same factor structure is present in this sample.  
+```{r}
+library(ggcorrplot)
+ggcorrplot(cor(cp2))
+```
+
+`r solend()`
+
+`r qbegin(qcounter())`
+Fit a 2 factor model in __lavaan__.  
+
+
+::: {.callout-note collapse="true"}
+#### The lavaan package
+
+For the remaining weeks of the course, we're going to rely heavily on the **lavaan** (**La**tent **Va**riable **An**alysis) package. 
+This is the main package in R for fitting structural equation models, and there is a huge scope of what we can do with it.  
+
+__Operators in lavaan__  
+  
+The first thing to get to grips with is the various new operators which __lavaan__ allows us to use.   
+
+Our standard multiple regression formula in R was specified as 
+
+```
+y ~ x1 + x2 + x3 + ...
+```
+
+In lavaan, we continue to fit regressions using the `~` symbol, but we can also specify the construction of latent variables using `=~` and residual variances & covariances using `~~`.  
+
+|  Formula type|  Operator|  Mnemonic|
+|--:|--:|--:|
+|  latent variable definition|  `=~`|  "is measured by"|
+|  regression|  `~`|  "is regressed on"|
+|  (residual) (co)variance |  `~~`|  "is correlated with"|
+|  intercept |  `~1`|  "has an intercept"|
+|  defined parameters | `:=` | "is defined as" |
+
+(from https://lavaan.ugent.be/tutorial/syntax1.html) 
+
+__Fitting models with lavaan__
+
+In practice, fitting models in lavaan tends to be a little different from things like `lm()` and `(g)lmer()`. Instead of including the model formula *inside* the fit function (e.g., `lm(y ~ x1 + x2, data = df)`), we tend to do it in a step-by-step process. This is because as our models become more complex, our formulas can pretty long!   
+
+In lavaan, it is typical to write the model as a character string (e.g. `model <- "y ~ x1 + x2"`) and then we pass that formula along with the data to the relevant __lavaan__ function such as `cfa()` or `sem()`, giving it the formula and the data: `cfa(model, data = mydata)`.  
+
+1. Specify the model:  
+```{r}
+#| eval: false
+mymodel <- "
+  factor1 =~ item1 + item2 + .....
+  factor2 =~ item6 + ...... 
+  ...
+  ..
+"
+```
+2. Estimate the model (other fitting functions include `sem()`, `growth()` and `lavaan()`):
+```{r}
+#| eval: false
+mymodelfit <- cfa(mymodel, data = mydata)
+```
+3. Examine the fitted model: 
+```{r}
+#| eval: false
+summary(mymodelfit)
+```
+
+:::
+  
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+`r solend()`
+
+`r qbegin(qcounter())`
+
+- examine fit
+  - box, df and model fit
+  - box fit measures
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+`r solend()`
+
+
+`r qbegin(qcounter())`
+
+- for comparison, fit a 1 factor model and examine fit
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+`r solend()`
+
+  
+`r qbegin(qcounter())`
+
+- return to 2 factor model. local misfit?
+  - box modindices
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+`r solend()`
+
+
+`r qbegin(qcounter())`
+semplot sempaths
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+`r solend()`
+
+
+`r qbegin(qcounter())`
+
+- write up
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+`r solend()`
+  
+
+
+
+
+# dimensions of apathy in adolescents
+
+:::frame
+__Dataset: das_SPS.csv__  
+
+
+For numerous inmates, the primary goal of incarceration is rehabilitation, aimed at decreasing the likelihood of repeat offenses. However, several barriers hinder individuals' receptiveness to rehabilitation programs, among them being prisoner apathy - characterized by a lack of interest, motivation, or concern.
+
+
+evaluate the invariance of the dimension of apathy in the prison population
+
+DAS developed on healthy adults, and has been widely used in patients with neurodegenerative diseases. 
+
+here we're interested in the utility of the DAS as a measure of apathy in the prison population.
+
+scale has 3 domains:
+
+executive
+emotional
+behavioural/cognitive initiation
+
+
+:::
+
+
+`r qbegin(qcounter())`
+assess whether the 3 apathy dimensions provide a good fit to the data  
+if they don't, how so?  
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+`r solend()`
+
+
+
+
+
+
+
+`r qbegin(qcounter())`
+Explore potential sources of model misspecification or methodological limitations that may affect the interpretation of the factor structure. Consider factors such as item wording, response scale, sample characteristics, and cultural differences that could influence respondents' interpretations and responses to the measurement items. Discuss strategies for addressing or mitigating these sources of bias or error in future research.
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+`r solend()`
+
+
+Discuss the practical implications of the findings for psychological assessment and measurement. Consider how the results of the confirmatory factor analysis inform our understanding of the latent constructs being assessed and their relevance for theory development, clinical practice, or intervention design. Highlight any implications for future research directions or the refinement of measurement instruments based on the analysis results.
+
+
+
+

@@ -92,7 +92,7 @@ Job done? Clearly not - we need only overlay model upon raw data (@fig-dfeg2) to
 #| label: fig-dfeg2
 #| fig-cap: "Uh-oh... "
 #| echo: false
-sjPlot::plot_model(linmod, type="pred", show.data = TRUE)[[1]] +
+sjPlot::plot_model(linmod, type="pred", terms=c("age"), show.data = TRUE) +
   scale_y_continuous(breaks=c(0,3,6,9,12))+
   scale_x_continuous(breaks=seq(0,30,10))+
   labs(title="",x="Age (years)",y="Synaptic Density")
@@ -127,19 +127,20 @@ For many purposes, extending the linear model to include higher-order terms can 
 #| fig-cap: "Linear, quadratic and cubic models fitted to the same dataset."
 #| echo: false
 p0 <- 
-  sjPlot::plot_model(lm(syndens~age,syndat), type="pred", show.data = TRUE)[[1]] +
+  sjPlot::plot_model(lm(syndens~age,syndat), type="pred",
+                     terms=c("age [all]"), show.data = TRUE) +
   scale_y_continuous(breaks=c(0,3,9,12))+
   scale_x_continuous(breaks=seq(0,30,10))+
   labs(title="",subtitle="y ~ x + e")
 
 p1 <- 
-  sjPlot::plot_model(lm(syndens~age+I(age^2),syndat), type="pred", show.data = TRUE)[[1]] +
+  sjPlot::plot_model(lm(syndens~age+I(age^2),syndat), type="pred", terms=c("age [all]"), show.data = TRUE) +
   scale_y_continuous(breaks=c(0,3,9,12))+
   scale_x_continuous(breaks=seq(0,30,10))+
   labs(title="",subtitle="y ~ x + x^2 + e")
 
 p2 <- 
-  sjPlot::plot_model(lm(syndens~age+I(age^2)+I(age^3),syndat), type="pred", show.data = TRUE)[[1]] +
+  sjPlot::plot_model(lm(syndens~age+I(age^2)+I(age^3),syndat), type="pred",terms=c("age [all]"), show.data = TRUE) +
   scale_y_continuous(breaks=c(0,3,9,12))+
   scale_x_continuous(breaks=seq(0,30,10))+
   labs(title="",subtitle="y ~ x + x^2 + x^3 + e")
