@@ -406,16 +406,62 @@ For instance:</p>
 <p>Because it’s often important to keep track of what each question actually asks, it can be useful to create a little dictionary to map our new variable names to the current names.</p>
 <p>In our data, we have variables called <code>ppt</code>, <code>age</code> and <code>height</code>, and then 50 variables corresponding to 50 different questions.<br>
 What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>height</code>,<code>q1</code>, <code>q2</code>, …, <code>q50</code>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+what do <code>paste()/paste0()</code> do?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The <code>paste</code> functions allow us to simply “paste” characters together:<br>
+By default, <code>paste()</code> will separate these with a space:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>datadict <span class="ot">&lt;-</span> </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># these are my proposed new names</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">variable =</span> <span class="fu">c</span>(<span class="st">"ppt"</span>,<span class="st">"age"</span>,<span class="st">"height"</span>, </span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">paste0</span>(<span class="st">"q"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>)),</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># current names</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">question =</span> <span class="fu">names</span>(survdat)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(datadict)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"i have a dog called"</span>, <span class="st">"dougal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "i have a dog called dougal"</code></pre>
+</div>
+</div>
+<p>and <code>paste0()</code> will not separate them by anything:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">"i have a dog called"</span>, <span class="st">"dougal"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "i have a dog calleddougal"</code></pre>
+</div>
+</div>
+<p>We can paste the same thing to a set of things:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"i have a dog called"</span>, <span class="fu">c</span>(<span class="st">"dougal"</span>, <span class="st">"rufus"</span>,<span class="st">"rosie"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "i have a dog called dougal" "i have a dog called rufus" 
+[3] "i have a dog called rosie" </code></pre>
+</div>
+</div>
+<p>Which can be useful for quickly making a set of variable names:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">"item_"</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "item_1"  "item_2"  "item_3"  "item_4"  "item_5"  "item_6"  "item_7" 
+ [8] "item_8"  "item_9"  "item_10"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>datadict <span class="ot">&lt;-</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># these are my proposed new names</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">variable =</span> <span class="fu">c</span>(<span class="st">"ppt"</span>,<span class="st">"age"</span>,<span class="st">"height"</span>, </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                 <span class="fu">paste0</span>(<span class="st">"q"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>)),</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># current names</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">question =</span> <span class="fu">names</span>(survdat)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(datadict)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 2
   variable question                           
@@ -430,12 +476,12 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
 </div>
 <p>If we want to, we can write this to a .csv file so that we can keep it somewhere useful.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(datadict, <span class="at">file =</span> <span class="st">"survey_dictionary.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(datadict, <span class="at">file =</span> <span class="st">"survey_dictionary.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we have created our record, we can actually change the names of the variables:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(survdat)[<span class="dv">4</span><span class="sc">:</span><span class="dv">53</span>] <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"q"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(survdat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(survdat)[<span class="dv">4</span><span class="sc">:</span><span class="dv">53</span>] <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"q"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(survdat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 53
     ppt   age height q1    q2    q3    q4    q5    q6    q7    q8    q9    q10  
@@ -463,23 +509,23 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 
-<div id="mvwpetvofi" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#mvwpetvofi table {
+<div id="hbhgvstrje" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#hbhgvstrje table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#mvwpetvofi thead, #mvwpetvofi tbody, #mvwpetvofi tfoot, #mvwpetvofi tr, #mvwpetvofi td, #mvwpetvofi th {
+#hbhgvstrje thead, #hbhgvstrje tbody, #hbhgvstrje tfoot, #hbhgvstrje tr, #hbhgvstrje td, #hbhgvstrje th {
   border-style: none;
 }
 
-#mvwpetvofi p {
+#hbhgvstrje p {
   margin: 0;
   padding: 0;
 }
 
-#mvwpetvofi .gt_table {
+#hbhgvstrje .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -505,12 +551,12 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-left-color: #D3D3D3;
 }
 
-#mvwpetvofi .gt_caption {
+#hbhgvstrje .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#mvwpetvofi .gt_title {
+#hbhgvstrje .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -522,7 +568,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-bottom-width: 0;
 }
 
-#mvwpetvofi .gt_subtitle {
+#hbhgvstrje .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -534,7 +580,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-top-width: 0;
 }
 
-#mvwpetvofi .gt_heading {
+#hbhgvstrje .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -546,13 +592,13 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-right-color: #D3D3D3;
 }
 
-#mvwpetvofi .gt_bottom_border {
+#hbhgvstrje .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#mvwpetvofi .gt_col_headings {
+#hbhgvstrje .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -567,7 +613,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-right-color: #D3D3D3;
 }
 
-#mvwpetvofi .gt_col_heading {
+#hbhgvstrje .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -587,7 +633,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   overflow-x: hidden;
 }
 
-#mvwpetvofi .gt_column_spanner_outer {
+#hbhgvstrje .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -599,15 +645,15 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   padding-right: 4px;
 }
 
-#mvwpetvofi .gt_column_spanner_outer:first-child {
+#hbhgvstrje .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#mvwpetvofi .gt_column_spanner_outer:last-child {
+#hbhgvstrje .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#mvwpetvofi .gt_column_spanner {
+#hbhgvstrje .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -619,11 +665,11 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   width: 100%;
 }
 
-#mvwpetvofi .gt_spanner_row {
+#hbhgvstrje .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#mvwpetvofi .gt_group_heading {
+#hbhgvstrje .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -649,7 +695,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   text-align: left;
 }
 
-#mvwpetvofi .gt_empty_group_heading {
+#hbhgvstrje .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -664,15 +710,15 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   vertical-align: middle;
 }
 
-#mvwpetvofi .gt_from_md > :first-child {
+#hbhgvstrje .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#mvwpetvofi .gt_from_md > :last-child {
+#hbhgvstrje .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#mvwpetvofi .gt_row {
+#hbhgvstrje .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -691,7 +737,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   overflow-x: hidden;
 }
 
-#mvwpetvofi .gt_stub {
+#hbhgvstrje .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -704,7 +750,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   padding-right: 5px;
 }
 
-#mvwpetvofi .gt_stub_row_group {
+#hbhgvstrje .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -718,15 +764,15 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   vertical-align: top;
 }
 
-#mvwpetvofi .gt_row_group_first td {
+#hbhgvstrje .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#mvwpetvofi .gt_row_group_first th {
+#hbhgvstrje .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#mvwpetvofi .gt_summary_row {
+#hbhgvstrje .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -736,16 +782,16 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   padding-right: 5px;
 }
 
-#mvwpetvofi .gt_first_summary_row {
+#hbhgvstrje .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#mvwpetvofi .gt_first_summary_row.thick {
+#hbhgvstrje .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#mvwpetvofi .gt_last_summary_row {
+#hbhgvstrje .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -755,7 +801,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-bottom-color: #D3D3D3;
 }
 
-#mvwpetvofi .gt_grand_summary_row {
+#hbhgvstrje .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -765,7 +811,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   padding-right: 5px;
 }
 
-#mvwpetvofi .gt_first_grand_summary_row {
+#hbhgvstrje .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -775,7 +821,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-top-color: #D3D3D3;
 }
 
-#mvwpetvofi .gt_last_grand_summary_row_top {
+#hbhgvstrje .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -785,11 +831,11 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-bottom-color: #D3D3D3;
 }
 
-#mvwpetvofi .gt_striped {
+#hbhgvstrje .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#mvwpetvofi .gt_table_body {
+#hbhgvstrje .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -798,7 +844,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-bottom-color: #D3D3D3;
 }
 
-#mvwpetvofi .gt_footnotes {
+#hbhgvstrje .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -812,7 +858,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-right-color: #D3D3D3;
 }
 
-#mvwpetvofi .gt_footnote {
+#hbhgvstrje .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -821,7 +867,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   padding-right: 5px;
 }
 
-#mvwpetvofi .gt_sourcenotes {
+#hbhgvstrje .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -835,7 +881,7 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   border-right-color: #D3D3D3;
 }
 
-#mvwpetvofi .gt_sourcenote {
+#hbhgvstrje .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -843,63 +889,63 @@ What I plan to do is rename them to <code>ppt</code>,<code>age</code>,<code>heig
   padding-right: 5px;
 }
 
-#mvwpetvofi .gt_left {
+#hbhgvstrje .gt_left {
   text-align: left;
 }
 
-#mvwpetvofi .gt_center {
+#hbhgvstrje .gt_center {
   text-align: center;
 }
 
-#mvwpetvofi .gt_right {
+#hbhgvstrje .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#mvwpetvofi .gt_font_normal {
+#hbhgvstrje .gt_font_normal {
   font-weight: normal;
 }
 
-#mvwpetvofi .gt_font_bold {
+#hbhgvstrje .gt_font_bold {
   font-weight: bold;
 }
 
-#mvwpetvofi .gt_font_italic {
+#hbhgvstrje .gt_font_italic {
   font-style: italic;
 }
 
-#mvwpetvofi .gt_super {
+#hbhgvstrje .gt_super {
   font-size: 65%;
 }
 
-#mvwpetvofi .gt_footnote_marks {
+#hbhgvstrje .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#mvwpetvofi .gt_asterisk {
+#hbhgvstrje .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#mvwpetvofi .gt_indent_1 {
+#hbhgvstrje .gt_indent_1 {
   text-indent: 5px;
 }
 
-#mvwpetvofi .gt_indent_2 {
+#hbhgvstrje .gt_indent_2 {
   text-indent: 10px;
 }
 
-#mvwpetvofi .gt_indent_3 {
+#hbhgvstrje .gt_indent_3 {
   text-indent: 15px;
 }
 
-#mvwpetvofi .gt_indent_4 {
+#hbhgvstrje .gt_indent_4 {
   text-indent: 20px;
 }
 
-#mvwpetvofi .gt_indent_5 {
+#hbhgvstrje .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -937,14 +983,14 @@ First we’ll do it for just one variable. As always in R, there are lots of way
 <p>This is the most cumbersome way to do this logic as it requires multiple nested ifelse statements.<br>
 To ensure that anything that isn’t one of the 5 valid response options gets to be an NA, we have the final “else” specifying that if it’s none of the prespecified options, make it an NA</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">q1 =</span> <span class="fu">ifelse</span>(q1 <span class="sc">==</span> <span class="st">"Very Inaccurate"</span>, <span class="dv">1</span>,</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                <span class="fu">ifelse</span>(q1 <span class="sc">==</span> <span class="st">"Moderately Inaccurate"</span>, <span class="dv">2</span>, </span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">ifelse</span>( q1 <span class="sc">==</span> <span class="st">"Neither Accurate nor Inaccurate"</span>, <span class="dv">3</span>, </span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">ifelse</span>(q1 <span class="sc">==</span> <span class="st">"Moderately Accurate"</span>, <span class="dv">4</span>, </span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                                      <span class="fu">ifelse</span>(q1 <span class="sc">==</span> <span class="st">"Very Accurate"</span>, <span class="dv">5</span>, <span class="cn">NA</span>)))))</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">q1 =</span> <span class="fu">ifelse</span>(q1 <span class="sc">==</span> <span class="st">"Very Inaccurate"</span>, <span class="dv">1</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                <span class="fu">ifelse</span>(q1 <span class="sc">==</span> <span class="st">"Moderately Inaccurate"</span>, <span class="dv">2</span>, </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">ifelse</span>( q1 <span class="sc">==</span> <span class="st">"Neither Accurate nor Inaccurate"</span>, <span class="dv">3</span>, </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">ifelse</span>(q1 <span class="sc">==</span> <span class="st">"Moderately Accurate"</span>, <span class="dv">4</span>, </span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>                                      <span class="fu">ifelse</span>(q1 <span class="sc">==</span> <span class="st">"Very Accurate"</span>, <span class="dv">5</span>, <span class="cn">NA</span>)))))</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 76 × 53
      ppt   age height    q1 q2         q3    q4    q5    q6    q7    q8    q9   
@@ -973,17 +1019,17 @@ To ensure that anything that isn’t one of the 5 valid response options gets to
 <h4 class="anchored" data-anchor-id="case_when">case_when</h4>
 <p><code>case_when()</code> follows this same logic as <code>ifelse()</code> but makes for easier reading (and writing). Each line is a statement saying “if [variable] is equal to [value], then return [new value]”. The final entry here <code>TRUE ~ NA</code> is a bit like saying “and if it is anything else, make it an NA”.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">q1 =</span> <span class="fu">case_when</span>(</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>      q1 <span class="sc">==</span> <span class="st">"Very Inaccurate"</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>      q1 <span class="sc">==</span> <span class="st">"Moderately Inaccurate"</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>      q1 <span class="sc">==</span> <span class="st">"Neither Accurate nor Inaccurate"</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>      q1 <span class="sc">==</span> <span class="st">"Moderately Accurate"</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>      q1 <span class="sc">==</span> <span class="st">"Very Accurate"</span> <span class="sc">~</span> <span class="dv">5</span>,</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">q1 =</span> <span class="fu">case_when</span>(</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>      q1 <span class="sc">==</span> <span class="st">"Very Inaccurate"</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>      q1 <span class="sc">==</span> <span class="st">"Moderately Inaccurate"</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>      q1 <span class="sc">==</span> <span class="st">"Neither Accurate nor Inaccurate"</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>      q1 <span class="sc">==</span> <span class="st">"Moderately Accurate"</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>      q1 <span class="sc">==</span> <span class="st">"Very Accurate"</span> <span class="sc">~</span> <span class="dv">5</span>,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 76 × 53
      ppt   age height    q1 q2         q3    q4    q5    q6    q7    q8    q9   
@@ -1013,15 +1059,15 @@ To ensure that anything that isn’t one of the 5 valid response options gets to
 <p>The <code>ifelse()</code> and <code>case_when()</code> functions are much more generalised - we can say “if x is 1 make it 1, and if y is 2 make it 0, and if z is …”.</p>
 <p>However, in the task at hand, all of our “if” questions apply to the value of the same variable. The <code>case_match()</code> function is perfectly designed for this:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> </span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">q1 =</span> <span class="fu">case_match</span>(q1, </span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Very Inaccurate"</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Moderately Inaccurate"</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Neither Accurate nor Inaccurate"</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Moderately Accurate"</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Very Accurate"</span> <span class="sc">~</span> <span class="dv">5</span>)</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">q1 =</span> <span class="fu">case_match</span>(q1, </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Very Inaccurate"</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Moderately Inaccurate"</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Neither Accurate nor Inaccurate"</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Moderately Accurate"</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Very Accurate"</span> <span class="sc">~</span> <span class="dv">5</span>)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 76 × 53
      ppt   age height    q1 q2         q3    q4    q5    q6    q7    q8    q9   
@@ -1047,14 +1093,14 @@ To ensure that anything that isn’t one of the 5 valid response options gets to
 </div>
 <p>If we wanted to collapse levels, the syntax works like so:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">q1 =</span> <span class="fu">case_match</span>(q1, </span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">c</span>(<span class="st">"Very Inaccurate"</span>,<span class="st">"Moderately Inaccurate"</span>) <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"Neither Accurate nor Inaccurate"</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">c</span>(<span class="st">"Moderately Accurate"</span>,<span class="st">"Very Accurate"</span>) <span class="sc">~</span> <span class="dv">3</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">q1 =</span> <span class="fu">case_match</span>(q1, </span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">c</span>(<span class="st">"Very Inaccurate"</span>,<span class="st">"Moderately Inaccurate"</span>) <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"Neither Accurate nor Inaccurate"</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">c</span>(<span class="st">"Moderately Accurate"</span>,<span class="st">"Very Accurate"</span>) <span class="sc">~</span> <span class="dv">3</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </div>
@@ -1063,19 +1109,19 @@ To ensure that anything that isn’t one of the 5 valid response options gets to
 <h1>Applying the same operation across variables</h1>
 <p>Now that we know how to recode a variable, what if we want to do it for all 50 questions? We don’t want to do it manually, because that would be hugely inefficient:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> <span class="fu">mutate</span>(</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">q1 =</span> <span class="fu">case_match</span>(q1,</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    ...</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    ..</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    ...</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">q2 =</span> <span class="fu">case_match</span>(q2,</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    ...</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    ..</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    ...</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  ..</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> <span class="fu">mutate</span>(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">q1 =</span> <span class="fu">case_match</span>(q1,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    ..</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">q2 =</span> <span class="fu">case_match</span>(q2,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    ..</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  ..</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>There are various ways to do this, but the two main ones are by utilising <strong>tidyverse</strong>’s <code>across()</code> function, or by using the Base R <code>apply()</code> function.</p>
 <div class="panelset">
@@ -1084,15 +1130,15 @@ To ensure that anything that isn’t one of the 5 valid response options gets to
 <p>The <code>across()</code> function works inside other tidyverse functions like <code>summarise()</code> and <code>mutate()</code>, and allows us to do the same operation across a set of columns.</p>
 <p>The syntax is (with either summarise or mutate):</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(variables, operation))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(variables, operation))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>As an example, suppose i wanted to summarise across the first three variables (<code>ppt</code>,<code>age</code>, and <code>height</code>) and get the mean. We can either specify the column numbers, or a set of names, or use the <code>:</code> to choose all variables between two columns.<br>
 These all do the same:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, mean))</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(ppt,age,height), mean))</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(ppt<span class="sc">:</span>height), mean))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, mean))</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(ppt,age,height), mean))</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">c</span>(ppt<span class="sc">:</span>height), mean))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-layout-align="center">
 <div class="cell-output cell-output-stdout">
@@ -1105,7 +1151,7 @@ These all do the same:</p>
 <p>Note that we get an NA in the mean heights, because there is an NA in the data. So we need to specify that <code>na.rm=TRUE</code> when using the <code>mean()</code> function.<br>
 Unfortunately, this won’t work:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="fu">mean</span>(<span class="at">na.rm=</span>T)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="fu">mean</span>(<span class="at">na.rm=</span>T)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-error">
 <pre><code>Error in `summarise()`:
 ℹ In argument: `across(1:3, mean(na.rm = T))`.
@@ -1115,7 +1161,7 @@ Caused by error in `mean.default()`:
 </div>
 <p>This is because when we open the brackets of <code>mean()</code>, it looks for the object we want to take the mean of. We can pass this through using <code>~</code> and <code>.</code>, like so: (You can kind of read the <code>.</code> as a place-holder for each variable)</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="sc">~</span><span class="fu">mean</span>(<span class="at">x=</span>., <span class="at">na.rm=</span>T)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="sc">~</span><span class="fu">mean</span>(<span class="at">x=</span>., <span class="at">na.rm=</span>T)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 3
     ppt   age height
@@ -1126,15 +1172,15 @@ Caused by error in `mean.default()`:
 <p>Using this syntax, we can apply the recoding we have seen above, but do it for all of the variables from <code>q1</code> to <code>q50</code>. All at once. like magic!<br>
 Note, we’re not summarising here (i.e.&nbsp;we’re not summarising down into a single value, we’re just wanting to mutate the existing variables):</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> </span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(q1<span class="sc">:</span>q50,</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                <span class="sc">~</span><span class="fu">case_match</span>(., </span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Very Inaccurate"</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Moderately Inaccurate"</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Neither Accurate nor Inaccurate"</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Moderately Accurate"</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Very Accurate"</span> <span class="sc">~</span> <span class="dv">5</span>)</span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(q1<span class="sc">:</span>q50,</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>                <span class="sc">~</span><span class="fu">case_match</span>(., </span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Very Inaccurate"</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Moderately Inaccurate"</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Neither Accurate nor Inaccurate"</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Moderately Accurate"</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Very Accurate"</span> <span class="sc">~</span> <span class="dv">5</span>)</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 76 × 53
      ppt   age height    q1    q2    q3    q4    q5    q6    q7    q8    q9
@@ -1165,7 +1211,7 @@ Note, we’re not summarising here (i.e.&nbsp;we’re not summarising down into 
 <p>For <code>apply()</code>, we give it an object like a dataframe, and we give it the dimension that we wish to perform the operation over. If we choose 1, it will do it for each row, and if we choose 2, it will do it for each column.<br>
 So if we want the mean of the first 3 columns:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(survdat[,<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="at">MARGIN=</span><span class="dv">2</span>, <span class="at">FUN=</span>mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(survdat[,<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="at">MARGIN=</span><span class="dv">2</span>, <span class="at">FUN=</span>mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     ppt      age   height 
 38.50000 24.28947       NA </code></pre>
@@ -1173,14 +1219,14 @@ So if we want the mean of the first 3 columns:</p>
 </div>
 <p>Much like with <code>across()</code>, this doesn’t work because <code>mean()</code> now wants x explicitly given:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(survdat[,<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="at">MARGIN=</span><span class="dv">2</span>, <span class="at">FUN=</span><span class="fu">mean</span>(<span class="at">na.rm=</span><span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(survdat[,<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="at">MARGIN=</span><span class="dv">2</span>, <span class="at">FUN=</span><span class="fu">mean</span>(<span class="at">na.rm=</span><span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-error">
 <pre><code>Error in mean.default(na.rm = TRUE): argument "x" is missing, with no default</code></pre>
 </div>
 </div>
 <p>But instead of the <code>~</code> and <code>.</code> stuff in tidyverse, the <code>apply()</code> wants us to explicitly define a little function, using <code>function()</code>.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(survdat[,<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="at">MARGIN=</span><span class="dv">2</span>, <span class="at">FUN=</span><span class="cf">function</span>(x) <span class="fu">mean</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(survdat[,<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="at">MARGIN=</span><span class="dv">2</span>, <span class="at">FUN=</span><span class="cf">function</span>(x) <span class="fu">mean</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      ppt       age    height 
  38.50000  24.28947 169.36000 </code></pre>
@@ -1189,15 +1235,15 @@ So if we want the mean of the first 3 columns:</p>
 <p>(it’s actually just convention that people use <code>function(x)</code>. we could use <code>function(kermit) mean(kermit, na.rm=TRUE)</code> and it would still work!)</p>
 <p>So how do we do the recoding of all our questions? We simply apply a function like <code>case_match()</code> to each column!</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>survdat[,<span class="dv">4</span><span class="sc">:</span><span class="dv">53</span>] <span class="ot">&lt;-</span> <span class="fu">apply</span>(survdat[,<span class="dv">4</span><span class="sc">:</span><span class="dv">53</span>], <span class="at">MARGIN=</span><span class="dv">2</span>, <span class="at">FUN=</span><span class="cf">function</span>(x) </span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">case_match</span>(x, </span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Very Inaccurate"</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Moderately Inaccurate"</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Neither Accurate nor Inaccurate"</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Moderately Accurate"</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Very Accurate"</span> <span class="sc">~</span> <span class="dv">5</span>)</span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>survdat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>survdat[,<span class="dv">4</span><span class="sc">:</span><span class="dv">53</span>] <span class="ot">&lt;-</span> <span class="fu">apply</span>(survdat[,<span class="dv">4</span><span class="sc">:</span><span class="dv">53</span>], <span class="at">MARGIN=</span><span class="dv">2</span>, <span class="at">FUN=</span><span class="cf">function</span>(x) </span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">case_match</span>(x, </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Very Inaccurate"</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Moderately Inaccurate"</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Neither Accurate nor Inaccurate"</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Moderately Accurate"</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Very Accurate"</span> <span class="sc">~</span> <span class="dv">5</span>)</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>survdat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-layout-align="center">
 <div class="cell-output cell-output-stdout">
@@ -1226,7 +1272,7 @@ So if we want the mean of the first 3 columns:</p>
 </section>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1235,30 +1281,30 @@ optional: more complex functions
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>We can also define our custom functions outside of the use of <code>apply()</code>/<code>across()</code>, which can be useful if we have more complex functions.</p>
 <p>For example, we can do the same recoding and <em>then</em> standardise each variable, by explicitly defining a function that does that:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>recodemysurvey <span class="ot">&lt;-</span> <span class="cf">function</span>(question){</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  score <span class="ot">=</span> <span class="fu">case_match</span>(question, </span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Very Inaccurate"</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Moderately Inaccurate"</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Neither Accurate nor Inaccurate"</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Moderately Accurate"</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Very Accurate"</span> <span class="sc">~</span> <span class="dv">5</span>)</span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  score <span class="ot">=</span> (score <span class="sc">-</span> <span class="fu">mean</span>(score, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">/</span> <span class="fu">sd</span>(score, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(score)</span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>recodemysurvey <span class="ot">&lt;-</span> <span class="cf">function</span>(question){</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  score <span class="ot">=</span> <span class="fu">case_match</span>(question, </span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Very Inaccurate"</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Moderately Inaccurate"</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Neither Accurate nor Inaccurate"</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Moderately Accurate"</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Very Accurate"</span> <span class="sc">~</span> <span class="dv">5</span>)</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>  score <span class="ot">=</span> (score <span class="sc">-</span> <span class="fu">mean</span>(score, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">/</span> <span class="fu">sd</span>(score, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(score)</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>And then using that function, either with:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(q1<span class="sc">:</span>q50, recodemysurvey))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(q1<span class="sc">:</span>q50, recodemysurvey))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>or with:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(survdat[,<span class="dv">4</span><span class="sc">:</span><span class="dv">53</span>], <span class="dv">2</span>, recodemysurvey)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(survdat[,<span class="dv">4</span><span class="sc">:</span><span class="dv">53</span>], <span class="dv">2</span>, recodemysurvey)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -1269,8 +1315,8 @@ optional: more complex functions
 <p>It’s very common for questionnaires to have a combination of questions for a construct, some of which are positively phrased and some which are negatively phrased. The idea here is to avoid introducing biases such as a bias to agree more than to disagree.</p>
 <p>Take, for instance, <code>q1</code> and <code>q6</code> in our data, which are both measuring Extraversion:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>datadict <span class="sc">|&gt;</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"q1"</span>,<span class="st">"q6"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>datadict <span class="sc">|&gt;</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variable <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"q1"</span>,<span class="st">"q6"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 2
   variable question                     
@@ -1284,15 +1330,15 @@ optional: more complex functions
 <p>How do we reverse? We want any value of 1 to become 5, any value of 2 to become 4, 3 stays 3, 4 becomes 2, and 5 becomes 1.<br>
 We can just subtract the value from 6!</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="dv">6</span><span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="dv">6</span><span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 5 4 3 2 1</code></pre>
 </div>
 </div>
 <p>So to reverse code <code>q6</code>, we can simply subtract the variable from 6.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> </span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">q6 =</span> <span class="dv">6</span><span class="sc">-</span>q6)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> </span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">q6 =</span> <span class="dv">6</span><span class="sc">-</span>q6)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 76 × 53
      ppt   age height    q1    q2    q3    q4    q5    q6    q7    q8    q9
@@ -1320,8 +1366,8 @@ We can just subtract the value from 6!</p>
 <p>That’s a frustrating set!<br>
 Let’s find a way to capture those. <code>seq(2,38,2)</code> will give us a sequence from 2 to 38 in steps of 2. So that gives us most of them. We can then just combine that with the other ones, and put “q” in front of each one to give us the variable names:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>neg_items <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"q"</span>, <span class="fu">c</span>(<span class="fu">seq</span>(<span class="dv">2</span>,<span class="dv">38</span>,<span class="dv">2</span>),<span class="dv">39</span>,<span class="dv">44</span>,<span class="dv">46</span>,<span class="dv">49</span>))</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>neg_items</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>neg_items <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"q"</span>, <span class="fu">c</span>(<span class="fu">seq</span>(<span class="dv">2</span>,<span class="dv">38</span>,<span class="dv">2</span>),<span class="dv">39</span>,<span class="dv">44</span>,<span class="dv">46</span>,<span class="dv">49</span>))</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>neg_items</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] "q2"  "q4"  "q6"  "q8"  "q10" "q12" "q14" "q16" "q18" "q20" "q22" "q24"
 [13] "q26" "q28" "q30" "q32" "q34" "q36" "q38" "q39" "q44" "q46" "q49"</code></pre>
@@ -1331,8 +1377,8 @@ Let’s find a way to capture those. <code>seq(2,38,2)</code> will give us a seq
 <section id="using-across" class="level4 panel">
 <h4 class="anchored" data-anchor-id="using-across">using <code>across()</code></h4>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> </span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(neg_items),<span class="sc">~</span><span class="dv">6</span><span class="sc">-</span>.))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> </span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(neg_items),<span class="sc">~</span><span class="dv">6</span><span class="sc">-</span>.))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 76 × 53
      ppt   age height    q1    q2    q3    q4    q5    q6    q7    q8    q9
@@ -1360,8 +1406,8 @@ Let’s find a way to capture those. <code>seq(2,38,2)</code> will give us a seq
 <section id="using-apply" class="level4 panel">
 <h4 class="anchored" data-anchor-id="using-apply">using <code>apply()</code></h4>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>survdat[,neg_items] <span class="ot">&lt;-</span> <span class="fu">apply</span>(survdat[,neg_items], <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="dv">6</span><span class="sc">-</span>x)</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>survdat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>survdat[,neg_items] <span class="ot">&lt;-</span> <span class="fu">apply</span>(survdat[,neg_items], <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="dv">6</span><span class="sc">-</span>x)</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>survdat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 76 × 53
      ppt   age height    q1    q2    q3    q4    q5    q6    q7    q8    q9
@@ -1394,12 +1440,12 @@ Let’s find a way to capture those. <code>seq(2,38,2)</code> will give us a seq
 <p>There are handy functions that can do quick row scoring: <code>rowSums()</code> and <code>rowMeans()</code>.</p>
 <p>For instance, to calculate each person’s (each row of our data is a person) sum of the questions 1 to 5, we can use any of:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tidyverse</span></span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> <span class="fu">select</span>(q1<span class="sc">:</span>q5) <span class="sc">|&gt;</span> <span class="fu">rowSums</span>()</span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="co"># indexing:</span></span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rowSums</span>(survdat[,<span class="fu">c</span>(<span class="st">"q1"</span>,<span class="st">"q2"</span>,<span class="st">"q3"</span>,<span class="st">"q4"</span>,<span class="st">"q5"</span>)])</span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="co"># concise indexing</span></span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="fu">rowSums</span>(survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tidyverse</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> <span class="fu">select</span>(q1<span class="sc">:</span>q5) <span class="sc">|&gt;</span> <span class="fu">rowSums</span>()</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="co"># indexing:</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rowSums</span>(survdat[,<span class="fu">c</span>(<span class="st">"q1"</span>,<span class="st">"q2"</span>,<span class="st">"q3"</span>,<span class="st">"q4"</span>,<span class="st">"q5"</span>)])</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a><span class="co"># concise indexing</span></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a><span class="fu">rowSums</span>(survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-layout-align="center">
 <div class="cell-output cell-output-stdout">
@@ -1412,35 +1458,35 @@ Let’s find a way to capture those. <code>seq(2,38,2)</code> will give us a seq
 <p>From the <a href="https://ipip.ori.org/new_ipip-50-item-scale.htm" target="_blank">inventory page of the IPIP</a>, we can see that the questions are ordered such that questions 1, 6, 11, …, all correspond to Extraversion, questions 2, 7, 12, … all correspond to Agreeableness, and so on.</p>
 <p>We can use things like <code>seq()</code> to capture the relevant numbers of each question:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sequence from 1 to 50 in steps of 5</span></span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">50</span>,<span class="dv">5</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sequence from 1 to 50 in steps of 5</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">50</span>,<span class="dv">5</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1]  1  6 11 16 21 26 31 36 41 46</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sequence from 1 to 50 in steps of 5</span></span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">seq</span>(<span class="dv">2</span>,<span class="dv">50</span>,<span class="dv">5</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sequence from 1 to 50 in steps of 5</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">seq</span>(<span class="dv">2</span>,<span class="dv">50</span>,<span class="dv">5</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1]  2  7 12 17 22 27 32 37 42 47</code></pre>
 </div>
 </div>
 <p>Which means we can get the scores for each personality trait using something such as:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>survdat<span class="sc">$</span>extr <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">50</span>,<span class="dv">5</span>))])</span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>survdat<span class="sc">$</span>agree <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="fu">seq</span>(<span class="dv">2</span>,<span class="dv">50</span>,<span class="dv">5</span>))])</span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>survdat<span class="sc">$</span>consc <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="fu">seq</span>(<span class="dv">3</span>,<span class="dv">50</span>,<span class="dv">5</span>))])</span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>survdat<span class="sc">$</span>emot_s <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="fu">seq</span>(<span class="dv">4</span>,<span class="dv">50</span>,<span class="dv">5</span>))])</span>
-<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>survdat<span class="sc">$</span>imagin <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="fu">seq</span>(<span class="dv">5</span>,<span class="dv">50</span>,<span class="dv">5</span>))])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>survdat<span class="sc">$</span>extr <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">50</span>,<span class="dv">5</span>))])</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>survdat<span class="sc">$</span>agree <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="fu">seq</span>(<span class="dv">2</span>,<span class="dv">50</span>,<span class="dv">5</span>))])</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>survdat<span class="sc">$</span>consc <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="fu">seq</span>(<span class="dv">3</span>,<span class="dv">50</span>,<span class="dv">5</span>))])</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>survdat<span class="sc">$</span>emot_s <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="fu">seq</span>(<span class="dv">4</span>,<span class="dv">50</span>,<span class="dv">5</span>))])</span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>survdat<span class="sc">$</span>imagin <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="fu">seq</span>(<span class="dv">5</span>,<span class="dv">50</span>,<span class="dv">5</span>))])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>And we can quickly examine all our scale scores:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> </span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(extr<span class="sc">:</span>imagin) <span class="sc">|&gt;</span></span>
-<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pairs.panels</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> </span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(extr<span class="sc">:</span>imagin) <span class="sc">|&gt;</span></span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pairs.panels</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="00_surveywrangle_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<p><img src="00_surveywrangle_files/figure-html/unnamed-chunk-41-1.png" class="img-fluid figure-img" style="width:80.0%"></p>
 </figure>
 </div>
 </div>
@@ -1450,9 +1496,9 @@ Let’s find a way to capture those. <code>seq(2,38,2)</code> will give us a seq
 <h1>More Rowwise Stuff</h1>
 <p>We can also find out useful information for each row about things like how much missingness there is:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># is.na will turn all NA entries to "TRUE", and all non-missing values to FALSE. </span></span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="co"># then we sum them up across the rows and it will give us how many NAs are in each row, across the 50 questions!  </span></span>
-<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rowSums</span>( <span class="fu">is.na</span>( survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>)] ) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co"># is.na will turn all NA entries to "TRUE", and all non-missing values to FALSE. </span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="co"># then we sum them up across the rows and it will give us how many NAs are in each row, across the 50 questions!  </span></span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rowSums</span>( <span class="fu">is.na</span>( survdat[, <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>)] ) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1] 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0
 [39] 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</code></pre>
@@ -1460,14 +1506,14 @@ Let’s find a way to capture those. <code>seq(2,38,2)</code> will give us a seq
 </div>
 <p>Occasionally, you might find that you want to do row-wise operations that don’t have easy functions like <code>rowSums</code>. In these cases, the tidyverse function <code>rowwise()</code> can be useful in that it applies an operation to one row at a time:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> </span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">|&gt;</span></span>
-<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># find the minimum score given for each row</span></span>
-<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">maxscore =</span> <span class="fu">min</span>(<span class="fu">across</span>(q1<span class="sc">:</span>q50)), </span>
-<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># put the column after the height column</span></span>
-<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">.after =</span> height</span>
-<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>survdat <span class="sc">|&gt;</span> </span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">|&gt;</span></span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># find the minimum score given for each row</span></span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">maxscore =</span> <span class="fu">min</span>(<span class="fu">across</span>(q1<span class="sc">:</span>q50)), </span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># put the column after the height column</span></span>
+<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">.after =</span> height</span>
+<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 76 × 59
 # Rowwise: 
@@ -1495,7 +1541,7 @@ Let’s find a way to capture those. <code>seq(2,38,2)</code> will give us a seq
 <p>Alternatively, <code>apply()</code> to the rescue again!<br>
 <code>MARGIN = 1</code> here applies the operation across rows:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(survdat[,<span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>)], <span class="at">MARGIN =</span> <span class="dv">1</span>, <span class="at">FUN =</span> min)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(survdat[,<span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>)], <span class="at">MARGIN =</span> <span class="dv">1</span>, <span class="at">FUN =</span> min)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> [1]  1  2  1  1  1  1  1  1  1  1 NA  1  1  1 NA  1  1  1  2  1  1  1  1  1  1
 [26]  1  1  1  2 NA  1  1  1  1  1  1  1  1  1  1  2  2  2  2  1  1  1 NA  1  1
