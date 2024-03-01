@@ -1,7 +1,7 @@
 ---
 title: "Week 8 Exercises: CFA"
 params: 
-    SHOW_SOLS: FALSE
+    SHOW_SOLS: TRUE
     TOGGLE: TRUE
 editor_options: 
   chunk_output_type: console
@@ -24,6 +24,7 @@ qcounter <- function(){
   qcounter_i
 }
 library(psych)
+library(semPlot)
 ```
 
 :::frame
@@ -117,14 +118,14 @@ knitr::include_graphics("images/diag_cfa.png")
 :::
 
 
-# conduct problems
+# Conduct Problems 
 
 :::frame
-__Data: Conduct Problems Dataset2__  
+__Data: conduct_problems_2.csv__  
 
-Last week we conducted an exploratory factor analysis of a dataset to try and identify an optimal factor structure for a new measure of conduct (i.e., antisocial behavioural) problems. This week, we'll conduct some confirmatory factor analyses (CFA) of the same inventory. 
+Last week we conducted an exploratory factor analysis of a dataset to try and identify an optimal factor structure for a new measure of conduct (i.e., antisocial behavioural) problems. 
 
-We have administered our measure to a new sample of n=600 adolescents. 
+This week, we'll conduct some confirmatory factor analyses (CFA) of the same inventory to assess the extent to which this 2-factor structure fits an independent sample. To do this, we have administered our measure to a new sample of n=600 adolescents. 
 
 We have re-ordered the questionnaire items to be grouped into the two types of behaviours:
 
@@ -169,6 +170,7 @@ Read in the data. Take a look at the correlation matrix.
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 ```{r}
+library(tidyverse)
 cp2 <- read_csv("https://uoepsy.github.io/data/conduct_problems_2.csv")
 
 cor(cp2)
@@ -233,123 +235,659 @@ mymodel <- "
 2. Estimate the model (other fitting functions include `sem()`, `growth()` and `lavaan()`):
 ```{r}
 #| eval: false
-mymodelfit <- cfa(mymodel, data = mydata)
+myfittedmodel <- cfa(mymodel, data = mydata)
 ```
 3. Examine the fitted model: 
 ```{r}
 #| eval: false
-summary(mymodelfit)
+summary(myfittedmodel)
+```
+
+The output of the `summary()` will show you each estimated parameter in your model. It groups these according to whether they are loadings onto latent variables, covariances, regressions, variances etc.  
+:::
+  
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+library(lavaan)
+cpmod <- "
+  # the non-aggressive problems factor
+  nonagg =~ item1 + item2 + item3 + item4 + item5
+
+  # the aggressive problems factor
+  agg =~ item6 + item7 + item8 + item9 + item10
+
+  # covariance between the two factors
+  # (this is included by default in cfa)
+  agg ~~ nonagg
+"
+
+cpmod.est <- cfa(cpmod, data = cp2)
+
+summary(cpmod.est)
+```
+
+`r solend()`
+
+`r qbegin(qcounter())`
+Latent variable models like CFA come with a whole bucket load of 'fit indices' as metrics of how well our model is reflecting the observed data.  
+
+We can get out these indices by either asking for the most common fit indices to be printed inside all of our summary output:  
+```{r}
+#| eval: false
+summary(myfittedmodel, fit.measures = TRUE)
+```
+Or by asking for _all_ available indices with:
+```{r}
+#| eval: false
+fitmeasures(myfittedmodel)
+# to get just a select few, we can index the desired ones:
+fitmeasures(myfittedmodel)[c("rmsea","srmr","tli","cfi")]
+```
+
+Examine the fit of the 2-factor model of conduct problems to this new sample of 600 adolescents.  
+
+
+::: {.callout-note collapse="true"}
+#### "Model Fit" 
+
+You'll have heard the term "model fit" many times when learning about statistics. However, the exact meaning of the phrase is different for different modelling frameworks.
+
+We can think more generally as "model fit" as asking "how well does our model reproduce the characteristics of the data that we observed?". In things like multiple regression, this has been tied to the question of "how much variance can we explain in outcome $y$ with our set of predictors?"^[or in logistic regression, "what is the likelihood of observing the outcome $y$ given our model parameters?"].  
+
+For methods like CFA, path analysis and SEM, we are working with models that run on covariances matrices, so "model fit" becomes "how well can our model reproduce our observed covariance matrix?".   
+
+:::
+
+::: {.callout-note collapse="true"}
+#### Degrees of Freedom
+
+In regression, we could only talk about model fit if we had more than 2 datapoints. This is because there is only one possible line that we can fit between 2 datapoints, and this line explains _all_ of the variance in the outcome variable (it uses up all our 2 degrees of freedom to estimate 1) the intercept and 2) the slope).   
+
+The logic is the same for model fit in terms of CFA and SEM - we need more degrees of freedom than we have parameters that are estimated. 
+
+The difference is that it is all in terms of our covariance matrix, rather than individual observations. The idea is that we need to be estimating fewer paths (e.g. parameters) than there are variances/covariances in our covariance matrix. This is because if we just fit paths between all our variables, then our model would be able to reproduce the data perfectly (just like a regression with 2 datapoints has an $R^2$ of 1).  
+
+
+The degrees of freedom for methods like CFA, Path and SEM, that are fitted to the covariance matrix of our data, correspond to the number of *knowns* (observed covariances/variances from our sample) minus the number of *unknowns* (parameters to be estimated by the model). 
+
+- **degrees of freedom = number of knowns - number of unknowns**  
+  - number of knowns: how many variances/covariances in our data?  
+  The number of knowns in a covariance matrix of $k$ observed variables is equal to $\frac{k \cdot (k+1)}{2}$.  
+  - number of unknowns: how many parameters is our model estimating?  
+  We can reduce the number of unknowns (thereby getting back a degree of freedom) by fixing parameters to be specific values. *By removing a path altogether, we are fixing it to be zero.*  
+
+A model is only able to be estimated if it has at least 0 degrees of freedom (if there are as many knowns as unknowns). A model with 0 degrees of freedom is termed **just-identified**. An **under-identified** model is one with $<0$ degrees of freedom, and an **over-identified** one has $>0$ degrees of freedom.  
+
+:::
+
+
+::: {.callout-note collapse="true"}
+#### Fit Indices
+
+There are _loads_ of different metrics that people use to examine model fit for CFA and SEM, and there's lots of debate over the various merits and disadvantages as well as the proposed cut-offs to be used with each method.  
+
+The most fundamental test of model fit is a $\chi^2$ test, which reflects the discrepancy between our observed covariance matrix and the *model-implied* covariance matrix. If we denote the population covariance matrix as $\Sigma$ and the model-implied covariance matrix as $\Sigma(\Theta)$, then we can think of the null hypothesis here as $H_0: \Sigma - \Sigma(\Theta) = 0$. In this way our null hypothesis is that our theoretical model is correct (and can therefore perfectly reproduce the covariance matrix), therefore a significant result indicates _poor_ fit. It is very sensitive to departures from normality, as well as sample size (for models with $n>400$, the $\chi^2$ is almost always significant), and can often lead to rejecting otherwise adequate models.  
+
+Alongside this, the main four fit indices that are commonly used are known as RMSEA, SRMR, CFI and TLI. Smaller values of RMSEA and SRMR mean better fit while larger values of CFI and TLI mean better fit.  
+
+**Convention:** if $\textrm{RMSEA} < .05$, $\textrm{SRMR} < .05$, $\textrm{TLI} > .95$ and $\textrm{CFI} > .95$ then the model fits well.  
+
+::: {.callout-caution collapse="true"}
+#### optional: absolute fit indices
+
+```{r}
+#| echo: false
+#| out-width: "100%"
+knitr::include_graphics("images/fitmeas_abs.PNG")
 ```
 
 :::
-  
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+::: {.callout-caution collapse="true"}
+#### optional: incremental fit indices
 
-`r solend()`
+```{r}
+#| echo: false
+#| out-width: "100%"
+knitr::include_graphics("images/fitmeas_inc.PNG")
+```
 
-`r qbegin(qcounter())`
-
-- examine fit
-  - box, df and model fit
-  - box fit measures
-
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-
-`r solend()`
+:::
 
 
-`r qbegin(qcounter())`
-
-- for comparison, fit a 1 factor model and examine fit
-
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-
-`r solend()`
-
-  
-`r qbegin(qcounter())`
-
-- return to 2 factor model. local misfit?
-  - box modindices
-
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-
-`r solend()`
-
-
-`r qbegin(qcounter())`
-semplot sempaths
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-
-`r solend()`
-
-
-`r qbegin(qcounter())`
-
-- write up
-
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-
-`r solend()`
-  
-
-
-
-
-# dimensions of apathy in adolescents
-
-:::frame
-__Dataset: das_SPS.csv__  
-
-
-For numerous inmates, the primary goal of incarceration is rehabilitation, aimed at decreasing the likelihood of repeat offenses. However, several barriers hinder individuals' receptiveness to rehabilitation programs, among them being prisoner apathy - characterized by a lack of interest, motivation, or concern.
-
-
-evaluate the invariance of the dimension of apathy in the prison population
-
-DAS developed on healthy adults, and has been widely used in patients with neurodegenerative diseases. 
-
-here we're interested in the utility of the DAS as a measure of apathy in the prison population.
-
-scale has 3 domains:
-
-executive
-emotional
-behavioural/cognitive initiation
 
 
 :::
 
 
-`r qbegin(qcounter())`
-assess whether the 3 apathy dimensions provide a good fit to the data  
-if they don't, how so?  
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+Our model fits well by all metrics!  
+```{r}
+fitmeasures(cpmod.est)[c("srmr","rmsea","cfi","tli")]
+```
+
+
+`r solend()`
+
+
+`r qbegin(qcounter())`
+Take a look at the loadings of our variables on to the latent factors (these are in the `estimate` column under "Latent Variables" in the `summary()`).  
+
+In EFA, our factor loadings were always <1, because they were _standardised_ loadings (where the factor and item were both standardised to have a variance of 1). Because a latent variable is unobserved, it's actually up to us how we define its scale! 
+In CFA, the default is to make it have the same scale as its first item, which is why the first loading for each factor is exactly 1, and has no standard error associated with it - it's _fixed_, rather than estimated.  
+
+
+::: {.callout-note collapse="true"}
+#### Latent Variable Scaling
+
+in @fig-df1, we can see a the model of a latent factor loading on to 4 items. The number of paths to be estimated here is greater than the number of known covariances. However, we can get around this by *fixing certain parameters to be specific values*. In @fig-df2, the latent factor variance is set at 1, and the residual factor loadings are also set to 1.  
+This has the additional benefit of making our latent factor have some defining features. Because we don't actually measure the latent variable (it is a hypothetical construct), it doesn't really have any intrinsic 'scale'. When we fix the variance to be 1, we are providing some property (its variance) we create a reference from which the other paths to/from the variable are in relation to. A common alternative is to fix the factor loading of the first item to be 1 (see @fig-df3).
+
+```{r}
+#| echo: false
+#| label: fig-df1
+#| fig-cap: "A four item factor structure. There are 10 knowns, but 13 parameters"
+knitr::include_graphics("images/cfa_df1.png")
+```
+
+```{r}
+#| echo: false
+#| label: fig-df2
+#| fig-cap: "A four item factor structure. By fixing 5 of these parameters to be equal to 1, we gain back degrees of freedom and make our model identifiable"
+knitr::include_graphics("images/cfa_df2.png")
+```
+```{r}
+#| echo: false
+#| label: fig-df3
+#| fig-cap: "A four item factor structure. The 'marker method' fixes the first factor loading to be 1, leaving the factor variance free to be estimated."
+knitr::include_graphics("images/cfa_df3.png")
+```
+
+:::
+
+
+
+
+
+Fit the model again, (assign it a new name so we can compare), but this time use:  
+```{r}
+#| eval: false
+cfa(model_syntax, data = ..., std.lv = TRUE)
+```
+
+Do the fit measures such as TLI, CFI, RMSEA, SRMR etc., change at all? 
+Do the loadings change at all? Can you see a link between these loadings and those from the previously fitted model?  
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+Here's our original model:  
+```{r}
+cpmod.est <- cfa(cpmod, data = cp2)
+```
+Here's our model with `std.lv=TRUE`:  
+```{r}
+cpmod.est2 <- cfa(cpmod, data = cp2, std.lv=TRUE)
+```
+
+The fit is identical! This is much like how `lm(y~x)` and `lm(scale(y)~scale(x))` are one and the same model - the difference only comes in the estimates being transformed to be in different scales.  
+```{r}
+fitmeasures(cpmod.est)[c("srmr","rmsea","tli","cfi")]
+fitmeasures(cpmod.est2)[c("srmr","rmsea","tli","cfi")]
+```
+
+The loadings from the model with `std.lv=TRUE` are all <1. 
+```{r}
+#| eval: false
+summary(cpmod.est2)
+```
+```{r}
+#| echo: false
+.pp(summary(cpmod.est2), l=list(0,c(20:35),0))
+```
+
+Taking just the first factor, note that the first loading is 0.673. _Relative to this loading_, the other loadings of 0.819, 0.681, 0.771, 0.915, are all bigger. How much bigger?  
+If we divide each one by that first loading, we get their size relative to that loading - these are the same as our unstandardised loadings!  
+
+$\frac{0.819}{0.673}=1.217$  
+$\frac{0.681}{0.673}=1.012$  
+$\frac{0.771}{0.673}=1.146$  
+$\frac{0.915}{0.673}=1.360$  
+
+
+Note also that we now have _fixed_ values for the variances of the latent factors, which previously were being estimated for us.
+
+In the second model, with `std.lv=TRUE`: 
+```{r}
+#| echo: false
+.pp(summary(cpmod.est2), l=list(0,c(41,42,53:54),0))
+```
+
+And in the first: 
+```{r}
+#| echo: false
+.pp(summary(cpmod.est), l=list(0,c(41,42,53:54),0))
+```
+
+`r solend()`
+
+`r qbegin(paste0(qcounter()," - optional"))`
+We don't actually even have to re-fit the model in order to get out standardised estimates.  
+
+Try doing:  
+
+```{r}
+#| eval: false
+mod.est <- cfa(model_syntax, data = ...)
+summary(mod.est, std=TRUE)
+```
+
+You'll get some extra columns - can you figure out what they are?  
+
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+Back to our original model fit:  
+```{r}
+cpmod.est <- cfa(cpmod, data = cp2)
+```
+
+We get out an extra couple of columns here. 
+One of which we have already seen - the `Std.lv` column contains the same numbers from the previous question. The numbers in the `Std.all` column are similar, but not quite the same.  
+```{r}
+#| eval: false
+summary(mod.est, std=TRUE)
+```
+```{r}
+#| echo: false
+.pp(summary(cpmod.est,std=TRUE), l=list(0,c(20:35),0))
+```
+
+The `Std.lv` column represents when the latent variables are scaled to have a variance of 1, but the measured variables variances are not.  
+The `Std.all` column represents when *both* latent variables *and* measured variable are scaled to have variances of 1.  
+
+This means that if we _first_ standardised all our observed variables manually, and _then_ fitted our model to that data, then the `Std.lv` and `Std.all` columns would be identical.  
+
+
+`r solend()`
+
+`r qbegin(qcounter())`
+Make a diagram of your model, using the standardised factor loadings as labels.  
+
+
+::: {.callout-note collapse="true"}
+#### The semPlot package
+
+For more complex models with latent variables, we will almost always have to make diagrams manually, either in generic presentation software such as powerpoint or google slides, or in specific software such as [TODO semdiag](){target="_blank"}.  
+
+R has a couple of packages which work well enough for some of the more common model structures such as CFA.  
+
+The 
+```{r}
+#| eval: false
+library(semPaths)
+semPlot(myfittedmodel, 
+        what = ?, # line thickness & color by... 
+        whatLabels = ?, # label lines as... 
+        rotation = ? # rotations, +1 = 90degrees
+        )
+```
+
+
+::: {.callout-tip collapse="true"}
+#### optional: handy functionality! 
+
+Occasionally we might want to draw models before we even get the data. __lavaan__ has some useful functionality where you can give it a model formula and ask it to "lavaanify" it into a model object that just hasn't yet been fitted to anything. 
+
+For instance, by setting up a pretend model and "lavaanify-ing" it, we can then make a diagram!  
+```{r}
+pretend_model <- "
+biscuits =~ digestive + oreo + custard_cream + bourbon + crackers
+crisps =~ salt_vinegar + cheese_onion + prawn_cocktail + crackers
+"
+lavaanify(pretend_model) |>
+  semPaths()
+```
+
+:::
+
+:::
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+You can rotate this however you like. Convention is typically to have it downwards but I like it left to right (not sure why!)
+```{r}
+library(semPlot)
+semPaths(cpmod.est, 
+        whatLabels = "std", 
+        rotation = 2)
+```
+The lines from `agg =~ item6` and `nonagg =~ item1` are dotted to indicate that the model was initially fitted with the loading fixed to 1. 
+Because we're showing standardised loadings, we could just use the model when fitted with `std.lv=TRUE` just to stop these dotted lines from appearing: 
+```{r}
+library(semPlot)
+semPaths(cpmod.est2, 
+        whatLabels = "std", 
+        rotation = 2)
+```
+
+
+`r solend()`
+
+
+`r qbegin(qcounter())`
+Make a bullet point list of everything you have done so far, and the resulting conclusions.  
+Then, if you feel like it, turn the bulleted list into written paragraphs, and you'll have a write-up of your analyses!  
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+
+A two-factor model was tested. Items 1-5 loaded on a 'non-aggressive conduct problems' factor and items 6-10 loaded on an 'aggression' factor and these factors were allowed to correlate. Scaling and identification were achieved by fixing the loading of item 1 on the non-aggressive conduct problems factor and item 6 on the aggression factor to 1. The model was estimated using maximum likelihood estimation. The model fit well with CFI=.99, TLI=0.99,  RMSEA=.04, and SRMR=.04 (Hu & Bentler, 1999).  All loadings were statistically significant and >|.3| on the standardised scale. Overall, therefore, a two-factor oblique model was supported for the conduct problems items. The correlation between the factors was $r=.38\,\, (p<.001)$.
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+invisible(summary(cpmod.est, std=TRUE)$pe) |>
+  as_tibble() |>
+  mutate(parameter = paste0(lhs, op, rhs)) |>
+  mutate_if(is.numeric, ~round(.,3)) |>
+  dplyr::transmute(
+    parameter,est,
+    std.est = std.all, se, 
+    z = ifelse(is.na(z),"",z),
+    pvalue = ifelse(is.na(pvalue),"",format.pval(pvalue,eps=.001))) |>
+  knitr::kable()
+```
+
+<!-- Modification indices and expected parameter changes were inspected but no modifications were made because no expected parameter changes were judged large enough to merit the inclusion of additional parameters given that there was little theoretical rationale for their inclusion. -->
+
+
+`r solend()`
+<br>  
+
+# "DOOM" Scrolling 
+
+
+:::frame
+__Dataset: doom.csv__  
+
+The "Domains of Online Obsession Measure" (DOOM) is a fictitious scale that aims to assess the sub types of addictions to online content. It was developed to measure 2 separate domains of online obsession: items 1 to 9 are representative of the "emotional" relationships people have with their internet usage (i.e. how it makes them feel), and items 10 to 15 reflect "practical" relationship (i.e., how it connects or interferes with their day-to-day life). Each item is measured on a 7-point likert scale from "strongly disagree" to "strongly agree".  
+
+We administered this scale to 476 participants in order to assess the validity of the 2 domain structure of the online obsession measure that we obtained during scale development.  
+
+The data are available at [https://uoepsy.github.io/data/doom.csv](https://uoepsy.github.io/data/doom.csv){target="_blank"}, and the table below shows the individual item wordings.  
+
+```{r}
+#| echo: false
+doom <- read_csv("../../data/doom.csv")
+tibble(
+  variable = names(doom),
+  question = c("i just can't stop watching videos of animals",
+"i spend hours scrolling through tutorials but never actually attempt any projects.",
+"cats are my main source of entertainment.",
+"life without the internet would be boring, empty, and joyless",
+"i try to hide how long i’ve been online",
+"i avoid thinking about things by scrolling on the internet",
+"everything i see online is either sad or terrifying",
+"all the negative stuff online makes me feel better about my own life",
+"i feel better the more 'likes' i receive",
+"most of my time online is spent communicating with others",
+"my work suffers because of the amount of time i spend online",
+"i spend a lot of time online for work",
+"i check my emails very regularly",
+"others in my life complain about the amount of time i spend online",
+"i neglect household chores to spend more time online")
+) |> gt::gt()
+```
+
+:::
+
+`r qbegin(qcounter())`
+Assess whether the 2 domain model of online obsession provides a good fit to the validation sample of 476 participants.   
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+From the visual of the correlation matrix, you can see the vague outline of two groups of items correlations. Note there's a little overlap.. 
+```{r}
+doom <- read_csv("../../data/doom.csv")
+ggcorrplot(cor(doom))
+```
+
+first we write our model: 
+```{r}
+moddoom <- "
+# emotional domain
+emot =~ item_1 + item_2 + item_3 + item_4 + item_5 + item_6 + item_7 + item_8 + item_9
+# practical domain
+pract =~ item_10 + item_11 + item_13 + item_14 + item_15
+# correlated domains (will be estimated by default)
+emot ~~ pract
+"
+```
+Then we fit it to the data:  
+```{r}
+moddoom.est <- cfa(moddoom, data = doom)
+```
+Then we inspect that fitted model object.   
+I'm just going to extract the fit indices here first.  
+```{r}
+fitmeasures(moddoom.est)[c("rmsea","srmr","cfi","tli")]
+```
+Uh-oh.. they don't look great. 
 
 `r solend()`
 
 
 
-
-
-
-
 `r qbegin(qcounter())`
-Explore potential sources of model misspecification or methodological limitations that may affect the interpretation of the factor structure. Consider factors such as item wording, response scale, sample characteristics, and cultural differences that could influence respondents' interpretations and responses to the measurement items. Discuss strategies for addressing or mitigating these sources of bias or error in future research.
+Are there any areas of local misfit (certain parameters that are not in the model (and are therefore fixed to zero) but that could improve model fit _if they were_ estimated?).  
+
+::: {.callout-note collapse="true"}
+#### modification indices
+
+When a factor structure does not fit well, we can either start over and go back to doing EFA, deciding on an appropriate factor structure, on whether we should drop certain items, etc. The downside of this is that we essentially result in _another_ version of the scale, and before we know it, we have 10 versions of the same measure floating around, in a perpetual state of scale-development. 
+Alternatively, we can see if it is possible to minimally adjust our model based on areas of local misfit in order to see if our global fit improves. Note that this would still be in a sense _exploratory,_ and we should be very clear when writing up about the process that we undertook. We should also avoid just shoving any parameter in that might make it fit better - we should let common sense and theoretical knowledge support any adjustments we make.  
+
+The `modindices()` function takes a fitted model object from __lavaan__ and provides a table of all the possible additional parameters we _could_ estimate.  
+
+The output is table, which we can ask to be sorted according to the `mi` column using `sort = TRUE`.  
+
+```{r}
+#| eval: false
+modindices(myfittedmodel, sort = TRUE)
+```
+```
+      lhs op    rhs     mi    epc sepc.lv sepc.all sepc.nox
+72  item6 ~~ item10 10.747  0.082   0.082    0.144    0.144
+25 fact1  =~  item7  8.106  0.119   0.080    0.080    0.080
+65  item5 ~~  item7  6.720  0.039   0.039    0.160    0.160
+71  item6 ~~  item9  6.675 -0.065  -0.065   -0.115   -0.115
+.   ...   .   ...    ...    ...     ...      ...      ...
+```
+
+The columns show:  
+
+| `lhs`,`op`,`rhs`  | `mi`  | `epc` | `sepc.lv`, `sepc.all`,`sepc.nox`    |
+| --------------------- | ----------------------- | --------------------- | --------------------- |
+| these three columns show the specific parameter, in lavaan syntax. So `fact1 =~ item7` is for the possible inclusion of `item7` being loaded on to the latent variable `fact1`. `item6 ~~ item10` is for the inclusion of a covariance between `item6` and `item10`, and so on. | "modification index" = the change in the model $\chi^2$ value _were we to include this parameter in the model_ | "expected parameter change" = the estimated value that the parameter _would take were it included in the model_ | these provide the `epc` values but scaled to when a) the latent variables are standardised, b) all variables are standardised, and c) all except exogenous observed variables are standardised (not relevant for CFA) |
+
+
+Often, the `sepc.all`is a useful column to look at, because it shows the proposed parameter estimate in a standardised metric. i.e. if the `op` is `~~`, then the `sepc.all` value is a correlation, and so we can consider anything <.2/.3ish to be quite small. If `op` is `=~`, then the `sepc.all` value is a standardised factor loading, so values >.3 or >.4 are worth thinking about, and so on. 
+:::
+
+
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+I'm printing out just the `head()`, so that I can look at the few parameters with the greatest modification indices.  
+The top three parameters jump out immediately to me.  
+`item_1` and `item_3` have a suggested correlation of c0.5, as do `item_7` and `item_8`. In addition, it's suggested that including a loading (estimated to be about 0.6) from `item_10` to the `emot` factor would improve the model fit.
+```{r}
+modindices(moddoom.est, sort=TRUE) |>
+  head()
+```
 
 `r solend()`
 
 
-Discuss the practical implications of the findings for psychological assessment and measurement. Consider how the results of the confirmatory factor analysis inform our understanding of the latent constructs being assessed and their relevance for theory development, clinical practice, or intervention design. Highlight any implications for future research directions or the refinement of measurement instruments based on the analysis results.
+`r qbegin(qcounter())`
+Looking carefully at the item wordings, decide on whether any adjustments suggested by their modification indices make sense.  
+If any do, then add these to your model and re-fit it. Does this new model fit well?  
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+There are three main proposed adjustments from our initial model:  
+
+1. `item_1 ~~ item_3`. These questions are both about animals. It would make sense that these are related over and above the underlying "emotional internet usage" factor. 
+2. `item_7 ~~ item_8`. These are both about viewing negative content online, so it makes sense here that they would be related beyond the 'emotional' factor. 
+
+3. `emot =~ item_10`. This item is about communicating with others. It currently loads highly on the `pract` factor too. It maybe makes sense here that "communicating with others" will capture both a practical element of internet useage _and_ an emotional one. 
+
+
+Putting them all in at once could be a mistake - if we added in `emot =~ item_10`, then we change slightly the underlying construct of the `emot` factor, meaning it might make other suggested modifications (`item_7 ~~ item_8`) less important. It's a bit like [Whac-A-Mole](https://en.wikipedia.org/wiki/Whac-A-Mole){target="_blank"}!  
+
+Let's adjust our model:  
+```{r}
+moddoom2 <- "
+# emotional domain
+emot =~ item_1 + item_2 + item_3 + item_4 + item_5 + item_6 + item_7 + item_8 + item_9 + item_10
+# practical domain
+pract =~ item_10 + item_11 + item_13 + item_14 + item_15
+# correlated domains (will be estimated by default)
+emot ~~ pract
+"
+```
+Then fit it to the data:  
+```{r}
+moddoom2.est <- cfa(moddoom2, data = doom)
+
+fitmeasures(moddoom2.est)[c("rmsea","srmr","cfi","tli")]
+```
+
+The fit is still not great, and the same suggested correlations are present in modification indices:  
+```{r}
+modindices(moddoom2.est, sort=TRUE) |>
+  head()
+```
+
+Let's go ahead and put the covariance between `item_1` and `item_3` in. I personally went for this first because they seem more similar to me than `item_7` and `item_8` do. 
+
+```{r}
+moddoom3 <- "
+# emotional domain
+emot =~ item_1 + item_2 + item_3 + item_4 + item_5 + item_6 + item_7 + item_8 + item_9 + item_10
+# practical domain
+pract =~ item_10 + item_11 + item_13 + item_14 + item_15
+# correlated domains (will be estimated by default)
+emot ~~ pract
+item_1 ~~ item_3
+"
+
+moddoom3.est <- cfa(moddoom3, data = doom)
+
+fitmeasures(moddoom3.est)[c("rmsea","srmr","cfi","tli")]
+```
+
+Whoop! It fits well! It may well be that if we inspect modification indices again, we still see that `item_1 ~~ item_3` would improve our model fit. The thing to remember however, is that we could simply keep adding parameters until we run out of degrees of freedom, and our model would "fit better". But such a model would not be useful. It would not generalise well, becaue it runs the risk of being overfitted to the nuances of this specific sample.
+
+`r solend()`
+
+`r qbegin(qcounter())`
+Construct a diagram of your model. 
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+semPaths(moddoom3.est, whatLabels = "std", 
+         rotation = 2)
+```
+
+`r solend()`
+<br>
+
+# Dimensions of Apathy  
+
+:::frame
+__Dataset: radakovic_das.csv__  
+
+The "Dimensions of Apathy" Scale is a measure of ... blah balah
+
+
+:::
+
+`r qbegin(qcounter())`
+Read in the data. 
+It will need a little bit of tidying before we can get to fitting a CFA.  
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+rdas <- read_csv("../../data/radakovic_das.csv")
+head(rdas)
+```
+
+variable names
+```{r}
+rdas_dict <- tibble(
+  variable = paste0("q",1:24),
+  item = names(rdas)
+)
+head(rdas_dict)
+
+names(rdas) <- paste0("q", 1:24)
+```
+
+recode.  
+```{r}
+rdas <- rdas |> 
+  mutate(across(q1:q24, ~case_match(.,
+    "Never" ~ 1,
+    "Hardly Ever" ~ 2,
+    "Occasionally" ~ 3,
+    "Often" ~ 4,
+    "Almost Always" ~ 5,
+    "Always" ~ 6
+  )))
+```
+
+complete cases
+```{r}
+rdasc <- na.omit(rdas)
+```
+
+`r solend()`
+
+
+`r qbegin(qcounter())`
+Assess! 
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+dasmod = "
+Em =~ q1 + q6 + q10 + q11 + q17 + q19 + q23
+Ex =~ q3 + q5 + q7 + q9 + q12 + q15 + q20 + q24
+BCI =~ q2 + q4 + q8 + q13 + q14 + q16 + q18 + q22
+Em ~~ Ex
+Em ~~ BCI
+Ex ~~ BCI
+"
+dasmod.est = cfa(dasmod, rdasc)
+fitmeasures(dasmod.est)[c("srmr","rmsea","tli","cfi")]
+modindices(dasmod.est, sort=TRUE) |> head()
+
+rdas_dict[c(3,6),]
+rdas_dict[c(1,9),]
+```
+
+
+`r solend()`
+
 
 
 

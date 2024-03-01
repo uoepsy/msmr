@@ -50,6 +50,33 @@ Because it's often important to keep track of what each question actually asks, 
 
 In our data, we have variables called `ppt`, `age` and `height`, and then 50 variables corresponding to 50 different questions.  
 What I plan to do is rename them to `ppt`,`age`,`height`,`q1`, `q2`, ..., `q50`.  
+
+
+::: {.callout-tip collapse="true"}
+#### what do `paste()/paste0()` do?   
+
+The `paste` functions allow us to simply "paste" characters together:  
+By default, `paste()` will separate these with a space:  
+```{r}
+paste("i have a dog called", "dougal")
+```
+and `paste0()` will not separate them by anything:
+```{r}
+paste0("i have a dog called", "dougal")
+```
+
+We can paste the same thing to a set of things: 
+```{r}
+paste("i have a dog called", c("dougal", "rufus","rosie"))
+```
+Which can be useful for quickly making a set of variable names: 
+```{r}
+paste0("item_",1:10)
+```
+
+:::
+
+
 ```{r}
 datadict <- 
   tibble(
