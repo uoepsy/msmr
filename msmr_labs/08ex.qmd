@@ -749,26 +749,27 @@ modindices(moddoom.est, sort=TRUE) |>
 
 
 `r qbegin(qcounter())`
-Looking carefully at the item wordings, decide on whether any adjustments suggested by their modification indices make sense.  
+__Beware:__ there's a slightly blurred line here that we're about to step over, and move from confirmatory back to 'exploratory'.  
 
-If any do, then add these to your model and re-fit it. Does this new model fit well?  
+Look carefully at the item wordings,do any of the suggested modifications make theoretical sense? Add them to the model and re-fit it. Does this new model fit well?  
 
+::: {.callout-caution collapse="true"}
+#### model modifications are exploratory!!
 
-::: {.callout-tip collapse="true"}
-#### What's the aim here?  
+It's likely you will have to make a couple of modifications in order to obtain a model that fits well to this data.  
 
-It's likely you will have to make a couple of modifications in order to obtain a model that fits well to this data. 
+__BUT...__ we could simply keep adding suggested parameters to our model and we will eventually end up with a perfectly fitting model.  
 
-It's very important to think critically here about _why_ such modifications may be necessary. Making adjustments to the model could simply mean that the underlying structure of "online obsession" differs in this population from the one for which it was developed. This is called "non-invariance"^[it's almost like people make up terms like this _just_ to confuse us!] - and there are lots of studies looking at how the measurement model of a psychological construct varies cross-culturally, or varies with age (e.g., "anxiety" probably has a different structure when you are a child from when you are a teenager, and from when you are an adult, and so on).  
+It's very important to think critically here about _why_ such modifications may be necessary. 
 
-Alternatively, it could just be that our initial scale is not very appropriate for the current use. This could be because it was developed long ago, and the factor structure has since changed (e.g., "online obsession" is probably very different from what it was 20 years ago). Or it could be that the sample data for which it was developed were not very representative of the population of interest.
+- The initial model may have failed to capture the complexity of the underlying relationships among variables. For instance, suggested residual covariances, representing unexplained covariation among observed variables, may indicate misspecification in the initial model. 
+- The structure of the construct is genuinely different in your population from the initial one in which the scale is developed (this could be a research question in and of itself - i.e. does the structure of "anxiety" differ as people age, or differ between cultures?)
 
-In these cases, the adjustments you make to the model are of key interest. For instance, seeing how an 'anxiety' measurement model varies as people age helps us to think about how 'anxiety' might be differing across age, and how best to measure it for young and old people. 
-
-Additionally, and this is likely in the case of the "DOOM" scale, it _could_ be that that the person who made the items (ahem, me) doesn't really know anything about the construct they are talking about, and didn't put much care into constructing the items!  
+Modifications to a CFA model should be made judiciously, with careful consideration of theory as well as quantitative metrics. The goal is to develop a model that accurately represents the underlying structure of the data while maintaining theoretical coherence and generalizability.  
 
 :::
 
+In this case, the likely reason for the poor fit of the "DOOM" scale, is that the person who made the items (ahem, me) doesn't really know anything about the construct they are talking about, and didn't put much care into constructing the items!  
 
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
@@ -826,18 +827,6 @@ fitmeasures(moddoom3.est)[c("rmsea","srmr","cfi","tli")]
 ```
 
 Whoop! It fits well! It may well be that if we inspect modification indices again, we still see that `item_1 ~~ item_3` would improve our model fit. The thing to remember however, is that we could simply keep adding parameters until we run out of degrees of freedom, and our model would "fit better". But such a model would not be useful. It would not generalise well, becaue it runs the risk of being overfitted to the nuances of this specific sample.
-
-`r solend()`
-
-`r qbegin(qcounter())`
-Construct a diagram of your model. 
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-
-```{r}
-semPaths(moddoom3.est, whatLabels = "std", 
-         rotation = 2)
-```
 
 `r solend()`
 <br>
