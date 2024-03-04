@@ -60,12 +60,17 @@ knitr::include_graphics("images/semdiag.png")
 ::: {.callout-note collapse="true"}
 #### PCA as a diagram
 
-PCA represented as a diagram. Note that the idea of a 'composite' requires us to use a special shape (the hexagon), but many people would just use a square.
+__Used for:__  
+Reducing from a lot of correlated variables down to a smaller set of orthogonal (uncorrelated) components that capture a substantial amount of the variance. The components we get out are a bit like "composites" - they are a weighted sum of the original variables, and can be useful in subsequent analyses. For instance, if you have 20 predictors in a linear regression model that are highly correlated with one another (remember multicollinearity?), you might be able to instead use a small number of orthogonal components! 
+
+__As a diagram__  
+Note that the idea of a 'composite' requires us to use a special shape (the hexagon), but many people would just use a square.
 ```{r}
 #| echo: false
 #| out-width: "100%"
 knitr::include_graphics("images/diag_pca.png")
 ```
+
 
 
 ::: {.callout-caution collapse="true"}
@@ -85,6 +90,10 @@ knitr::include_graphics("images/diag_pca2.png")
 ::: {.callout-note collapse="true"}
 #### EFA as a diagram
 
+__Used for:__  
+EFA is generally used with the aim of understanding the underlying constructs or latent variables that may be driving observed patterns of responses or behaviors. Often used in construction of questionnaires, scale development, and in the initial stages of developing theoretical frameworks.  
+
+__As a diagram__  
 Exploratory Factor Analysis as a diagram has arrows going from the factors to the observed variables. Unlike PCA, we also have 'uniqueness' factors for each variable, representing the various stray causes that are specific to each variable. Sometimes, these uniqueness are represented by an arrow only, but they are technically themselves latent variables, and so can be drawn as circles. 
 
 ```{r}
@@ -105,6 +114,10 @@ knitr::include_graphics("images/diag_efa2.png")
 ::: {.callout-note collapse="true"}
 #### CFA as a diagram
 
+__Used for:__  
+CFA is a method that allows us to assess the validity of a hypothesized factor structure (or to compare competing hypothesized structures). Typically factor structures fitted are ones that have been proposed based on theory or on previous research. 
+
+__As a diagram__  
 The diagram for a Confirmatory Factor Analysis model looks very similar to that of an exploratory factor analysis, but we now have the explicit absence of some arrows - i.e. a variable loads on to a specific factor (or factor**s** - we can have a variable that loads on multiple), and **not** on others.  
 
 Note that this is a change from the 'exploratory' nature of EFA, to a situation in which we are explicitly imposing a theoretical model on the data.  
@@ -185,7 +198,7 @@ ggcorrplot(cor(cp2))
 `r solend()`
 
 `r qbegin(qcounter())`
-Fit a 2 factor model in __lavaan__.  
+Fit the proposed 2 factor model in __lavaan__.  
 
 
 ::: {.callout-note collapse="true"}
@@ -473,7 +486,7 @@ And in the first:
 
 `r solend()`
 
-`r qbegin(paste0(qcounter()," - optional"))`
+`r qbegin(paste("Optional",qcounter()))`
 We don't actually even have to re-fit the model in order to get out standardised estimates.  
 
 Try doing:  
@@ -737,7 +750,26 @@ modindices(moddoom.est, sort=TRUE) |>
 
 `r qbegin(qcounter())`
 Looking carefully at the item wordings, decide on whether any adjustments suggested by their modification indices make sense.  
+
 If any do, then add these to your model and re-fit it. Does this new model fit well?  
+
+
+::: {.callout-tip collapse="true"}
+#### What's the aim here?  
+
+It's likely you will have to make a couple of modifications in order to obtain a model that fits well to this data. 
+
+It's very important to think critically here about _why_ such modifications may be necessary. Making adjustments to the model could simply mean that the underlying structure of "online obsession" differs in this population from the one for which it was developed. This is called "non-invariance"^[it's almost like people make up terms like this _just_ to confuse us!] - and there are lots of studies looking at how the measurement model of a psychological construct varies cross-culturally, or varies with age (e.g., "anxiety" probably has a different structure when you are a child from when you are a teenager, and from when you are an adult, and so on).  
+
+Alternatively, it could just be that our initial scale is not very appropriate for the current use. This could be because it was developed long ago, and the factor structure has since changed (e.g., "online obsession" is probably very different from what it was 20 years ago). Or it could be that the sample data for which it was developed were not very representative of the population of interest.
+
+In these cases, the adjustments you make to the model are of key interest. For instance, seeing how an 'anxiety' measurement model varies as people age helps us to think about how 'anxiety' might be differing across age, and how best to measure it for young and old people. 
+
+Additionally, and this is likely in the case of the "DOOM" scale, it _could_ be that that the person who made the items (ahem, me) doesn't really know anything about the construct they are talking about, and didn't put much care into constructing the items!  
+
+:::
+
+
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 
@@ -749,7 +781,7 @@ There are three main proposed adjustments from our initial model:
 3. `emot =~ item_10`. This item is about communicating with others. It currently loads highly on the `pract` factor too. It maybe makes sense here that "communicating with others" will capture both a practical element of internet useage _and_ an emotional one. 
 
 
-Putting them all in at once could be a mistake - if we added in `emot =~ item_10`, then we change slightly the underlying construct of the `emot` factor, meaning it might make other suggested modifications (`item_7 ~~ item_8`) less important. It's a bit like [Whac-A-Mole](https://en.wikipedia.org/wiki/Whac-A-Mole){target="_blank"}!  
+Putting them all in at once could be a mistake - if we added in `emot =~ item_10`, then we change slightly the underlying construct of the `emot` factor, meaning it might make other suggested modifications (`item_7 ~~ item_8`) less important. It's a bit like [Whac-A-Mole](https://en.wikipedia.org/wiki/Whac-A-Mole){target="_blank"} - you make one modification and then a whole new area of misfits appears!  
 
 Let's adjust our model:  
 ```{r}
@@ -810,13 +842,53 @@ semPaths(moddoom3.est, whatLabels = "std",
 `r solend()`
 <br>
 
-# Dimensions of Apathy  
+# Optional Extra Exercises for the Enthusiastic
 
 :::frame
 __Dataset: radakovic_das.csv__  
 
-The "Dimensions of Apathy" Scale is a measure of ... blah balah
+Apathy is lack of motivation towards goal-directed behaviours. It is pervasive in a majority of psychiatric and neurological diseases, and impacts everyday life. Traditionally, apathy has been measured as a one-dimensional construct but is in fact composed of different types of demotivation.
 
+Dimensional Apathy Scale (DAS)
+The Dimensional Apathy Scale (DAS) is a multidimensional assessment for demotivation, in which 3 subtypes of apathy are assessed:  
+
+- **Executive:** lack of motivation for planning, attention or organisation
+- **Emotional:** lack of emotional motivation (indifference, affective or emotional neutrality, flatness or blunting)
+- **Initiation:** lack of motivation for self-generation of thoughts and/or actions
+
+The DAS measures these subtypes of apathy and allows for quick and easy assessment, through self-assessment, observations by informants/carers or administration by researchers or healthcare professionals.  
+
+You can find data for the DAS when administered to 250 healthy adults at [https://uoepsy.github.io/radakovic_das.R](https://uoepsy.github.io/radakovic_das.R){target="_blank"}, and information on the items is below.  
+
+::: {.callout-note collapse="true"}
+#### DAS Dictionary
+
+All items are measured on a 6-point Likert scale of Always (0), Almost Always (1), Often (2), Occasionally (3), Hardly Ever (4), and Never (5). Certain items (indicated in the table below with a `-` direction) are reverse scored to ensure that higher scores indicate greater levels of apathy. 
+
+```{r}
+#| echo: false
+qnames = c("I need a bit of encouragement to get things started","I contact my friends","I express my emotions","I think of new things to do during the day","I am concerned about how my family feel","I find myself staring in to space","Before I do something I think about how others would feel about it","I plan my days activities in advance","When I receive bad news I feel bad about it","I am unable to focus on a task until it is finished","I lack motivation","I struggle to empathise with other people","I set goals for myself","I try new things","I am unconcerned about how others feel about my behaviour","I act on things I have thought about during the day","When doing a demanding task, I have difficulty working out what I have to do","I keep myself busy","I get easily confused when doing several things at once","I become emotional easily when watching something happy or sad on TV","I find it difficult to keep my mind on things","I am spontaneous","I am easily distracted","I feel indifferent to what is going on around me")
+revitems = c(10,3,5,7,9,20,2,4,8,13,14,16,18,22)
+Exitems = c(1,6,10,11,17,19,21,23)
+Emitems = c(3,5,7,9,12,15,20,24)
+BCIitems = c(2,4,8,13,14,16,18,22)
+
+tibble(
+  item = 1:24,
+  direction = case_when(
+    item %in% revitems ~ "-",
+    TRUE ~ "+"
+  ),
+  dimension = case_when(
+    item %in% Exitems ~ "Executive",
+    item %in% Emitems ~ "Emotional",
+    item %in% BCIitems ~ "Initiation"
+  ),
+  question = qnames
+) |> gt::gt()
+```
+
+:::
 
 :::
 
@@ -826,50 +898,100 @@ It will need a little bit of tidying before we can get to fitting a CFA.
 If you haven't already, check out the page on [Data Wrangling for Surveys & Questionnaires](00_surveywrangle.html){target="_blank"}.  
 
 `r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+`r solbegin(show=TRUE, label="1 - Read and check", slabel=FALSE, toggle=params$TOGGLE)`
 
+First let's just read in the dataset:
 ```{r}
 rdas <- read_csv("../../data/radakovic_das.csv")
 head(rdas)
 ```
 
-variable names
+The names we're getting are useful in that they show the items, but they're horrible to have to use in R, so we will ideally replace them with easy to use names. 
+Note also that the data is being read in as the actual response option - e.g., "Almost Always" - and we want to treat these as a numeric scale. So those will have to change too.  
+
+`r solend()`
+`r solbegin(show=TRUE, label="2 - Renaming variables", slabel=FALSE, toggle=params$TOGGLE)`
+
+I like to make a "data dictionary" whenever I get data like this. While I want to rename the variables to make it easier for me to use, I also want to keep track of what the questions were.  
+Here I make a "tibble" (the function `data.frame()` would work too, tibble is just tidyverse version). I indicate what I am going to rename things as ("q1","q2", ..., "q24"), and then I have the current names of the variables
 ```{r}
 rdas_dict <- tibble(
   variable = paste0("q",1:24),
   item = names(rdas)
 )
-head(rdas_dict)
+```
 
+Doing this is really useful because I can't keep track in my head of what "q5" was.  
+If I want to know, then I can just do: 
+```{r}
+rdas_dict[5,]
+```
+
+Now let's actually change the names in our data to what we said we would:  
+```{r}
 names(rdas) <- paste0("q", 1:24)
 ```
 
-recode.  
+`r solend()`
+`r solbegin(show=TRUE, label="3 - Recoding responses", slabel=FALSE, toggle=params$TOGGLE)`
+
+Okay, so we have all our data in words, not numbers. Views on how to treat Likert data are mixed, but it's very common to treat it as continuous in Psychology.  
+
+Let's check the response values we have. Just in question 1 for now:  
+```{r}
+unique(rdas$q1)
+```
+
+A little trick that we can use to find the unique values in an entire dataset is to quickly convert the dataframe into one big long vector. Technically, a dataframe is a "list of vectors", and the function `unlist()` will remove this structure.  
+So we can find all the unique values in all the questions with:  
+```{r}
+unique(unlist(rdas))
+```
+
+Perfect. So we know we have uniformity of spelling. It happens less often these days as questionnaire software is improving, but you might occasionally encounter typos in _some_ of the questions, or things with and without capital letters (R is a bit thick, and doesn't recognise that "Often" and "often" are the same thing).  
+Note that we have the 6 responses that we would expect given the description of the scale, but we also have some `NA` values, and some `[NO ENTRY]` values. Not sure how those got there.  
+We want to turn each "Always" in to 0, each "Almost Always" in to 1, "Often" in to 2, and so on. If we simply leave out the "[NO ENTRY]", then this will be turned into a missing value `NA`, which is handy.  
+
 ```{r}
 rdas <- rdas |> 
   mutate(across(q1:q24, ~case_match(.,
-    "Never" ~ 1,
-    "Hardly Ever" ~ 2,
+    "Always" ~ 0,
+    "Almost Always" ~ 1,
+    "Often" ~ 2,
     "Occasionally" ~ 3,
-    "Often" ~ 4,
-    "Almost Always" ~ 5,
-    "Always" ~ 6
+    "Hardly Ever" ~ 4,
+    "Never" ~ 5
   )))
+head(rdas)
 ```
 
-complete cases
+`r solend()`
+`r solbegin(show=TRUE, label="4 - Removing missingness", slabel=FALSE, toggle=params$TOGGLE)`
+
+We haven't learned about more sophisticated methods of handling missing data, so for now we will just remove any rows in which there is missingness - i.e., we'll do "listwise deletion":  
+
 ```{r}
-rdasc <- na.omit(rdas)
+compl_rdas <- na.omit(rdas)
 ```
 
 `r solend()`
 
 
 `r qbegin(qcounter())`
-Assess! 
+How well does the 3-dimensional model of apathy fit to this dataset?  
+
+
+::: {.callout-tip collapse="true"}
+#### Hints
+
+You'll have to use the data dictionary to figure out which items are associated with with dimensions.  
+
+:::
+
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-
+Here is the model structure, according to the list of items in the dictionary.  
+I'm calling my factors "Em", "Ex", and "BCI" for "emotional", "executive" and "behavioural/cognitive initiation" respectively. The factor correlations will be estimated by default, but I like to write things explicitly. 
 ```{r}
 dasmod = "
 Em =~ q1 + q6 + q10 + q11 + q17 + q19 + q23
@@ -879,17 +1001,100 @@ Em ~~ Ex
 Em ~~ BCI
 Ex ~~ BCI
 "
-dasmod.est = cfa(dasmod, rdasc)
-fitmeasures(dasmod.est)[c("srmr","rmsea","tli","cfi")]
-modindices(dasmod.est, sort=TRUE) |> head()
+```
 
+Let's fit the model!  
+```{r}
+dasmod.est = cfa(dasmod, compl_rdas)
+```
+
+And examine the global fit: 
+```{r}
+fitmeasures(dasmod.est)[c("srmr","rmsea","tli","cfi")]
+```
+
+All looks pretty good! Cut-offs for SRMR tend to vary, with some using <0.08, or <0.09, and some being stricter with <0.05. Remember, these criteria are somewhat arbitrary.  
+
+Modification indices suggest a whole bunch of items that could have some associations beyond that modelled in the factors, but these are all weak correlations at around 0.2.  
+```{r}
+modindices(dasmod.est, sort=TRUE) |> head()
+```
+
+These are the top 3 being suggested. I can't see any obvious link between any of these that would make me think they are related beyond their measuring of 'apathy'.  
+```{r}
 rdas_dict[c(3,6),]
 rdas_dict[c(1,9),]
+rdas_dict[c(19,20),]
+```
+
+`r solend()`
+
+`r qbegin(qcounter())`
+Much like for EFA, we can estimate individuals' scores on the latent factors. In lavaan, the function `lavPredict()` will get us some estimates.  
+
+However, for a clinician administering the DAS to a patient, this option is not available. Instead, it is common that scores on the individual items associated with a given factor are used to create a sum score or a mean score which can be used in a practical setting (e.g., scores above a given threshold might indicate cause for concern).  
+
+Calculate sum scores for each of the dimensions of apathy. 
+
+
+::: {.callout-tip collapse="true"}
+#### Hints
+
+You'll need to reverse some items first! See [Data Wrangling for Surveys #reverse-coding](00_surveywrangle.html#reverse-coding){target="_blank"}.  
+
+:::
+
+`r qend()`
+`r solbegin(show=TRUE, label="1 - Reversing items", slabel=FALSE, toggle=params$TOGGLE)`
+
+According to the table of items, the ones which need to be reverse scored are:  
+```{r}
+reversed <- c(2,3,4,5,7,8,9,10,13,14,16,18,20,22)
+```
+
+For these items, we want 5s to become 0s, 4s become 1s, and so on.. 
+```{r}
+compl_rdas[, reversed] <- apply(
+  compl_rdas[, reversed], MARGIN = 2, function(x) 5-x)
+```
+
+__Note:__ The above code works nicely because our dataset is currently ordered such that the first column is item 1, 2nd column is item 2, and so on. This means we can use _numbers_ to index the appropriate variables, rather than _names_. It would need adjusting if, for instance, our first column contained "participant ID", and our items only began later.  
+
+
+`r solend()`
+`r solbegin(show=TRUE, label="2 - Sum Scoring", slabel=FALSE, toggle=params$TOGGLE)`
+
+Here are the sets of items associated with each dimension: 
+```{r}
+Exitems <- c(1,6,10,11,17,19,21,23)
+Emitems <- c(3,5,7,9,12,15,20,24)
+BCIitems <- c(2,4,8,13,14,16,18,22)
+```
+
+Again, because the item numbers correspond to the column positions in our data, we can reverse code using those numbers: 
+```{r}
+compl_rdas$ExSCORE <- rowSums(compl_rdas[,Exitems])
+compl_rdas$EmSCORE <- rowSums(compl_rdas[,Emitems])
+compl_rdas$BCIScore <- rowSums(compl_rdas[,BCIitems])
 ```
 
 
 `r solend()`
 
+
+::: {.callout-caution collapse="true"}
+#### optional: what is a sum score but a constrained factor model?  
+
+Computing sum scores can feel like a 'model free' calculation, but actually it **does** pre-suppose a factor structure, and a much more constrained one than those we have been estimating. For a full explanation of this, see ["Thinking twice about sum scores", McNeish & Wolf 2020](https://doi.org/10.3758/s13428-020-01398-0){target="_blank"}. 
+
+```{r}
+#| echo: false
+#| out-width: "100%"
+knitr::include_graphics("images/diag_sumscore.png")
+```
+
+
+:::
 
 
 
