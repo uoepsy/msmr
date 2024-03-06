@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.340">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>MSMR - Week 9 Exercises: Path Analysis &amp; Mediation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script>
+function toggle_visibility(id1, id2) {
+var e = document.getElementById(id1);
+var f = document.getElementById(id2);
+e.style.display = ((e.style.display!='none') ? 'none' : 'block');
+if(f.classList.contains('jk-circle-right')) {
+    f.classList.add('jk-circle-down')
+    f.classList.remove('jk-circle-right')
+} else {
+    f.classList.add('jk-circle-right')
+    f.classList.remove('jk-circle-down')
+}
+}
+</script>
+
+<!---<script src="https://kit.fontawesome.com/120b08a6f5.js" crossorigin="anonymous"></script>-->
+<link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet">
+<script src="site_libs/panelset-0.2.6/panelset.js"></script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
+      MSMR
+      </li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MSMR</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+ <span class="menu-text">Week 1</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01a_clustered.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">1A: Clustered Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01b_lmm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">1B: Linear Mixed Models/Multi-level Models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 1 Exercises: Intro to MLM</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+ <span class="menu-text">Week 2</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02a_inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">2A: Inference for MLM</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02b_loglong.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">2B: Logistic MLM | Longitudinal MLM</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 2 Exercises: Logistic and Longitudinal</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
+ <span class="menu-text">Week 3</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03a_poly.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">3A: Polynomial Growth</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 3 Exercises: Non-Linear Change</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+ <span class="menu-text">Week 4</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04a_ranef.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">4A: Random Effect Structures</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 4 Exercises: Nested and Crossed</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
+ <span class="menu-text">Week 5</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05a_assump.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">5A: Model Assumptions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05b_writing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">5B: Writing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 5 Exercises: Assumptions, Diagnostics, Writing up</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+ <span class="menu-text">Week 7</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 7 Exercises: PCA &amp; EFA</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+ <span class="menu-text">Week 8</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 8 Exercises: CFA</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+ <span class="menu-text">Additional Docs</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00_lm_assumpt.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">LM Troubleshooting</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lvp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Likelihood vs Probability</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00_surveywrangle.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Wrangling for Surveys &amp; Questionnaires</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00_pca.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PCA in 3D</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#toy-example-education-and-salary" id="toc-toy-example-education-and-salary" class="nav-link active" data-scroll-target="#toy-example-education-and-salary">Toy Example: Education and Salary</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Week 9 Exercises: Path Analysis &amp; Mediation</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+How does Path Analysis work?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The logic behind path analysis is to estimate a system of equations that best reproduce the covariance structure that we see in the data.</p>
+<ol type="1">
+<li>We specify our theoretical model of the world as a system of paths between variables that represent which variables influence which other variables. This is simply a diagramatic way of specifying a set of equations.
+<ul>
+<li>A single headed arrow from <span class="math inline">\(X \rightarrow Y\)</span> indicates that Y “listens to” X - if X changes, then Y will change accordingly (but not vice versa)</li>
+<li>A double headed arrow between <span class="math inline">\(X \leftrightarrow Y\)</span> indicates that these two variables are related, not because one causes the other, but because there is some mechanism outside of our model that results in these two variables being associated.</li>
+</ul></li>
+<li>We collect data on the relevant variables and we observe a covariance matrix (i.e.&nbsp;how each variable covaries with every other variable).</li>
+<li>We fit our model to the data, and evaluate how well our theoretical model (the estimated values for our path coefficients) can reproduce the observed covariance matrix.</li>
+</ol>
+<div class="sticky">
+<p><strong>Terminology</strong></p>
+<ul>
+<li><strong>Exogenous variables</strong> are a bit like what we have been describing with words like “independent variable” or “predictor”. In a path diagram, they have no arrows coming into them from other variables in the system, but have paths <em>going out</em> to other variables.<br>
+</li>
+<li><strong>Endogenous variables</strong> are more like the “outcome”/“dependent”/“response” variables we are used to. They have some arrow coming into them from another variable in the system (and may also - but not necessarily - have paths going out from them).<br>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+optional: The fun details!
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>For Path Diagrams that meet a certain set of pre-requisites, we can use a cool technique called “Path Tracing” to move between the path estimates and the implied covariances between a set of variables. The process is much easier with correlations, so in the examples below everything is standardised to have a variance of 1, meaning that covariance == correlation.</p>
+<p>For us to be able to do this, a Path Diagram must meet these criteria:</p>
+<ul>
+<li>The model has no two-way causal relations or feedback loops (e.g.&nbsp;<span class="math inline">\(A \rightarrow B \rightarrow C \rightarrow A\)</span> ).<br>
+</li>
+<li>All relations are linear and additive.<br>
+</li>
+<li>‘causes’ are unitary (if A -&gt; B and A -&gt; C, then it is presumed that this is the same aspect of A resulting in a change in both B and C, and not two distinct aspects of A, which would be better represented by two correlated variables A1 and A2).<br>
+</li>
+<li>The variables are measured without error (we will relax this assumption later on by including latent variables).</li>
+<li>Endogenous variables are not connected by correlations (we would correlate the residuals instead, because residuals are not endogenous).<br>
+</li>
+<li>The residuals (error terms) are uncorrelated with exogenous variables.<br>
+</li>
+<li>All our exogenous variables are correlated (unless we specifically assume that their correlation is zero).</li>
+</ul>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+causality?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Path models allow us to reason about ‘cause and effect’, without having to conduct an experiment and manipulate a given variable. However, there is nothing special about the statistical machinery or techniques here that makes our results ‘causal’. The extent to which we can claim ‘causation’ is entirely model-dependent. That is, the use of ‘causal’ refers to an assumption that our model includes all relevant causal relations (and captures them appropriately). When we test these models, a good fitting model does <strong>not</strong> prove that the causal assumptions are correct.</p>
+</div>
+</div>
+</div>
+<p><strong>Path Tracing Rules</strong></p>
+<p>Thanks to <a href="https://www.jstor.org/stable/pdf/2527551.pdf?casa_token=3QF0ad2ZoBcAAAAA:MbEkDNNdoLZr1SXE4LrnK--qrhhsTXLgsRtcWre1UvWxiQiGNUl5vWytGp34XIxhAYMZJe-MbIcBnEwXSfX6MAONevz04-sMXpEDI3IaYKk6mMX46QvX">Sewal Wright</a>, we can express the correlation between any two variables in the system as the sum of all <em>compound paths</em> between the two variables<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
+<p><em>compound paths</em> are the products of any paths you can trace between A and B for which there are:</p>
+<ul>
+<li>no loops</li>
+<li>no going forward then backward (and no going forward then across a curved arrow)</li>
+<li>maximum of one curved arrow per path</li>
+</ul>
+<div class="panelset">
+<section id="example-1" class="level4 panel">
+<h4 class="anchored" data-anchor-id="example-1">Example 1</h4>
+<p>Let’s consider the example below, for which the paths are all labelled with lower case letters <span class="math inline">\(a, b, c, \text{and } d\)</span>. In this case, we have two exogenous variables X1 and X2 that both influence a single outcome Y. This is actually just a multiple regression expressed as a path diagram!</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-patheq1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/patheq1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;1: A multiple regression model as a path diagram</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>According to Wright’s tracing rules above, we can write out the equations corresponding to the 3 correlations between our observed variables (remember that <span class="math inline">\(r_{a,b} = r_{b,a}\)</span>, so it doesn’t matter at which variable we start the paths).</p>
+<p>There is only one way to move between X1 and X2, according to Wright’s rules, and that is to go via the double headed arrow <span class="math inline">\(c\)</span>. There are two ways to go from X1 to Y - we can go across the double headed arrow to X2, and then go from X2 to y (path <span class="math inline">\(bc\)</span>), or we can go directly from X1 to Y (path <span class="math inline">\(a\)</span>). To get from X2 to Y, we can go either via X1 (path <span class="math inline">\(ac\)</span>), or go directly (path <span class="math inline">\(b\)</span>).</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>covariance</th>
+<th>paths</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(r_{x1,x2}\)</span></td>
+<td>c</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(r_{x1,y}\)</span></td>
+<td>a + bc</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(r_{x2,y}\)</span></td>
+<td>b + ac</td>
+</tr>
+</tbody>
+</table>
+<p>Suppose that we fit this model to some data using something like our good friend maximum likelihood estimation, and we get some estimates for our path coefficients such as those below:</p>
+<div class="cell" data-layout-align="center">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lavaan)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># our data:</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>egdata <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../../data/path_eg1.csv"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># our model formula</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>mod.formula <span class="ot">&lt;-</span> <span class="st">"y ~ x1 + x2"</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># fitted to some data</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>mod.est <span class="ot">&lt;-</span> <span class="fu">sem</span>(mod.formula, <span class="at">data =</span> egdata)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># extract parameters:</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">parTable</span>(mod.est) <span class="sc">|&gt;</span> <span class="fu">select</span>(lhs,op,rhs,est)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  lhs op rhs   est
+1   y  ~  x1 0.612
+2   y  ~  x2 0.382
+3   y ~~   y 0.310
+4  x1 ~~  x1 0.995
+5  x1 ~~  x2 0.359
+6  x2 ~~  x2 0.995</code></pre>
+</div>
+</div>
+<p>With this set of path estimates (<span class="math inline">\(a = 0.61\)</span>, <span class="math inline">\(b = 0.38\)</span>, and <span class="math inline">\(c = 0.36\)</span>), we can calculate the correlation that is <em>implied</em> by our estimated model:</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>covariance</th>
+<th>paths</th>
+<th>model implied correlation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(r_{x1,x2}\)</span></td>
+<td>c</td>
+<td><span class="math inline">\(0.36\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(r_{x1,y}\)</span></td>
+<td>a + bc</td>
+<td><span class="math inline">\(0.61 + (0.38 \times 0.36) = 0.75\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(r_{x2,y}\)</span></td>
+<td>b + ac</td>
+<td><span class="math inline">\(0.38 + (0.61 \times 0.36) = 0.60\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>We can then examine how far off this is from the observed covariance matrix. In this specific case, our covariance matrix has 6 values in it, and we are estimating 6 things (see the parameters above). This means that there is unique solution, and our model is <strong>just-identified</strong> (or “saturated”), and is capable of <strong>perfectly</strong> reproducing the covariance matrix.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cov</span>(egdata) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     x1   x2    y
+x1 1.00 0.36 0.75
+x2 0.36 1.00 0.60
+y  0.75 0.60 1.00</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+why 6? the model in full
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The variances of individual variables (also covariances of each variable with itself) are also in our covariance matrix on the diagonals, and in full, our model also includes the estimation of variances of exogenous variables, as well as the residual variance of endogenous variables. These can be represented as the paths <span class="math inline">\(d\)</span>, <span class="math inline">\(e\)</span> and <span class="math inline">\(f\)</span> in <a href="#fig-patheq1a">Figure&nbsp;2</a>.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>covariance</th>
+<th>paths</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(r_{x1,x2}\)</span></td>
+<td>c</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(r_{x1,y}\)</span></td>
+<td>a + bc</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(r_{x2,y}\)</span></td>
+<td>b + ac</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(r_{x1,x1}\)</span></td>
+<td>e</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(r_{x2,x2}\)</span></td>
+<td>f</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(r_{y,y}\)</span></td>
+<td>d + a<span class="math inline">\(^2\)</span> + b<span class="math inline">\(^2\)</span> + acb + bca</td>
+</tr>
+</tbody>
+</table>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-patheq1a" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/patheq1a.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;2: A multiple regression model as a path diagram with variances of exogenous variables and residuals indicated</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-2" class="level4 panel">
+<h4 class="anchored" data-anchor-id="example-2">Example 2</h4>
+<p>One benefit of a path model over a regression model is that we can include multiple endogenous variables. In <a href="#fig-patheq2">Figure&nbsp;3</a>, we can see now a model in which we have two outcomes (Y1 and Y2), an exogenous predictor X, and a variable M that sits on the path between X and the two outcomes. In this case, M is itself an outcome of Z.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-patheq2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/patheq2.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;3: A model with 2 outcomes</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Using the path tracing rules, there is only one way to get between X and M, and that is the path <span class="math inline">\(a\)</span>. There is only one way to get between M and Y1 (path <span class="math inline">\(b\)</span>), and only one way to get between M and Y2 (path <span class="math inline">\(c\)</span>). To get between X and Y1, we can only go via <span class="math inline">\(ab\)</span>, and to get between X and Y2, we can only go via <span class="math inline">\(ac\)</span>. To get between Y1 and Y2, we can go backwards to M and then forwards to Y2, the path <span class="math inline">\(bc\)</span>.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>covariance</th>
+<th>paths</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(r_{x,m}\)</span></td>
+<td>a</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(r_{m,y1}\)</span></td>
+<td>b</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(r_{m,y2}\)</span></td>
+<td>c</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(r_{x,y1}\)</span></td>
+<td>ab</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(r_{x,y2}\)</span></td>
+<td>ac</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(r_{y1,y2}\)</span></td>
+<td>bc</td>
+</tr>
+</tbody>
+</table>
+<p>As with the previous example, we fit our model to some sample data, and get some estimates for the parameters:</p>
+<div class="cell" data-layout-align="center">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># our data:</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>egdata2 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../../data/path_eg2.csv"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># our model formula</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>mod.formula <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="st">y1 ~ m</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="st">y2 ~ m</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="st">m ~ x</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="st"># by default, lavaan will correlate the residual variance</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="st"># for the purposes of this example, to match our model exactly, </span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="st"># we'll constrain it to 0:  </span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="st">y1~~0*y2</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># fitted to some data</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>mod.est <span class="ot">&lt;-</span> <span class="fu">sem</span>(mod.formula, <span class="at">data =</span> egdata2)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co"># extract parameters:</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="fu">parTable</span>(mod.est) <span class="sc">|&gt;</span> <span class="fu">select</span>(lhs,op,rhs,est)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  lhs op rhs   est
+1  y1  ~   m 0.520
+2  y2  ~   m 0.187
+3   m  ~   x 0.461
+4  y1 ~~  y2 0.000
+5  y1 ~~  y1 0.728
+6  y2 ~~  y2 0.963
+7   m ~~   m 0.786
+8   x ~~   x 0.998</code></pre>
+</div>
+</div>
+<p>And the estimated path coefficients of <span class="math inline">\(a = 0.46\)</span>, <span class="math inline">\(b = 0.52\)</span> and <span class="math inline">\(c = 0.19\)</span>, imply that our covariances are:</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>covariance</th>
+<th>paths</th>
+<th>model implied covariance</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(r_{x,m}\)</span></td>
+<td>a</td>
+<td><span class="math inline">\(0.46\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(r_{m,y1}\)</span></td>
+<td>b</td>
+<td><span class="math inline">\(0.52\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(r_{m,y2}\)</span></td>
+<td>c</td>
+<td><span class="math inline">\(0.19\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(r_{x,y1}\)</span></td>
+<td>ab</td>
+<td><span class="math inline">\(0.46 \times 0.52 = 0.24\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(r_{x,y2}\)</span></td>
+<td>ac</td>
+<td><span class="math inline">\(0.46 \times 0.19 = 0.09\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(r_{y1,y2}\)</span></td>
+<td>bc</td>
+<td><span class="math inline">\(0.52 \times 0.19 = 0.10\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Finally, our <strong>observed</strong> covariances are here:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cov</span>(egdata2) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     y1   y2    m    x
+y1 1.00 0.06 0.52 0.49
+y2 0.06 1.00 0.19 0.06
+m  0.52 0.19 1.00 0.46
+x  0.49 0.06 0.46 1.00</code></pre>
+</div>
+</div>
+<p>But wait.. unlike the first example, this one does <em>not</em> perfectly reproduce our the covariances we observe. This is because our model is <strong>over-identified</strong>. We are trying to recreate our covariance matrix with 10 values in it using only <strong>7</strong> unknown parameters. This is a good thing! It means we can assess the fit of the model to the data, and evaluate the plausibility of the proposed relationships!</p>
+<p>Notably, some of our “model implied covariances” are quite different to those in our observed covariance matrix (e.g, the model implies that <span class="math inline">\(r_{x,y1} = 0.24\)</span>, but we actually observe it to be 0.49!).</p>
+</section>
+<section id="example-3" class="level4 panel">
+<h4 class="anchored" data-anchor-id="example-3">Example 3</h4>
+<p>In Example 2, our theoretical model proposed that <em>all</em> of the association that we might observe between X and Y1 is due to the relationship that X has with M, and that M in turn has with Y1. However, an alternative model (see <a href="#fig-patheq3">Figure&nbsp;4</a>) could propose that X still directly influences Y1 beyond the influence it exerts via M. We would indicate this via an additional path (path <span class="math inline">\(g\)</span> in <a href="#fig-patheq3">Figure&nbsp;4</a>).</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-patheq3" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/patheq3.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;4: X now directly influences Y, as well as its influence via M</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Fitting this model (to the same data), we get out estimates for the paths (including this additional parameter):</p>
+<div class="cell" data-layout-align="center">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># our model formula</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>mod.formula <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="st">y1 ~ m + x</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="st">y2 ~ m</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="st">m ~ x</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="st"># by default, lavaan will correlate the residual variance</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="st"># for the purposes of this example, to match our model exactly, </span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="st"># we'll constrain it to 0:  </span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="st">y1~~0*y2</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co"># fitted to the same data as for example 2</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>mod.est <span class="ot">&lt;-</span> <span class="fu">sem</span>(mod.formula, <span class="at">data =</span> egdata2)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co"># extract parameters:</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="fu">parTable</span>(mod.est) <span class="sc">|&gt;</span> <span class="fu">select</span>(lhs,op,rhs,est)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  lhs op rhs   est
+1  y1  ~   m 0.375
+2  y1  ~   x 0.313
+3  y2  ~   m 0.187
+4   m  ~   x 0.461
+5  y1 ~~  y2 0.000
+6  y1 ~~  y1 0.651
+7  y2 ~~  y2 0.963
+8   m ~~   m 0.786
+9   x ~~   x 0.998</code></pre>
+</div>
+</div>
+<p>Our covariances between variables are, in this model, expressed as:</p>
+<table class="table">
+<colgroup>
+<col style="width: 52%">
+<col style="width: 21%">
+<col style="width: 26%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>covariance</th>
+<th>paths</th>
+<th>model implied covariance</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(r_{x,m}\)</span></td>
+<td>a</td>
+<td><span class="math inline">\(0.46\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(r_{m,y1}\)</span></td>
+<td>b + ag</td>
+<td><span class="math inline">\(0.38 + (0.46 \times 0.31) = 0.52\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(r_{m,y2}\)</span></td>
+<td>c</td>
+<td><span class="math inline">\(0.19\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(r_{x,y1}\)</span></td>
+<td>ab + g</td>
+<td><span class="math inline">\((0.46 \times 0.38) + 0.31 = 0.49\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(r_{x,y2}\)</span></td>
+<td>ac</td>
+<td><span class="math inline">\(0.46 \times 0.19 = 0.09\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(r_{y1,y2}\)</span></td>
+<td>bc + gac</td>
+<td><span class="math inline">\((0.38 \times 0.19) + (0.31 \times 0.46 \times 0.19) = 0.10\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>And now, when we look at our observed covariance matrix, we are doing a much better job of recreating it, than we did with the model from Example 2!</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cov</span>(egdata2) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     y1   y2    m    x
+y1 1.00 0.06 0.52 0.49
+y2 0.06 1.00 0.19 0.06
+m  0.52 0.19 1.00 0.46
+x  0.49 0.06 0.46 1.00</code></pre>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</div>
+<section id="toy-example-education-and-salary" class="level1">
+<h1>Toy Example: Education and Salary</h1>
+<div class="frame">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lavaan)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">777</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">=</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Educ =</span> <span class="fu">round</span>(<span class="fu">rnorm</span>(<span class="dv">390</span>, <span class="fl">15.5</span>, <span class="dv">3</span>)),</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Skill =</span> <span class="fu">scale</span>(.<span class="dv">6</span><span class="sc">*</span><span class="fu">scale</span>(Educ) <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">390</span>))[,<span class="dv">1</span>],</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">Salary =</span> <span class="fu">scale</span>(.<span class="dv">12</span><span class="sc">*</span><span class="fu">scale</span>(Educ) <span class="sc">+</span> .<span class="dv">3</span><span class="sc">*</span>Skill <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">390</span>))[,<span class="dv">1</span>]<span class="sc">*</span><span class="fl">12.3</span> <span class="sc">+</span> <span class="fl">39.533</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>m<span class="ot">=</span><span class="st">"</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="st">Salary ~ c*Educ + b*Skill</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="st">Skill ~ a*Educ</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="st">ind:=a*b</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="st">total:=a*b+c</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="fu">sem</span>(m, df) <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>lavaan 0.6.17 ended normally after 1 iteration
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                         5
+
+  Number of observations                           390
+
+Model Test User Model:
+                                                      
+  Test statistic                                 0.000
+  Degrees of freedom                                 0
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Regressions:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  Salary ~                                            
+    Educ       (c)    0.482    0.215    2.239    0.025
+    Skill      (b)    3.568    0.679    5.254    0.000
+  Skill ~                                             
+    Educ       (a)    0.166    0.014   12.125    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .Salary          130.239    9.327   13.964    0.000
+   .Skill             0.724    0.052   13.964    0.000
+
+Defined Parameters:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+    ind               0.591    0.123    4.821    0.000
+    total             1.073    0.190    5.657    0.000</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#lm(Salary ~ Educ + Skill,df) |&gt; summary()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div class="question-begin">
+Question 1
+</div>
+<div class="question-body">
+<p>read in the dataset.<br>
+suppose that the only statistical machinery available is the good old regression models with <code>lm()</code>. What is the estimated effect of education on salary?</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>edskill <span class="ot">&lt;-</span> df</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Salary <span class="sc">~</span> Educ, <span class="at">data =</span> edskill)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Salary <span class="sc">~</span> Skill <span class="sc">+</span> Educ, <span class="at">data =</span> edskill)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>sjPlot<span class="sc">::</span><span class="fu">tab_model</span>(m1,m2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th" style="text-align: center; border-top: double; font-style: normal; font-weight: bold; padding: 0.2cm;">&nbsp;</td>
+<td colspan="3" data-quarto-table-cell-role="th" style="text-align: center; border-top: double; font-style: normal; font-weight: bold; padding: 0.2cm;">Salary</td>
+<td colspan="3" data-quarto-table-cell-role="th" style="text-align: center; border-top: double; font-style: normal; font-weight: bold; padding: 0.2cm;">Salary</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; border-bottom: 1px solid; font-style: italic; font-weight: normal;">Predictors</td>
+<td style="text-align: center; border-bottom: 1px solid; font-style: italic; font-weight: normal;">Estimates</td>
+<td style="text-align: center; border-bottom: 1px solid; font-style: italic; font-weight: normal;">CI</td>
+<td style="text-align: center; border-bottom: 1px solid; font-style: italic; font-weight: normal;">p</td>
+<td style="text-align: center; border-bottom: 1px solid; font-style: italic; font-weight: normal;">Estimates</td>
+<td style="text-align: center; border-bottom: 1px solid; font-style: italic; font-weight: normal;">CI</td>
+<td style="text-align: center;">p</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">(Intercept)</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">22.88</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">16.96&nbsp;–&nbsp;28.80</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"><strong>&lt;0.001</strong></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">32.06</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">25.37&nbsp;–&nbsp;38.74</td>
+<td style="text-align: center;"><strong>&lt;0.001</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">Educ</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">1.07</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.70&nbsp;–&nbsp;1.45</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"><strong>&lt;0.001</strong></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.48</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.06&nbsp;–&nbsp;0.91</td>
+<td style="text-align: center;"><strong>0.026</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">Skill</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">3.57</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">2.23&nbsp;–&nbsp;4.91</td>
+<td style="text-align: center;"><strong>&lt;0.001</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm; border-top: 1px solid;">Observations</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm; border-top: 1px solid;">390</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm; border-top: 1px solid;">390</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm;">R<sup>2</sup> / R<sup>2</sup> adjusted</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm;">0.076 / 0.073</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm;">0.137 / 0.132</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>example of why <em>some</em> variables we do not want to simply ‘control’ for. In this example, controlling for skill actually <em>removes</em> part of the effect of education on salary!</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 2
+</div>
+<div class="question-body">
+<p>Instead, let’s suppose we are actually interested in the mechanism of how education influences salary. do more educated people tend to have higher salaries <em>entirely</em> because of the skills obtained during their education?</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Direct, Indirect and Total effects
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>In path diagrams:</p>
+<ul>
+<li>Direct effect = one single-headed arrow between the two variables concerned<br>
+</li>
+<li>Indirect effect = An effect transmitted via some other variables</li>
+</ul>
+<p>If we have a variable <span class="math inline">\(X\)</span> that we take to ‘cause’ variable <span class="math inline">\(Y\)</span>, then our path diagram will look like so:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/MED1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In this diagram, path <span class="math inline">\(c\)</span> is the <strong>total effect</strong>. This is the <em>unmediated</em> effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>.</p>
+<p>However, while the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> could in part be explained by the process of being mediated by some variable <span class="math inline">\(M\)</span>, the variable <span class="math inline">\(X\)</span> could still affect <span class="math inline">\(Y\)</span> directly.<br>
+Our mediating model is shown below:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/MED2.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In this case, path <span class="math inline">\(c'\)</span> is the <strong>direct effect</strong>, and paths <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> make up the <strong>indirect effect</strong>.</p>
+<p>You will find in some areas people talk about the ideas of <strong>“complete”</strong> vs <strong>“partial”</strong> mediation.</p>
+<ul>
+<li><strong>Complete mediation</strong> is when <span class="math inline">\(X\)</span> does not influence <span class="math inline">\(Y\)</span> other than its influence through <span class="math inline">\(M\)</span> (therefore path <span class="math inline">\(c'\)</span> would not be significantly different from zero).</li>
+<li><strong>Partial mediation</strong> is when the path from <span class="math inline">\(X\)</span> to <span class="math inline">\(Y\)</span> is <em>reduced in magnitude</em> when the mediator <span class="math inline">\(M\)</span> is introduced, <em>but still different from zero.</em><br>
+</li>
+<li>The <strong>Proportion Mediated</strong> is the amount of the total effect of <span class="math inline">\(X\)</span> to <span class="math inline">\(Y\)</span> that goes via <span class="math inline">\(M\)</span>. i.e.&nbsp;<span class="math inline">\(\frac{a \times b}{c}\)</span> in the images above.</li>
+</ul>
+</div>
+</div>
+</div>
+<p>fit a path model in which education has an effect on salary both directly and indirectly, via its influence on the skills obtained.</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="st">Salary ~ Educ + Skill</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="st">Skill ~ Educ</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>mod1.est <span class="ot">&lt;-</span> <span class="fu">sem</span>(mod1, <span class="at">data =</span> edskill)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod1.est)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>lavaan 0.6.17 ended normally after 1 iteration
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                         5
+
+  Number of observations                           390
+
+Model Test User Model:
+                                                      
+  Test statistic                                 0.000
+  Degrees of freedom                                 0
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Regressions:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  Salary ~                                            
+    Educ              0.482    0.215    2.239    0.025
+    Skill             3.568    0.679    5.254    0.000
+  Skill ~                                             
+    Educ              0.166    0.014   12.125    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .Salary          130.239    9.327   13.964    0.000
+   .Skill             0.724    0.052   13.964    0.000</code></pre>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 3
+</div>
+<div class="question-body">
+<p>While the model in the previous question better reflects our theoretical notions of how these variables are actually related, we are yet to get an estimate of the indirect effect.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Defined Parameters in lavaan
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>To specifically test the indirect effect, we need to explicitly <strong>define</strong> the indirect effect in our model, by first creating a label for each of its sub-component paths, and then defining the indirect effect itself as the product of these two paths (why the product? <a href="https://uoepsy.github.io/msmr/indirect_effects.pdf">Click here for a lovely explanation from Aja</a>).</p>
+<p>To do this, we use a new operator, <code>:=</code>.</p>
+<p><em>“This operator ‘defines’ new parameters which take on values that are an arbitrary function of the original model parameters. The function, however, must be specified in terms of the parameter labels that are explicitly mentioned in the model syntax.”</em>^(<a href="https://lavaan.ugent.be/">the lavaan project</a>)] The labels are entirely up to us, we can use “a”, “b” and “c”, or “dougal”, “dylan” and “ermintrude”, they’re just labels!</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>med_model <span class="ot">&lt;-</span> <span class="st">" </span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="st">    Y ~ b*M + c*X</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="st">    M ~ a*X</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="st">    indirect := a*b</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="st">    total := a*b + c</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<p>Edit your model formula to also estimate the total and indirect effects, and re-fit the model.</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="st">Salary ~ c*Educ + b*Skill</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="st">Skill ~ a*Educ</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="st">indirect := a*b</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="st">total := a*b + c</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>mod1.est <span class="ot">&lt;-</span> <span class="fu">sem</span>(mod1, <span class="at">data =</span> edskill)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod1.est)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>lavaan 0.6.17 ended normally after 1 iteration
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                         5
+
+  Number of observations                           390
+
+Model Test User Model:
+                                                      
+  Test statistic                                 0.000
+  Degrees of freedom                                 0
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Regressions:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  Salary ~                                            
+    Educ       (c)    0.482    0.215    2.239    0.025
+    Skill      (b)    3.568    0.679    5.254    0.000
+  Skill ~                                             
+    Educ       (a)    0.166    0.014   12.125    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .Salary          130.239    9.327   13.964    0.000
+   .Skill             0.724    0.052   13.964    0.000
+
+Defined Parameters:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+    indirect          0.591    0.123    4.821    0.000
+    total             1.073    0.190    5.657    0.000</code></pre>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<p>No X-M Interaction: The effect of M on Y or b does not vary across levels of X. Causal Direction: The variable M causes Y, by Y does not cause M. Perfect Reliability in M: The reliability of M is perfect.<br>
+No Confounding: There is no variable that causes M and Y.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Why Bootstrap?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We are computing our indirect effect as the <em>product</em> of the sub-component paths. However, this results in the estimated indirect effect rarely following a normal distribution, and makes our usual analytically derived standard errors &amp; p-values inappropriate.</p>
+<p>Instead, bootstrapping has become the norm for assessing sampling distributions of indirect effects in mediation models (remember, bootstrapping involves resampling the data with replacement, thousands of times, in order to empirically generate a sampling distribution).</p>
+<p>We can do this easily in lavaan:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>mod.est <span class="ot">&lt;-</span> <span class="fu">sem</span>(model_formula, <span class="at">data=</span>my_data, <span class="at">se =</span> <span class="st">"bootstrap"</span>) </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># to print out the confidence intervals:</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod.est, <span class="at">ci =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>if we were wanting covariances, and we didn’t have standardised variables, then these would have to be multiplied by the corresponding variance estimates for the variables<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">© Copyright 2019-2024 <a href="https://www.ed.ac.uk/">The University of Edinburgh</a>. Site licensed under the <a href="https://www.gnu.org/licenses/agpl-3.0.en.html">GNU AGPLv3</a> license.</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>

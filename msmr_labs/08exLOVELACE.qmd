@@ -534,15 +534,15 @@ Make a diagram of your model, using the standardised factor loadings as labels.
 ::: {.callout-note collapse="true"}
 #### The semPlot package
 
-For more complex models with latent variables, we will almost always have to make diagrams manually, either in generic presentation software such as powerpoint or google slides, or in specific software such as [TODO semdiag](){target="_blank"}.  
+For more complex models with latent variables, we will almost always have to make diagrams manually, either in generic presentation software such as powerpoint or google slides, or in specific software such as [semdiag](https://semdiag.psychstat.org/){target="_blank"}.  
 
 R has a couple of packages which work well enough for some of the more common model structures such as CFA.  
 
-The 
+The `semPaths()` function from __semPlot__ package can take a fitted lavaan model and create a nice diagram. 
 ```{r}
 #| eval: false
-library(semPaths)
-semPlot(myfittedmodel, 
+library(semPlot)
+semPaths(myfittedmodel, 
         what = ?, # line thickness & color by... 
         whatLabels = ?, # label lines as... 
         rotation = ? # rotations, +1 = 90degrees
