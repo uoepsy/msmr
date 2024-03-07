@@ -437,11 +437,11 @@ optional: The fun details!
 <p>For Path Diagrams that meet a certain set of pre-requisites, we can use a cool technique called “Path Tracing” to move between the path estimates and the implied covariances between a set of variables. The process is much easier with correlations, so in the examples below everything is standardised to have a variance of 1, meaning that covariance == correlation.</p>
 <p>For us to be able to do this, a Path Diagram must meet these criteria:</p>
 <ul>
-<li>The model has no two-way causal relations or feedback loops (e.g.&nbsp;<span class="math inline">\(A \rightarrow B \rightarrow C \rightarrow A\)</span> ).<br>
+<li>The model has no two-way causal relations or feedback loops (e.g.&nbsp;A<span class="math inline">\(\rightarrow\)</span>B<span class="math inline">\(\rightarrow\)</span>C<span class="math inline">\(\rightarrow\)</span>A).<br>
 </li>
 <li>All relations are linear and additive.<br>
 </li>
-<li>‘causes’ are unitary (if A -&gt; B and A -&gt; C, then it is presumed that this is the same aspect of A resulting in a change in both B and C, and not two distinct aspects of A, which would be better represented by two correlated variables A1 and A2).<br>
+<li>‘causes’ are unitary (if A<span class="math inline">\(\rightarrow\)</span>B and A<span class="math inline">\(\rightarrow\)</span>C, then it is presumed that this is the same aspect of A resulting in a change in both B and C, and not two distinct aspects of A, which would be better represented by two correlated variables A1 and A2).<br>
 </li>
 <li>The variables are measured without error (we will relax this assumption later on by including latent variables).</li>
 <li>Endogenous variables are not connected by correlations (we would correlate the residuals instead, because residuals are not endogenous).<br>
@@ -471,9 +471,10 @@ causality?
 <p><em>compound paths</em> are the products of any paths you can trace between A and B for which there are:</p>
 <ul>
 <li>no loops</li>
-<li>no going forward then backward (and no going forward then across a curved arrow)</li>
+<li>no going forward then backward (and no going forward then across a curved arrow)<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></li>
 <li>maximum of one curved arrow per path</li>
 </ul>
+<p>If we look at our path diagram and find all the distinct routes to get from A to B that adhere to the 3 rules above, and sum these routes up, then we get the implied covariance between A and B. (routes are ‘distinct’ if they contain different coefficients, or encounter coefficients in a different order).</p>
 <div class="panelset">
 <section id="example-1" class="level4 panel">
 <h4 class="anchored" data-anchor-id="example-1">Example 1</h4>
@@ -519,7 +520,7 @@ causality?
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lavaan)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># our data:</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>egdata <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../../data/path_eg1.csv"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>egdata <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/path_eg1.csv"</span>)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># our model formula</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>mod.formula <span class="ot">&lt;-</span> <span class="st">"y ~ x1 + x2"</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># fitted to some data</span></span>
@@ -688,7 +689,7 @@ why 6? the model in full
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># our data:</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>egdata2 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../../data/path_eg2.csv"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>egdata2 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/path_eg2.csv"</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># our model formula</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>mod.formula <span class="ot">&lt;-</span> <span class="st">"</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="st">y1 ~ m</span></span>
@@ -883,78 +884,500 @@ x  0.49 0.06 0.46 1.00</code></pre>
 <section id="toy-example-education-and-salary" class="level1">
 <h1>Toy Example: Education and Salary</h1>
 <div class="frame">
+<p>We sampled 500 people who were all 5 years out of their last year of education. All participants completed an extensive questionnaire to ascertain the number of and expertise in any skills that may be of potential interest to employers. This resulted in a “Skillset Metric”. 5 years later, participants were followed up and asked to provide their current salaries. 110 participants failed to respond to follow-ups and thus the final sample included 390 people.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lavaan)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">777</span>)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">=</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Educ =</span> <span class="fu">round</span>(<span class="fu">rnorm</span>(<span class="dv">390</span>, <span class="fl">15.5</span>, <span class="dv">3</span>)),</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Skill =</span> <span class="fu">scale</span>(.<span class="dv">6</span><span class="sc">*</span><span class="fu">scale</span>(Educ) <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">390</span>))[,<span class="dv">1</span>],</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">Salary =</span> <span class="fu">scale</span>(.<span class="dv">12</span><span class="sc">*</span><span class="fu">scale</span>(Educ) <span class="sc">+</span> .<span class="dv">3</span><span class="sc">*</span>Skill <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">390</span>))[,<span class="dv">1</span>]<span class="sc">*</span><span class="fl">12.3</span> <span class="sc">+</span> <span class="fl">39.533</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>m<span class="ot">=</span><span class="st">"</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="st">Salary ~ c*Educ + b*Skill</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="st">Skill ~ a*Educ</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="st">ind:=a*b</span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="st">total:=a*b+c</span></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="fu">sem</span>(m, df) <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>lavaan 0.6.17 ended normally after 1 iteration
+<div class="cell-output-display">
 
-  Estimator                                         ML
-  Optimization method                           NLMINB
-  Number of model parameters                         5
+<div id="fgbjnpxgpo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#fgbjnpxgpo table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-  Number of observations                           390
+#fgbjnpxgpo thead, #fgbjnpxgpo tbody, #fgbjnpxgpo tfoot, #fgbjnpxgpo tr, #fgbjnpxgpo td, #fgbjnpxgpo th {
+  border-style: none;
+}
 
-Model Test User Model:
-                                                      
-  Test statistic                                 0.000
-  Degrees of freedom                                 0
+#fgbjnpxgpo p {
+  margin: 0;
+  padding: 0;
+}
 
-Parameter Estimates:
+#fgbjnpxgpo .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
 
-  Standard errors                             Standard
-  Information                                 Expected
-  Information saturated (h1) model          Structured
+#fgbjnpxgpo .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
 
-Regressions:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
-  Salary ~                                            
-    Educ       (c)    0.482    0.215    2.239    0.025
-    Skill      (b)    3.568    0.679    5.254    0.000
-  Skill ~                                             
-    Educ       (a)    0.166    0.014   12.125    0.000
+#fgbjnpxgpo .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
 
-Variances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
-   .Salary          130.239    9.327   13.964    0.000
-   .Skill             0.724    0.052   13.964    0.000
+#fgbjnpxgpo .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
 
-Defined Parameters:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
-    ind               0.591    0.123    4.821    0.000
-    total             1.073    0.190    5.657    0.000</code></pre>
+#fgbjnpxgpo .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#fgbjnpxgpo .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#fgbjnpxgpo .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#fgbjnpxgpo .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#fgbjnpxgpo .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#fgbjnpxgpo .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#fgbjnpxgpo .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#fgbjnpxgpo .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#fgbjnpxgpo .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#fgbjnpxgpo .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#fgbjnpxgpo .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#fgbjnpxgpo .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fgbjnpxgpo .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#fgbjnpxgpo .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#fgbjnpxgpo .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#fgbjnpxgpo .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fgbjnpxgpo .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#fgbjnpxgpo .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fgbjnpxgpo .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#fgbjnpxgpo .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fgbjnpxgpo .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fgbjnpxgpo .gt_left {
+  text-align: left;
+}
+
+#fgbjnpxgpo .gt_center {
+  text-align: center;
+}
+
+#fgbjnpxgpo .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#fgbjnpxgpo .gt_font_normal {
+  font-weight: normal;
+}
+
+#fgbjnpxgpo .gt_font_bold {
+  font-weight: bold;
+}
+
+#fgbjnpxgpo .gt_font_italic {
+  font-style: italic;
+}
+
+#fgbjnpxgpo .gt_super {
+  font-size: 65%;
+}
+
+#fgbjnpxgpo .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#fgbjnpxgpo .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#fgbjnpxgpo .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#fgbjnpxgpo .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#fgbjnpxgpo .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#fgbjnpxgpo .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#fgbjnpxgpo .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="variable">variable</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="description">description</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="variable" class="gt_row gt_left">Educ</td>
+<td headers="description" class="gt_row gt_left">Number of years of education undertaken</td></tr>
+    <tr><td headers="variable" class="gt_row gt_left">Skill</td>
+<td headers="description" class="gt_row gt_left">Skillset metric (standardised score obtained via a 100 item questionnaire measuring the number of, and expertise in, any skills deemed relevant to employers)</td></tr>
+    <tr><td headers="variable" class="gt_row gt_left">Salary</td>
+<td headers="description" class="gt_row gt_left">Salary (in thousands of £)</td></tr>
+  </tbody>
+  
+  
+</table>
 </div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#lm(Salary ~ Educ + Skill,df) |&gt; summary()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </div>
 </div>
 <div class="question-begin">
 Question 1
 </div>
 <div class="question-body">
-<p>read in the dataset.<br>
-suppose that the only statistical machinery available is the good old regression models with <code>lm()</code>. What is the estimated effect of education on salary?</p>
+<p>Read in the dataset.<br>
+Let’s suppose that the only statistical machinery available to us is the good old regression models with <code>lm()</code>, and we are interested in the estimated effect of education on salary.</p>
+<p>Which model are you going to fit?</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(Salary <span class="sc">~</span> Educ, <span class="at">data =</span> ... )</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(Salary <span class="sc">~</span> Skill <span class="sc">+</span> Educ, <span class="at">data =</span> ... )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+
+</div>
+<div class="solution-body">
+<p>Here’s the data:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>edskill <span class="ot">&lt;-</span> df</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Salary <span class="sc">~</span> Educ, <span class="at">data =</span> edskill)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Salary <span class="sc">~</span> Skill <span class="sc">+</span> Educ, <span class="at">data =</span> edskill)</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>sjPlot<span class="sc">::</span><span class="fu">tab_model</span>(m1,m2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>edskill <span class="ot">&lt;-</span> df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>I’m going to fit both models so that we can discuss them below</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Salary <span class="sc">~</span> Educ, <span class="at">data =</span> edskill)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Salary <span class="sc">~</span> Skill <span class="sc">+</span> Educ, <span class="at">data =</span> edskill)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># model tables side by side</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>sjPlot<span class="sc">::</span><span class="fu">tab_model</span>(m1,m2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table data-quarto-postprocess="true" class="table table-sm table-striped small">
 <tbody>
@@ -978,7 +1401,7 @@ suppose that the only statistical machinery available is the good old regression
 <td style="text-align: left; padding: 0.2cm; vertical-align: top;">16.96&nbsp;–&nbsp;28.80</td>
 <td style="text-align: left; padding: 0.2cm; vertical-align: top;"><strong>&lt;0.001</strong></td>
 <td style="text-align: left; padding: 0.2cm; vertical-align: top;">32.06</td>
-<td style="text-align: left; padding: 0.2cm; vertical-align: top;">25.37&nbsp;–&nbsp;38.74</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">25.37&nbsp;–&nbsp;38.75</td>
 <td style="text-align: center;"><strong>&lt;0.001</strong></td>
 </tr>
 <tr class="even">
@@ -1015,7 +1438,69 @@ suppose that the only statistical machinery available is the good old regression
 
 </div>
 </div>
-<p>example of why <em>some</em> variables we do not want to simply ‘control’ for. In this example, controlling for skill actually <em>removes</em> part of the effect of education on salary!</p>
+<p>So we have got two quite different pictures. The first model says that for every additional year of education, the salary offered would be £1070 more. The second model says it would only be £480 more, and it looks like skills are a lot more important than education is for getting a good salary, right?</p>
+<p>But this makes it sound like Education and Skills are things that we can compare the effects of independently. The implicit model we are referring to when using <code>lm(Salary ~ Skill + Educ)</code> is in the left hand diagram, Model A, of <a href="#fig-educ">Figure&nbsp;5</a>. But does it not make a lot more sense to think that Education is a cause of peoples’ skill level (especially as the skill level being measured 5 years after their last year of education precludes the opposite direction). In other words, does Model B in <a href="#fig-educ">Figure&nbsp;5</a> not make more sense?</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-educ" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/path_educ.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;5: Two theoretical models of process that gives rise to the data</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:80%;">
+<p>What Model B suggests is that part of <em>how</em> education influences peoples’ salaries is by giving them more skills. A perfect example is that you are all now on your way to becoming proficient R users!</p>
+</div><div class="column" style="width:5%;">
+
+</div><div class="column" style="width:15%;">
+<p><img src="images/new-skill-unlocked.gif" class="img-fluid"></p>
+</div>
+</div>
+<p>This is a great example that illustrates instances we might <strong>not</strong> want to include a variable in our model. If you are interested in “what does having an extra year of education do for peoples’ salaries?”, then controlling for skill in our model actually <em>removes</em> that part of the mechanism by which education influences salary.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+another example
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>To make this point super clear, suppose we were testing some drug that reduces blood pressure in order to lower the risk of cardiac arrest. We do an experiment where we gave some people the drug, and some people a placebo, then after a year we measured their blood pressure, and then we followed up 5 years later to see how many experienced cardiac arrests.</p>
+<p>The diagram to show how these variable relate is clearly the one in <a href="#fig-pathdrugmed">Figure&nbsp;6</a></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-pathdrugmed" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/path_drug.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;6: A drug aimed at reducing cardiac arrests by lowering blood pressure. The faint grey line indicates the path that would be estimated if we attempted to control for post-treatment blood-pressure</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>If we fitted the model <code>lm(cardiac_arrest ~ blood_pressure + drug)</code>, then the estimated coefficient we get for <code>drug</code> will be the effect of the drug on cardiac arrests that <em>isn’t</em> due to how it changes blood pressure. But that is exactly the opposite of what we want, because we think the drug works specifically by lowering blood pressure!</p>
+<p>Contrast this with another example, where we do not run an experiment and allocate people into “drug” or “placebo”, we simply observe a whole load of people who either do or do not take the drug, and we follow them up to see how many have cardiac arrests. <strong>But</strong>, it is generally older people who take the drug, whereas younger people do not. In addition, older people have a higher risk of cardiac arrests. So our model is that seen in <a href="#fig-pathdrugcon">Figure&nbsp;7</a>.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-pathdrugcon" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/path_drug_con.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;7: We are interested in a drug aimed at reducing cardiac arrests. Older people are more likely to take the drug, and are also more likely to experience cardiac arrest</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>In this case, controlling for the third variable <code>age</code> is the right thing to do.<br>
+If we do not control for age, and fit the model <code>lm(cardiac_arrest ~ drug)</code>, then the coefficient for <code>drug</code> will be biased because the group who take the drug are on average older, and thus will tend to experience more cardiac arrests. If the imbalance of age between the drug and no-drug groups is great enough, it could even look like the drug is making cardiac arrests <em>more</em> likely!</p>
+</div>
+</div>
+</div>
 </div>
 <p class="solution-end">
 </p>
@@ -1023,9 +1508,9 @@ suppose that the only statistical machinery available is the good old regression
 Question 2
 </div>
 <div class="question-body">
-<p>Instead, let’s suppose we are actually interested in the mechanism of how education influences salary. do more educated people tend to have higher salaries <em>entirely</em> because of the skills obtained during their education?</p>
+<p>Instead, let’s suppose we are actually interested in the mechanism of <em>how</em> education influences salary. Do more educated people tend to have higher salaries in part because of the skills obtained during their education?</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1034,7 +1519,7 @@ Direct, Indirect and Total effects
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>In path diagrams:</p>
 <ul>
@@ -1042,29 +1527,28 @@ Direct, Indirect and Total effects
 </li>
 <li>Indirect effect = An effect transmitted via some other variables</li>
 </ul>
-<p>If we have a variable <span class="math inline">\(X\)</span> that we take to ‘cause’ variable <span class="math inline">\(Y\)</span>, then our path diagram will look like so:</p>
+<p>If we have a variable <span class="math inline">\(X\)</span> that we take to ‘cause’ variable <span class="math inline">\(Y\)</span>, then our path diagram will look like <a href="#fig-total">Figure&nbsp;8</a>, which path <span class="math inline">\(c\)</span> is the <strong>total effect</strong>. This is the <em>unmediated</em> effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
+<div id="fig-total" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="images/MED1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;8: The total effect of X on Y</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>In this diagram, path <span class="math inline">\(c\)</span> is the <strong>total effect</strong>. This is the <em>unmediated</em> effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span>.</p>
-<p>However, while the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> could in part be explained by the process of being mediated by some variable <span class="math inline">\(M\)</span>, the variable <span class="math inline">\(X\)</span> could still affect <span class="math inline">\(Y\)</span> directly.<br>
-Our mediating model is shown below:</p>
+<p>However, the effect of <span class="math inline">\(X\)</span> on <span class="math inline">\(Y\)</span> could in part be explained by the process of being mediated by some variable <span class="math inline">\(M\)</span> as well as affecting <span class="math inline">\(Y\)</span> directly. A path diagram representing this theoretical idea of ‘mediation’ is shown in <a href="#fig-indirect">Figure&nbsp;9</a>. In this case, path <span class="math inline">\(c'\)</span> is the <strong>direct effect</strong>, and paths <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> make up the <strong>indirect effect</strong>.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
+<div id="fig-indirect" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="images/MED2.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;9: The effect of X on Y is partly mediated by M</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>In this case, path <span class="math inline">\(c'\)</span> is the <strong>direct effect</strong>, and paths <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> make up the <strong>indirect effect</strong>.</p>
 <p>You will find in some areas people talk about the ideas of <strong>“complete”</strong> vs <strong>“partial”</strong> mediation.</p>
 <ul>
 <li><strong>Complete mediation</strong> is when <span class="math inline">\(X\)</span> does not influence <span class="math inline">\(Y\)</span> other than its influence through <span class="math inline">\(M\)</span> (therefore path <span class="math inline">\(c'\)</span> would not be significantly different from zero).</li>
@@ -1075,11 +1559,38 @@ Our mediating model is shown below:</p>
 </div>
 </div>
 </div>
-<p>fit a path model in which education has an effect on salary both directly and indirectly, via its influence on the skills obtained.</p>
+<p>Fit a path model in which education has an effect on salary both directly and indirectly, via its influence on the skills obtained.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hints
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>A path model is essential a <em>set</em> of equations. We can do this similarly these models similarly to how we estimated factor models using the <strong>lavaan</strong> package, but instead of <code>cfa()</code> we use the function <code>sem()</code> to fit the models.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>mod.formula <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="st">y1 ~ x1 + x2 + x3</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="st">y2 ~ x1</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="st">x1 ~ x3</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>mod.est <span class="ot">&lt;-</span> <span class="fu">sem</span>(mod.formula, <span class="at">data =</span> mydata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+
+</div>
+<div class="solution-body">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="st">"</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="st">Salary ~ Educ + Skill</span></span>
@@ -1112,13 +1623,13 @@ Regressions:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
   Salary ~                                            
     Educ              0.482    0.215    2.239    0.025
-    Skill             3.568    0.679    5.254    0.000
+    Skill             3.568    0.679    5.255    0.000
   Skill ~                                             
-    Educ              0.166    0.014   12.125    0.000
+    Educ              0.166    0.014   12.128    0.000
 
 Variances:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
-   .Salary          130.239    9.327   13.964    0.000
+   .Salary          130.237    9.326   13.964    0.000
    .Skill             0.724    0.052   13.964    0.000</code></pre>
 </div>
 </div>
@@ -1129,9 +1640,27 @@ Variances:
 Question 3
 </div>
 <div class="question-body">
-<p>While the model in the previous question better reflects our theoretical notions of how these variables are actually related, we are yet to get an estimate of the indirect effect.</p>
+<p>While the model in the previous question better reflects our theoretical notions of how these variables are actually related, we would ideally get out an estimate of the indirect effect.</p>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p>That is, we want to test the estimated path from X to Y through M. Typically, this is done by calculating the <em>product</em> of the sub-component paths. This would be <span class="math inline">\(a \times b\)</span> in the image to the right.</p>
+</div><div class="column" style="width:5%;">
+
+</div><div class="column" style="width:35%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/MED2.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Taking the product makes some intuitive sense, as if either one were zero then the product would be zero, indicating no effect. You can find a nice explanation from Aja of why exactly we take the product <a href="https://uoepsy.github.io/msmr/indirect_effects.pdf">here</a>).</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1140,11 +1669,12 @@ Defined Parameters in lavaan
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>To specifically test the indirect effect, we need to explicitly <strong>define</strong> the indirect effect in our model, by first creating a label for each of its sub-component paths, and then defining the indirect effect itself as the product of these two paths (why the product? <a href="https://uoepsy.github.io/msmr/indirect_effects.pdf">Click here for a lovely explanation from Aja</a>).</p>
+<p>To specifically test the indirect effect, we need to explicitly <strong>define</strong> the indirect effect in our model, by first creating a label for each of its sub-component paths, and then defining the indirect effect itself as the product of these two paths.</p>
 <p>To do this, we use a new operator, <code>:=</code>.</p>
-<p><em>“This operator ‘defines’ new parameters which take on values that are an arbitrary function of the original model parameters. The function, however, must be specified in terms of the parameter labels that are explicitly mentioned in the model syntax.”</em>^(<a href="https://lavaan.ugent.be/">the lavaan project</a>)] The labels are entirely up to us, we can use “a”, “b” and “c”, or “dougal”, “dylan” and “ermintrude”, they’re just labels!</p>
+<p><em>“This operator ‘defines’ new parameters which take on values that are an arbitrary function of the original model parameters. The function, however, must be specified in terms of the parameter labels that are explicitly mentioned in the model syntax.”</em> <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>.<br>
+The labels are entirely up to us, we can use “a”, “b” and “c”, or “dougal”, “dylan” and “ermintrude”, they’re just labels!</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>med_model <span class="ot">&lt;-</span> <span class="st">" </span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="st">    Y ~ b*M + c*X</span></span>
@@ -1157,11 +1687,14 @@ Defined Parameters in lavaan
 </div>
 </div>
 </div>
-<p>Edit your model formula to also estimate the total and indirect effects, and re-fit the model.</p>
+<p>Edit your model formula from the previous question to also estimate both the total and the indirect effects.</p>
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+
+</div>
+<div class="solution-body">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="st">"</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="st">Salary ~ c*Educ + b*Skill</span></span>
@@ -1169,10 +1702,50 @@ Defined Parameters in lavaan
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="st">indirect := a*b</span></span>
 <span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="st">total := a*b + c</span></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>mod1.est <span class="ot">&lt;-</span> <span class="fu">sem</span>(mod1, <span class="at">data =</span> edskill)</span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod1.est)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 4
+</div>
+<div class="question-body">
+<p>Re-fit the model, estimating the parameters using bootstrapping.<br>
+Is the association between education and salary mediated by skills? What proportion of the effect is mediated?</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Why Bootstrap?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We are computing our indirect effect as the <em>product</em> of the sub-component paths. However, this results in the estimated indirect effect rarely following a normal distribution, and makes our usual analytically derived standard errors &amp; p-values inappropriate.</p>
+<p>Instead, bootstrapping has become the norm for assessing sampling distributions of indirect effects in mediation models (remember, bootstrapping involves resampling the data with replacement, thousands of times, in order to empirically generate a sampling distribution).</p>
+<p>We can do this easily in lavaan:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>mod.est <span class="ot">&lt;-</span> <span class="fu">sem</span>(model_formula, <span class="at">data=</span>my_data, <span class="at">se =</span> <span class="st">"bootstrap"</span>) </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># to print out the confidence intervals:</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod.est, <span class="at">ci =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+
+</div>
+<div class="solution-body">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>mod1.est <span class="ot">&lt;-</span> <span class="fu">sem</span>(mod1, <span class="at">data =</span> edskill, <span class="at">se =</span> <span class="st">"bootstrap"</span>, <span class="at">bootstrap =</span> <span class="dv">100</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod1.est, <span class="at">ci =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>lavaan 0.6.17 ended normally after 1 iteration
 
@@ -1189,57 +1762,127 @@ Model Test User Model:
 
 Parameter Estimates:
 
-  Standard errors                             Standard
-  Information                                 Expected
-  Information saturated (h1) model          Structured
+  Standard errors                            Bootstrap
+  Number of requested bootstrap draws              100
+  Number of successful bootstrap draws             100
 
 Regressions:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
-  Salary ~                                            
-    Educ       (c)    0.482    0.215    2.239    0.025
-    Skill      (b)    3.568    0.679    5.254    0.000
-  Skill ~                                             
-    Educ       (a)    0.166    0.014   12.125    0.000
+                   Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+  Salary ~                                                              
+    Educ       (c)    0.482    0.238    2.020    0.043   -0.027    0.988
+    Skill      (b)    3.568    0.706    5.052    0.000    2.196    5.059
+  Skill ~                                                               
+    Educ       (a)    0.166    0.014   12.009    0.000    0.140    0.194
 
 Variances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
-   .Salary          130.239    9.327   13.964    0.000
-   .Skill             0.724    0.052   13.964    0.000
+                   Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+   .Salary          130.237   10.464   12.446    0.000  110.284  153.200
+   .Skill             0.724    0.055   13.240    0.000    0.619    0.837
 
 Defined Parameters:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
-    indirect          0.591    0.123    4.821    0.000
-    total             1.073    0.190    5.657    0.000</code></pre>
+                   Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+    indirect          0.592    0.117    5.052    0.000    0.341    0.816
+    total             1.073    0.219    4.891    0.000    0.642    1.556</code></pre>
+</div>
+</div>
+<p>The relationship between education and salary <strong>is</strong> mediated by skill level! We have a significant indirect effect of 0.59, 95% CI [0.34, 0.82].</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+optional: Y increases by 0.59 when what?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Typically people go no further in their interpretation of this coefficient than “The effect of X on Y through M”.</p>
+<p>If you want to make this more explicit, the indirect effect estimate is the amount by which the outcome Y changes when the predictor X is held constant, and the mediator M changes by however much it <em>would have changed</em> had the predictor increased by one.</p>
+<p>We can see this a bit clearer if we write down the prediction equations for Skill and Salary, and then see how it changes when we move from Education = 0 to Education = 1.</p>
+<table class="table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 37%">
+<col style="width: 37%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Educ</th>
+<th>Skill</th>
+<th>Salary</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><span class="math inline">\(= (a \times Educ)\)</span></td>
+<td><span class="math inline">\(= (c' \times Educ) + (b \times Skill)\)</span></td>
+</tr>
+<tr class="even">
+<td>0</td>
+<td><span class="math inline">\(= (0.166 \times Educ)\)</span><br><span class="math inline">\(= (0.166 \times 0)\)</span><br><span class="math inline">\(= 0\)</span></td>
+<td><span class="math inline">\(= (0.482 \times Educ) + (3.568 \times Skill)\)</span><br><span class="math inline">\(= (0.482 \times 0) + (3.568 \times 0)\)</span><br><span class="math inline">\(= 0\)</span></td>
+</tr>
+<tr class="odd">
+<td>1</td>
+<td><span class="math inline">\(= (0.166 \times Educ)\)</span><br><span class="math inline">\(= (0.166 \times 1)\)</span><br><span class="math inline">\(= 0.166\)</span></td>
+<td><span class="math inline">\(= (0.482 \times Educ) + (3.568 \times Skill)\)</span><br><span class="math inline">\(= (0.482 \times 1) + (3.568 \times 0.166)\)</span><br><span class="math inline">\(= (0.482) + (0.59)\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>The total effect of education on salary is 1.07, and the indirect effect is 0.59.<br>
+<span class="math inline">\(\frac{0.59}{1.07} = 0.55\)</span>, so 55% of the effect is mediated by the influence that education has on skillset and skillset has on salary.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 5
+</div>
+<div class="question-body">
+<p>In order for us to accurately estimate mediation effects, a few conditions have to be met.</p>
+<ul>
+<li><strong>Causal direction:</strong> Doing mediation analysis on cross-sectional data (variables collected all at the same time) is commonly done, but is almost always a bad idea. X<span class="math inline">\(\rightarrow\)</span>M<span class="math inline">\(\rightarrow\)</span>Y will fit your data just as well as X<span class="math inline">\(\rightarrow\)</span>Y<span class="math inline">\(\rightarrow\)</span>M or Y<span class="math inline">\(\rightarrow\)</span>M<span class="math inline">\(\rightarrow\)</span>X!</li>
+<li><strong>Perfect reliability of M:</strong> The mediator is measured without error</li>
+<li><strong>No X-M interaction:</strong> The effect of the mediator M on the outcome Y does not depend on the level of the predictor X.</li>
+<li><strong>No confounding:</strong> A variable that is a common cause of both X and Y will bias the total and direct effects, and a variable that is a common cause of both X and M will bias the indirect effect (it will bias the X<span class="math inline">\(\rightarrow\)</span>M path). Randomised experiments (i.e.&nbsp;randomly allocating people to different values of X) will avoid the first two, because nothing but the random allocation would cause X. However, confounding of the indirect effect can also happen if some variable is a common cause of both M and Y, and it is hard to randomly allocate to a mediator<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>.</li>
+</ul>
+<p>Think of two variables that could be in the place of the variables indicated by <code>?</code> in <a href="#fig-blanks">Figure&nbsp;10</a>.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-blanks" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/path_educ_conf_blank.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;10: fill in the blanks!</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+
+</div>
+<div class="solution-body">
+<p>Here are my suggestions. Even if we don’t believe that it <em>should</em>, something like “socioeconomic status” can likely influence both peoples’ levels of education (people from wealthier backgrounds have more access to more years of education) and their eventual salary (social connections might lead to better paying jobs, etc.).<br>
+Similarly, aspects of peoples’ employment post-education will influence the skills they have <em>and</em> their salary. For instance, some people might leave education and go into private industry jobs with lots of options for on-the-job training and ‘upskilling’. These jobs might also generally pay higher salaries!</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/path_educ_conf_example.png" class="img-fluid figure-img" style="width:80.0%"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
 <p class="solution-end">
 </p>
-<p>No X-M Interaction: The effect of M on Y or b does not vary across levels of X. Causal Direction: The variable M causes Y, by Y does not cause M. Perfect Reliability in M: The reliability of M is perfect.<br>
-No Confounding: There is no variable that causes M and Y.</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Why Bootstrap?
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>We are computing our indirect effect as the <em>product</em> of the sub-component paths. However, this results in the estimated indirect effect rarely following a normal distribution, and makes our usual analytically derived standard errors &amp; p-values inappropriate.</p>
-<p>Instead, bootstrapping has become the norm for assessing sampling distributions of indirect effects in mediation models (remember, bootstrapping involves resampling the data with replacement, thousands of times, in order to empirically generate a sampling distribution).</p>
-<p>We can do this easily in lavaan:</p>
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>mod.est <span class="ot">&lt;-</span> <span class="fu">sem</span>(model_formula, <span class="at">data=</span>my_data, <span class="at">se =</span> <span class="st">"bootstrap"</span>) </span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># to print out the confidence intervals:</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod.est, <span class="at">ci =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-</div>
-</div>
 
 
 </section>
@@ -1249,6 +1892,9 @@ Why Bootstrap?
 
 <ol>
 <li id="fn1"><p>if we were wanting covariances, and we didn’t have standardised variables, then these would have to be multiplied by the corresponding variance estimates for the variables<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>You can’t go out of one arrow-head into another arrow-head. We can go heads-to-tails, or tails-to-heads, not heads-heads<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p><a href="https://lavaan.ugent.be/" target="_blank">the lavaan project</a><a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>there <em>are</em> methods that attempt to “block” a mediator, or to manipulate X in multiple ways in order to increase or decrease the mediators’ effect. If you’re interested see <a href="https://doi.org/10.1016/j.jesp.2015.09.012" target="_blank"><em>Design approaches to experimental mediation</em>, Pirlott &amp; MacKinnon 2016</a><a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
