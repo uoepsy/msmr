@@ -448,6 +448,62 @@
     "text": "Footnotes\n\n\nor in logistic regression, “what is the likelihood of observing the outcome \\(y\\) given our model parameters?”↩︎"
   },
   {
+    "objectID": "09ex.html",
+    "href": "09ex.html",
+    "title": "Week 9 Exercises: Path Analysis & Mediation",
+    "section": "",
+    "text": "How does Path Analysis work?\n\n\n\n\n\nThe logic behind path analysis is to estimate a system of equations that best reproduce the covariance structure that we see in the data.\n\nWe specify our theoretical model of the world as a system of paths between variables that represent which variables influence which other variables. This is simply a diagramatic way of specifying a set of equations.\n\nA single headed arrow from \\(X \\rightarrow Y\\) indicates that Y “listens to” X - if X changes, then Y will change accordingly (but not vice versa)\nA double headed arrow between \\(X \\leftrightarrow Y\\) indicates that these two variables are related, not because one causes the other, but because there is some mechanism outside of our model that results in these two variables being associated.\n\nWe collect data on the relevant variables and we observe a covariance matrix (i.e. how each variable covaries with every other variable).\nWe fit our model to the data, and evaluate how well our theoretical model (the estimated values for our path coefficients) can reproduce the observed covariance matrix.\n\n\nTerminology\n\nExogenous variables are a bit like what we have been describing with words like “independent variable” or “predictor”. In a path diagram, they have no arrows coming into them from other variables in the system, but have paths going out to other variables.\n\nEndogenous variables are more like the “outcome”/“dependent”/“response” variables we are used to. They have some arrow coming into them from another variable in the system (and may also - but not necessarily - have paths going out from them)."
+  },
+  {
+    "objectID": "09ex.html#section",
+    "href": "09ex.html#section",
+    "title": "Week 9 Exercises: Path Analysis & Mediation",
+    "section": "",
+    "text": "Option A\n\n\n\n\n\n\n\n\n\n\n\nOption B"
+  },
+  {
+    "objectID": "09ex.html#section-1",
+    "href": "09ex.html#section-1",
+    "title": "Week 9 Exercises: Path Analysis & Mediation",
+    "section": "",
+    "text": "We now have two predictors, one mediator and one outcome (and two indirect effects, one for each predictor). We can represent this in two lines: one where we specify academic performance as the outcome variable and one where we specify teacher relationships (the mediator) as the outcome variable.\n\nmodel2 &lt;- '\n    Acad ~ c_A*Agg + c_NA*Non_agg + b*Teach_r\n    Teach_r ~ a_A*Agg + a_NA*Non_agg\n    \n    #indirect effect for aggressive conduct problems\n    ind_agg := a_A*b \n    #indirect effect for non-aggressive conduct problems\n    ind_nonagg := a_NA*b \n    \n    # total effects\n    tot_agg := a_A*b + c_A\n    tot_nonagg := a_NA*b + c_NA\n'"
+  },
+  {
+    "objectID": "09ex.html#footnotes",
+    "href": "09ex.html#footnotes",
+    "title": "Week 9 Exercises: Path Analysis & Mediation",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nif we were wanting covariances, and we didn’t have standardised variables, then these would have to be multiplied by the corresponding variance estimates for the variables↩︎\nYou can’t go out of one arrow-head into another arrow-head. We can go heads-to-tails, or tails-to-heads, not heads-heads↩︎\nthe lavaan project↩︎\nthere are methods that attempt to “block” a mediator, or to manipulate X in multiple ways in order to increase or decrease the mediators’ effect. If you’re interested see Design approaches to experimental mediation, Pirlott & MacKinnon 2016↩︎\nNote that the model fitted with sem() provides \\(Z\\) values instead of the \\(t\\)-values in regression models. This is because sem() fits models with maximum likelihood thereby assuming a reasonably large sample size.↩︎\nread y~m|x as y~m controlling for x↩︎\nsometimes referred to as “steps approach”↩︎"
+  },
+  {
+    "objectID": "09exWRIGHT.html",
+    "href": "09exWRIGHT.html",
+    "title": "Week 9 Exercises: Path Analysis & Mediation",
+    "section": "",
+    "text": "How does Path Analysis work?\n\n\n\n\n\nThe logic behind path analysis is to estimate a system of equations that best reproduce the covariance structure that we see in the data.\n\nWe specify our theoretical model of the world as a system of paths between variables that represent which variables influence which other variables. This is simply a diagramatic way of specifying a set of equations.\n\nA single headed arrow from \\(X \\rightarrow Y\\) indicates that Y “listens to” X - if X changes, then Y will change accordingly (but not vice versa)\nA double headed arrow between \\(X \\leftrightarrow Y\\) indicates that these two variables are related, not because one causes the other, but because there is some mechanism outside of our model that results in these two variables being associated.\n\nWe collect data on the relevant variables and we observe a covariance matrix (i.e. how each variable covaries with every other variable).\nWe fit our model to the data, and evaluate how well our theoretical model (the estimated values for our path coefficients) can reproduce the observed covariance matrix.\n\n\nTerminology\n\nExogenous variables are a bit like what we have been describing with words like “independent variable” or “predictor”. In a path diagram, they have no arrows coming into them from other variables in the system, but have paths going out to other variables.\n\nEndogenous variables are more like the “outcome”/“dependent”/“response” variables we are used to. They have some arrow coming into them from another variable in the system (and may also - but not necessarily - have paths going out from them)."
+  },
+  {
+    "objectID": "09exWRIGHT.html#section",
+    "href": "09exWRIGHT.html#section",
+    "title": "Week 9 Exercises: Path Analysis & Mediation",
+    "section": "",
+    "text": "Option A\n\n\n\n\n\n\n\n\n\n\n\nOption B"
+  },
+  {
+    "objectID": "09exWRIGHT.html#section-1",
+    "href": "09exWRIGHT.html#section-1",
+    "title": "Week 9 Exercises: Path Analysis & Mediation",
+    "section": "",
+    "text": "We now have two predictors, one mediator and one outcome (and two indirect effects, one for each predictor). We can represent this in two lines: one where we specify academic performance as the outcome variable and one where we specify teacher relationships (the mediator) as the outcome variable.\n\nmodel2 &lt;- '\n    Acad ~ c_A*Agg + c_NA*Non_agg + b*Teach_r\n    Teach_r ~ a_A*Agg + a_NA*Non_agg\n    \n    #indirect effect for aggressive conduct problems\n    ind_agg := a_A*b \n    #indirect effect for non-aggressive conduct problems\n    ind_nonagg := a_NA*b \n    \n    # total effects\n    tot_agg := a_A*b + c_A\n    tot_nonagg := a_NA*b + c_NA\n'"
+  },
+  {
+    "objectID": "09exWRIGHT.html#footnotes",
+    "href": "09exWRIGHT.html#footnotes",
+    "title": "Week 9 Exercises: Path Analysis & Mediation",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nif we were wanting covariances, and we didn’t have standardised variables, then these would have to be multiplied by the corresponding variance estimates for the variables↩︎\nYou can’t go out of one arrow-head into another arrow-head. We can go heads-to-tails, or tails-to-heads, not heads-heads↩︎\nthe lavaan project↩︎\nthere are methods that attempt to “block” a mediator, or to manipulate X in multiple ways in order to increase or decrease the mediators’ effect. If you’re interested see Design approaches to experimental mediation, Pirlott & MacKinnon 2016↩︎\nNote that the model fitted with sem() provides \\(Z\\) values instead of the \\(t\\)-values in regression models. This is because sem() fits models with maximum likelihood thereby assuming a reasonably large sample size.↩︎\nread y~m|x as y~m controlling for x↩︎\nsometimes referred to as “steps approach”↩︎"
+  },
+  {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About",
@@ -480,14 +536,14 @@
     "href": "lvp.html#setup",
     "title": "Likelihood vs Probability",
     "section": "Setup",
-    "text": "Setup\nLet’s consider a coin flip. For a fair coin, the chance of getting a heads/tails for any given flip is 0.5.\nWe can simulate the number of “heads” in a single fair coin flip with the following code (because it is a single flip, it’s just going to return 0 or 1):\n\nrbinom(n = 1, size = 1, prob = 0.5)\n\n[1] 0\n\n\nWe can simulate the number of “heads” in 8 fair coin flips with the following code:\n\nrbinom(n = 1, size = 8, prob = 0.5)\n\n[1] 4\n\n\nAs the coin is fair, what number of heads would we expect to see out of 8 coin flips? Answer: 4! Doing another 8 flips:\n\nrbinom(n = 1, size = 8, prob = 0.5)\n\n[1] 5\n\n\nand another 8:\n\nrbinom(n = 1, size = 8, prob = 0.5)\n\n[1] 5\n\n\nWe see that they tend to be around our intuition expected number of 4 heads. We can change n = 1 to ask rbinom() to not just do 1 set of 8 coin flips, but to do 1000 sets of 8 flips:\n\ntable(rbinom(n = 1000, size = 8, prob = 0.5))\n\n\n  0   1   2   3   4   5   6   7   8 \n  7  20 120 223 289 202 104  31   4"
+    "text": "Setup\nLet’s consider a coin flip. For a fair coin, the chance of getting a heads/tails for any given flip is 0.5.\nWe can simulate the number of “heads” in a single fair coin flip with the following code (because it is a single flip, it’s just going to return 0 or 1):\n\nrbinom(n = 1, size = 1, prob = 0.5)\n\n[1] 1\n\n\nWe can simulate the number of “heads” in 8 fair coin flips with the following code:\n\nrbinom(n = 1, size = 8, prob = 0.5)\n\n[1] 4\n\n\nAs the coin is fair, what number of heads would we expect to see out of 8 coin flips? Answer: 4! Doing another 8 flips:\n\nrbinom(n = 1, size = 8, prob = 0.5)\n\n[1] 5\n\n\nand another 8:\n\nrbinom(n = 1, size = 8, prob = 0.5)\n\n[1] 3\n\n\nWe see that they tend to be around our intuition expected number of 4 heads. We can change n = 1 to ask rbinom() to not just do 1 set of 8 coin flips, but to do 1000 sets of 8 flips:\n\ntable(rbinom(n = 1000, size = 8, prob = 0.5))\n\n\n  0   1   2   3   4   5   6   7   8 \n  4  29 107 199 301 222 103  29   6"
   },
   {
     "objectID": "lvp.html#probability",
     "href": "lvp.html#probability",
     "title": "Likelihood vs Probability",
     "section": "Probability",
-    "text": "Probability\nSo what is the probability of observing \\(k\\) heads in \\(n\\) flips of a fair coin?\nAs coin flips are independent, we can calculate probability using the product rule (\\(P(AB) = P(A)\\cdot P(B)\\) where \\(A\\) and \\(B\\) are independent).\nSo the probability of observing 2 heads in 2 flips is \\(0.5 \\cdot 0.5 = 0.25\\)\nWe can get to this probability using dbinom():\n\ndbinom(2, size=2, prob=0.5)\n\n[1] 0.25\n\n\nIn 8 flips, those two heads could occur in various ways:\n\n\n\n\n\n\n  \n    \n      Ways to get 2 heads in 8 flips\n    \n  \n  \n    TTTHTHTT\n    TTHTHTTT\n    THTHTTTT\n    HTTTTTHT\n    HTTHTTTT\n    TTTTHHTT\n    TTTTHTTH\n    ...\n  \n  \n  \n\n\n\n\nAs it happens, there are 28 different ways this could happen.2\nThe probability of getting 2 heads in 8 flips of a fair coin is, therefore:\n\n28 * (0.5^8)\n\n[1] 0.109375\n\n\nOr, using dbinom()\n\ndbinom(2, size = 8, prob = 0.5)\n\n[1] 0.109375\n\n\n\nThe important thing here is that when we are computing the probability, two things are fixed:\n\nthe number of coin flips (8)\nthe value(s) that govern the coin’s behaviour (0.5 chance of landing on heads for any given flip)\n\nWe can then can compute the probabilities for observing various numbers of heads:\n\ndbinom(0:8, 8, prob = 0.5)\n\n[1] 0.00390625 0.03125000 0.10937500 0.21875000 0.27343750 0.21875000 0.10937500\n[8] 0.03125000 0.00390625\n\n\n\n\n\n\n\n\n\n\n\nNote that the probability of observing 10 heads in 8 coin flips is 0, as we would hope!\n\ndbinom(10, 8, prob = 0.5)\n\n[1] 0"
+    "text": "Probability\nSo what is the probability of observing \\(k\\) heads in \\(n\\) flips of a fair coin?\nAs coin flips are independent, we can calculate probability using the product rule (\\(P(AB) = P(A)\\cdot P(B)\\) where \\(A\\) and \\(B\\) are independent).\nSo the probability of observing 2 heads in 2 flips is \\(0.5 \\cdot 0.5 = 0.25\\)\nWe can get to this probability using dbinom():\n\ndbinom(2, size=2, prob=0.5)\n\n[1] 0.25\n\n\nIn 8 flips, those two heads could occur in various ways:\n\n\n\n\n\n\n  \n    \n      Ways to get 2 heads in 8 flips\n    \n  \n  \n    HHTTTTTT\n    TTTHHTTT\n    HTTHTTTT\n    HTTTTHTT\n    THTTHTTT\n    TTTTTHHT\n    TTHTTTHT\n    THTHTTTT\n    ...\n  \n  \n  \n\n\n\n\nAs it happens, there are 28 different ways this could happen.2\nThe probability of getting 2 heads in 8 flips of a fair coin is, therefore:\n\n28 * (0.5^8)\n\n[1] 0.109375\n\n\nOr, using dbinom()\n\ndbinom(2, size = 8, prob = 0.5)\n\n[1] 0.109375\n\n\n\nThe important thing here is that when we are computing the probability, two things are fixed:\n\nthe number of coin flips (8)\nthe value(s) that govern the coin’s behaviour (0.5 chance of landing on heads for any given flip)\n\nWe can then can compute the probabilities for observing various numbers of heads:\n\ndbinom(0:8, 8, prob = 0.5)\n\n[1] 0.00390625 0.03125000 0.10937500 0.21875000 0.27343750 0.21875000 0.10937500\n[8] 0.03125000 0.00390625\n\n\n\n\n\n\n\n\n\n\n\nNote that the probability of observing 10 heads in 8 coin flips is 0, as we would hope!\n\ndbinom(10, 8, prob = 0.5)\n\n[1] 0"
   },
   {
     "objectID": "lvp.html#likelihood",
@@ -509,19 +565,5 @@
     "title": "Likelihood vs Probability",
     "section": "Footnotes",
     "text": "Footnotes\n\n\nThis is the typical frequentist stats view. There are other ways to do statistics (not covered in this course) - e.g., in Bayesian statistics, probability relates to the reasonable expectation (or “plausibility”) of a belief↩︎\nIf you really want to see them all, try running combn(8, 2) in your console.↩︎"
-  },
-  {
-    "objectID": "09exWRIGHT.html",
-    "href": "09exWRIGHT.html",
-    "title": "Week 9 Exercises: Path Analysis & Mediation",
-    "section": "",
-    "text": "How does Path Analysis work?\n\n\n\n\n\nThe logic behind path analysis is to estimate a system of equations that best reproduce the covariance structure that we see in the data.\n\nWe specify our theoretical model of the world as a system of paths between variables that represent which variables influence which other variables. This is simply a diagramatic way of specifying a set of equations.\n\nA single headed arrow from \\(X \\rightarrow Y\\) indicates that Y “listens to” X - if X changes, then Y will change accordingly (but not vice versa)\nA double headed arrow between \\(X \\leftrightarrow Y\\) indicates that these two variables are related, not because one causes the other, but because there is some mechanism outside of our model that results in these two variables being associated.\n\nWe collect data on the relevant variables and we observe a covariance matrix (i.e. how each variable covaries with every other variable).\nWe fit our model to the data, and evaluate how well our theoretical model (the estimated values for our path coefficients) can reproduce the observed covariance matrix.\n\n\nTerminology\n\nExogenous variables are a bit like what we have been describing with words like “independent variable” or “predictor”. In a path diagram, they have no arrows coming into them from other variables in the system, but have paths going out to other variables.\n\nEndogenous variables are more like the “outcome”/“dependent”/“response” variables we are used to. They have some arrow coming into them from another variable in the system (and may also - but not necessarily - have paths going out from them)."
-  },
-  {
-    "objectID": "09exWRIGHT.html#footnotes",
-    "href": "09exWRIGHT.html#footnotes",
-    "title": "Week 9 Exercises: Path Analysis & Mediation",
-    "section": "Footnotes",
-    "text": "Footnotes\n\n\nif we were wanting covariances, and we didn’t have standardised variables, then these would have to be multiplied by the corresponding variance estimates for the variables↩︎\nYou can’t go out of one arrow-head into another arrow-head. We can go heads-to-tails, or tails-to-heads, not heads-heads↩︎\nthe lavaan project↩︎\nthere are methods that attempt to “block” a mediator, or to manipulate X in multiple ways in order to increase or decrease the mediators’ effect. If you’re interested see Design approaches to experimental mediation, Pirlott & MacKinnon 2016↩︎"
   }
 ]
