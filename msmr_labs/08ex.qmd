@@ -1,7 +1,7 @@
 ---
 title: "Week 8 Exercises: CFA"
 params: 
-    SHOW_SOLS: FALSE
+    SHOW_SOLS: TRUE
     TOGGLE: TRUE
 editor_options: 
   chunk_output_type: console
@@ -1060,7 +1060,7 @@ Emitems <- c(3,5,7,9,12,15,20,24)
 BCIitems <- c(2,4,8,13,14,16,18,22)
 ```
 
-Again, because the item numbers correspond to the column positions in our data, we can reverse code using those numbers: 
+Again, because the item numbers correspond to the column positions in our data, we can just do rowSums indexing on those column numbers to get our scores:  
 ```{r}
 compl_rdas$ExSCORE <- rowSums(compl_rdas[,Exitems])
 compl_rdas$EmSCORE <- rowSums(compl_rdas[,Emitems])
