@@ -320,20 +320,22 @@ df = tibble::tibble(
   Skill = round(scale(.6*scale(Educ) + rnorm(390))[,1],2),
   Salary = scale(.12*scale(Educ) + .3*Skill + rnorm(390,0,1))[,1]*12.3 + 39.533
 )
-
-m="
-Salary ~ c*Educ + b*Skill
-Skill ~ a*Educ
-ind:=a*b
-total:=a*b+c
-"
-sem(m, df) |> summary()
+# readr::write_csv(df,file="../../data/edskill.csv")
+# m="
+# Salary ~ c*Educ + b*Skill
+# Skill ~ a*Educ
+# ind:=a*b
+# total:=a*b+c
+# "
+# sem(m, df) |> summary()
 #lm(Salary ~ Educ + Skill,df) |> summary()
   
 
 ```
 
 We sampled 500 people who were all 5 years out of their last year of education. All participants completed an extensive questionnaire to ascertain the number of and expertise in any skills that may be of potential interest to employers. This resulted in a "Skillset Metric". 5 years later, participants were followed up and asked to provide their current salaries. 110 participants failed to respond to follow-ups and thus the final sample included 390 people.  
+
+The data are available at [https://uoepsy.github.io/data/edskill.csv](https://uoepsy.github.io/data/edskill.csv){target="_blank"}.  
 
 ```{r}
 #| echo: false
@@ -367,7 +369,7 @@ lm(Salary ~ Skill + Educ, data = ... )
 
 Here's the data: 
 ```{r}
-edskill <- df
+edskill <- read_csv("https://uoepsy.github.io/data/edskill.csv")
 ```
 
 I'm going to fit both models so that we can discuss them below
