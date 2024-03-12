@@ -486,7 +486,7 @@ causality?
 <p>Thanks to <a href="https://www.jstor.org/stable/pdf/2527551.pdf?casa_token=3QF0ad2ZoBcAAAAA:MbEkDNNdoLZr1SXE4LrnK--qrhhsTXLgsRtcWre1UvWxiQiGNUl5vWytGp34XIxhAYMZJe-MbIcBnEwXSfX6MAONevz04-sMXpEDI3IaYKk6mMX46QvX">Sewal Wright</a>, we can express the correlation between any two variables in the system as the sum of all <em>compound paths</em> between the two variables<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
 <p><em>compound paths</em> are the products of any paths you can trace between A and B for which there are:</p>
 <ul>
-<li>no loops</li>
+<li>no loops. If you are tracing from one variable to another, you cannot pass through the same variable twice in a particular path.</li>
 <li>no going forward then backward (and no going forward then across a curved arrow)<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></li>
 <li>maximum of one curved arrow per path</li>
 </ul>
@@ -1381,7 +1381,12 @@ Let’s suppose that the only statistical machinery available to us is the good 
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<button id="sol-start-1" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-1', 'sol-start-1')">
+Solution
+</button>
+</div>
+<div id="sol-body-1" class="solution-body" style="display: none;">
 <p>Here’s the data:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>edskill <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/edskill.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -2810,7 +2815,7 @@ Skill        3.5681957  0.6816649 5.234530 2.718793e-07</code></pre>
 </div>
 </div>
 <p>Step 4. If Steps 1-3 all show effects of <code>y~x</code>, <code>m~x</code> and <code>y~m|x</code><a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> respectively, then we can assess mediation. We need to look at the how effect of the predictor on the outcome changes when we control for the mediator. This is from the same third model above. If the effect of the predictor is reduced, then we have mediation. If it is now zero, then we have complete mediation.</p>
-<p>This method is generally less optimal than using path models. Following the “separate models” approach<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a> and requiring certain effects to be significant can sometimes lead to erroneous conclusions. For example, if <code>Y ~ 2*M + -2*X</code> and <code>M ~ 1*X</code>, then the total effect of <code>Y~X</code> would be <span class="math inline">\((2 \times 1) + -2 = 0\)</span>, leading us to say that there is no effect that could be mediated! In part the problems with this approach are because it doesn’t actually <em>estimate</em> the indirect effects, and attempts to determine “is there mediation [Yes]/[No]?” based on the significance of the individual paths. Even if the total effect <span class="math inline">\(c\)</span> is significantly different from zero and the direct effect <span class="math inline">\(c'\)</span> is not, this does not imply that the coefficients <span class="math inline">\(c\)</span> and <span class="math inline">\(c'\)</span> are different from one another! We therefore need to conduct an extra step (popular approach is the “Sobel’s test”) in order to asses whether <span class="math inline">\(c-c'=0\)</span>.</p>
+<p>This method is generally less optimal than using path models. Following the “separate models” approach<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a> and requiring certain effects to be significant can sometimes lead to erroneous conclusions. For example, if <code>Y ~ 2*M + -2*X</code> and <code>M ~ 1*X</code>, then the total effect of <code>Y~X</code> would be <span class="math inline">\((2 \times 1) + -2 = 0\)</span>, leading us to say that there is no effect that could be mediated! In part the problems with this approach are because it doesn’t actually <em>estimate</em> the indirect effects, and attempts to determine “is there mediation [Yes]/[No]?” based on the significance of the individual paths. Even if the total effect <span class="math inline">\(c\)</span> is significantly different from zero and the direct effect <span class="math inline">\(c'\)</span> is not, this does not imply that the coefficients <span class="math inline">\(c\)</span> and <span class="math inline">\(c'\)</span> are different from one another! We therefore need to conduct an extra step (a popular approach is the “Sobel’s test”) in order to asses whether <span class="math inline">\(c-c'=0\)</span>, or to estimate the <span class="math inline">\(ab\)</span> path via bootstrapping like we do in <strong>lavaan</strong>.</p>
 <p>Perhaps a more relevant issue is that the separate models approach cannot so easily be generalised to situations with multiple mediators, multiple outcomes, or multiple predictors, whereas a path analytic approach can. In addition, both are susceptible to the same concerns of measurement reliability, confounding, predictor-mediator interactions, and the causal directions between variables.</p>
 <!-- ::: {.callout-caution collapse="true"} -->
 <!-- #### Optional - packages for estimating mediation effects -->

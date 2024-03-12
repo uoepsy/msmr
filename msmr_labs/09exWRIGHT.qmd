@@ -83,7 +83,7 @@ Thanks to [Sewal Wright](https://www.jstor.org/stable/pdf/2527551.pdf?casa_token
 
 *compound paths* are the products of any paths you can trace between A and B for which there are: 
 
-- no loops
+- no loops. If you are tracing from one variable to another, you cannot pass through the same variable twice in a particular path. 
 - no going forward then backward (and no going forward then across a curved arrow)^[You can't go out of one arrow-head into another
 arrow-head. We can go heads-to-tails, or tails-to-heads, not heads-heads]
 - maximum of one curved arrow per path
@@ -320,20 +320,22 @@ df = tibble::tibble(
   Skill = round(scale(.6*scale(Educ) + rnorm(390))[,1],2),
   Salary = scale(.12*scale(Educ) + .3*Skill + rnorm(390,0,1))[,1]*12.3 + 39.533
 )
-
-m="
-Salary ~ c*Educ + b*Skill
-Skill ~ a*Educ
-ind:=a*b
-total:=a*b+c
-"
-sem(m, df) |> summary()
+# readr::write_csv(df,file="../../data/edskill.csv")
+# m="
+# Salary ~ c*Educ + b*Skill
+# Skill ~ a*Educ
+# ind:=a*b
+# total:=a*b+c
+# "
+# sem(m, df) |> summary()
 #lm(Salary ~ Educ + Skill,df) |> summary()
   
 
 ```
 
 We sampled 500 people who were all 5 years out of their last year of education. All participants completed an extensive questionnaire to ascertain the number of and expertise in any skills that may be of potential interest to employers. This resulted in a "Skillset Metric". 5 years later, participants were followed up and asked to provide their current salaries. 110 participants failed to respond to follow-ups and thus the final sample included 390 people.  
+
+The data are available at [https://uoepsy.github.io/data/edskill.csv](https://uoepsy.github.io/data/edskill.csv){target="_blank"}.  
 
 ```{r}
 #| echo: false
@@ -363,7 +365,7 @@ lm(Salary ~ Skill + Educ, data = ... )
 
 
 `r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+`r solbegin(show=TRUE, toggle=params$TOGGLE)`
 
 Here's the data: 
 ```{r}
@@ -961,7 +963,7 @@ summary(mod3)$coefficients
 
 Step 4. If Steps 1-3 all show effects of `y~x`, `m~x` and `y~m|x`^[read `y~m|x` as `y~m` controlling for `x`] respectively, then we can assess mediation. We need to look at the how effect of the predictor on the outcome changes when we control for the mediator. This is from the same third model above. If the effect of the predictor is reduced, then we have mediation. If it is now zero, then we have complete mediation.  
 
-This method is generally less optimal than using path models. Following the "separate models" approach^[sometimes referred to as "steps approach"] and requiring certain effects to be significant can sometimes lead to erroneous conclusions. For example, if `Y ~ 2*M + -2*X` and `M ~ 1*X`, then the total effect of `Y~X` would be $(2 \times 1) + -2 = 0$, leading us to say that there is no effect that could be mediated! In part the problems with this approach are because it doesn't actually *estimate* the indirect effects, and attempts to determine "is there mediation [Yes]/[No]?" based on the significance of the individual paths. Even if the total effect $c$ is significantly different from zero and the direct effect $c'$ is not, this does not imply that the coefficients $c$ and $c'$ are different from one another! We therefore need to conduct an extra step (popular approach is the "Sobel's test") in order to asses whether $c-c'=0$.  
+This method is generally less optimal than using path models. Following the "separate models" approach^[sometimes referred to as "steps approach"] and requiring certain effects to be significant can sometimes lead to erroneous conclusions. For example, if `Y ~ 2*M + -2*X` and `M ~ 1*X`, then the total effect of `Y~X` would be $(2 \times 1) + -2 = 0$, leading us to say that there is no effect that could be mediated! In part the problems with this approach are because it doesn't actually *estimate* the indirect effects, and attempts to determine "is there mediation [Yes]/[No]?" based on the significance of the individual paths. Even if the total effect $c$ is significantly different from zero and the direct effect $c'$ is not, this does not imply that the coefficients $c$ and $c'$ are different from one another! We therefore need to conduct an extra step (a popular approach is the "Sobel's test") in order to asses whether $c-c'=0$, or to estimate the $ab$ path via bootstrapping like we do in __lavaan__.  
 
 Perhaps a more relevant issue is that the separate models approach cannot so easily be generalised to situations with multiple mediators, multiple outcomes, or multiple predictors, whereas a path analytic approach can. In addition, both are susceptible to the same concerns of measurement reliability, confounding, predictor-mediator interactions, and the causal directions between variables.   
 

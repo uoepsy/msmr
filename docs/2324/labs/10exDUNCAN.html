@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.340">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>MSMR - Week 10 Exercises: Structural Equation Modelling (SEM)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script>
+function toggle_visibility(id1, id2) {
+var e = document.getElementById(id1);
+var f = document.getElementById(id2);
+e.style.display = ((e.style.display!='none') ? 'none' : 'block');
+if(f.classList.contains('jk-circle-right')) {
+    f.classList.add('jk-circle-down')
+    f.classList.remove('jk-circle-right')
+} else {
+    f.classList.add('jk-circle-right')
+    f.classList.remove('jk-circle-down')
+}
+}
+</script>
+
+<!---<script src="https://kit.fontawesome.com/120b08a6f5.js" crossorigin="anonymous"></script>-->
+<link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet">
+<script src="site_libs/panelset-0.2.6/panelset.js"></script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">
+      MSMR
+      </li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MSMR</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+ <span class="menu-text">Week 1</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01a_clustered.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">1A: Clustered Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01b_lmm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">1B: Linear Mixed Models/Multi-level Models</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 1 Exercises: Intro to MLM</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+ <span class="menu-text">Week 2</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02a_inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">2A: Inference for MLM</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02b_loglong.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">2B: Logistic MLM | Longitudinal MLM</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 2 Exercises: Logistic and Longitudinal</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
+ <span class="menu-text">Week 3</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03a_poly.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">3A: Polynomial Growth</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 3 Exercises: Non-Linear Change</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+ <span class="menu-text">Week 4</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04a_ranef.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">4A: Random Effect Structures</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 4 Exercises: Nested and Crossed</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
+ <span class="menu-text">Week 5</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05a_assump.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">5A: Model Assumptions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05b_writing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">5B: Writing</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 5 Exercises: Assumptions, Diagnostics, Writing up</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
+ <span class="menu-text">Week 7</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 7 Exercises: PCA &amp; EFA</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
+ <span class="menu-text">Week 8</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 8 Exercises: CFA</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
+ <span class="menu-text">Week 9</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 9 Exercises: Path Analysis &amp; Mediation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">
+ <span class="menu-text">Additional Docs</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00_lm_assumpt.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">LM Troubleshooting</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./lvp.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Likelihood vs Probability</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00_surveywrangle.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Wrangling for Surveys &amp; Questionnaires</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00_pca.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PCA in 3D</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#exercising-exercises" id="toc-exercising-exercises" class="nav-link active" data-scroll-target="#exercising-exercises">Exercising Exercises</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Week 10 Exercises: Structural Equation Modelling (SEM)</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Measurement Error and the need for SEM
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We have been mentioning Structural Equation Modelling (SEM) for a few weeks now, but we haven’t been very clear on what exactly it is. Is it CFA? Is it Path Analysis? In fact it is both - it is the overarching framework of which CFA and Path Analysis are just particular cases. The beauty comes in when we put the CFA and Path Analysis approaches together.</p>
+<p>Path analysis, as we saw last week, offers a way of specifying and evaluating a <em>structural</em> model, in which variables relate to one another in various ways, via different (sometimes indirect) paths. Common models like our old friend multiple regression can be expressed in a Path Analysis framework.</p>
+<p>Factor Analysis, on the other hand, brings something absolutely crucial to the table - it allows us to mitigate some of the problems which are associated with measurement error by specifying the existence of some latent variable which is measured via some observed variables. No question can perfectly measure someone’s level of “anxiety”, but if we take a set of 10 carefully chosen questions, we can consider the shared covariance between those 10 questions to represent the construct that is common between all of them (they all ask, in different ways, about “anxiety”), also modeling the unique error with which each individual question represents the entire construct.</p>
+<p>Combine them and we can reap the rewards of having both a <em>structural model</em> and a <em>measurement model</em>. The measurement model is our specification between the items we directly observed, and the latent variables of which we consider these items to be manifestations. The structural model is our specified model of the relationships between the latent variables.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-semmdiag" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/semdiag.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;1: SEM diagram. Measurement model in orange, Structural model in purple</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="frame">
+<p><strong>You can’t test the structural model if the measurement model is bad</strong></p>
+<p>If you test the relationships between a set of latent factors, and they are not reliably measured by the observed items, then this error propagates up to influence the fit of the structural model.<br>
+To test the measurement model, it is typical to <em>saturate</em> the structural model (i.e., allow all the latent variables to correlate with one another). This way any misfit is due to the measurement model only.</p>
+<p>Alternatively, we can fit individual CFA models for each construct and assess their fit (making any reasonable adjustments if necessary) prior to then fitting the full SEM.</p>
+</div>
+</div>
+</div>
+</div>
+<section id="exercising-exercises" class="level1">
+<h1>Exercising Exercises</h1>
+<div class="frame">
+<p><strong>Dataset: TPB_data.Rdata</strong></p>
+<p>The “Theory of Planned Behaviour” is a theory about why people engage in physical activity (i.e.&nbsp;exercise).</p>
+<p>The theory is represented in the diagram in <a href="#fig-tpb">Figure&nbsp;2</a> (only the latent variables and not the measured items are shown). <strong>Attitudes</strong> refer to the extent to which a person has a favourable view of exercising; <strong>subjective norms</strong> refer to whether they believe others whose opinions they care about believe exercise to be a good thing; and <strong>perceived behavioural control</strong> refers to the extent to which they believe exercising is under their control. <strong>Intentions</strong> refer to whether a person intends to exercise and <strong>behaviour</strong> is a measure of the extent to which they exercised. Each construct is measured using four items.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-tpb" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/TPB example.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;2: Theory of planned behaviour (latent variables only)</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The data are available either:</p>
+<ul>
+<li>as a .RData file: <a href="https://uoepsy.github.io/data/TPB_data.Rdata" target="_blank">https://uoepsy.github.io/data/TPB_data.Rdata</a></li>
+<li>as a .txt file: <a href="https://uoepsy.github.io/data/TPB_data.txt" target="_blank">https://uoepsy.github.io/data/TPB_data.txt</a></li>
+</ul>
+</div>
+<div class="question-begin">
+Question 1
+</div>
+<div class="question-body">
+<p>Read in the data using the appropriate function. We’ve given you <strong>.csv</strong> files for a long time now, but it’s good to be prepared to encounter all sorts of weird filetypes.</p>
+<p>Can you successfully read in from both types of data?</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<p>Either one or the other of:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">url</span>(<span class="st">"https://uoepsy.github.io/data/TPB_data.Rdata"</span>))</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>TPB_data <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">"https://uoepsy.github.io/data/TPB_data.txt"</span>, <span class="at">header =</span> <span class="cn">TRUE</span>, <span class="at">sep =</span> <span class="st">"</span><span class="sc">\t</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 2
+</div>
+<div class="question-body">
+<p>Test separate one-factor models for each construct.<br>
+Are the measurement models satisfactory? <em>(check their fit measures)</em>.</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># specify one factor CFA model for attitudes</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>attitude_model <span class="ot">&lt;-</span> <span class="st">'att =~ attitude1 + attitude2 + attitude3 + attitude4'</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate the model</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>attitude_model.est <span class="ot">&lt;-</span> <span class="fu">cfa</span>(attitude_model, <span class="at">data=</span>TPB_data)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># inspect the output</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(attitude_model.est, <span class="at">fit.measures=</span>T, <span class="at">standardized=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>lavaan 0.6.17 ended normally after 19 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                         8
+
+  Number of observations                           890
+
+Model Test User Model:
+                                                      
+  Test statistic                                 0.175
+  Degrees of freedom                                 2
+  P-value (Chi-square)                           0.916
+
+Model Test Baseline Model:
+
+  Test statistic                              1032.173
+  Degrees of freedom                                 6
+  P-value                                        0.000
+
+User Model versus Baseline Model:
+
+  Comparative Fit Index (CFI)                    1.000
+  Tucker-Lewis Index (TLI)                       1.005
+
+Loglikelihood and Information Criteria:
+
+  Loglikelihood user model (H0)              -4620.704
+  Loglikelihood unrestricted model (H1)      -4620.616
+                                                      
+  Akaike (AIC)                                9257.408
+  Bayesian (BIC)                              9295.737
+  Sample-size adjusted Bayesian (SABIC)       9270.331
+
+Root Mean Square Error of Approximation:
+
+  RMSEA                                          0.000
+  90 Percent confidence interval - lower         0.000
+  90 Percent confidence interval - upper         0.025
+  P-value H_0: RMSEA &lt;= 0.050                    0.990
+  P-value H_0: RMSEA &gt;= 0.080                    0.000
+
+Standardized Root Mean Square Residual:
+
+  SRMR                                           0.002
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+  att =~                                                                
+    attitude1         1.000                               0.705    0.685
+    attitude2         1.052    0.062   17.093    0.000    0.742    0.722
+    attitude3         0.989    0.060   16.432    0.000    0.698    0.681
+    attitude4         1.060    0.061   17.270    0.000    0.747    0.736
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+   .attitude1         0.562    0.035   16.245    0.000    0.562    0.531
+   .attitude2         0.505    0.033   15.077    0.000    0.505    0.478
+   .attitude3         0.563    0.034   16.365    0.000    0.563    0.537
+   .attitude4         0.474    0.032   14.582    0.000    0.474    0.459
+    att               0.497    0.048   10.371    0.000    1.000    1.000</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#check the model fit and that RMSEA&lt;.05, SRMR&lt;.05, TLI&gt;0.95 and CFI&gt;.95 and that all loadings are significant and &gt;|.30|</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">modificationindices</span>(attitude_model.est)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         lhs op       rhs    mi    epc sepc.lv sepc.all sepc.nox
+10 attitude1 ~~ attitude2 0.040 -0.006  -0.006   -0.011   -0.011
+11 attitude1 ~~ attitude3 0.049 -0.006  -0.006   -0.011   -0.011
+12 attitude1 ~~ attitude4 0.176  0.013   0.013    0.025    0.025
+13 attitude2 ~~ attitude3 0.176  0.013   0.013    0.024    0.024
+14 attitude2 ~~ attitude4 0.049 -0.007  -0.007   -0.015   -0.015
+15 attitude3 ~~ attitude4 0.040 -0.006  -0.006   -0.012   -0.012</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#check the largest modification indices to see if the expected parameter changes are large enough to justify any additional parameters in the  model</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The above code shows you the steps you should run through for the attitudes construct. You should repeat these steps for each of:</p>
+<ul>
+<li>attitudes<br>
+</li>
+<li>subjective norms<br>
+</li>
+<li>perceived behavioural control<br>
+</li>
+<li>intentions<br>
+</li>
+<li>behaviour</li>
+</ul>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 3
+</div>
+<div class="question-body">
+<p>Using lavaan syntax, specify a structural equation model that corresponds to the model in Figure @ref(fig:tpb). For each construct use a latent variable measured by the corresponding items in the dataset.</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>TPB_model<span class="ot">&lt;-</span><span class="st">'</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="st">#measurement models for attitudes, subjective norms and perceived behavioural control</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="st">  att =~ attitude1 + attitude2 + attitude3 + attitude4</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="st">  SN =~ SN1 + SN2 + SN3 + SN4</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="st">  PBC =~ PBC1 + PBC2 + PBC3 + PBC4</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="st">  intent =~ int1 + int2 + int3 + int4</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="st">  beh =~ beh1 + beh2 + beh3 + beh4</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="st">#regressions  </span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="st">  beh ~ intent + PBC</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="st">  intent ~ att + SN + PBC</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="st">#covariances between attitudes, subjective norms and perceived behavioural control</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="st">  att ~~ SN    </span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="st">  att ~~ PBC</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="st">  SN ~~ PBC</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 4
+</div>
+<div class="question-body">
+<p>Estimate the model from Question A4 and evaluate the model</p>
+<ul>
+<li>Does the model fit well?<br>
+</li>
+<li>Are the hypothesised paths significant?</li>
+</ul>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<p>We can estimate the model using the <code>sem()</code> function.<br>
+By default the <code>sem()</code> function will scale the latent variables by fixing the loading of the first item for each latent variable to 1 but we can override this by setting <code>std.lv=T</code> if we wanted to. By default, maximum likelihood estimation will be used.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>TPB_model.est<span class="ot">&lt;-</span><span class="fu">sem</span>(TPB_model, <span class="at">data=</span>TPB_data, <span class="at">std.lv=</span>T)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(TPB_model.est, <span class="at">fit.measures=</span>T, <span class="at">standardized=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>lavaan 0.6.17 ended normally after 24 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        48
+
+  Number of observations                           890
+
+Model Test User Model:
+                                                      
+  Test statistic                               157.059
+  Degrees of freedom                               162
+  P-value (Chi-square)                           0.595
+
+Model Test Baseline Model:
+
+  Test statistic                              5335.624
+  Degrees of freedom                               190
+  P-value                                        0.000
+
+User Model versus Baseline Model:
+
+  Comparative Fit Index (CFI)                    1.000
+  Tucker-Lewis Index (TLI)                       1.001
+
+Loglikelihood and Information Criteria:
+
+  Loglikelihood user model (H0)             -24403.833
+  Loglikelihood unrestricted model (H1)     -24325.304
+                                                      
+  Akaike (AIC)                               48903.667
+  Bayesian (BIC)                             49133.646
+  Sample-size adjusted Bayesian (SABIC)      48981.207
+
+Root Mean Square Error of Approximation:
+
+  RMSEA                                          0.000
+  90 Percent confidence interval - lower         0.000
+  90 Percent confidence interval - upper         0.014
+  P-value H_0: RMSEA &lt;= 0.050                    1.000
+  P-value H_0: RMSEA &gt;= 0.080                    0.000
+
+Standardized Root Mean Square Residual:
+
+  SRMR                                           0.023
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+  att =~                                                                
+    attitude1         0.710    0.034   21.152    0.000    0.710    0.689
+    attitude2         0.746    0.033   22.590    0.000    0.746    0.726
+    attitude3         0.707    0.033   21.155    0.000    0.707    0.689
+    attitude4         0.730    0.033   22.298    0.000    0.730    0.719
+  SN =~                                                                 
+    SN1               0.685    0.036   18.786    0.000    0.685    0.661
+    SN2               0.673    0.036   18.466    0.000    0.673    0.651
+    SN3               0.646    0.037   17.369    0.000    0.646    0.616
+    SN4               0.681    0.038   18.064    0.000    0.681    0.638
+  PBC =~                                                                
+    PBC1              0.776    0.029   27.045    0.000    0.776    0.799
+    PBC2              0.728    0.028   25.777    0.000    0.728    0.772
+    PBC3              0.709    0.028   25.023    0.000    0.709    0.756
+    PBC4              0.747    0.029   25.813    0.000    0.747    0.773
+  intent =~                                                             
+    int1              0.459    0.033   14.067    0.000    0.708    0.584
+    int2              0.535    0.035   15.144    0.000    0.824    0.646
+    int3              0.513    0.035   14.794    0.000    0.791    0.625
+    int4              0.492    0.034   14.300    0.000    0.759    0.597
+  beh =~                                                                
+    beh1              0.623    0.039   16.044    0.000    0.808    0.649
+    beh2              0.584    0.039   15.022    0.000    0.758    0.599
+    beh3              0.576    0.039   14.782    0.000    0.748    0.588
+    beh4              0.599    0.040   15.153    0.000    0.777    0.605
+
+Regressions:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+  beh ~                                                                 
+    intent            0.426    0.057    7.513    0.000    0.506    0.506
+    PBC               0.241    0.071    3.373    0.001    0.185    0.185
+  intent ~                                                              
+    att               0.553    0.069    8.010    0.000    0.359    0.359
+    SN                0.302    0.064    4.692    0.000    0.196    0.196
+    PBC               0.756    0.073   10.364    0.000    0.490    0.490
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+  att ~~                                                                
+    SN                0.320    0.040    7.938    0.000    0.320    0.320
+    PBC               0.253    0.038    6.611    0.000    0.253    0.253
+  SN ~~                                                                 
+    PBC               0.196    0.041    4.800    0.000    0.196    0.196
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+   .attitude1         0.556    0.034   16.511    0.000    0.556    0.525
+   .attitude2         0.498    0.032   15.415    0.000    0.498    0.472
+   .attitude3         0.551    0.033   16.509    0.000    0.551    0.525
+   .attitude4         0.498    0.032   15.658    0.000    0.498    0.483
+   .SN1               0.605    0.039   15.384    0.000    0.605    0.563
+   .SN2               0.616    0.039   15.689    0.000    0.616    0.577
+   .SN3               0.681    0.041   16.608    0.000    0.681    0.620
+   .SN4               0.676    0.042   16.047    0.000    0.676    0.593
+   .PBC1              0.341    0.023   15.163    0.000    0.341    0.362
+   .PBC2              0.359    0.022   16.144    0.000    0.359    0.404
+   .PBC3              0.377    0.023   16.639    0.000    0.377    0.429
+   .PBC4              0.376    0.023   16.119    0.000    0.376    0.403
+   .int1              0.969    0.054   18.096    0.000    0.969    0.659
+   .int2              0.949    0.056   16.914    0.000    0.949    0.583
+   .int3              0.976    0.056   17.371    0.000    0.976    0.610
+   .int4              1.042    0.058   17.889    0.000    1.042    0.644
+   .beh1              0.900    0.057   15.656    0.000    0.900    0.579
+   .beh2              1.026    0.061   16.918    0.000    1.026    0.641
+   .beh3              1.057    0.062   17.152    0.000    1.057    0.654
+   .beh4              1.045    0.062   16.783    0.000    1.045    0.634
+    att               1.000                               1.000    1.000
+    SN                1.000                               1.000    1.000
+    PBC               1.000                               1.000    1.000
+   .intent            1.000                               0.421    0.421
+   .beh               1.000                               0.593    0.593</code></pre>
+</div>
+</div>
+<p>We can see that the model fits well according to RMSEA, SRMR, TLI and CFI. All of the hypothesised paths in the theory of planned behaviour are statistically significant.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 5
+</div>
+<div class="question-body">
+<p>Examine the modification indices and expected parameter changes - are there any additional parameters you would consider including?</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">modindices</span>(TPB_model.est)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          lhs op       rhs     mi    epc sepc.lv sepc.all sepc.nox
+54        att =~       SN1  1.663  0.049   0.049    0.047    0.047
+55        att =~       SN2  3.197  0.067   0.067    0.065    0.065
+56        att =~       SN3  1.283 -0.043  -0.043   -0.041   -0.041
+57        att =~       SN4  4.294 -0.081  -0.081   -0.076   -0.076
+58        att =~      PBC1  0.350 -0.016  -0.016   -0.017   -0.017
+59        att =~      PBC2  1.394  0.032   0.032    0.034    0.034
+60        att =~      PBC3  0.133 -0.010  -0.010   -0.011   -0.011
+61        att =~      PBC4  0.043 -0.006  -0.006   -0.006   -0.006
+62        att =~      int1  0.002 -0.003  -0.003   -0.002   -0.002
+63        att =~      int2  0.014 -0.007  -0.007   -0.005   -0.005
+64        att =~      int3  0.379  0.035   0.035    0.027    0.027
+65        att =~      int4  0.243 -0.028  -0.028   -0.022   -0.022
+66        att =~      beh1  0.134 -0.016  -0.016   -0.013   -0.013
+67        att =~      beh2  0.844  0.042   0.042    0.034    0.034
+68        att =~      beh3  0.033  0.008   0.008    0.007    0.007
+69        att =~      beh4  0.420 -0.030  -0.030   -0.024   -0.024
+70         SN =~ attitude1  0.923  0.035   0.035    0.034    0.034
+71         SN =~ attitude2  0.454  0.024   0.024    0.023    0.023
+72         SN =~ attitude3  0.054  0.008   0.008    0.008    0.008
+73         SN =~ attitude4  3.291 -0.064  -0.064   -0.063   -0.063
+74         SN =~      PBC1  0.216 -0.013  -0.013   -0.013   -0.013
+75         SN =~      PBC2  1.679  0.036   0.036    0.038    0.038
+76         SN =~      PBC3  0.485 -0.019  -0.019   -0.021   -0.021
+77         SN =~      PBC4  0.034 -0.005  -0.005   -0.005   -0.005
+78         SN =~      int1  2.659 -0.080  -0.080   -0.066   -0.066
+79         SN =~      int2  0.050 -0.011  -0.011   -0.009   -0.009
+80         SN =~      int3  0.269  0.027   0.027    0.021    0.021
+81         SN =~      int4  1.081  0.054   0.054    0.042    0.042
+82         SN =~      beh1  2.904 -0.075  -0.075   -0.060   -0.060
+83         SN =~      beh2  0.263  0.023   0.023    0.019    0.019
+84         SN =~      beh3  1.906  0.064   0.064    0.050    0.050
+85         SN =~      beh4  0.202  0.021   0.021    0.016    0.016
+86        PBC =~ attitude1  1.435 -0.039  -0.039   -0.038   -0.038
+87        PBC =~ attitude2  0.256  0.016   0.016    0.016    0.016
+88        PBC =~ attitude3  1.785  0.043   0.043    0.042    0.042
+89        PBC =~ attitude4  0.415 -0.020  -0.020   -0.020   -0.020
+90        PBC =~       SN1  0.103  0.011   0.011    0.011    0.011
+91        PBC =~       SN2  1.946  0.048   0.048    0.046    0.046
+92        PBC =~       SN3  3.081 -0.061  -0.061   -0.058   -0.058
+93        PBC =~       SN4  0.005 -0.002  -0.002   -0.002   -0.002
+94        PBC =~      int1  0.043 -0.012  -0.012   -0.010   -0.010
+95        PBC =~      int2  0.064  0.016   0.016    0.012    0.012
+96        PBC =~      int3  0.000  0.001   0.001    0.001    0.001
+97        PBC =~      int4  0.007 -0.005  -0.005   -0.004   -0.004
+98        PBC =~      beh1  0.005 -0.004  -0.004   -0.003   -0.003
+99        PBC =~      beh2  1.367  0.063   0.063    0.050    0.050
+100       PBC =~      beh3  0.001 -0.001  -0.001   -0.001   -0.001
+101       PBC =~      beh4  1.119 -0.058  -0.058   -0.045   -0.045
+102    intent =~ attitude1  0.043  0.006   0.009    0.009    0.009
+103    intent =~ attitude2  0.353  0.016   0.025    0.025    0.025
+104    intent =~ attitude3  3.425  0.051   0.079    0.077    0.077
+105    intent =~ attitude4  6.558 -0.070  -0.108   -0.106   -0.106
+106    intent =~       SN1  0.024  0.004   0.006    0.006    0.006
+107    intent =~       SN2  4.489  0.056   0.086    0.084    0.084
+108    intent =~       SN3  1.063 -0.028  -0.043   -0.041   -0.041
+109    intent =~       SN4  1.761 -0.036  -0.056   -0.052   -0.052
+110    intent =~      PBC1  0.058 -0.006  -0.009   -0.010   -0.010
+111    intent =~      PBC2  0.656  0.020   0.031    0.033    0.033
+112    intent =~      PBC3  0.069 -0.007  -0.010   -0.011   -0.011
+113    intent =~      PBC4  0.092 -0.008  -0.012   -0.012   -0.012
+114    intent =~      beh1  0.008  0.004   0.006    0.005    0.005
+115    intent =~      beh2  0.306 -0.025  -0.039   -0.031   -0.031
+116    intent =~      beh3  1.632  0.059   0.091    0.071    0.071
+117    intent =~      beh4  0.630 -0.037  -0.057   -0.044   -0.044
+118       beh =~ attitude1  0.187 -0.012  -0.016   -0.015   -0.015
+119       beh =~ attitude2  1.049 -0.028  -0.036   -0.035   -0.035
+120       beh =~ attitude3  6.156  0.068   0.089    0.087    0.087
+121       beh =~ attitude4  0.815 -0.024  -0.031   -0.031   -0.031
+122       beh =~       SN1  0.084  0.008   0.011    0.010    0.010
+123       beh =~       SN2  1.865  0.039   0.051    0.049    0.049
+124       beh =~       SN3  2.447 -0.046  -0.059   -0.057   -0.057
+125       beh =~       SN4  0.009  0.003   0.004    0.003    0.003
+126       beh =~      PBC1  0.923  0.026   0.033    0.034    0.034
+127       beh =~      PBC2  0.127 -0.009  -0.012   -0.013   -0.013
+128       beh =~      PBC3  0.478  0.018   0.024    0.025    0.025
+129       beh =~      PBC4  1.692 -0.035  -0.046   -0.047   -0.047
+130       beh =~      int1  0.556 -0.038  -0.049   -0.040   -0.040
+131       beh =~      int2  1.705  0.069   0.089    0.070    0.070
+132       beh =~      int3  0.140 -0.020  -0.025   -0.020   -0.020
+133       beh =~      int4  0.260 -0.027  -0.035   -0.027   -0.027
+134 attitude1 ~~ attitude2  0.587 -0.022  -0.022   -0.041   -0.041
+135 attitude1 ~~ attitude3  0.930 -0.026  -0.026   -0.048   -0.048
+136 attitude1 ~~ attitude4  1.278  0.031   0.031    0.059    0.059
+137 attitude1 ~~       SN1  0.738  0.021   0.021    0.035    0.035
+138 attitude1 ~~       SN2  0.068  0.006   0.006    0.011    0.011
+139 attitude1 ~~       SN3  0.258  0.013   0.013    0.020    0.020
+140 attitude1 ~~       SN4  0.446 -0.017  -0.017   -0.027   -0.027
+141 attitude1 ~~      PBC1  2.436 -0.029  -0.029   -0.066   -0.066
+142 attitude1 ~~      PBC2  0.070 -0.005  -0.005   -0.011   -0.011
+143 attitude1 ~~      PBC3  0.033  0.003   0.003    0.007    0.007
+144 attitude1 ~~      PBC4  0.031  0.003   0.003    0.007    0.007
+145 attitude1 ~~      int1  0.075  0.008   0.008    0.011    0.011
+146 attitude1 ~~      int2  0.476 -0.020  -0.020   -0.028   -0.028
+147 attitude1 ~~      int3  3.310  0.054   0.054    0.073    0.073
+148 attitude1 ~~      int4  0.254  0.015   0.015    0.020    0.020
+149 attitude1 ~~      beh1  1.811  0.039   0.039    0.055    0.055
+150 attitude1 ~~      beh2  0.045  0.006   0.006    0.008    0.008
+151 attitude1 ~~      beh3  0.490 -0.021  -0.021   -0.028   -0.028
+152 attitude1 ~~      beh4  2.283 -0.046  -0.046   -0.060   -0.060
+153 attitude2 ~~ attitude3  0.234 -0.014  -0.014   -0.026   -0.026
+154 attitude2 ~~ attitude4  0.582  0.022   0.022    0.044    0.044
+155 attitude2 ~~       SN1  9.972  0.073   0.073    0.133    0.133
+156 attitude2 ~~       SN2  2.493 -0.037  -0.037   -0.066   -0.066
+157 attitude2 ~~       SN3  0.257 -0.012  -0.012   -0.021   -0.021
+158 attitude2 ~~       SN4  0.314 -0.014  -0.014   -0.023   -0.023
+159 attitude2 ~~      PBC1  0.342 -0.010  -0.010   -0.025   -0.025
+160 attitude2 ~~      PBC2  0.529  0.013   0.013    0.031    0.031
+161 attitude2 ~~      PBC3  0.302  0.010   0.010    0.023    0.023
+162 attitude2 ~~      PBC4  0.002 -0.001  -0.001   -0.002   -0.002
+163 attitude2 ~~      int1  2.209  0.042   0.042    0.060    0.060
+164 attitude2 ~~      int2  0.020 -0.004  -0.004   -0.006   -0.006
+165 attitude2 ~~      int3  0.001 -0.001  -0.001   -0.001   -0.001
+166 attitude2 ~~      int4  0.063  0.007   0.007    0.010    0.010
+167 attitude2 ~~      beh1  0.447 -0.019  -0.019   -0.028   -0.028
+168 attitude2 ~~      beh2  1.233  0.032   0.032    0.045    0.045
+169 attitude2 ~~      beh3  8.914 -0.088  -0.088   -0.121   -0.121
+170 attitude2 ~~      beh4  0.000  0.000   0.000    0.000    0.000
+171 attitude3 ~~ attitude4  0.084  0.008   0.008    0.015    0.015
+172 attitude3 ~~       SN1  2.870 -0.040  -0.040   -0.070   -0.070
+173 attitude3 ~~       SN2  4.497  0.051   0.051    0.087    0.087
+174 attitude3 ~~       SN3  0.029 -0.004  -0.004   -0.007   -0.007
+175 attitude3 ~~       SN4  0.303 -0.014  -0.014   -0.022   -0.022
+176 attitude3 ~~      PBC1  1.372  0.021   0.021    0.049    0.049
+177 attitude3 ~~      PBC2  0.044  0.004   0.004    0.009    0.009
+178 attitude3 ~~      PBC3  0.001  0.000   0.000   -0.001   -0.001
+179 attitude3 ~~      PBC4  1.608 -0.024  -0.024   -0.052   -0.052
+180 attitude3 ~~      int1  0.005  0.002   0.002    0.003    0.003
+181 attitude3 ~~      int2  0.112  0.010   0.010    0.014    0.014
+182 attitude3 ~~      int3  0.005  0.002   0.002    0.003    0.003
+183 attitude3 ~~      int4  0.031  0.005   0.005    0.007    0.007
+184 attitude3 ~~      beh1  0.123 -0.010  -0.010   -0.014   -0.014
+185 attitude3 ~~      beh2  0.000  0.000   0.000    0.000    0.000
+186 attitude3 ~~      beh3  3.529  0.057   0.057    0.074    0.074
+187 attitude3 ~~      beh4  1.412  0.036   0.036    0.047    0.047
+188 attitude4 ~~       SN1  0.783 -0.020  -0.020   -0.037   -0.037
+189 attitude4 ~~       SN2  0.173  0.010   0.010    0.017    0.017
+190 attitude4 ~~       SN3  0.696 -0.020  -0.020   -0.034   -0.034
+191 attitude4 ~~       SN4  0.000  0.000   0.000    0.001    0.001
+192 attitude4 ~~      PBC1  0.143  0.007   0.007    0.016    0.016
+193 attitude4 ~~      PBC2  0.063  0.004   0.004    0.011    0.011
+194 attitude4 ~~      PBC3  0.901 -0.017  -0.017   -0.039   -0.039
+195 attitude4 ~~      PBC4  0.964  0.018   0.018    0.041    0.041
+196 attitude4 ~~      int1  2.923 -0.048  -0.048   -0.069   -0.069
+197 attitude4 ~~      int2  0.170  0.012   0.012    0.017    0.017
+198 attitude4 ~~      int3  1.396 -0.034  -0.034   -0.048   -0.048
+199 attitude4 ~~      int4  2.376 -0.045  -0.045   -0.062   -0.062
+200 attitude4 ~~      beh1  0.276 -0.015  -0.015   -0.022   -0.022
+201 attitude4 ~~      beh2  0.036  0.006   0.006    0.008    0.008
+202 attitude4 ~~      beh3  1.806  0.039   0.039    0.054    0.054
+203 attitude4 ~~      beh4  0.122 -0.010  -0.010   -0.014   -0.014
+204       SN1 ~~       SN2  3.906 -0.069  -0.069   -0.114   -0.114
+205       SN1 ~~       SN3  1.516  0.042   0.042    0.066    0.066
+206       SN1 ~~       SN4  0.187  0.015   0.015    0.024    0.024
+207       SN1 ~~      PBC1  0.563 -0.015  -0.015   -0.032   -0.032
+208       SN1 ~~      PBC2  0.396  0.012   0.012    0.026    0.026
+209       SN1 ~~      PBC3  1.548  0.025   0.025    0.051    0.051
+210       SN1 ~~      PBC4  0.348 -0.012  -0.012   -0.025   -0.025
+211       SN1 ~~      int1  0.183 -0.013  -0.013   -0.017   -0.017
+212       SN1 ~~      int2  0.117 -0.011  -0.011   -0.014   -0.014
+213       SN1 ~~      int3  2.133 -0.045  -0.045   -0.059   -0.059
+214       SN1 ~~      int4  0.802  0.028   0.028    0.036    0.036
+215       SN1 ~~      beh1  0.345  0.018   0.018    0.024    0.024
+216       SN1 ~~      beh2  0.044 -0.007  -0.007   -0.008   -0.008
+217       SN1 ~~      beh3  3.760 -0.062  -0.062   -0.078   -0.078
+218       SN1 ~~      beh4  2.978  0.056   0.056    0.070    0.070
+219       SN2 ~~       SN3  0.193 -0.015  -0.015   -0.023   -0.023
+220       SN2 ~~       SN4  0.946  0.034   0.034    0.053    0.053
+221       SN2 ~~      PBC1  0.086  0.006   0.006    0.012    0.012
+222       SN2 ~~      PBC2  0.099  0.006   0.006    0.013    0.013
+223       SN2 ~~      PBC3  0.271 -0.010  -0.010   -0.021   -0.021
+224       SN2 ~~      PBC4  0.077  0.006   0.006    0.012    0.012
+225       SN2 ~~      int1  0.014 -0.004  -0.004   -0.005   -0.005
+226       SN2 ~~      int2  1.097  0.033   0.033    0.043    0.043
+227       SN2 ~~      int3  0.058 -0.008  -0.008   -0.010   -0.010
+228       SN2 ~~      int4  0.343  0.019   0.019    0.023    0.023
+229       SN2 ~~      beh1  0.980 -0.030  -0.030   -0.041   -0.041
+230       SN2 ~~      beh2  0.065  0.008   0.008    0.010    0.010
+231       SN2 ~~      beh3  3.600  0.061   0.061    0.076    0.076
+232       SN2 ~~      beh4  0.612 -0.025  -0.025   -0.031   -0.031
+233       SN3 ~~       SN4  0.043 -0.007  -0.007   -0.010   -0.010
+234       SN3 ~~      PBC1  0.047 -0.004  -0.004   -0.009   -0.009
+235       SN3 ~~      PBC2  0.109  0.007   0.007    0.013    0.013
+236       SN3 ~~      PBC3  2.593 -0.033  -0.033   -0.065   -0.065
+237       SN3 ~~      PBC4  0.002 -0.001  -0.001   -0.002   -0.002
+238       SN3 ~~      int1  2.489 -0.050  -0.050   -0.061   -0.061
+239       SN3 ~~      int2  0.694 -0.027  -0.027   -0.033   -0.033
+240       SN3 ~~      int3 11.073  0.107   0.107    0.131    0.131
+241       SN3 ~~      int4  0.503  0.023   0.023    0.028    0.028
+242       SN3 ~~      beh1  0.295 -0.017  -0.017   -0.022   -0.022
+243       SN3 ~~      beh2  0.624 -0.026  -0.026   -0.031   -0.031
+244       SN3 ~~      beh3  0.163 -0.013  -0.013   -0.016   -0.016
+245       SN3 ~~      beh4  0.133  0.012   0.012    0.014    0.014
+246       SN4 ~~      PBC1  0.074  0.006   0.006    0.011    0.011
+247       SN4 ~~      PBC2  0.008 -0.002  -0.002   -0.004   -0.004
+248       SN4 ~~      PBC3  0.000  0.000   0.000    0.000    0.000
+249       SN4 ~~      PBC4  0.080  0.006   0.006    0.012    0.012
+250       SN4 ~~      int1  0.034  0.006   0.006    0.007    0.007
+251       SN4 ~~      int2  0.019 -0.004  -0.004   -0.006   -0.006
+252       SN4 ~~      int3  0.802 -0.029  -0.029   -0.036   -0.036
+253       SN4 ~~      int4  0.917 -0.032  -0.032   -0.038   -0.038
+254       SN4 ~~      beh1  1.596 -0.040  -0.040   -0.052   -0.052
+255       SN4 ~~      beh2  2.241  0.050   0.050    0.060    0.060
+256       SN4 ~~      beh3  3.345  0.061   0.061    0.073    0.073
+257       SN4 ~~      beh4  0.240 -0.016  -0.016   -0.020   -0.020
+258      PBC1 ~~      PBC2  0.368 -0.012  -0.012   -0.034   -0.034
+259      PBC1 ~~      PBC3  0.246 -0.010  -0.010   -0.027   -0.027
+260      PBC1 ~~      PBC4  0.777  0.018   0.018    0.050    0.050
+261      PBC1 ~~      int1  0.018  0.003   0.003    0.005    0.005
+262      PBC1 ~~      int2  0.879 -0.022  -0.022   -0.040   -0.040
+263      PBC1 ~~      int3  0.008 -0.002  -0.002   -0.004   -0.004
+264      PBC1 ~~      int4  0.284  0.013   0.013    0.022    0.022
+265      PBC1 ~~      beh1  3.313 -0.043  -0.043   -0.078   -0.078
+266      PBC1 ~~      beh2  6.404  0.062   0.062    0.105    0.105
+267      PBC1 ~~      beh3  0.350  0.015   0.015    0.025    0.025
+268      PBC1 ~~      beh4  0.353  0.015   0.015    0.025    0.025
+269      PBC2 ~~      PBC3  0.437  0.012   0.012    0.033    0.033
+270      PBC2 ~~      PBC4  0.033 -0.003  -0.003   -0.009   -0.009
+271      PBC2 ~~      int1  0.031  0.004   0.004    0.007    0.007
+272      PBC2 ~~      int2  0.194  0.011   0.011    0.018    0.018
+273      PBC2 ~~      int3  0.093 -0.007  -0.007   -0.012   -0.012
+274      PBC2 ~~      int4  0.002 -0.001  -0.001   -0.002   -0.002
+275      PBC2 ~~      beh1  0.087  0.007   0.007    0.012    0.012
+276      PBC2 ~~      beh2  2.826 -0.041  -0.041   -0.068   -0.068
+277      PBC2 ~~      beh3  0.060 -0.006  -0.006   -0.010   -0.010
+278      PBC2 ~~      beh4  0.186  0.011   0.011    0.018    0.018
+279      PBC3 ~~      PBC4  0.068 -0.005  -0.005   -0.013   -0.013
+280      PBC3 ~~      int1  0.356  0.014   0.014    0.024    0.024
+281      PBC3 ~~      int2  0.487  0.017   0.017    0.028    0.028
+282      PBC3 ~~      int3  1.378 -0.029  -0.029   -0.047   -0.047
+283      PBC3 ~~      int4  0.292 -0.013  -0.013   -0.021   -0.021
+284      PBC3 ~~      beh1  0.458  0.016   0.016    0.028    0.028
+285      PBC3 ~~      beh2  0.000  0.000   0.000    0.001    0.001
+286      PBC3 ~~      beh3  0.108  0.008   0.008    0.013    0.013
+287      PBC3 ~~      beh4  0.048  0.006   0.006    0.009    0.009
+288      PBC4 ~~      int1  1.150 -0.026  -0.026   -0.043   -0.043
+289      PBC4 ~~      int2  0.011 -0.003  -0.003   -0.004   -0.004
+290      PBC4 ~~      int3  2.882  0.042   0.042    0.069    0.069
+291      PBC4 ~~      int4  0.000  0.000   0.000    0.000    0.000
+292      PBC4 ~~      beh1  0.507  0.017   0.017    0.030    0.030
+293      PBC4 ~~      beh2  0.419  0.016   0.016    0.026    0.026
+294      PBC4 ~~      beh3  1.507 -0.031  -0.031   -0.050   -0.050
+295      PBC4 ~~      beh4  4.308 -0.053  -0.053   -0.085   -0.085
+296      int1 ~~      int2  0.334 -0.024  -0.024   -0.025   -0.025
+297      int1 ~~      int3  2.242  0.062   0.062    0.064    0.064
+298      int1 ~~      int4  0.450  0.028   0.028    0.028    0.028
+299      int1 ~~      beh1  0.002 -0.002  -0.002   -0.002   -0.002
+300      int1 ~~      beh2  0.010  0.004   0.004    0.004    0.004
+301      int1 ~~      beh3  0.447 -0.026  -0.026   -0.026   -0.026
+302      int1 ~~      beh4  0.102 -0.012  -0.012   -0.012   -0.012
+303      int2 ~~      int3  0.956 -0.043  -0.043   -0.044   -0.044
+304      int2 ~~      int4  0.398  0.028   0.028    0.028    0.028
+305      int2 ~~      beh1  3.497  0.071   0.071    0.077    0.077
+306      int2 ~~      beh2  3.910 -0.078  -0.078   -0.079   -0.079
+307      int2 ~~      beh3  0.155  0.016   0.016    0.016    0.016
+308      int2 ~~      beh4  1.241  0.044   0.044    0.044    0.044
+309      int3 ~~      int4  0.925 -0.042  -0.042   -0.041   -0.041
+310      int3 ~~      beh1  0.001  0.001   0.001    0.001    0.001
+311      int3 ~~      beh2  0.023 -0.006  -0.006   -0.006   -0.006
+312      int3 ~~      beh3  0.001  0.001   0.001    0.001    0.001
+313      int3 ~~      beh4  0.158 -0.016  -0.016   -0.016   -0.016
+314      int4 ~~      beh1  0.295 -0.021  -0.021   -0.022   -0.022
+315      int4 ~~      beh2  1.510 -0.049  -0.049   -0.048   -0.048
+316      int4 ~~      beh3  3.937  0.081   0.081    0.077    0.077
+317      int4 ~~      beh4  0.551 -0.030  -0.030   -0.029   -0.029
+318      beh1 ~~      beh2  0.009 -0.005  -0.005   -0.005   -0.005
+319      beh1 ~~      beh3  1.786 -0.065  -0.065   -0.066   -0.066
+320      beh1 ~~      beh4  1.863  0.067   0.067    0.070    0.070
+321      beh2 ~~      beh3  0.250  0.024   0.024    0.023    0.023
+322      beh2 ~~      beh4  0.156 -0.019  -0.019   -0.019   -0.019
+323      beh3 ~~      beh4  0.003 -0.003  -0.003   -0.002   -0.002
+325       att ~~       beh  0.006 -0.004  -0.004   -0.004   -0.004
+327        SN ~~       beh  0.114  0.018   0.018    0.018    0.018
+329       PBC ~~       beh  0.049 -0.055  -0.055   -0.055   -0.055
+330    intent ~~       beh  0.044 -0.023  -0.023   -0.023   -0.023
+331       beh  ~       att  0.001  0.002   0.002    0.002    0.002
+332       beh  ~        SN  0.125  0.022   0.017    0.017    0.017
+333    intent  ~       beh  0.044 -0.023  -0.019   -0.019   -0.019
+334       PBC  ~       beh  0.049 -0.055  -0.072   -0.072   -0.072
+338       att  ~       beh  0.006 -0.004  -0.006   -0.006   -0.006
+342        SN  ~       beh  0.114  0.018   0.024    0.024    0.024</code></pre>
+</div>
+</div>
+<p>In this case, none of the expected parameter changes are large enough that we would consider including any additional parameters</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 6
+</div>
+<div class="question-body">
+<p>Test the indirect effect of attitudes, subjective norms, and perceived behavioural control on behaviour via intentions.</p>
+<p>Remember, when you fit the model with <code>sem()</code>, use <code>se='bootstrap'</code> to get boostrapped standard errors (it may take a few minutes). When you inspect the model using <code>summary()</code>, get the 95% confidence intervals for parameters with <code>ci = TRUE</code>.</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<p>First, let’s name the paths in the structural equation model:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/msmr-w9.png" class="img-fluid figure-img" style="width:85.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>To test these indirect effects we create new a parameter for each indirect effect:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>TPB_model2 <span class="ot">&lt;-</span> <span class="st">'</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="st">  #measurement models for attitudes, subjective norms and perceived behavioural control</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="st">  att =~ attitude1 + attitude2 + attitude3 + attitude4</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="st">  SN =~ SN1 + SN2 + SN3 + SN4</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="st">  PBC =~ PBC1 + PBC2 + PBC3 + PBC4</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="st">  intent =~ int1 + int2 + int3 + int4</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="st">  beh =~ beh1 + beh2 + beh3 + beh4</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="st">  #regressions  </span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="st">  beh ~ b*intent + PBC</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="st">  intent ~ a1*att + a2*SN + a3*PBC</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="st">  ##covariances between attitudes, subjective norms and perceived behavioural control</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="st">  att ~~ SN    </span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="st">  att ~~ PBC</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="st">  SN ~~ PBC</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="st">  ind1 := a1*b  #indirect effect of attitudes via intentions</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="st">  ind2 := a2*b  #indirect effect of subjective norms via intentions</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="st">  ind3 := a3*b  #indirect effect of perceived behavioural control via intentions</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>When we estimate the model, we request boostrapped standard errors:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>TPB_model2.est<span class="ot">&lt;-</span><span class="fu">sem</span>(TPB_model2, <span class="at">se=</span><span class="st">'bootstrap'</span>, <span class="at">data=</span>TPB_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>When we inspect the model, we request the 95% confidence intervals for parameters:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(TPB_model2.est, <span class="at">fit.measures=</span>T, <span class="at">standardized=</span>T, <span class="at">ci=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>lavaan 0.6.17 ended normally after 39 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        48
+
+  Number of observations                           890
+
+Model Test User Model:
+                                                      
+  Test statistic                               157.059
+  Degrees of freedom                               162
+  P-value (Chi-square)                           0.595
+
+Model Test Baseline Model:
+
+  Test statistic                              5335.624
+  Degrees of freedom                               190
+  P-value                                        0.000
+
+User Model versus Baseline Model:
+
+  Comparative Fit Index (CFI)                    1.000
+  Tucker-Lewis Index (TLI)                       1.001
+
+Loglikelihood and Information Criteria:
+
+  Loglikelihood user model (H0)             -24403.833
+  Loglikelihood unrestricted model (H1)     -24325.304
+                                                      
+  Akaike (AIC)                               48903.667
+  Bayesian (BIC)                             49133.646
+  Sample-size adjusted Bayesian (SABIC)      48981.207
+
+Root Mean Square Error of Approximation:
+
+  RMSEA                                          0.000
+  90 Percent confidence interval - lower         0.000
+  90 Percent confidence interval - upper         0.014
+  P-value H_0: RMSEA &lt;= 0.050                    1.000
+  P-value H_0: RMSEA &gt;= 0.080                    0.000
+
+Standardized Root Mean Square Residual:
+
+  SRMR                                           0.023
+
+Parameter Estimates:
+
+  Standard errors                            Bootstrap
+  Number of requested bootstrap draws             1000
+  Number of successful bootstrap draws            1000
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+  att =~                                                                
+    attitude1         1.000                               1.000    1.000
+    attitude2         1.051    0.058   17.983    0.000    0.943    1.170
+    attitude3         0.995    0.061   16.260    0.000    0.876    1.114
+    attitude4         1.029    0.058   17.758    0.000    0.921    1.147
+  SN =~                                                                 
+    SN1               1.000                               1.000    1.000
+    SN2               0.982    0.072   13.609    0.000    0.855    1.133
+    SN3               0.944    0.067   14.007    0.000    0.817    1.088
+    SN4               0.995    0.072   13.826    0.000    0.854    1.138
+  PBC =~                                                                
+    PBC1              1.000                               1.000    1.000
+    PBC2              0.938    0.042   22.556    0.000    0.860    1.023
+    PBC3              0.914    0.039   23.316    0.000    0.843    0.996
+    PBC4              0.963    0.041   23.401    0.000    0.890    1.050
+  intent =~                                                             
+    int1              1.000                               1.000    1.000
+    int2              1.164    0.084   13.781    0.000    1.003    1.353
+    int3              1.116    0.085   13.091    0.000    0.961    1.293
+    int4              1.072    0.081   13.169    0.000    0.921    1.232
+  beh =~                                                                
+    beh1              1.000                               1.000    1.000
+    beh2              0.937    0.075   12.576    0.000    0.811    1.101
+    beh3              0.925    0.073   12.720    0.000    0.783    1.082
+    beh4              0.961    0.069   14.030    0.000    0.828    1.104
+   Std.lv  Std.all
+                  
+    0.710    0.689
+    0.746    0.726
+    0.707    0.689
+    0.730    0.719
+                  
+    0.685    0.661
+    0.673    0.651
+    0.646    0.616
+    0.681    0.638
+                  
+    0.776    0.799
+    0.728    0.772
+    0.709    0.756
+    0.747    0.773
+                  
+    0.708    0.584
+    0.824    0.646
+    0.791    0.625
+    0.759    0.597
+                  
+    0.808    0.649
+    0.758    0.599
+    0.748    0.588
+    0.777    0.605
+
+Regressions:
+                   Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+  beh ~                                                                 
+    intent     (b)    0.578    0.079    7.329    0.000    0.435    0.741
+    PBC               0.193    0.057    3.367    0.001    0.076    0.298
+  intent ~                                                              
+    att       (a1)    0.358    0.044    8.105    0.000    0.278    0.452
+    SN        (a2)    0.203    0.046    4.445    0.000    0.120    0.295
+    PBC       (a3)    0.447    0.041   11.007    0.000    0.368    0.530
+   Std.lv  Std.all
+                  
+    0.506    0.506
+    0.185    0.185
+                  
+    0.359    0.359
+    0.196    0.196
+    0.490    0.490
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+  att ~~                                                                
+    SN                0.156    0.024    6.460    0.000    0.109    0.205
+    PBC               0.140    0.024    5.934    0.000    0.094    0.188
+  SN ~~                                                                 
+    PBC               0.104    0.022    4.645    0.000    0.061    0.147
+   Std.lv  Std.all
+                  
+    0.320    0.320
+    0.253    0.253
+                  
+    0.196    0.196
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+   .attitude1         0.556    0.035   15.673    0.000    0.483    0.623
+   .attitude2         0.498    0.033   14.927    0.000    0.429    0.561
+   .attitude3         0.551    0.033   16.673    0.000    0.482    0.613
+   .attitude4         0.498    0.029   17.348    0.000    0.442    0.553
+   .SN1               0.605    0.043   14.135    0.000    0.521    0.698
+   .SN2               0.616    0.040   15.549    0.000    0.536    0.695
+   .SN3               0.681    0.040   17.016    0.000    0.605    0.760
+   .SN4               0.676    0.046   14.718    0.000    0.588    0.767
+   .PBC1              0.341    0.023   15.110    0.000    0.299    0.387
+   .PBC2              0.359    0.023   15.355    0.000    0.314    0.407
+   .PBC3              0.377    0.021   17.854    0.000    0.335    0.420
+   .PBC4              0.376    0.023   16.319    0.000    0.329    0.421
+   .int1              0.969    0.049   19.693    0.000    0.870    1.065
+   .int2              0.949    0.060   15.894    0.000    0.836    1.075
+   .int3              0.976    0.055   17.710    0.000    0.862    1.081
+   .int4              1.042    0.054   19.260    0.000    0.935    1.147
+   .beh1              0.900    0.058   15.509    0.000    0.785    1.016
+   .beh2              1.026    0.061   16.950    0.000    0.906    1.141
+   .beh3              1.057    0.057   18.409    0.000    0.937    1.170
+   .beh4              1.045    0.060   17.296    0.000    0.924    1.173
+    att               0.504    0.048   10.465    0.000    0.415    0.606
+    SN                0.469    0.049    9.646    0.000    0.374    0.576
+    PBC               0.603    0.044   13.750    0.000    0.517    0.683
+   .intent            0.211    0.030    7.007    0.000    0.155    0.272
+   .beh               0.388    0.046    8.345    0.000    0.298    0.483
+   Std.lv  Std.all
+    0.556    0.525
+    0.498    0.472
+    0.551    0.525
+    0.498    0.483
+    0.605    0.563
+    0.616    0.577
+    0.681    0.620
+    0.676    0.593
+    0.341    0.362
+    0.359    0.404
+    0.377    0.429
+    0.376    0.403
+    0.969    0.659
+    0.949    0.583
+    0.976    0.610
+    1.042    0.644
+    0.900    0.579
+    1.026    0.641
+    1.057    0.654
+    1.045    0.634
+    1.000    1.000
+    1.000    1.000
+    1.000    1.000
+    0.421    0.421
+    0.593    0.593
+
+Defined Parameters:
+                   Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+    ind1              0.207    0.033    6.293    0.000    0.149    0.275
+    ind2              0.117    0.029    4.005    0.000    0.067    0.180
+    ind3              0.258    0.038    6.736    0.000    0.192    0.340
+   Std.lv  Std.all
+    0.182    0.182
+    0.099    0.099
+    0.248    0.248</code></pre>
+</div>
+</div>
+<p>We can see that all of the indirect effects are statistically significant at p&lt;.05 as none of the 95% confidence intervals for the coefficients include zero.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 7
+</div>
+<div class="question-body">
+<p>Write up your analysis as if you were presenting the work in academic paper, with brief separate ‘Method’ and ‘Results’ sections</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<p>An example write up would be as follows:</p>
+<div class="int">
+<p><strong>Method</strong></p>
+<p>We tested a theory of planned behaviour model of physical activity by fitting a structural equation model in which attitudes, subjective norms, perceived behavioural control, intentions and behaviour were latent variables defined by four items. We first tested the measurement models for each construct by fitting a one-factor CFA model. Latent variable scaling was by fixing the loading of the first item for each construct to 1. Models were judged to fit well if <span class="math inline">\(CFI\)</span> and <span class="math inline">\(TLI\)</span> were <span class="math inline">\(&gt;.95\)</span> and <span class="math inline">\(RMSEA\)</span> and <span class="math inline">\(SRMR\)</span> were <span class="math inline">\(&lt;.05\)</span>.</p>
+<p>Within the SEM, behaviour was regressed on intentions and perceived behavioural control and intentions were regressed on attitudes, subjective norms, and perceived behavioiural control. In addition, attitudes, subjective norms, and perceived behavioural control were allowed to covary. The indirect effects of attitudes, subjective norms and perceived behavioural control on behaviour were calculated as the product of the effect of the relevant predictor on the mediator (intentions) and the effect of the mediator on the outcome. The statistical significance of the indirect effects were evaluated using bootstrapped 95% confidence intervals with 1000 resamples.</p>
+<p>In all cases models were fit using maximum likelihood estimation and model fit was judged to be good if CFI and TLI were <span class="math inline">\(&gt;.95\)</span> and RMSEA and SRMR were <span class="math inline">\(&lt;.05\)</span>. Modification indices and expected parameter changes were inspected to identify any areas of local mis-fit but model modifications were only made if they could be justified on substantive grounds.</p>
+<p><strong>Results</strong></p>
+<p>All measurement models fit well (<span class="math inline">\(CFI\)</span> and <span class="math inline">\(TLI &gt;.95\)</span> and <span class="math inline">\(RMSEA\)</span> and <span class="math inline">\(SRMR &lt;.05\)</span>). The full structural equation model also fit well (<span class="math inline">\(CFI = 1.00\)</span>, <span class="math inline">\(TLI = 1.00\)</span>, <span class="math inline">\(RMSEA &lt;.001\)</span>, <span class="math inline">\(SRMR = 0.023\)</span>). Unstandardised parameter estimates are provided in Table 1. All of the hypothesised paths were statistically significant at <span class="math inline">\(p&lt;.05\)</span>. The significant indirect effects suggested that intentions mediate the effects of attitudes, subjective norms, and perceived behavioural control on behaviour whilst perceived behavioural control also has a direct effect on behaviour. Results thus provide support for a theory of planned behaviour model of physical activity.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-tabsem" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/lab4 table.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;3: Unstandardised parameter estimates for structural equation model for a theory of planned behaviour model of physical activity.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">© Copyright 2019-2024 <a href="https://www.ed.ac.uk/">The University of Edinburgh</a>. Site licensed under the <a href="https://www.gnu.org/licenses/agpl-3.0.en.html">GNU AGPLv3</a> license.</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>
