@@ -1,5 +1,5 @@
 ---
-title: "Week 11 Exercises: More SEM"
+title: "Week 11 Exercises: More SEM!"
 params: 
     SHOW_SOLS: TRUE
     TOGGLE: TRUE
@@ -97,18 +97,26 @@ The `multi.hist()` function from the __psych__ package is pretty useful for gett
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 
-TODO add comment
+
 ```{r message=FALSE}
 library(tidyverse)
 library(psych)
 
-stress_IQ_data <- read_csv("../../data/stressIQ.csv")
+stress_IQ_data <- read_csv("https://uoepsy.github.io/data/stressIQ.csv")
+```
 
+This gives us a whole load of descriptives, means, standard deviations, and other things like skew and kurtosis.  
+```{r}
 describe(stress_IQ_data) # from psych package
+```
+
+Here we can see the distribution of each variable. Some immediate things of note - the stress items are only measured on 3 response options, and the IQ items are quite positively skewed (we can see this matches with the skew metrics above).  
+```{r}
 multi.hist(stress_IQ_data, global = FALSE) # from psych package
 ```
 `r solend()`
 
+## Non-normality
 
 
 `r qbegin(qcounter())`
@@ -363,6 +371,7 @@ summary(model2_IQ.est, standardized=T)
 
 `r solend()`
 
+## Ordered Categoricals
 
 
 `r qbegin(qcounter())`
@@ -475,10 +484,6 @@ summary(model_stress.est, standardized=TRUE)
 `r solend()`
 
 
-
-
-
-
 `r qbegin(qcounter())`
 Now its time to build the full SEM.   
 Estimate the effect of prenatal stress on IQ.  
@@ -490,9 +495,9 @@ Estimate the effect of prenatal stress on IQ.
 
 **Remember:** We know that IQ is non-normal, so we would like to use a robust estimator (e.g. MLR). However, as lavaan will tell you if you try using `estimator="MLR"`, this is not supported for ordered data (i.e., the Stress items). It suggests instead using the WLSMV (weighted least square mean and variance adjusted) estimator.  
 
-As it happens, the WLSMV estimator is just DWLS with a correction to return robust standard errors, and it's what the functions will use by default if you have used `ordered` when fitting. Don't be misled by the fact that the summary here will still say that the estimator is DWLS. When we specify *any* ordered-categorical endogenous variables in the model then lavaan uses DWLS (diagonally weighted least squares) estimation for the model parameters. However, because we specified it in fitting our model, WLSMV is being used to correct the standard errors.  
+As it happens, the WLSMV estimator is just DWLS with a correction to return robust standard errors. If you specify `estimator="WLSMV"` then your standard errors *will* be corrected, but don't be misled by the fact that the summary here will still say that the estimator is DWLS.   
 
-Specify and estimate your SEM model. 
+:::
 
 `r qend()` 
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
@@ -529,8 +534,17 @@ We can see that the effect of prenatal stress on offspring IQ is $\beta$ = `r ro
 
 `r solend()`
 
+## Missingness
 
 
+`r qbegin(qcounter())`
+In order to try and replicate the IQ CFA, our researcher collects a **new** sample of size $n=500$. However, she has some missing data (specifically, those who scored poorly on earlier tests tended to feel discouraged and chose not to complete further tests).  
+  
+Read in the new dataset, plot and numerically summarise the univariate distributions of the measured variables, and then conduct a CFA using the new data, taking account of the missingness (don't forget to also use an appropriate estimator to account for any non-normality). Does the model fit well?    
+  
++ The data can be found at [https://uoepsy.github.io/data/IQdatam.csv](https://uoepsy.github.io/data/IQdatam.csv), and is in .csv format.  
+ 
+ 
 ::: {.callout-note collapse="true"}
 #### Missingness
 
@@ -546,23 +560,15 @@ There are three main reasons that we certain data may be missing, and the acrony
 
 - **MNAR: Missing Not At Random.** Data which are MNAR are missing data for which the propensity for missingness is related to the value which is missing. For example, suppose an employer tells employees that there are a limited number of bonuses to hand out, and then employees are asked to fill out a questionnaire. Thos who are less satisfied with their job may not respond to questions on job satisfaction (if they believe it will negatively impact their chances of receiving a bonus). 
 
-::: {.callout-caution collapse="true"}
-#### optional: other approaches to missingness
+:::blue
+**What we can do**
 
-Thus far in our analyses, we have been simply excluding any row for which there is missingness. This is typically known as "listwise deletion", and is the default for many modelling approaches. Any person who is missing _some_ data on a variable in our model will simply not be included. This method _assumes_ that the data are "Missing Completely At Random", because we make the assumption that studying only the people who have complete data does not bias our results in any way.  
+In SEM, there is an extremely useful method known as **full information maximum likelihood (FIML)** which, allows us to use all our available data (*including* those that have only _some_ values present).  
 
-Other traditional approaches are to use basic imputation methods such as "mean/median imputation" (replace missing values with the average of that variable). These can be okay, but they assume that the imputed values are **exactly** what we _would_ have observed had it not been missing, rather than estimates. The lack of variability around this imputed value will shrink the standard errors because it is assumed that no deviations exist among the substituted values. 
-Another option is "regression imputation", where we replace missing values with the predicted values from a regression model of the variable with missingness onto some relevant predictors. This is better because our estimates of the values of missing observations could be much better, but we still make an assumption that these estimates are perfect, when we know they are just estimates.  
-
-A more sophisticated approach to this is "Multiple Imputation" (MI). Multiple imputation is similar to the regression imputation approach described above in that it predicts the value of missing observations based on the covariates, but instead of predicting just one value, it predicts many. Rather than saying "the predicted value for this missing observation is 5", we say "the predicted value for this missing observation is from the distribution $\sim N(5,2)$". So we simulate $m$ draws from that distribution, and we end up with $m$ predicted values. We make $m$ copies of our data and replace the missing observations with each of our $m$ predicted values. We then do our analysis on each $m$ imputed dataset, and pool the results!  
-
-:::
-
-
-**FIML (Full Information Maximum Likelihood)**
-In SEM, there is an extremely useful method known as full information maximum likelihood (FIML) which, allows us to use all our available data (*including* those that have only _some_ values present). At the high level, this is like how we are able fill in the gaps in the surface below.  
+FIML separates data into the different patterns of missingness (i.e. those that are missing on `IQ1`, those missing on `IQ1` and `IQ2`, those missing on just `IQ2`, and so on). The likelihood of each group can be estimated from the parameters that are available for that pattern. The estimation process then finds the set of parameters that maximise the likelihood of the full dataset (we can sum up the loglikelihoods of the datsets with each missingness pattern). This way it utilises *all* observed variables (hence "full information") to estimate the model parameters.   
 
 ```{r}
+#| include: false
 #| echo: false
 set.seed(345)
 d <- data.frame(x=rnorm(1e5),y=rnorm(1e5)) |>
@@ -576,33 +582,34 @@ plot_ly(x=kd$x, y = kd$y, z = kd$z) |>
   add_surface()
 ```
 
-FIML utilises *all* observed variables (hence "full information") to estimate missing values looking at the "patterns of missingness", and letting each pattern contribute to the model likelihood according to the variables for which they have data. 
-
-
-
-
-
-A downside, one could argue, is that you may have specific theoretical considerations about which observed variables *should* weigh in on estimating missingness in variable $x$ (rather than *all* variables), in which case imputation techniques may be preferable.  
+A downside, one could argue, is that you may have specific theoretical considerations about which observed variables *should* weigh in on estimating missingness in variable $x$ (rather than *all* variables), in which case imputation techniques may be preferable. FIML only provides unbiased estimates if the data are MAR (i.e. if the missingness depends on other variables present in the data).  
   
 In lavaan, we can make use of full information maximum likelihood by using either `missing = "FIML"` or `missing = "ML"` (they're the same) in the functions `cfa()` and `sem()`.  
 
+::: 
+
+
+::: {.callout-caution collapse="true"}
+#### optional: other approaches to missingness
+
+Thus far in our analyses, we have been simply excluding any row for which there is missingness. This is typically known as "listwise deletion", and is the default for many modelling approaches. Any person who is missing _some_ data on a variable in our model will simply not be included. This method _assumes_ that the data are "Missing Completely At Random", because we make the assumption that studying only the people who have complete data does not bias our results in any way.  
+
+Other traditional approaches are to use basic imputation methods such as "mean/median imputation" (replace missing values with the average of that variable). These can be okay, but they assume that the imputed values are **exactly** what we _would_ have observed had it not been missing, rather than estimates. The lack of variability around this imputed value will shrink the standard errors because it is assumed that no deviations exist among the substituted values. 
+Another option is "regression imputation", where we replace missing values with the predicted values from a regression model of the variable with missingness onto some relevant predictors. This is better because our estimates of the values of missing observations could be much better, but we still make an assumption that these estimates are perfect, when we know they are just estimates.  
+
+A more sophisticated approach to this is "Multiple Imputation" (MI). Multiple imputation is similar to the regression imputation approach described above in that it predicts the value of missing observations based on the covariates, but instead of predicting just one value, it predicts many. Rather than saying "the predicted value for this missing observation is 5", we say "the predicted value for this missing observation is from the distribution $\sim N(5,2)$". So we simulate $m$ draws from that distribution, and we end up with $m$ predicted values. We make $m$ copies of our data and replace the missing observations with each of our $m$ predicted values. We then do our analysis on each $m$ imputed dataset, and pool the results!  
+
 :::
 
-
-
-`r qbegin(qcounter())`
-In order to try and replicate the IQ CFA, our researcher collects a new sample of size $n=500$. However, she has some missing data (specifically, those who scored poorly on earlier tests tended to feel discouraged and chose not to complete further tests).  
-  
-Read in the new dataset, plot and numerically summarise the univariate distributions of the measured variables, and then conduct a CFA using the new data, taking account of the missingness (don't forget to also use an appropriate estimator to account for any non-normality). Does the model fit well?    
-  
-+ The data can be found at [https://uoepsy.github.io/data/IQdatam.csv](https://uoepsy.github.io/data/IQdatam.csv), and is in .csv format. 
+:::
+ 
  
 `r qend()` 
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 We can fit the model setting `missing='FIML'`. If data are missing at random (MAR) - i.e., missingness is related to the measured variables but not the unobserved missing values - then this gives us unbiased parameter estimates. Unfortunately we can never know whether data are MAR for sure as this would require knowledge of the missing values. 
 
 ```{r message=FALSE}
-IQ_data_new <- read_csv("../../data/IQdatam.csv")
+IQ_data_new <- read_csv("https://uoepsy.github.io/data/IQdatam.csv")
 multi.hist(IQ_data_new, global = FALSE)
 
 IQ_data_new |> select(contains("IQ")) |> 
@@ -632,6 +639,47 @@ Our fit indices all look very good!
 `r solend()`
 
 
+`r qbegin(qcounter())`
+Note that the summary of the model output when we used FIML also told us that there are 3 patterns of missingness.  
+
+Can you find out a) what the patterns are, and b) how many people are in each pattern?  
+
+
+
+::: {.callout-tip collapse="true"}
+#### Hints
+
+`is.na()` will help a lot here, as will `distinct()` and `count()`.  
+
+:::
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+
+This will turn all the NAs into TRUE, and everything else into FALSE:  
+```{r}
+#| eval: false
+is.na(IQ_data_new)
+```
+
+If we turn this back to a dataframe, and then pass it to `distinct()`, we get out the different patterns!  
+```{r}
+is.na(IQ_data_new) |>
+  as.data.frame() |>
+  distinct()
+```
+
+Getting the counts is more difficult, but one way would be to do it with `count()`, but we have to give it all of the variables, to get all the different combinations:  
+```{r}
+is.na(IQ_data_new) |>
+  as.data.frame() |>
+  count(ID1,IQ1,IQ2,IQ3,IQ4,IQ5)
+```
+
+
+
+`r solend()`
 
 
 
