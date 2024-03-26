@@ -678,10 +678,102 @@ is.na(IQ_data_new) |>
 ```
 
 
+`r solend()`
+
+
+# Extras: Equivalent models
+
+`r qbegin(paste0("Extra ", qcounter()))`
+Returning to our full SEM, adjust your model so that instead of `IQ ~ Stress` we are fitting `Stress ~ IQ` (i.e. child cognitive ability $\rightarrow$ prenatal stress).  
+Does this model fit better or worse than our first one?  
+
+`r qend()`
+`r solbegin(show=TRUE, toggle=params$TOGGLE)`
+
+Here's our first model:  
+```{r}
+fitmeasures(SEM_model.est)[c("rmsea","srmr","tli","cfi")]
+```
+
+And here's the model with the direction reversed:  
+```{r}
+SEM_model2 <- '
+    #IQ measurement model
+    IQ =~ IQ1 + IQ2 + IQ3 + IQ4 + IQ5 
+    IQ1 ~~ IQ2
+    IQ4 ~~ IQ5
+    
+    #stress measurement model 
+    Stress =~ stress1 + stress2 + stress3 + stress4 + stress5 
+    
+    #structural part of model
+    Stress ~ IQ
+'
+
+SEM_model.est2 <- sem(SEM_model2, data=stress_IQ_data,
+                    ordered = c('stress1', 'stress2', 'stress3', 'stress4', 'stress5'),
+                    estimator="WLSMV")
+
+fitmeasures(SEM_model.est2)[c("rmsea","srmr","tli","cfi")]
+```
+
+
+The fit is exactly the same!!  
+
+One of the strengths of SEM is that we are fitting quantitative models that very closely correspond to theoretical models. In fact, researchers may often start with two slightly different theoretical models, and SEM will allow them to make a formal comparison of the two, because they will lead to differences in model fit. 
+
+However, it is important to be aware that for every structural equation model, there are always equivalent representations of the model structure that leads to _precisely_ the same model fit. These are essentially re-parameterisations of our model - they contain the same information, and lead to the exact same model-implied covariance matrix, but they involve different theoretical assumptions. Many of these we can rule out on conceptual grounds (i.e. a child's cognitive ability cannot influence their mothers' pre-natal stress levels), but others we cannot.  
 
 `r solend()`
 
 
+# Extras: Simulating SEM data  
+
+
+`r qbegin(paste0("Extra", qcounter()))`
+
+::: {.callout-note collapse="true"}
+#### Simulating data as an tool for learning
+
+An *extremely* useful approach to learning both R and statistics is to create yourself some fake data on which you can try things out. Because you create the data, you can control any relationships, group differences etc. In doing so, you essentially make yourself a target to aim for.  
+
+Many of you will currently be in the process of collecting/acquiring data for your thesis. If you are yet to obtain your data, we **strongly** recommend that you start to simulate some data with the expected distributions in order to play around and test how your analyses works, and how to interpret the results.  
+
+I estimate that I generate fake data at least a couple of times every week just to help me work out things I don't understand. It also enables for easy sharing of reproducible chunks of code which can perfectly replicate issues and help discussions.  
+
+While structural equation models are a fairly complex method, simulating data from a pre-defined SEM is actually pretty straightforward. We just specify a population model (i.e. giving it some values of each parameter) and then sample from it.  
+For example:  
+
+```{r}
+popmod <- "
+biscuits =~ .7*oreo + .6*digestive + .7*custardcream + 
+            .6*jammydodger + .8*bourbon + .3*jaffacake
+"
+
+newdata <- simulateData(popmod, sample.nobs = 300)
+
+head(newdata)
+```
+
+:::
+
+1. Do a little bit of research and find a paper that fits a structural equation model. Simulate some data from it.  
+2. Save the dataset (`write_csv()` will help), and share it with someone else, along with a description of the theoretical model. Can they estimate a model that fits well? 
+
+`r qend()`
+
+
+
+# Extras: Extensions of SEM
+
+We have really only scraped the surface of the different things we can do with SEM. If you are interested in taking you learning further, then some of the next things to start looking into:   
+
+  - Multigroup analysis (testing the model across two or more populations)  
+    - Jöreskog, K. G. (1971). Simultaneous factor analysis in several populations. Psychometrika, 36(4), 409-426.  
+    - Sorbom, D. (1974). A general method for studying differences in factor means and factor structures between groups. British Journal of Mathematical and Statistical Psychology, 27, 229-239.  
+
+  - Latent Growth Curves (actually just the same as a multilevel model!! &#129327; )  
+    - [Michael Clark has a great lot of resources on this](https://m-clark.github.io/mixed-models-with-R/supplemental.html), and it makes the link between random effects and latent variables super clear.  
 
 
 
