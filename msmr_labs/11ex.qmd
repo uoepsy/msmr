@@ -1,7 +1,7 @@
 ---
 title: "Week 11 Exercises: More SEM!"
 params: 
-    SHOW_SOLS: FALSE
+    SHOW_SOLS: TRUE
     TOGGLE: TRUE
 editor_options: 
   chunk_output_type: console
@@ -340,8 +340,9 @@ If it doesn't fit very well, consider checking for areas of local misfit (i.e., 
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 
+We also get out robust fit measures, so we should ask for them:
 ```{r}
-fitmeasures(model_IQ.est)[c("rmsea","srmr","cfi","tli")]
+fitmeasures(model_IQ.est)[c("rmsea.robust","srmr","cfi.robust","tli.robust")]
 ```
 
 The model doesn't fit very well so we could check the modification indices for local mis-specifications
@@ -351,20 +352,20 @@ modindices(model_IQ.est, sort=T) |> head()
 ```
 
 It looks like we might need to include residual covariances between the items IQ1 and IQ2 and maybe also between items IQ4 and IQ5. 
-As always, we need to double check this makes substantive sense. Items IQ1 and IQ2 measure verbal comprehension and verbal memory - people might be likely to score low/high on both of these due to their verbal ability. IQ4 and IQ5 might be both related due to both being tests requiring visual perception?  
+As always, we need to double check this makes substantive sense. Items IQ1 and IQ2 measure verbal comprehension and verbal memory - people might be likely to score low/high on both of these due to their verbal ability. IQ4 and IQ5 might be both related due to both being tests requiring visual perception, but it's less obvious. We'd probably want to know more about the specific tests undertaken. 
 
 ```{r make modifications}
 model2_IQ <- '
     IQ=~IQ1+IQ2+IQ3+IQ4+IQ5
     IQ1~~IQ2
-    IQ4~~IQ5
 '
 model2_IQ.est <- cfa(model2_IQ, data=stress_IQ_data, estimator='MLR')
 ```
 
 The fit of the model is now much improved! and our loadings are all significant and $>|0.3|$.   
+The RMSEA is still in that grey area between 0.05 and 0.08, so we would probably want to flag this when writing up. We could keep trying to add stuff in order to get it below 0.05, but that means a high risk of overfitting.  
 ```{r}
-fitmeasures(model2_IQ.est)[c("rmsea","srmr","cfi","tli")]
+fitmeasures(model2_IQ.est)[c("rmsea.robust","srmr","cfi.robust","tli.robust")]
 
 summary(model2_IQ.est, standardized=T)
 ```
@@ -473,12 +474,12 @@ model_stress.est <-
 
 
 `r qbegin(qcounter())`
-Inspect your summary model output. Notice that we have a couple of additional things - we have 'robust' values for the fit statistics (those that appear in the right-hand column under 'robust'), and we have the estimated 'thresholds' in our output (there are two thresholds per item in this example because we have a three-point response scale). The estimates themselves are not of great interest to us.  
+Inspect your summary model output. Notice that we have a couple of additional things - we have 'scaled' and 'robust' values for the fit statistics (we have a second column for all the fit indices but using a scaled version of the $\chi^2$ statistic, and then we also have some extra rows of 'robust' measures), and we have the estimated 'thresholds' in our output (there are two thresholds per item in this example because we have a three-point response scale). The estimates themselves are not of great interest to us.  
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 ```{r}
 # inspect the output
-fitmeasures(model_stress.est)[c("rmsea","srmr","cfi","tli")]
+fitmeasures(model_stress.est)[c("rmsea.robust","srmr","cfi.robust","tli.robust")]
 summary(model_stress.est, standardized=TRUE)
 ```
 `r solend()`
@@ -521,7 +522,11 @@ SEM_model <- '
 SEM_model.est <- sem(SEM_model, data=stress_IQ_data,
                      ordered=c('stress1','stress2','stress3','stress4','stress5'),
                      estimator="WLSMV")
+```
 
+Let's print out the full summary.  
+Note that when we have a mix of ordered categoricals _and_ continuous variables, then we can't get the robust estimates of the fit indices. These are now NA. We do still get the scaled versions though:  
+```{r}
 summary(SEM_model.est, fit.measures=T, standardized=T)
 ```
 ```{r}
@@ -692,7 +697,7 @@ Does this model fit better or worse than our first one?
 
 Here's our first model:  
 ```{r}
-fitmeasures(SEM_model.est)[c("rmsea","srmr","tli","cfi")]
+fitmeasures(SEM_model.est)[c("rmsea.scaled","srmr","tli.scaled","cfi.scaled")]
 ```
 
 And here's the model with the direction reversed:  
@@ -714,7 +719,7 @@ SEM_model.est2 <- sem(SEM_model2, data=stress_IQ_data,
                     ordered = c('stress1', 'stress2', 'stress3', 'stress4', 'stress5'),
                     estimator="WLSMV")
 
-fitmeasures(SEM_model.est2)[c("rmsea","srmr","tli","cfi")]
+fitmeasures(SEM_model.est2)[c("rmsea.scaled","srmr","tli.scaled","cfi.scaled")]
 ```
 
 
