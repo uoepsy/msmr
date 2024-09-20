@@ -109,8 +109,8 @@ if(f.classList.contains('jk-circle-right')) {
 
 <!---<script src="https://kit.fontawesome.com/120b08a6f5.js" crossorigin="anonymous"></script>-->
 
-<link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet">
-<script src="site_libs/panelset-0.2.6/panelset.js"></script>
+<link href="site_libs/panelset-0.3.0/panelset.css" rel="stylesheet">
+<script src="site_libs/panelset-0.3.0/panelset.js"></script>
 <script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
 
@@ -670,12 +670,7 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-4" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-4', 'sol-start-4')">
-Solution
-</button>
-</div>
-<div id="sol-body-4" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p>Here’s the overall picture. The average score on the GAD7 at each visit gets more and more different between the two groups. The treatment looks effective..</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(geduc_long, <span class="fu">aes</span>(<span class="at">x =</span> visit, <span class="at">y =</span> GAD, <span class="at">col =</span> group)) <span class="sc">+</span></span>
@@ -714,11 +709,11 @@ Question 3
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-5" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-5', 'sol-start-5')">
+<button id="sol-start-4" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-4', 'sol-start-4')">
 1 - fixed effects
 </button>
 </div>
-<div id="sol-body-5" class="solution-body" style="display: none;">
+<div id="sol-body-4" class="solution-body" style="display: none;">
 <p>We want to know if how anxiety (<code>GAD</code>) changes over time (<code>visit</code>) is different between treatment and control (<code>group</code>).</p>
 <p>Hopefully this should hopefully come as no surprise<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> - it’s an interaction!</p>
 <div class="cell" data-layout-align="center">
@@ -730,11 +725,11 @@ Question 3
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-6" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-6', 'sol-start-6')">
+<button id="sol-start-5" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-5', 'sol-start-5')">
 2 - grouping structure
 </button>
 </div>
-<div id="sol-body-6" class="solution-body" style="display: none;">
+<div id="sol-body-5" class="solution-body" style="display: none;">
 <p>We have multiple observations for each of the 520 patients, and those patients are nested within 30 therapists.</p>
 <p>Note that in our data, the patient variable does not uniquely specify the individual patients. i.e.&nbsp;patient “1” from therapist “OT” is a different person from patient “1” from therapist “ND”. To correctly group the observations into different patients (and not ‘patient numbers’), we need to have <code>therapist:patient</code>.</p>
 <p>So we capture therapist-level differences in <code>( ... | therapist)</code> and the patients-within-therapist-level differences in <code>( ... | therapist:patient)</code>:</p>
@@ -748,11 +743,11 @@ Question 3
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-7" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-7', 'sol-start-7')">
+<button id="sol-start-6" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-6', 'sol-start-6')">
 3 - random effects
 </button>
 </div>
-<div id="sol-body-7" class="solution-body" style="display: none;">
+<div id="sol-body-6" class="solution-body" style="display: none;">
 <p>Note that each patient can change differently in their anxiety levels over time - i.e.&nbsp;the slope of <code>visit</code> could vary by participant.</p>
 <p>Likewise, some therapists could have patients who change differently from patients from another therapist, so <code>visit|therapist</code> can be included.</p>
 <p>Each patient is in one of the two groups - they’re <em>either</em> treatment <em>or</em> control. So we can’t say that “differences in anxiety due to treatment varies between patients”, because for any one patient the “difference in anxiety due to treatment” is not defined in our study design.</p>
@@ -785,12 +780,7 @@ Question 4
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-8" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-8', 'sol-start-8')">
-Solution
-</button>
-</div>
-<div id="sol-body-8" class="solution-body" style="display: none;">
+<div style="display:none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>modelA <span class="ot">&lt;-</span> <span class="fu">lmer</span>(GAD <span class="sc">~</span> visit<span class="sc">*</span>group <span class="sc">+</span> </span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>               (<span class="dv">1</span><span class="sc">+</span>visit<span class="sc">*</span>group<span class="sc">|</span>therapist)<span class="sc">+</span></span>
@@ -831,12 +821,7 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-9" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-9', 'sol-start-9')">
-Solution
-</button>
-</div>
-<div id="sol-body-9" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p>It would be best to go to one of the therapists <code>WG</code>, <code>EQ</code>, or <code>EI</code>…</p>
 <p>Why? These therapists all have the most negative slope of visit:</p>
 <div class="cell" data-layout-align="center">
@@ -894,12 +879,7 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-10" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-10', 'sol-start-10')">
-Solution
-</button>
-</div>
-<div id="sol-body-10" class="solution-body" style="display: none;">
+<div style="display:none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effects)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom.mixed)</span>
@@ -1009,12 +989,7 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-11" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-11', 'sol-start-11')">
-Solution
-</button>
-</div>
-<div id="sol-body-11" class="solution-body" style="display: none;">
+<div style="display:none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">url</span>(<span class="st">"https://uoepsy.github.io/data/testenhancedlearning.RData"</span>))</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1065,11 +1040,11 @@ Hints
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-12" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-12', 'sol-start-12')">
+<button id="sol-start-7" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-7', 'sol-start-7')">
 1 - maximal model
 </button>
 </div>
-<div id="sol-body-12" class="solution-body" style="display: none;">
+<div id="sol-body-7" class="solution-body" style="display: none;">
 <p>We have a <strong>crossed</strong> random effect structure here. Each participant was tested on every word, and each word was seen by every participant.</p>
 <p>Subjects were tested at both the <code>min</code> and <code>week</code>, so <code>Delay|Subject_ID</code> can be included (some people might retain the items better than others).<br>
 Likewise the words were seen at both <code>min</code> and <code>week</code>, and some words might be more easy to retain than others (<code>Delay|Test_word</code>).</p>
@@ -1100,11 +1075,11 @@ Warning message:<br> In checkConv(attr(opt, “derivs”), opt$par, ctrl = contr
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-13" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-13', 'sol-start-13')">
+<button id="sol-start-8" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-8', 'sol-start-8')">
 2 - Removing Delay*Group|Test_word
 </button>
 </div>
-<div id="sol-body-13" class="solution-body" style="display: none;">
+<div id="sol-body-8" class="solution-body" style="display: none;">
 <p>Lets remove the interaction in the by-word random effects.<br>
 This one took about 5 minutes…</p>
 <div class="cell" data-layout-align="center">
@@ -1131,11 +1106,11 @@ Warning message:<br> In checkConv(attr(opt, “derivs”), opt$par, ctrl = contr
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-14" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-14', 'sol-start-14')">
+<button id="sol-start-9" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-9', 'sol-start-9')">
 3 - Removing Group|Test_word
 </button>
 </div>
-<div id="sol-body-14" class="solution-body" style="display: none;">
+<div id="sol-body-9" class="solution-body" style="display: none;">
 <p>We still have a singular fit here. Thinking about the study, if we are going to remove <strong>one</strong> of the by-testword random effects (<code>Delay</code> or <code>Group</code>), which one do we consider to be more theoretically justified? Is the effect of Delay likely to vary by test-words? More so than the effect of group is likely to vary by test-words?<br>
 Quite possibly - it’s reasonable to think that some words will be more easily retained over a week than others, but I can’t come up with a reason to think why <code>StudyTest</code> vs <code>StudyStudy</code> would have a different effect for some words than others.</p>
 <p>Let’s remove the by-testword random effect of group.</p>
@@ -1176,11 +1151,11 @@ Why did we not get a warning message?</p>
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-15" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-15', 'sol-start-15')">
+<button id="sol-start-10" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-10', 'sol-start-10')">
 4 - Removing Delay|Test_word
 </button>
 </div>
-<div id="sol-body-15" class="solution-body" style="display: none;">
+<div id="sol-body-10" class="solution-body" style="display: none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>mod4 <span class="ot">&lt;-</span> <span class="fu">glmer</span>(Correct <span class="sc">~</span> Delay<span class="sc">*</span>Group <span class="sc">+</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>             (<span class="dv">1</span> <span class="sc">+</span> Delay <span class="sc">|</span> Subject_ID) <span class="sc">+</span></span>
@@ -1208,34 +1183,34 @@ Why did we not get a warning message?</p>
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-16" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-16', 'sol-start-16')">
+<button id="sol-start-11" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-11', 'sol-start-11')">
 5 - Comparisons
 </button>
 </div>
-<div id="sol-body-16" class="solution-body" style="display: none;">
+<div id="sol-body-11" class="solution-body" style="display: none;">
 <p>In the process of getting to our final model, we’ve just fitted quite a few models that didn’t converge. We definitely don’t want to do anything with these models (i.e.&nbsp;we shouldn’t report them or use them in model comparisons etc).</p>
 <p>However, it can sometimes be useful to just check how estimates of fixed effects and their standard errors differ across these models. More often than not, this simply provides us with reassurance that the removal of random effects hasn’t actually had too much of an impact on anything we’re going to conduct inferences on.</p>
 <p>For instance, in all these models, the fixed effects estimates are all pretty similar, suggesting that they’ve all found similar estimates of these parameters which have been largely invariant to our refinement of the random effects.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 
-<div id="ncbsknlwqw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ncbsknlwqw table {
+<div id="kpcecodpzt" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#kpcecodpzt table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#ncbsknlwqw thead, #ncbsknlwqw tbody, #ncbsknlwqw tfoot, #ncbsknlwqw tr, #ncbsknlwqw td, #ncbsknlwqw th {
+#kpcecodpzt thead, #kpcecodpzt tbody, #kpcecodpzt tfoot, #kpcecodpzt tr, #kpcecodpzt td, #kpcecodpzt th {
   border-style: none;
 }
 
-#ncbsknlwqw p {
+#kpcecodpzt p {
   margin: 0;
   padding: 0;
 }
 
-#ncbsknlwqw .gt_table {
+#kpcecodpzt .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1261,12 +1236,12 @@ Why did we not get a warning message?</p>
   border-left-color: #D3D3D3;
 }
 
-#ncbsknlwqw .gt_caption {
+#kpcecodpzt .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#ncbsknlwqw .gt_title {
+#kpcecodpzt .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1278,7 +1253,7 @@ Why did we not get a warning message?</p>
   border-bottom-width: 0;
 }
 
-#ncbsknlwqw .gt_subtitle {
+#kpcecodpzt .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1290,7 +1265,7 @@ Why did we not get a warning message?</p>
   border-top-width: 0;
 }
 
-#ncbsknlwqw .gt_heading {
+#kpcecodpzt .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1302,13 +1277,13 @@ Why did we not get a warning message?</p>
   border-right-color: #D3D3D3;
 }
 
-#ncbsknlwqw .gt_bottom_border {
+#kpcecodpzt .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ncbsknlwqw .gt_col_headings {
+#kpcecodpzt .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1323,7 +1298,7 @@ Why did we not get a warning message?</p>
   border-right-color: #D3D3D3;
 }
 
-#ncbsknlwqw .gt_col_heading {
+#kpcecodpzt .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1343,7 +1318,7 @@ Why did we not get a warning message?</p>
   overflow-x: hidden;
 }
 
-#ncbsknlwqw .gt_column_spanner_outer {
+#kpcecodpzt .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1355,15 +1330,15 @@ Why did we not get a warning message?</p>
   padding-right: 4px;
 }
 
-#ncbsknlwqw .gt_column_spanner_outer:first-child {
+#kpcecodpzt .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ncbsknlwqw .gt_column_spanner_outer:last-child {
+#kpcecodpzt .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ncbsknlwqw .gt_column_spanner {
+#kpcecodpzt .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1375,11 +1350,11 @@ Why did we not get a warning message?</p>
   width: 100%;
 }
 
-#ncbsknlwqw .gt_spanner_row {
+#kpcecodpzt .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#ncbsknlwqw .gt_group_heading {
+#kpcecodpzt .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1405,7 +1380,7 @@ Why did we not get a warning message?</p>
   text-align: left;
 }
 
-#ncbsknlwqw .gt_empty_group_heading {
+#kpcecodpzt .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1420,15 +1395,15 @@ Why did we not get a warning message?</p>
   vertical-align: middle;
 }
 
-#ncbsknlwqw .gt_from_md > :first-child {
+#kpcecodpzt .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ncbsknlwqw .gt_from_md > :last-child {
+#kpcecodpzt .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ncbsknlwqw .gt_row {
+#kpcecodpzt .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1447,7 +1422,7 @@ Why did we not get a warning message?</p>
   overflow-x: hidden;
 }
 
-#ncbsknlwqw .gt_stub {
+#kpcecodpzt .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1460,7 +1435,7 @@ Why did we not get a warning message?</p>
   padding-right: 5px;
 }
 
-#ncbsknlwqw .gt_stub_row_group {
+#kpcecodpzt .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1474,15 +1449,15 @@ Why did we not get a warning message?</p>
   vertical-align: top;
 }
 
-#ncbsknlwqw .gt_row_group_first td {
+#kpcecodpzt .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ncbsknlwqw .gt_row_group_first th {
+#kpcecodpzt .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#ncbsknlwqw .gt_summary_row {
+#kpcecodpzt .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1492,16 +1467,16 @@ Why did we not get a warning message?</p>
   padding-right: 5px;
 }
 
-#ncbsknlwqw .gt_first_summary_row {
+#kpcecodpzt .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ncbsknlwqw .gt_first_summary_row.thick {
+#kpcecodpzt .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ncbsknlwqw .gt_last_summary_row {
+#kpcecodpzt .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1511,7 +1486,7 @@ Why did we not get a warning message?</p>
   border-bottom-color: #D3D3D3;
 }
 
-#ncbsknlwqw .gt_grand_summary_row {
+#kpcecodpzt .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1521,7 +1496,7 @@ Why did we not get a warning message?</p>
   padding-right: 5px;
 }
 
-#ncbsknlwqw .gt_first_grand_summary_row {
+#kpcecodpzt .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1531,7 +1506,7 @@ Why did we not get a warning message?</p>
   border-top-color: #D3D3D3;
 }
 
-#ncbsknlwqw .gt_last_grand_summary_row_top {
+#kpcecodpzt .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1541,11 +1516,11 @@ Why did we not get a warning message?</p>
   border-bottom-color: #D3D3D3;
 }
 
-#ncbsknlwqw .gt_striped {
+#kpcecodpzt .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ncbsknlwqw .gt_table_body {
+#kpcecodpzt .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1554,7 +1529,7 @@ Why did we not get a warning message?</p>
   border-bottom-color: #D3D3D3;
 }
 
-#ncbsknlwqw .gt_footnotes {
+#kpcecodpzt .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1568,7 +1543,7 @@ Why did we not get a warning message?</p>
   border-right-color: #D3D3D3;
 }
 
-#ncbsknlwqw .gt_footnote {
+#kpcecodpzt .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1577,7 +1552,7 @@ Why did we not get a warning message?</p>
   padding-right: 5px;
 }
 
-#ncbsknlwqw .gt_sourcenotes {
+#kpcecodpzt .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1591,7 +1566,7 @@ Why did we not get a warning message?</p>
   border-right-color: #D3D3D3;
 }
 
-#ncbsknlwqw .gt_sourcenote {
+#kpcecodpzt .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1599,64 +1574,73 @@ Why did we not get a warning message?</p>
   padding-right: 5px;
 }
 
-#ncbsknlwqw .gt_left {
+#kpcecodpzt .gt_left {
   text-align: left;
 }
 
-#ncbsknlwqw .gt_center {
+#kpcecodpzt .gt_center {
   text-align: center;
 }
 
-#ncbsknlwqw .gt_right {
+#kpcecodpzt .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ncbsknlwqw .gt_font_normal {
+#kpcecodpzt .gt_font_normal {
   font-weight: normal;
 }
 
-#ncbsknlwqw .gt_font_bold {
+#kpcecodpzt .gt_font_bold {
   font-weight: bold;
 }
 
-#ncbsknlwqw .gt_font_italic {
+#kpcecodpzt .gt_font_italic {
   font-style: italic;
 }
 
-#ncbsknlwqw .gt_super {
+#kpcecodpzt .gt_super {
   font-size: 65%;
 }
 
-#ncbsknlwqw .gt_footnote_marks {
+#kpcecodpzt .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#ncbsknlwqw .gt_asterisk {
+#kpcecodpzt .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ncbsknlwqw .gt_indent_1 {
+#kpcecodpzt .gt_indent_1 {
   text-indent: 5px;
 }
 
-#ncbsknlwqw .gt_indent_2 {
+#kpcecodpzt .gt_indent_2 {
   text-indent: 10px;
 }
 
-#ncbsknlwqw .gt_indent_3 {
+#kpcecodpzt .gt_indent_3 {
   text-indent: 15px;
 }
 
-#ncbsknlwqw .gt_indent_4 {
+#kpcecodpzt .gt_indent_4 {
   text-indent: 20px;
 }
 
-#ncbsknlwqw .gt_indent_5 {
+#kpcecodpzt .gt_indent_5 {
   text-indent: 25px;
+}
+
+#kpcecodpzt .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#kpcecodpzt div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
 }
 </style>
 <table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
@@ -1708,12 +1692,7 @@ Question 9
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-17" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-17', 'sol-start-17')">
-Solution
-</button>
-</div>
-<div id="sol-body-17" class="solution-body" style="display: none;">
+<div style="display:none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effects)</span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>effplot <span class="ot">&lt;-</span> <span class="fu">effect</span>(<span class="st">"Delay:Group"</span>, mod4) <span class="sc">|&gt;</span></span>
@@ -1763,11 +1742,11 @@ Delayweek:GroupStudyTest 2.1734992 1.7894502 2.6399723</code></pre>
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-18" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-18', 'sol-start-18')">
+<button id="sol-start-12" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-12', 'sol-start-12')">
 Solution
 </button>
 </div>
-<div id="sol-body-18" class="solution-body" style="display: none;">
+<div id="sol-body-12" class="solution-body" style="display: none;">
 <p>We’ll get the benefits of test-enhanced learning if we try these exercises before looking at any of the solutions that are visible! If we don’t test ourselves, we’re more likely to forget it in the long run.</p>
 </div>
 <p class="solution-end">
@@ -1852,12 +1831,7 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-19" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-19', 'sol-start-19')">
-Solution
-</button>
-</div>
-<div id="sol-body-19" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p>Let’s read in the data:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>pvt <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/pvt_bilingual.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -2080,30 +2054,30 @@ REML criterion at convergence: 23076.6
 
 Scaled residuals: 
     Min      1Q  Median      3Q     Max 
--4.4459 -0.5498 -0.0004  0.5262  4.4199 
+-4.4459 -0.5498 -0.0004  0.5262  4.4201 
 
 Random effects:
  Groups       Name        Variance Std.Dev. Corr             
  school:child (Intercept)   34.86   5.904                    
-              poly1       1839.62  42.891    0.01            
-              poly2       3945.03  62.810   -0.08  0.23      
-              poly3        684.45  26.162    0.19  0.61  0.87
- school       (Intercept)   19.97   4.468                    
-              poly1        928.67  30.474   -0.40            
-              poly3        335.73  18.323   -0.52 -0.12      
+              poly1       1840.35  42.899    0.01            
+              poly2       3944.43  62.805   -0.08  0.23      
+              poly3        684.63  26.165    0.19  0.61  0.87
+ school       (Intercept)   19.97   4.469                    
+              poly1        926.85  30.444   -0.40            
+              poly3        335.70  18.322   -0.52 -0.11      
  Residual                   31.94   5.651                    
 Number of obs: 3458, groups:  school:child, 494; school, 30
 
 Fixed effects:
                     Estimate Std. Error        df t value Pr(&gt;|t|)    
-(Intercept)          27.9464     0.8987   31.1131  31.098  &lt; 2e-16 ***
-poly1               157.0432     9.5752   39.5900  16.401  &lt; 2e-16 ***
-poly2               -48.9606     8.0943  517.6462  -6.049 2.80e-09 ***
-poly3                -1.2783     8.1743   61.5668  -0.156  0.87624    
-isBilingual1         -1.2113     0.5863  465.7954  -2.066  0.03939 *  
-poly1:isBilingual1   16.6106    12.3112  501.6593   1.349  0.17787    
-poly2:isBilingual1   56.2609    12.9499  517.6462   4.345 1.68e-05 ***
-poly3:isBilingual1  -34.3285    11.8631 1217.6504  -2.894  0.00387 ** 
+(Intercept)          27.9463     0.8988   31.0992  31.094  &lt; 2e-16 ***
+poly1               157.0347     9.5720   39.6323  16.406  &lt; 2e-16 ***
+poly2               -48.9606     8.0943  517.6311  -6.049 2.80e-09 ***
+poly3                -1.2775     8.1743   61.5895  -0.156  0.87632    
+isBilingual1         -1.2114     0.5863  465.8109  -2.066  0.03938 *  
+poly1:isBilingual1   16.6080    12.3114  501.4212   1.349  0.17795    
+poly2:isBilingual1   56.2609    12.9498  517.6311   4.345 1.68e-05 ***
+poly3:isBilingual1  -34.3282    11.8633 1217.4313  -2.894  0.00388 ** 
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -2113,31 +2087,33 @@ poly1       -0.215
 poly2       -0.013  0.026                                   
 poly3       -0.184 -0.003  0.072                            
 isBilingul1 -0.250 -0.001  0.020 -0.020                     
-ply1:sBlng1  0.000 -0.499 -0.020 -0.022 -0.001              
-ply2:sBlng1  0.008 -0.016 -0.625 -0.045 -0.033  0.033       
-ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
+ply1:sBlng1  0.000 -0.500 -0.021 -0.022 -0.001              
+ply2:sBlng1  0.008 -0.017 -0.625 -0.045 -0.033  0.033       
+ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079
+optimizer (nloptwrap) convergence code: 0 (OK)
+Model failed to converge with max|grad| = 0.00432485 (tol = 0.002, component 1)</code></pre>
 </div>
 </div>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 
-<div id="ahxsrtzizz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ahxsrtzizz table {
+<div id="dwockdssow" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#dwockdssow table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#ahxsrtzizz thead, #ahxsrtzizz tbody, #ahxsrtzizz tfoot, #ahxsrtzizz tr, #ahxsrtzizz td, #ahxsrtzizz th {
+#dwockdssow thead, #dwockdssow tbody, #dwockdssow tfoot, #dwockdssow tr, #dwockdssow td, #dwockdssow th {
   border-style: none;
 }
 
-#ahxsrtzizz p {
+#dwockdssow p {
   margin: 0;
   padding: 0;
 }
 
-#ahxsrtzizz .gt_table {
+#dwockdssow .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2163,12 +2139,12 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#ahxsrtzizz .gt_caption {
+#dwockdssow .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#ahxsrtzizz .gt_title {
+#dwockdssow .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2180,7 +2156,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-bottom-width: 0;
 }
 
-#ahxsrtzizz .gt_subtitle {
+#dwockdssow .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2192,7 +2168,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-top-width: 0;
 }
 
-#ahxsrtzizz .gt_heading {
+#dwockdssow .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2204,13 +2180,13 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#ahxsrtzizz .gt_bottom_border {
+#dwockdssow .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ahxsrtzizz .gt_col_headings {
+#dwockdssow .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2225,7 +2201,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#ahxsrtzizz .gt_col_heading {
+#dwockdssow .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2245,7 +2221,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   overflow-x: hidden;
 }
 
-#ahxsrtzizz .gt_column_spanner_outer {
+#dwockdssow .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2257,15 +2233,15 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   padding-right: 4px;
 }
 
-#ahxsrtzizz .gt_column_spanner_outer:first-child {
+#dwockdssow .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ahxsrtzizz .gt_column_spanner_outer:last-child {
+#dwockdssow .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ahxsrtzizz .gt_column_spanner {
+#dwockdssow .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2277,11 +2253,11 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   width: 100%;
 }
 
-#ahxsrtzizz .gt_spanner_row {
+#dwockdssow .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#ahxsrtzizz .gt_group_heading {
+#dwockdssow .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2307,7 +2283,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   text-align: left;
 }
 
-#ahxsrtzizz .gt_empty_group_heading {
+#dwockdssow .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2322,15 +2298,15 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   vertical-align: middle;
 }
 
-#ahxsrtzizz .gt_from_md > :first-child {
+#dwockdssow .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ahxsrtzizz .gt_from_md > :last-child {
+#dwockdssow .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ahxsrtzizz .gt_row {
+#dwockdssow .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2349,7 +2325,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   overflow-x: hidden;
 }
 
-#ahxsrtzizz .gt_stub {
+#dwockdssow .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2362,7 +2338,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   padding-right: 5px;
 }
 
-#ahxsrtzizz .gt_stub_row_group {
+#dwockdssow .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2376,15 +2352,15 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   vertical-align: top;
 }
 
-#ahxsrtzizz .gt_row_group_first td {
+#dwockdssow .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ahxsrtzizz .gt_row_group_first th {
+#dwockdssow .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#ahxsrtzizz .gt_summary_row {
+#dwockdssow .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2394,16 +2370,16 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   padding-right: 5px;
 }
 
-#ahxsrtzizz .gt_first_summary_row {
+#dwockdssow .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ahxsrtzizz .gt_first_summary_row.thick {
+#dwockdssow .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ahxsrtzizz .gt_last_summary_row {
+#dwockdssow .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2413,7 +2389,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#ahxsrtzizz .gt_grand_summary_row {
+#dwockdssow .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2423,7 +2399,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   padding-right: 5px;
 }
 
-#ahxsrtzizz .gt_first_grand_summary_row {
+#dwockdssow .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2433,7 +2409,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#ahxsrtzizz .gt_last_grand_summary_row_top {
+#dwockdssow .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2443,11 +2419,11 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#ahxsrtzizz .gt_striped {
+#dwockdssow .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ahxsrtzizz .gt_table_body {
+#dwockdssow .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2456,7 +2432,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#ahxsrtzizz .gt_footnotes {
+#dwockdssow .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2470,7 +2446,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#ahxsrtzizz .gt_footnote {
+#dwockdssow .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2479,7 +2455,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   padding-right: 5px;
 }
 
-#ahxsrtzizz .gt_sourcenotes {
+#dwockdssow .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2493,7 +2469,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#ahxsrtzizz .gt_sourcenote {
+#dwockdssow .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2501,64 +2477,73 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   padding-right: 5px;
 }
 
-#ahxsrtzizz .gt_left {
+#dwockdssow .gt_left {
   text-align: left;
 }
 
-#ahxsrtzizz .gt_center {
+#dwockdssow .gt_center {
   text-align: center;
 }
 
-#ahxsrtzizz .gt_right {
+#dwockdssow .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ahxsrtzizz .gt_font_normal {
+#dwockdssow .gt_font_normal {
   font-weight: normal;
 }
 
-#ahxsrtzizz .gt_font_bold {
+#dwockdssow .gt_font_bold {
   font-weight: bold;
 }
 
-#ahxsrtzizz .gt_font_italic {
+#dwockdssow .gt_font_italic {
   font-style: italic;
 }
 
-#ahxsrtzizz .gt_super {
+#dwockdssow .gt_super {
   font-size: 65%;
 }
 
-#ahxsrtzizz .gt_footnote_marks {
+#dwockdssow .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#ahxsrtzizz .gt_asterisk {
+#dwockdssow .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ahxsrtzizz .gt_indent_1 {
+#dwockdssow .gt_indent_1 {
   text-indent: 5px;
 }
 
-#ahxsrtzizz .gt_indent_2 {
+#dwockdssow .gt_indent_2 {
   text-indent: 10px;
 }
 
-#ahxsrtzizz .gt_indent_3 {
+#dwockdssow .gt_indent_3 {
   text-indent: 15px;
 }
 
-#ahxsrtzizz .gt_indent_4 {
+#dwockdssow .gt_indent_4 {
   text-indent: 20px;
 }
 
-#ahxsrtzizz .gt_indent_5 {
+#dwockdssow .gt_indent_5 {
   text-indent: 25px;
+}
+
+#dwockdssow .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#dwockdssow div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
 }
 </style>
 <table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
@@ -2576,7 +2561,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
 <td headers="p" class="gt_row gt_right">*</td>
 <td headers="interpretation" class="gt_row gt_left">average vocab score at the mean age (for monolingual)</td></tr>
     <tr><td headers="term" class="gt_row gt_left">poly1</td>
-<td headers="est" class="gt_row gt_right">157.04</td>
+<td headers="est" class="gt_row gt_right">157.03</td>
 <td headers="p" class="gt_row gt_right">*</td>
 <td headers="interpretation" class="gt_row gt_left">vocab increases over time (for monolingual children)</td></tr>
     <tr><td headers="term" class="gt_row gt_left">poly2</td>
@@ -2617,14 +2602,14 @@ Within schools, children vary in the vocab scores at mean age with an SD of 5.9.
 <div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">VarCorr</span>(mod7)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> Groups       Name        Std.Dev. Corr                
- school:child (Intercept)  5.9043                      
-              poly1       42.8908   0.005              
-              poly2       62.8095  -0.078  0.228       
-              poly3       26.1619   0.191  0.610  0.871
- school       (Intercept)  4.4683                      
-              poly1       30.4741  -0.403              
-              poly3       18.3230  -0.525 -0.116       
- Residual                  5.6511                      </code></pre>
+ school:child (Intercept)  5.9042                      
+              poly1       42.8993   0.005              
+              poly2       62.8047  -0.078  0.229       
+              poly3       26.1654   0.191  0.611  0.871
+ school       (Intercept)  4.4691                      
+              poly1       30.4442  -0.405              
+              poly3       18.3221  -0.524 -0.115       
+ Residual                  5.6512                      </code></pre>
 </div>
 </div>
 <!-- ::: {.callout-caution collapse="true"} -->

@@ -108,8 +108,8 @@ if(f.classList.contains('jk-circle-right')) {
 </script>
 
 <!---<script src="https://kit.fontawesome.com/120b08a6f5.js" crossorigin="anonymous"></script>-->
-<link href="site_libs/panelset-0.2.6/panelset.css" rel="stylesheet">
-<script src="site_libs/panelset-0.2.6/panelset.js"></script>
+<link href="site_libs/panelset-0.3.0/panelset.css" rel="stylesheet">
+<script src="site_libs/panelset-0.3.0/panelset.js"></script>
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -891,6 +891,15 @@ if(f.classList.contains('jk-circle-right')) {
 #dyzbugvass .gt_indent_5 {
   text-indent: 25px;
 }
+
+#dyzbugvass .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#dyzbugvass div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
 </style>
 <table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false"><caption>Table&nbsp;1:  <p>Data Dictionary: msmr_apespecies.csv</p> </caption>
   <thead>
@@ -1358,6 +1367,15 @@ if(f.classList.contains('jk-circle-right')) {
 #sdiwzdhuhq .gt_indent_5 {
   text-indent: 25px;
 }
+
+#sdiwzdhuhq .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#sdiwzdhuhq div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
 </style>
 <table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false"><caption>Table&nbsp;2:  <p>Data Dictionary: msmr_apeage.csv</p> </caption>
   <thead>
@@ -1513,12 +1531,7 @@ Question 2
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-4" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-4', 'sol-start-4')">
-Solution
-</button>
-</div>
-<div id="sol-body-4" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p>We have a random sample of <span class="math inline">\(\underbrace{\text{timepoints}}_{\text{level 1}}\)</span> from a random sample of <span class="math inline">\(\underbrace{\text{apes}}_{\text{level 2}}\)</span>.</p>
 </div>
 <p class="solution-end">
@@ -1548,12 +1561,7 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-5" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-5', 'sol-start-5')">
-Solution
-</button>
-</div>
-<div id="sol-body-5" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p>We have 168 apes in our dataset:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(apedat<span class="sc">$</span>ape))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1618,12 +1626,7 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-6" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-6', 'sol-start-6')">
-Solution
-</button>
-</div>
-<div id="sol-body-6" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p>Here’s a line for each ape, and a facet for each species:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(apedat, <span class="fu">aes</span>(<span class="at">x =</span> age, <span class="at">y =</span> dominance, <span class="at">col =</span> species))<span class="sc">+</span></span>
@@ -1665,12 +1668,7 @@ Question 5
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-7" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-7', 'sol-start-7')">
-Solution
-</button>
-</div>
-<div id="sol-body-7" class="solution-body" style="display: none;">
+<div style="display:none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>apedat<span class="sc">$</span>age <span class="ot">=</span> apedat<span class="sc">$</span>age<span class="dv">-1</span> </span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1704,12 +1702,7 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-8" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-8', 'sol-start-8')">
-Solution
-</button>
-</div>
-<div id="sol-body-8" class="solution-body" style="display: none;">
+<div style="display:none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>m.int <span class="ot">&lt;-</span> <span class="fu">lmer</span>(dominance <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> age <span class="sc">+</span> species <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> age <span class="sc">|</span> ape), <span class="at">data =</span> apedat)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1757,12 +1750,7 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-9" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-9', 'sol-start-9')">
-Solution
-</button>
-</div>
-<div id="sol-body-9" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p>Averaging fitted values would give us straight lines <em>if</em> every ape had data at all ages, but in our study we have some apes with only 2 data points, and each ape has different set of ages (e.g., one ape might be measured at age 3, 6, and 10, another ape might be at ages 2 and 16).</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom.mixed)</span>
@@ -1792,12 +1780,7 @@ Question 8
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-10" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-10', 'sol-start-10')">
-Solution
-</button>
-</div>
-<div id="sol-body-10" class="solution-body" style="display: none;">
+<div style="display:none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>effects<span class="sc">::</span><span class="fu">effect</span>(<span class="st">"age*species"</span>, m.full, <span class="at">xlevels=</span><span class="dv">10</span>) <span class="sc">|&gt;</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
@@ -1844,12 +1827,7 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-11" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-11', 'sol-start-11')">
-Solution
-</button>
-</div>
-<div id="sol-body-11" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p>Let’s get some confidence intervals:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(m.full, <span class="at">method=</span><span class="st">"profile"</span>,</span>
@@ -1862,7 +1840,7 @@ specieschimp          0.13383485  0.77009884
 speciesgorilla        0.28124162  0.94933844
 speciesorangutan     -0.38909919  0.34257548
 age:specieschimp     -0.03973125  0.03392308
-age:speciesgorilla   -0.05012759  0.02799394
+age:speciesgorilla   -0.05012759  0.02799393
 age:speciesorangutan -0.10625760 -0.02167806</code></pre>
 </div>
 </div>
@@ -2307,6 +2285,15 @@ age:speciesorangutan -0.10625760 -0.02167806</code></pre>
 
 #kfbjhlxcuh .gt_indent_5 {
   text-indent: 25px;
+}
+
+#kfbjhlxcuh .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#kfbjhlxcuh div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
 }
 </style>
 <table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
@@ -2823,6 +2810,15 @@ age:speciesorangutan -0.10625760 -0.02167806</code></pre>
 #jzxpjdmlao .gt_indent_5 {
   text-indent: 25px;
 }
+
+#jzxpjdmlao .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#jzxpjdmlao div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
 </style>
 <table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
   <thead>
@@ -3289,6 +3285,15 @@ age:speciesorangutan -0.10625760 -0.02167806</code></pre>
 #tlhoviadrs .gt_indent_5 {
   text-indent: 25px;
 }
+
+#tlhoviadrs .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#tlhoviadrs div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
 </style>
 <table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false"><caption>Table&nbsp;3:  <p>Data Dictionary: trolley.csv</p> </caption>
   <thead>
@@ -3340,11 +3345,11 @@ Hints
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-12" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-12', 'sol-start-12')">
+<button id="sol-start-4" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-4', 'sol-start-4')">
 Solution
 </button>
 </div>
-<div id="sol-body-12" class="solution-body" style="display: none;">
+<div id="sol-body-4" class="solution-body" style="display: none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>trolley <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/msmr_trolley.csv"</span>)</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(trolley)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -3443,12 +3448,7 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-13" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-13', 'sol-start-13')">
-Solution
-</button>
-</div>
-<div id="sol-body-13" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p>Here is a plot of proportions of trials in which the lever was pulled, split by how the problem was framed, and the number of lives saved:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(trolley, <span class="fu">aes</span>(<span class="at">x=</span>frame, <span class="at">y=</span>lever, <span class="at">col=</span>lives)) <span class="sc">+</span></span>
@@ -3495,11 +3495,11 @@ Hints
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-14" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-14', 'sol-start-14')">
+<button id="sol-start-5" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-5', 'sol-start-5')">
 1 - fixed
 </button>
 </div>
-<div id="sol-body-14" class="solution-body" style="display: none;">
+<div id="sol-body-5" class="solution-body" style="display: none;">
 <p>The researchers are <em>“interested in whether the framing effects on moral judgements depends upon the stakes (i.e.&nbsp;the number of lives saved)”</em>.</p>
 <p>“the framing effect on moral judgements” here is operationalised as</p>
 <div class="cell" data-layout-align="center">
@@ -3519,11 +3519,11 @@ Hints
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-15" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-15', 'sol-start-15')">
+<button id="sol-start-6" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-6', 'sol-start-6')">
 2 - grouping
 </button>
 </div>
-<div id="sol-body-15" class="solution-body" style="display: none;">
+<div id="sol-body-6" class="solution-body" style="display: none;">
 <p>We know that we have multiple observations for each participant, and those participants are just a random sample (it’s not something we’re interested in testing, we would like to model participant differences as random variation).</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glmer</span>(lever <span class="sc">~</span> frame <span class="sc">*</span> lives <span class="sc">+</span> ....</span>
@@ -3534,11 +3534,11 @@ Hints
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-16" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-16', 'sol-start-16')">
+<button id="sol-start-7" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-7', 'sol-start-7')">
 3 - random
 </button>
 </div>
-<div id="sol-body-16" class="solution-body" style="display: none;">
+<div id="sol-body-7" class="solution-body" style="display: none;">
 <p>Finally, what effects <em>could</em> theoretically vary between our participants?<br>
 Every participant saw everything (i.e.&nbsp;both <code>frame</code> and <code>lives</code> are “within participant” variables).</p>
 <p>In theory, all of these are possible given our design:</p>
@@ -3586,12 +3586,7 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-17" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-17', 'sol-start-17')">
-Solution
-</button>
-</div>
-<div id="sol-body-17" class="solution-body" style="display: none;">
+<div style="display:none;">
 <p>This model still does not converge:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>mod2 <span class="ot">&lt;-</span> <span class="fu">glmer</span>(lever <span class="sc">~</span> frame <span class="sc">*</span> lives <span class="sc">+</span> </span>
@@ -3619,12 +3614,7 @@ Question 14
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-18" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-18', 'sol-start-18')">
-Solution
-</button>
-</div>
-<div id="sol-body-18" class="solution-body" style="display: none;">
+<div style="display:none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effects)</span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">effect</span>(<span class="st">"frame*lives"</span>, mod3) <span class="sc">|&gt;</span></span>
@@ -3663,7 +3653,7 @@ Solution
  -->
 <!-- 
 
-<div class="solution-begin"><button id='sol-start-19' class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-19', 'sol-start-19')">  Solution </button></div><div class="solution-body" id = "sol-body-19" style="display: none;">
+<div style="display:none;">
 
  -->
 <!-- ```{r} -->
@@ -4166,6 +4156,15 @@ Solution
 #qvxcaazjpu .gt_indent_5 {
   text-indent: 25px;
 }
+
+#qvxcaazjpu .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#qvxcaazjpu div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
 </style>
 <table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
   <thead>
@@ -4208,11 +4207,11 @@ Question 16
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-20" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-20', 'sol-start-20')">
+<button id="sol-start-8" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-8', 'sol-start-8')">
 Solution
 </button>
 </div>
-<div id="sol-body-20" class="solution-body" style="display: none;">
+<div id="sol-body-8" class="solution-body" style="display: none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">url</span>(<span class="st">"https://uoepsy.github.io/msmr/data/nwl.RData"</span>))</span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(nwl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -4277,11 +4276,11 @@ Hints
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-21" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-21', 'sol-start-21')">
+<button id="sol-start-9" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-9', 'sol-start-9')">
 Solution
 </button>
 </div>
-<div id="sol-body-21" class="solution-body" style="display: none;">
+<div id="sol-body-9" class="solution-body" style="display: none;">
 <p>The outcome here is (in words) the proportion of correct answers or, equivalently, the probability of answering correctly. A proportion/probability can only vary between 0 and 1 and, as such, we cannot use traditional linear regression or we could end up with predictions outside of the [0, 1] range.</p>
 <p>As said, the outcome is the proportion of correct answers in each block. This makes it tempting to look at the variable called <code>PropCorrect</code>, but this is encoded as a proportion. We have learned to use logistic models, but these require either:</p>
 <ul>
@@ -4730,6 +4729,15 @@ Solution
 
 #oddopdumdq .gt_indent_5 {
   text-indent: 25px;
+}
+
+#oddopdumdq .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#oddopdumdq div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
 }
 </style>
 <table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
@@ -5204,6 +5212,15 @@ Solution
 #bfenaqvktz .gt_indent_5 {
   text-indent: 25px;
 }
+
+#bfenaqvktz .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#bfenaqvktz div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
 </style>
 <table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
   <thead>
@@ -5283,11 +5300,11 @@ Hints
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-22" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-22', 'sol-start-22')">
+<button id="sol-start-10" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-10', 'sol-start-10')">
 1 - answers to the hints
 </button>
 </div>
-<div id="sol-body-22" class="solution-body" style="display: none;">
+<div id="sol-body-10" class="solution-body" style="display: none;">
 <ul>
 <li><p>Do we want <code>cbind(num_successes, num_failures)</code>?</p>
 <ul>
@@ -5327,11 +5344,11 @@ What do you want your model to allow to vary within these groups?</li>
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-23" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-23', 'sol-start-23')">
+<button id="sol-start-11" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-11', 'sol-start-11')">
 2 - modelling
 </button>
 </div>
-<div id="sol-body-23" class="solution-body" style="display: none;">
+<div id="sol-body-11" class="solution-body" style="display: none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>m.base <span class="ot">&lt;-</span> <span class="fu">glmer</span>(<span class="fu">cbind</span>(NumCorrect, NumError) <span class="sc">~</span> block <span class="sc">+</span> (block <span class="sc">|</span> ID), </span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> <span class="fu">filter</span>(nwl, block <span class="sc">&lt;</span> <span class="dv">8</span>, <span class="sc">!</span><span class="fu">is.na</span>(lesion_location)),</span>
@@ -5396,11 +5413,11 @@ Hints
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-24" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-24', 'sol-start-24')">
+<button id="sol-start-12" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-12', 'sol-start-12')">
 Solution
 </button>
 </div>
-<div id="sol-body-24" class="solution-body" style="display: none;">
+<div id="sol-body-12" class="solution-body" style="display: none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>nwl_test <span class="ot">&lt;-</span> <span class="fu">filter</span>(nwl, block <span class="sc">&gt;</span> <span class="dv">7</span>, <span class="sc">!</span><span class="fu">is.na</span>(lesion_location)) <span class="sc">%&gt;%</span></span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
@@ -5480,11 +5497,11 @@ Question 20
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-25" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-25', 'sol-start-25')">
+<button id="sol-start-13" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-13', 'sol-start-13')">
 Solution
 </button>
 </div>
-<div id="sol-body-25" class="solution-body" style="display: none;">
+<div id="sol-body-13" class="solution-body" style="display: none;">
 <ol type="1">
 <li><p>The link function is the <code>logit</code>, or log-odds (other link functions are available).</p></li>
 <li><p>To convert log-odds to odds, we can use <code>exp()</code>, to get odds and odds ratios.</p></li>
@@ -5503,7 +5520,7 @@ These can be difficult, especially when it’s logistic, and especially when the
 </ul>
 <!-- 
 
-<div class="optional-begin"><button id='opt-start-26' class="jk-circle-right optional-icon clickable" onclick="toggle_visibility('opt-body-26', 'opt-start-26')"> Optional help: Our Solution to A4 </button></div><div class="optional-body" id = "opt-body-26" style="display: none;">
+<div class="optional-begin"><button id='opt-start-14' class="jk-circle-right optional-icon clickable" onclick="toggle_visibility('opt-body-14', 'opt-start-14')"> Optional help: Our Solution to A4 </button></div><div class="optional-body" id = "opt-body-14" style="display: none;">
 
  -->
 <!-- ```{r eval=F} -->
@@ -5522,12 +5539,7 @@ These can be difficult, especially when it’s logistic, and especially when the
 </div>
 <p class="question-end">
 </p>
-<div class="solution-begin">
-<button id="sol-start-27" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-27', 'sol-start-27')">
-Solution
-</button>
-</div>
-<div id="sol-body-27" class="solution-body" style="display: none;">
+<div style="display:none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">fixef</span>(m.recall.loc))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -5575,11 +5587,11 @@ Question 22
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-28" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-28', 'sol-start-28')">
+<button id="sol-start-15" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-15', 'sol-start-15')">
 Solution
 </button>
 </div>
-<div id="sol-body-28" class="solution-body" style="display: none;">
+<div id="sol-body-15" class="solution-body" style="display: none;">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(nwl, <span class="sc">!</span><span class="fu">is.na</span>(lesion_location)), <span class="fu">aes</span>(block, PropCorrect, </span>
 <span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>                                                 <span class="at">color=</span>lesion_location, </span>
@@ -5632,7 +5644,7 @@ Solution
  -->
 <!-- 
 
-<div class="solution-begin"><button id='sol-start-29' class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-29', 'sol-start-29')">  Solution </button></div><div class="solution-body" id = "sol-body-29" style="display: none;">
+<div class="solution-begin"><button id='sol-start-16' class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-16', 'sol-start-16')">  Solution </button></div><div class="solution-body" id = "sol-body-16" style="display: none;">
 
  -->
 <!-- * `(Intercept)` ==> Overall performance in immediate test. This is the overall log-odds of answering correctly in the immediate test.  -->
