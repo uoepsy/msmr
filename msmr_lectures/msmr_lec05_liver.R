@@ -19,9 +19,44 @@ library(effects)
 library(tidyverse)
 library(lme4)
 library(lmerTest)
+library(broom.mixed)
 load("./data/SNARC.RData")
 summary(dat_snarc)
+head(dat_snarc)
+# key variables:
+# stimulus_mag
+# dRT
+# math - individual difference in math ability
 
+ggplot(dat_snarc, aes(stimulus_mag, dRT)) +
+  geom_point() + stat_smooth(method="lm") +
+  geom_hline(yintercept = 0, linetype="dashed")
+
+m <- lmer(dRT ~ stimulus_mag + 
+            (stimulus_mag | subject),
+          data=dat_snarc)
+summary(m)
+
+m.excl <- lmer(dRT ~ stimulus_mag + 
+                 (stimulus_mag | subject),
+               data=subset(augment(m), 
+                           abs(.resid) < 3*sd(.resid)))
+summary(m.excl)
+
+### individual difference analyses
+# math scores are stored as character, but should be numeric, so convert them
+dat_snarc$math <- as.numeric(dat_snarc$math)
+summary(dat_snarc)
+
+m.math <- lmer(dRT ~ stimulus_mag*math + 
+                 (stimulus_mag | subject),
+               data=dat_snarc)
+summary(m.math)
+
+m.hand <- lmer(dRT ~ stimulus_mag*Handedness + 
+                 (stimulus_mag | subject),
+               data=dat_snarc)
+summary(m.hand)
 
 ############
 source(url("https://uoepsy.github.io/msmr/functions/get_ranef.R"))
