@@ -78,7 +78,7 @@ $$
 
 **OUTCOME** Y = linear combination of set of **PREDICTORS** X plus some error
 
-`\(\beta_{x}\)`: coefficient or weight of predictor `\(x\)`
+`\(\beta_{1}\)`: coefficient or weight of predictor `\(x\)`
 
 ---
 # The Linear Model
@@ -378,7 +378,7 @@ Goodness of fit measure: log likelihood (LL)
 
 .pull-left[
 
-```r
+``` r
 head(caff_mlm)
 ```
 
@@ -394,7 +394,7 @@ head(caff_mlm)
 ## 6           3 NoCaffeine  577.
 ```
 
-```r
+``` r
 library(lme4)
 mod_caff &lt;- lmer(RT ~ 1 + Condition +
                    (1 | Participant), 
@@ -411,7 +411,7 @@ mod_caff &lt;- lmer(RT ~ 1 + Condition +
 
 .scroll-output[
 
-```r
+``` r
 summary(mod_caff)
 ```
 
@@ -475,7 +475,7 @@ One of the easiest to use is the `lmerTest` package: you can fit the model the s
 
 .scroll-output[
 
-```r
+``` r
 library(lmerTest)
 mod_caff &lt;- lmer(RT ~ 1 + Condition +
                    (1 | Participant), 
@@ -528,7 +528,7 @@ summary(mod_caff)
 
 **A paired-samples t-test**
 
-```r
+``` r
 t.test(RT ~ Condition, data=caff_mlm, paired=TRUE)
 ```
 
@@ -589,7 +589,7 @@ MLM is an extension of GLM with random effects to capture within-participant nes
 ### Example: Effect of caffeine consumption on processing speed **in younger vs older adults**
 
 
-```r
+``` r
 load("./data/caff_age.rda")
 ```
 
