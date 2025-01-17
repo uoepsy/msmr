@@ -554,49 +554,6 @@ Consider the following questions about the study:
 
 `r solend()`
 
-<!-- `r qbegin(qcounter())` -->
-<!-- The multilevel model that has only an intercept (and the grouping structure) specified is sometimes referred to as the "null model" (or "intercept only model"). Because there are no predictors in the fixed effects there is just a single value (the intercept). All of the variance in the outcome gets modelled in the random effects part, and is partitioned into either 'variance between groups' or 'residual variance'. This means we can just use those estimates to calculate the ICC.   -->
-
-<!-- For our executive functioning study, fit the null model use the output to calculate the ICC. Compare it to the answer you get from `ICCbare()` (it should be pretty close).   -->
-
-
-<!-- ::: {.callout-tip collapse="true"} -->
-<!-- #### Hints -->
-
-<!-- ```{r} -->
-<!-- #| echo: false -->
-<!-- knitr::include_graphics("images/nullmod.png") -->
-<!-- ``` -->
-
-<!-- The formula for the ICC is:   -->
-<!-- $$ -->
-<!-- ICC = \frac{\sigma^2_{b}}{\sigma^2_{b} + \sigma^2_e} = \frac{\text{between-group variance}}{\text{between-group variance}+\text{within-group variance}} -->
-<!-- $$ -->
-
-
-<!-- ::: -->
-
-
-`r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
-
-```{r}
-nullmod <- lmer(SDMT ~ 1 + (1 | PID), data = efdat)
-summary(nullmod)
-```
-```{r}
-#| echo: false
-rr = as.data.frame(VarCorr(nullmod))[,4]
-```
-
-$\frac{`r round(rr[1],2)`}{`r round(rr[1],2)`+`r round(rr[2],2)`} = `r round(rr[1]/sum(rr),2)`$, or `r round(rr[1]/sum(rr),2)*100`% of the variance in SDMT scores is explained by participant differences.  
-
-This matches (closely enough) with the `ICCbare()` function: 
-```{r}
-library(ICC)
-ICCbare(x = PID, y = SDMT, data = efdat)
-```
-`r solend()`
 
 `r qbegin(qcounter())`
 Make factors and set the reference levels of the `audio` and `headphones` variables to "no audio" and "speakers" respectively.    
