@@ -1,7 +1,7 @@
 ---
 title: "Week 1 Exercises: Intro to MLM"
 params: 
-    SHOW_SOLS: FALSE
+    SHOW_SOLS: TRUE
     TOGGLE: TRUE
 editor_options: 
   chunk_output_type: console
@@ -615,7 +615,7 @@ Can't remember about setting factors and reference levels? Check back to USMR!
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 
 ```{r}
-efdat <- efdat %>%
+efdat <- efdat |>
   mutate(
     audio = fct_relevel(factor(audio), "no_audio"),
     headphones = fct_relevel(factor(headphones), "S")
@@ -646,7 +646,7 @@ $$
 ::: {.callout-tip collapse="true"}
 #### Hints
 
-Make sure to read about multilevel modesl and how to fit them in [2: MLM #multilevel-models-in-r](https://uoepsy.github.io/lmm/02_lmm.html#multilevel-models-in-r){target="_blank"}.  
+Make sure to read about multilevel modesl and how to fit them in [Chapter 2: MLM #multilevel-models-in-r](https://uoepsy.github.io/lmm/02_lmm.html#multilevel-models-in-r){target="_blank"}.  
 
 :::
 
@@ -802,7 +802,7 @@ effect(term = "audio*headphones", mod = sdmt_mod) |>
 ::: {.callout-tip collapse="true"}
 #### Hints
 
-You can see the effects package in [2: MLM #visualising-models](https://uoepsy.github.io/lmm/02_lmm.html#visualising-models){target="_blank"}. The logic is just the same as it was for USMR, it's just that the estimated effects are from an `lmer()` instead of an `lm()`/`glm()`.  
+You can see the effects package in [Chapter 2: MLM #visualising-models](https://uoepsy.github.io/lmm/02_lmm.html#visualising-models){target="_blank"}. The logic is just the same as it was for USMR, it's just that the estimated effects are from an `lmer()` instead of an `lm()`/`glm()`.  
 
 :::
 
@@ -848,7 +848,9 @@ The aim in writing a statistical report should be that a reader is able to more 
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 
-
+:::imp
+Not a perfect write-up (there's not really any such thing!).  
+:::
 
 
 ```{r}
