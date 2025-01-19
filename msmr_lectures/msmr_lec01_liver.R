@@ -10,3 +10,14 @@ library(lmerTest)
 
 # load and inspect the data
 load("./data/caff_age.rda")
+summary(caff_age)
+head(caff_age)
+ggplot(caff_age, aes(Condition, RT, fill=Age)) +
+  geom_boxplot()
+ggplot(caff_age, aes(Age, RT, fill=Condition)) +
+  geom_boxplot()
+
+m <- lmer(RT ~ Condition*Age +
+            (Condition | Participant),
+          data = caff_age, REML=FALSE)
+summary(m)
