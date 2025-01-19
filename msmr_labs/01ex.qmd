@@ -1,7 +1,7 @@
 ---
 title: "Week 1 Exercises: Intro to MLM"
 params: 
-    SHOW_SOLS: FALSE
+    SHOW_SOLS: TRUE
     TOGGLE: TRUE
 editor_options: 
   chunk_output_type: console
@@ -554,27 +554,27 @@ Consider the following questions about the study:
 
 `r solend()`
 
-`r qbegin(qcounter())`
-The multilevel model that has only an intercept (and the grouping structure) specified is sometimes referred to as the "null model" (or "intercept only model"). Because there are no predictors in the fixed effects there is just a single value (the intercept). All of the variance in the outcome gets modelled in the random effects part, and is partitioned into either 'variance between groups' or 'residual variance'. This means we can just use those estimates to calculate the ICC.  
+<!-- `r qbegin(qcounter())` -->
+<!-- The multilevel model that has only an intercept (and the grouping structure) specified is sometimes referred to as the "null model" (or "intercept only model"). Because there are no predictors in the fixed effects there is just a single value (the intercept). All of the variance in the outcome gets modelled in the random effects part, and is partitioned into either 'variance between groups' or 'residual variance'. This means we can just use those estimates to calculate the ICC.   -->
 
-For our executive functioning study, fit the null model use the output to calculate the ICC. Compare it to the answer you get from `ICCbare()` (it should be pretty close).  
-
-
-::: {.callout-tip collapse="true"}
-#### Hints
-
-```{r}
-#| echo: false
-knitr::include_graphics("images/nullmod.png")
-```
-
-The formula for the ICC is:  
-$$
-ICC = \frac{\sigma^2_{b}}{\sigma^2_{b} + \sigma^2_e} = \frac{\text{between-group variance}}{\text{between-group variance}+\text{within-group variance}}
-$$
+<!-- For our executive functioning study, fit the null model use the output to calculate the ICC. Compare it to the answer you get from `ICCbare()` (it should be pretty close).   -->
 
 
-:::
+<!-- ::: {.callout-tip collapse="true"} -->
+<!-- #### Hints -->
+
+<!-- ```{r} -->
+<!-- #| echo: false -->
+<!-- knitr::include_graphics("images/nullmod.png") -->
+<!-- ``` -->
+
+<!-- The formula for the ICC is:   -->
+<!-- $$ -->
+<!-- ICC = \frac{\sigma^2_{b}}{\sigma^2_{b} + \sigma^2_e} = \frac{\text{between-group variance}}{\text{between-group variance}+\text{within-group variance}} -->
+<!-- $$ -->
+
+
+<!-- ::: -->
 
 
 `r qend()`
@@ -615,7 +615,7 @@ Can't remember about setting factors and reference levels? Check back to USMR!
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 
 ```{r}
-efdat <- efdat %>%
+efdat <- efdat |>
   mutate(
     audio = fct_relevel(factor(audio), "no_audio"),
     headphones = fct_relevel(factor(headphones), "S")
@@ -646,7 +646,7 @@ $$
 ::: {.callout-tip collapse="true"}
 #### Hints
 
-Make sure to read about multilevel modesl and how to fit them in [2: MLM #multilevel-models-in-r](https://uoepsy.github.io/lmm/02_lmm.html#multilevel-models-in-r){target="_blank"}.  
+Make sure to read about multilevel modesl and how to fit them in [Chapter 2: MLM #multilevel-models-in-r](https://uoepsy.github.io/lmm/02_lmm.html#multilevel-models-in-r){target="_blank"}.  
 
 :::
 
@@ -786,7 +786,7 @@ summary(sdmt_mod)
 
 `r qbegin(qcounter())`
 
-We've already seen in the example with the with the UK civil service employees (above) that we can visualise the fitted values (model predictions). But these were plotting all the cluster-specific values, and what we are really interested in are the estimates of (and uncertainty around) our *fixed effects* (i.e. estimates for clusters *on average*)  
+We've already seen in the example with the with the different types of toys (above) that we can visualise the fitted values (model predictions). But these were plotting all the cluster-specific values, and what we are really interested in are the estimates of (and uncertainty around) our *fixed effects* (i.e. estimates for clusters *on average*)  
 
 Using tools like the __effects__ package can provide us with the values of the outcome across levels of a specific fixed predictor (holding other predictors at their mean).   
 
@@ -802,7 +802,7 @@ effect(term = "audio*headphones", mod = sdmt_mod) |>
 ::: {.callout-tip collapse="true"}
 #### Hints
 
-You can see the effects package in [2: MLM #visualising-models](https://uoepsy.github.io/lmm/02_lmm.html#visualising-models){target="_blank"}. The logic is just the same as it was for USMR, it's just that the estimated effects are from an `lmer()` instead of an `lm()`/`glm()`.  
+You can see the effects package in [Chapter 2: MLM #visualising-models](https://uoepsy.github.io/lmm/02_lmm.html#visualising-models){target="_blank"}. The logic is just the same as it was for USMR, it's just that the estimated effects are from an `lmer()` instead of an `lm()`/`glm()`.  
 
 :::
 
@@ -848,7 +848,9 @@ The aim in writing a statistical report should be that a reader is able to more 
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 
-
+:::imp
+Not a perfect write-up (there's not really any such thing!).  
+:::
 
 
 ```{r}
