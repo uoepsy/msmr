@@ -1,7 +1,7 @@
 ---
 title: "Week 2 Exercises: Logistic and Longitudinal"
 params: 
-    SHOW_SOLS: FALSE
+    SHOW_SOLS: TRUE
     TOGGLE: TRUE
 editor_options: 
   chunk_output_type: console
@@ -1026,14 +1026,13 @@ tibble(participant = c(1,1,1),
     gt::gt()
 ```
 
-__Binomial data__. You would use the specification `cbind(num_successes, num_failures)` which, in the case below, would be:
+__Binomial data__. You would use the specification `cbind(NumCorrect, NumError) ~ ...`:  
 
-`cbind(questions_correct, questions_incorrect) ~ ...`
 
 ```{r echo=FALSE}
 tibble(participant = c(1,2,3),
-       questions_correct=c(2,1,3),
-       questions_incorrect=c(1,2,0)) %>% 
+       NumCorrect=c(2,1,3),
+       NumError=c(1,2,0)) %>% 
     rbind(rep("...",3)) %>% 
     gt::gt()
 ```
@@ -1048,7 +1047,7 @@ tibble(participant = c(1,2,3),
 ::: {.callout-tip collapse="true"}
 #### Hints
 
-- Do we want `cbind(num_successes, num_failures)`?
+- Do we want `cbind(successes, failures)`?
 
 - Ensure you are running models on only the data we are actually interested in. 
 
@@ -1072,7 +1071,7 @@ tibble(participant = c(1,2,3),
 `r qend()`
 `r solbegin(label="1 - answers to the hints", slabel=F,show=T, toggle=params$TOGGLE)`
 
-- Do we want `cbind(num_successes, num_failures)`?
+- Do we want `cbind(successes, failures)`?
 
     + Yes, we don't a binary variable with correct/incorrect questions but the binomial variables NumCorrect and NumError representing, respectively, the aggregated count (out of 30) of correct and incorrect questions. As such, we will need the following: `cbind(NumCorrect, NumError)`
 
@@ -1101,15 +1100,15 @@ What do you want your model to allow to vary within these groups?
 `r solbegin(label="2 - modelling", slabel=F,show=T, toggle=params$TOGGLE)`
 
 ```{r}
-m.base <- glmer(cbind(NumCorrect, NumError) ~ block + (block | ID), 
+m.base <- glmer(cbind(NumCorrect, NumError) ~ block + (1 + block | ID), 
                 data = filter(nwl, block < 8, !is.na(lesion_location)),
                 family=binomial)
 
-m.loc0 <- glmer(cbind(NumCorrect, NumError) ~ block + lesion_location + (block | ID), 
+m.loc0 <- glmer(cbind(NumCorrect, NumError) ~ block + lesion_location + (1 + block | ID), 
                 data=filter(nwl, block < 8, !is.na(lesion_location)),
                 family=binomial)
 
-m.loc1 <- glmer(cbind(NumCorrect, NumError) ~ block * lesion_location + (block | ID), 
+m.loc1 <- glmer(cbind(NumCorrect, NumError) ~ block * lesion_location + (1 + block | ID), 
                 data=filter(nwl, block < 8, !is.na(lesion_location)),
                 family=binomial)
 
