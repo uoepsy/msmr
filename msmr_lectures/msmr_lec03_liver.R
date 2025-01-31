@@ -6,56 +6,37 @@ library(lme4)
 source("code_poly.R")
 load("./data/TargetFix.rda")
 summary(TargetFix)
+ggplot(TargetFix, aes(Time, meanFix, color=Condition)) + 
+  stat_summary(fun.data=mean_se, geom="pointrange")
 
-ggplot(TargetFix, aes(Time, meanFix, color=Condition)) +
-  stat_summary(fun.data = mean_se, geom="pointrange") +
-  stat_smooth()
-
-# create 3rd-order orth poly
-TargetFix.gca <- code_poly(TargetFix, predictor = "Time", poly.order=3)
+# prep for analysis
+TargetFix.gca <- code_poly(TargetFix, 
+                           predictor = "Time",
+                           poly.order = 5)
 summary(TargetFix.gca)
-# fit maximal model
 
-m.full <- glmer(cbind(sumFix, N-sumFix) ~ (poly1+poly2+poly3)*Condition +
-                  (poly1+poly2+poly3 | Subject) +
-                  (poly1+poly2+poly3 | Subject:Condition),
-                family = "binomial",
-                data=TargetFix.gca)
-summary(m.full)
-
-# remove Subject ranef correlations
-m.full.zcp <- glmer(cbind(sumFix, N-sumFix) ~ 
-                      (poly1+poly2+poly3)*Condition +
-                  (poly1+poly2+poly3 || Subject) +
-                  (poly1+poly2+poly3 | Subject:Condition),
-                family = "binomial",
-                data=TargetFix.gca)
-summary(m.full.zcp)
-
-# remove cubic ranefs
-m.full.no_cube <- glmer(cbind(sumFix, N-sumFix) ~ 
-                      (poly1+poly2+poly3)*Condition +
-                      (poly1+poly2+poly3 || Subject) +
-                      (poly1+poly2 | Subject:Condition),
-                    family = "binomial",
-                    data=TargetFix.gca)
-summary(m.full.no_cube)
-
-sjPlot::tab_model(m.full, m.full.no_cube)
-
-# left ranef
-m.left <- glmer(cbind(sumFix, N-sumFix) ~ 
-                          (poly1+poly2+poly3)*Condition +
-                          (((poly1+poly2)*Condition) || Subject),
-                        family = "binomial",
-                        data=TargetFix.gca)
-summary(m.left)
-
-sjPlot::tab_model(m.full, m.left)
+# fit the model
+m.target_log <- glmer(cbind(sumFix, N-sumFix) ~
+                        (poly1+poly2+poly3)*Condition +
+                        ((poly1+poly2+poly3)*Condition | Subject),
+                      data=TargetFix.gca, family = "binomial")
+summary(m.target_log)
 
 # plot model fit
-ggplot(TargetFix, aes(Time, meanFix, color=Condition)) +
-  stat_summary(fun.data = mean_se, geom="pointrange") +
-  stat_summary(aes(y=fitted(m.left)), fun=mean, geom="line") +
-  expand_limits(y=c(0,1)) +
-  labs(x="Time since word onset (ms)", y="Fixation proportion")
+ggplot(TargetFix, aes(Time, meanFix, color=Condition)) + 
+  stat_summary(fun.data=mean_se, geom="pointrange") +
+  stat_summary(aes(y=fitted(m.target_log)), 
+               fun=mean, geom="line")
+
+# choosing poly order
+ggplot(TargetFix, aes(Time, meanFix, color)) + 
+  stat_smooth()
+
+m.check <- glmer(cbind(sumFix, N-sumFix) ~
+                   (poly1+poly2+poly3+poly4+poly5) +
+                   ((poly1+poly2+poly3+poly4+poly5) | Subject),
+                 data=TargetFix.gca, family = "binomial")
+summary(m.check)
+
+
+load("http://uoepsy.github.io/msmr/data/WordLearnEx.rda")
