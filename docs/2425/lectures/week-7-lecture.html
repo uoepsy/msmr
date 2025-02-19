@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Week 1: Principal Components Analysis and Exploratory Factor Analysis </title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Aja Murray" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# <b>Week 1: Principal Components Analysis and Exploratory Factor Analysis </b>
+]
+.subtitle[
+## MSMR <br><br>
+]
+.author[
+### Aja Murray
+]
+.institute[
+### Department of Psychology<br>The University of Edinburgh
+]
+.date[
+### AY 2024-2025
+]
+
+---
+
+
+
+
+
+
+
+## Overview
+
+- Week 1: Dimension Reduction (PCA and EFA)
+- Week 2: SEM I - Confirmatory Factor Analysis
+- Week 3: SEM II - Path Analysis
+- Week 4: SEM III - Full SEM
+- Week 5: SEM IV - Practical Issues in SEM
+
+---
+
+## This Week
+- Techniques 
+    - Principal Components Analysis (PCA)
+    - Exploratory Factor Analysis (EFA)
+- Key Functions
+    - vss( )
+    - fa.parallel( )
+    - principal( )
+    - fa( )
+- Reading: *Principal Components Analysis* and *Exploratory Factor Analysis* Chapters (on *Learn* under 'Reading')
+- Office hours: by appointment
+
+---
+
+## Learning Outcomes
+
+- Understand the principles of dimension reduction
+- Understand thd difference between PCA and EFA
+- Know how to perform  and interpret PCA and EFA in R
+
+---
+
+## Dimension Reduction
+
+- Summarise a set of variables in terms of a smaller number of dimensions
+    - e.g., can 10 aggression items summarised in terms of 'physical' and 'verbal' aggression dimensions?
+    
+    1. I hit someone
+    2. I kicked someone 
+    3. I shoved someone 
+    4. I battered someone 
+    5. I physically hurt someone on purpose 
+    6. I deliberately insulted someone
+    7. I swore at someone
+    8. I threatened to hurt someone
+    9. I called someone a nasty name to their face
+    10. I shouted mean things at someone
+    
+---
+
+## Uses of dimension reduction techniques
+
+- Theory testing
+    - What are the number and nature of dimensions that best describe a theoretical construct?
+- Test construction
+    - How should I group my items into subscales?
+    - Which items are the best measures of my  constructs?
+- Pragmatic
+    - I have multicollinearity issues/too many variables, how can I defensibly combine my variables?
+
+---
+
+## Our running example
+
+- A researcher has collected n=1000 responses to our 10 aggression items
+- We'll use this data to illustrate dimension reduction techniques
+
+
+
+
+``` r
+library(psych)
+describe(agg.items)
+```
+
+```
+##        vars    n  mean   sd median trimmed  mad   min  max range  skew kurtosis
+## item1     1 1000  0.05 1.03   0.08    0.05 1.03 -3.45 3.39  6.84 -0.03    -0.05
+## item2     2 1000  0.02 1.03   0.02    0.04 1.03 -3.70 3.52  7.22 -0.11     0.11
+## item3     3 1000 -0.02 1.02   0.01   -0.01 1.13 -3.12 2.57  5.69 -0.10    -0.51
+## item4     4 1000  0.01 1.00   0.05    0.03 1.00 -3.87 3.10  6.98 -0.17     0.19
+## item5     5 1000  0.02 1.03   0.05    0.04 1.05 -3.91 3.23  7.14 -0.15    -0.07
+## item6     6 1000  0.01 1.01   0.03    0.03 1.02 -3.34 2.99  6.33 -0.14     0.04
+## item7     7 1000  0.04 1.02   0.09    0.05 1.05 -3.43 3.02  6.45 -0.17    -0.07
+## item8     8 1000  0.04 1.02   0.10    0.06 1.07 -3.23 3.20  6.43 -0.18    -0.11
+## item9     9 1000  0.02 1.04   0.01    0.02 1.04 -3.04 3.33  6.37  0.04    -0.02
+## item10   10 1000  0.04 1.01   0.05    0.04 1.03 -3.21 2.75  5.96 -0.06    -0.13
+##          se
+## item1  0.03
+## item2  0.03
+## item3  0.03
+## item4  0.03
+## item5  0.03
+## item6  0.03
+## item7  0.03
+## item8  0.03
+## item9  0.03
+## item10 0.03
+```
+
+---
+
+## PCA
+- Starts with a correlation matrix
+
+
+``` r
+#compute the correlation matrix for the aggression items
+round(cor(agg.items),2)
+```
+
+```
+##        item1 item2 item3 item4 item5 item6 item7 item8 item9 item10
+## item1   1.00  0.61  0.49  0.49  0.61  0.05  0.17  0.10  0.12   0.12
+## item2   0.61  1.00  0.58  0.55  0.68  0.03  0.12  0.07  0.12   0.06
+## item3   0.49  0.58  1.00  0.47  0.60  0.03  0.07  0.04  0.09   0.02
+## item4   0.49  0.55  0.47  1.00  0.52  0.07  0.12  0.11  0.14   0.07
+## item5   0.61  0.68  0.60  0.52  1.00 -0.02  0.09  0.03  0.08   0.01
+## item6   0.05  0.03  0.03  0.07 -0.02  1.00  0.58  0.60  0.46   0.47
+## item7   0.17  0.12  0.07  0.12  0.09  0.58  1.00  0.80  0.64   0.62
+## item8   0.10  0.07  0.04  0.11  0.03  0.60  0.80  1.00  0.64   0.65
+## item9   0.12  0.12  0.09  0.14  0.08  0.46  0.64  0.64  1.00   0.50
+## item10  0.12  0.06  0.02  0.07  0.01  0.47  0.62  0.65  0.50   1.00
+```
+
+---
+
+## What PCA does
+
+- Repackages the variance from the correlation matrix into a set  of **components**
+- Components = orthogonal (i.e.,uncorrelated) linear combinations of the original variables
+  - 1st component is the linear combination that accounts for the most possible variance
+  - 2nd accounts for second-largest after the variance accounted for by the first is removed
+  - 3rd...etc...
+- Each component accounts for as much remaining variance as possible
+- There are as many components are there were variables in original correlation matrix
+
+---
+ 
+## Eigendecomposition
+
+
+- Components are formed using an **eigen-decomposition** of the correlation matrix
+- Eigen-decomposition is a transformation of the correlation matrix to re-express it in terms of  **eigenvalues** and **eigenvectors**
+
+---
+
+## Eigenvalues and eigenvectors
+
+
+```
+## [1] "e1" "e2" "e3" "e4" "e5"
+```
+
+```
+##       component1 component2 component3 component4 component5
+## item1 "w11"      "w12"      "w13"      "w14"      "w15"     
+## item2 "w21"      "w22"      "w23"      "w24"      "w25"     
+## item3 "w31"      "w32"      "w33"      "w34"      "w35"     
+## item4 "w41"      "w42"      "w43"      "w44"      "w45"     
+## item5 "w51"      "w52"      "w53"      "w54"      "w55"
+```
+- There is one eigenvector and one eigenvalue for each component
+- Eigenvalues are a measure of the size of the variance packaged into a component
+    - Larger eigenvalues mean that the component accounts for a large proportion of the variance in the original correlation matrix
+- Eigenvectors are sets of **weights** (one weight per variable in original correlation matrix)
+  - e.g., if we had 5 variables each eigenvector would contain 5 weights
+  - Larger weights mean  a variable makes a bigger contribution to the component
+
+---
+
+## Eigen-decomposition of aggression item correlation matrix
+  
+- We can use the eigen() function to conduct an eigen-decomposition for our 10 aggression items
+
+
+``` r
+eigen(cor(agg.items))
+```
+
+```
+## eigen() decomposition
+## $values
+##  [1] 3.7209397 2.9508572 0.5651486 0.5414082 0.5223156 0.4698622 0.3773430
+##  [8] 0.3526817 0.3095030 0.1899409
+## 
+## $vectors
+##             [,1]       [,2]        [,3]         [,4]         [,5]        [,6]
+##  [1,] -0.2995227  0.3191321  0.38595427 -0.108975985 -0.340010734 -0.40556158
+##  [2,] -0.2987203  0.3682886  0.07035871 -0.052986714  0.002815926 -0.09133148
+##  [3,] -0.2587176  0.3472027 -0.26753860 -0.426790665  0.374257188  0.52818794
+##  [4,] -0.2778688  0.3000624 -0.39475519  0.747484358 -0.252751921  0.19033691
+##  [5,] -0.2782610  0.3892403  0.12095617 -0.142678617  0.108647858 -0.15828450
+##  [6,] -0.2973146 -0.2826881 -0.64479211 -0.375891409 -0.338685200 -0.26287834
+##  [7,] -0.3870937 -0.2854683  0.09129344  0.002689387  0.047099801 -0.09258709
+##  [8,] -0.3745550 -0.3187040  0.02896323  0.045992692  0.024764034  0.01296284
+##  [9,] -0.3443711 -0.2420305  0.05816367  0.281306867  0.658754607 -0.22855770
+## [10,] -0.3199326 -0.2808332  0.41920968 -0.039062169 -0.342244785  0.59735224
+##              [,7]        [,8]        [,9]        [,10]
+##  [1,]  0.59404815 -0.06377039 -0.08009433  0.064357969
+##  [2,] -0.57350421 -0.22924653 -0.61431901  0.013171149
+##  [3,]  0.35042546  0.08710859 -0.09647690 -0.006608184
+##  [4,]  0.09653688  0.04416377  0.06826952 -0.046311321
+##  [5,] -0.38802219  0.15242857  0.72461453  0.018839285
+##  [6,] -0.03372809 -0.27847480  0.10596007 -0.030236613
+##  [7,] -0.02741474  0.53716191 -0.14776263 -0.662121973
+##  [8,] -0.05310133  0.43647990 -0.10881610  0.741097457
+##  [9,]  0.15216228 -0.47426003  0.07637148 -0.014437881
+## [10,] -0.08751494 -0.35927446  0.16256519 -0.066238923
+```
+
+---
+
+## QUIZ QUESTION 1
+
+- Quiz question:
+    - What is the name of the process by which a correlation matrix is transformed into eigenvectors and eigenvalues?
+        - A) eigen-sedimentation
+        - B) eigen-consolidation
+        - C) eigen-diversification
+        - D) eigen-decomposition
+
+---
+
+## ANSWER 1
+
+- The answer to the quiz question is...
+
+  - A) eigen-sedimentation
+  - B) eigen-consolidation
+  - C) eigen-diversification
+  - D) **eigen-decomposition** 
+  
+---
+
+## How many components to keep?
+
+
+- Eigen-decomposition repackages the variance but does not reduce our dimensions
+- Dimension reduction comes from keeping only the largest components
+- Assumes the others can be dropped with little loss of information
+- Our decisions on how many components to keep can be guided by several methods
+    - Scree plot
+    - Minimum average partial test (MAP)
+    - Parallel analysis
+---
+
+## Other considerations in how many components to keep
+
+
+- Substantive considerations 
+    - Do the selected components make theoretical sense?
+- Practical considerations
+    - Are some components too 'minor' to be reliable?
+
+---
+
+## Kaiser criterion
+
+- Keeps number of components with eigenvalue &gt;1
+- DO NOT USE Kaiser criterion
+- Often suggests keeping far too many components
+
+---
+
+## Scree plot
+
+- Based on plotting the eigenvalues 
+- Looking for a sudden change of slope
+- Assumed to potentially reflect point at which components become substantively unimportant
+
+---
+
+## Constructing a scree plot
+
+![](week-7-lecture_files/figure-html/Scree plot example-1.png)&lt;!-- --&gt;
+
+-  Eigenvalue plot
+    - x-axis is component number
+    - y-axis is eigenvalue for each component
+- Keep the components with eigenvalues above a kink in the plot
+
+---
+
+## Further scree plot examples
+
+- Scree plots vary in how easy it is to interpret them
+
+
+```
+## [1] 10
+```
+
+![](week-7-lecture_files/figure-html/Scree plot example 1-1.png)&lt;!-- --&gt;
+
+---
+
+## Further scree plot examples
+
+
+```
+## [1] 10
+```
+
+![](week-7-lecture_files/figure-html/Scree plot example 2-1.png)&lt;!-- --&gt;
+
+---
+
+## Further scree plot examples
+
+
+```
+## [1] 10
+```
+
+![](week-7-lecture_files/figure-html/Scree plot example 3-1.png)&lt;!-- --&gt;
+---
+
+## Minimum average partial test (MAP)
+
+
+- Extracts components iteratively from the correlation matrix
+- Computes the average squared partial correlation  after each extraction
+- At first this quantity goes down with each component extracted but then it starts to increase again
+- MAP keeps the components from point at which the average squared partial correlation is at its smallest
+---
+
+## MAP test for the aggression items
+
+- We can obtain the results of the MAP test via the vss( ) function from the psych package
+
+``` r
+library(psych)
+vss(agg.items, plot=F)
+```
+
+```
+## 
+## Very Simple Structure
+## Call: vss(x = agg.items, plot = F)
+## VSS complexity 1 achieves a maximimum of 0.91  with  2  factors
+## VSS complexity 2 achieves a maximimum of 0.94  with  5  factors
+## 
+## The Velicer MAP achieves a minimum of 0.03  with  2  factors 
+## BIC achieves a minimum of  -151.61  with  2  factors
+## Sample Size adjusted BIC achieves a minimum of  -69.03  with  2  factors
+## 
+## Statistics by number of factors 
+##   vss1 vss2   map dof   chisq prob sqresid  fit  RMSEA  BIC SABIC complex
+## 1 0.55 0.00 0.180  35 2.6e+03 0.00    10.8 0.55 0.2704 2352  2463     1.0
+## 2 0.90 0.92 0.030  26 2.8e+01 0.36     1.9 0.92 0.0087 -152   -69     1.0
+## 3 0.80 0.93 0.055  18 1.5e+01 0.69     1.6 0.93 0.0000 -110   -53     1.1
+## 4 0.90 0.93 0.094  11 6.2e+00 0.86     1.6 0.93 0.0000  -70   -35     1.2
+## 5 0.82 0.94 0.162   5 2.3e+00 0.81     1.1 0.95 0.0000  -32   -16     1.3
+## 6 0.81 0.94 0.230   0 8.6e-02   NA     1.1 0.95     NA   NA    NA     1.3
+## 7 0.91 0.93 0.341  -4 3.2e-06   NA     1.5 0.94     NA   NA    NA     1.2
+## 8 0.91 0.92 0.619  -7 0.0e+00   NA     1.5 0.94     NA   NA    NA     1.1
+##    eChisq    SRMR  eCRMS eBIC
+## 1 5.7e+03 2.5e-01 0.2845 5424
+## 2 9.9e+00 1.1e-02 0.0138 -170
+## 3 4.5e+00 7.1e-03 0.0112 -120
+## 4 1.8e+00 4.5e-03 0.0090  -74
+## 5 5.2e-01 2.4e-03 0.0072  -34
+## 6 1.7e-02 4.4e-04     NA   NA
+## 7 1.0e-06 3.4e-06     NA   NA
+## 8 2.5e-15 1.7e-10     NA   NA
+```
+---
+## The MAP values 
+- The averaged squared partial correlation values
+
+
+
+``` r
+VSS$map
+```
+
+```
+## [1] 0.17953074 0.02971210 0.05466902 0.09425128 0.16154587 0.22977908 0.34061645
+## [8] 0.61864290
+```
+---
+
+## Parallel analysis
+
+
+
+- Simulates datasets with same number of participants and variables but no correlations 
+- Computes an eigen-decomposition for the simulated datasets
+- Compares the average eigenvalue across the simulated datasets for each component
+- If a real eigenvalue exceeds the corresponding average eigenvalue from the simulated datasets it is retained
+- We can also use alternative methods to compare our real versus simulated eigenvalues
+    - e.g. 95% percentile of the simulated eigenvalue distributions
+
+---
+
+## Parallel analysis for the aggression items
+
+
+``` r
+fa.parallel(agg.items, n.iter=500)
+```
+
+![](week-7-lecture_files/figure-html/parallel analysis-1.png)&lt;!-- --&gt;
+
+```
+## Parallel analysis suggests that the number of factors =  2  and the number of components =  2
+```
+
+---
+
+## The fa.parallel( ) function
+
+- Notice the function also gives us a scree plot
+- We can use this to find a point of inflection
+    - Use the 'PC Actual Data' datapoints
+- However, if we want to include a scree plot in a report we should construct our own...
+
+---
+
+## Example code for a scree plot
+
+
+``` r
+eigenvalues&lt;-eigen(cor(agg.items))$values
+plot(eigenvalues, type = 'b', pch = 16, main = "", xlab="", ylab="Eigenvalues")
+axis(1, at = 1:10, labels = 1:10)
+```
+
+![](week-7-lecture_files/figure-html/code for a scree plot-1.png)&lt;!-- --&gt;
+---
+
+## Limitations of scree, MAP, and parallel analysis
+
+- There is no one right answer about the number of components to retain
+- Scree plot, MAP and parallel analysis frequently disagree
+- Each method has weaknesses
+    - Scree plots are subjective and may have multiple or no obvious kinks
+    - Parallel analysis sometimes suggest too many components
+    - MAP sometimes suggests too few components
+- Examining the PCA solutions should also form part of the decision
+
+---
+
+## Quiz question 2
+
+- Quiz question:
+    - Which components are retained based on a scree plot?
+        - A) Those with eigenvalues up to and including the kink
+        - B) Those with eigenvalues &gt;2
+        - C) Those with eigenvalues before the kink
+        - D) Those up to the point where the average squared partial correlation is at its minimum
+
+---
+
+## Answer 2
+
+- The answer to the quiz question is...
+     - Which components are retained based on a scree plot?
+        - A) Those with eigenvalues up to and including the kink
+        - B) Those with eigenvalues &gt;2
+        - C) **Those with eigenvalues before the kink**
+        - D) Those up to the point where the average squared partial correlation is at its minimum
+        
+---
+
+## Running a PCA with a reduced number of components
+
+- We can run a PCA keeping just a selected number of components 
+- We do this using the principal() function from then psych package
+- We supply the dataframe or correlation matrix as the first argument
+- We specify the number of components to retain with the nfactors= argument
+- We specify rotate='none' to keep the components uncorrelated
+
+
+``` r
+PC2&lt;-principal(agg.items, nfactors=2, rotate='none') 
+PC3&lt;-principal(agg.items, nfactors=3, rotate='none') 
+```
+
+---
+
+## Interpreting the components
+
+- Once we have decided how many components to keep (or to help us decide) we examine the PCA solution
+- We do this based on the component loadings
+    - Component loadings are calculated from the values in the eigenvectors
+    - They can be interpreted as the correlations between variables and components
+
+---
+## The component loadings
+
+- Component loading matrix
+- RC1 and RC2 columns show the component loadings
+
+
+``` r
+PC2&lt;-principal(r=agg.items, nfactors=2, rotate='none')
+PC2$loadings
+```
+
+```
+## 
+## Loadings:
+##        PC1    PC2   
+## item1   0.578  0.548
+## item2   0.576  0.633
+## item3   0.499  0.596
+## item4   0.536  0.515
+## item5   0.537  0.669
+## item6   0.574 -0.486
+## item7   0.747 -0.490
+## item8   0.723 -0.547
+## item9   0.664 -0.416
+## item10  0.617 -0.482
+## 
+##                  PC1   PC2
+## SS loadings    3.721 2.951
+## Proportion Var 0.372 0.295
+## Cumulative Var 0.372 0.667
+```
+
+---
+## Interpreting the components 
+
+  1. I hit someone
+  2. I kicked someone 
+  3. I shoved someone 
+  4. I battered someone 
+  5. I physically hurt someone on purpose 
+  6. I deliberately insulted someone
+  7. I swore at someone
+  8. I threatened to hurt someone
+  9. I called someone a nasty name to their face
+  10. I shouted mean things at someone
+
+---
+
+## How good is my PCA solution?
+
+- A good PCA solution explains the variance of the original correlation matrix in as few components as possible
+
+
+
+``` r
+PC2$loadings
+```
+
+```
+## 
+## Loadings:
+##        PC1    PC2   
+## item1   0.578  0.548
+## item2   0.576  0.633
+## item3   0.499  0.596
+## item4   0.536  0.515
+## item5   0.537  0.669
+## item6   0.574 -0.486
+## item7   0.747 -0.490
+## item8   0.723 -0.547
+## item9   0.664 -0.416
+## item10  0.617 -0.482
+## 
+##                  PC1   PC2
+## SS loadings    3.721 2.951
+## Proportion Var 0.372 0.295
+## Cumulative Var 0.372 0.667
+```
+
+---
+
+## Computing scores for the components
+
+- After conducting a PCA you may want to create scores for the new dimensions
+    - e.g., to use in a regression
+- Simplest method is to sum the scores for all items with loadings &gt;|.3| 
+- Better method is to compute them taking into account the weights
+
+---
+
+## Computing component scores in R
+
+
+``` r
+PC&lt;-principal(r=agg.items, nfactors=2, rotate='none')
+scores&lt;-PC$scores
+head(scores)
+```
+
+```
+##             PC1         PC2
+## [1,]  0.6600335  0.07032198
+## [2,]  1.7982522 -0.84129277
+## [3,] -1.2866499 -1.24118103
+## [4,] -0.4268864  0.56905197
+## [5,] -1.5402985  1.79453915
+## [6,]  0.1898291 -1.15123537
+```
+
+---
+
+## Reporting a PCA
+
+- Main principles: transparency and reproducibility
+- Method
+    - Methods used to decide on number of factors
+  
+- Results
+    - Results of MAP, parallel analysis, scree test
+    (&amp; any other considerations in choice of number of components)
+    - How many components were retained
+    - The loading matrix for  the chosen solution
+    - Variance expained by components
+    - Labelling and interpretation of the components
+
+---
+
+## PCA Summary
+
+- PCA is a common dimension reduction technique
+- Steps are:
+    - Decide how many components to keep (scree plot, parallel analysis, MAP test)
+    - Interpret solution (loadings, variance explained) 
+- Several subjective decision points - critical thinking is needed
+- Number of components is arguably most important decision
+
+---
+
+## END OF PCA
+
+
+- End of PCA section!
+- Next we will cover **exploratory factor analysis**
+
+---
+
+## Exploratory factor analysis
+
+- Used to identify the number &amp; nature of dimensions that describe a psychological construct and their inter-relations
+- Procedurally similar to PCA but differs in important ways
+    - Uses only the common variance in its calculation
+    - Can give quite different results to PCA under some circumstances
+    - Resulting dimensions are called **factors**
+    - EFA based on a **latent variable model**
+
+---
+
+## Latent variable models
+
+- Divides the world into **observed variables** and **latent variables** (factors)
+    - Observed variables can be measured directly
+        - e.g., scores on IQ subtests
+    - Latent variables inferred based on patterns of observed variable associations
+        - e.g., Spearman's *g*
+- Latent variables generate the correlations between observed variables        
+    - e.g., higher *g* causes higher subtest scores
+- Observed variables are imperfect **indicators** (measures) of latent variables
+    - Observed variable scores have both a systematic and a random error component 
+
+    
+---
+
+## Doing EFA
+
+- Like PCA, there are a number of decisions:
+    - How many factors?
+    - **Which rotation?**
+    - **Which extraction method?**
+-  In EFA we also have to choose an extraction/estimation method and rotation
+    
+    
+---
+
+## How many factors?
+
+- As in PCA, we can use the following tools to help us decide how many factors to retain:
+    - Scree test
+    - Parallel analysis
+    - MAP test
+- It is also important to examine the factor solutions for varying numbers of factors
+    - Which solutions make more sense based on our background knowledge of the construct?
+    - Do some solutions have deficiencies such as minor factors?
+
+---
+
+##  Our running example
+
+- Let's return to our aggression example and now run an EFA  
+- We had n=1000 participants with data on the following 10 items:
+
+  1. I hit someone
+  2. I kicked someone 
+  3. I shoved someone 
+  4. I battered someone 
+  5. I physically hurt someone on purpose 
+  6. I deliberately insulted someone
+  7. I swore at someone
+  8. I threatened to hurt someone
+  9. I called someone a nasty name to their face
+  10. I shouted mean things at someone
+
+
+---
+
+## How many aggression factors? Scree test
+
+- We can plot the eigenvalues and look for a kink in the plot:
+![](week-7-lecture_files/figure-html/Scree plot-1.png)&lt;!-- --&gt;
+---
+
+## How many aggression factors? MAP
+- We can conduct a MAP test using vss( ):
+
+``` r
+library(psych)
+vss(agg.items, plot=F)
+```
+
+```
+## 
+## Very Simple Structure
+## Call: vss(x = agg.items, plot = F)
+## VSS complexity 1 achieves a maximimum of 0.91  with  2  factors
+## VSS complexity 2 achieves a maximimum of 0.94  with  5  factors
+## 
+## The Velicer MAP achieves a minimum of 0.03  with  2  factors 
+## BIC achieves a minimum of  -151.61  with  2  factors
+## Sample Size adjusted BIC achieves a minimum of  -69.03  with  2  factors
+## 
+## Statistics by number of factors 
+##   vss1 vss2   map dof   chisq prob sqresid  fit  RMSEA  BIC SABIC complex
+## 1 0.55 0.00 0.180  35 2.6e+03 0.00    10.8 0.55 0.2704 2352  2463     1.0
+## 2 0.90 0.92 0.030  26 2.8e+01 0.36     1.9 0.92 0.0087 -152   -69     1.0
+## 3 0.80 0.93 0.055  18 1.5e+01 0.69     1.6 0.93 0.0000 -110   -53     1.1
+## 4 0.90 0.93 0.094  11 6.2e+00 0.86     1.6 0.93 0.0000  -70   -35     1.2
+## 5 0.82 0.94 0.162   5 2.3e+00 0.81     1.1 0.95 0.0000  -32   -16     1.3
+## 6 0.81 0.94 0.230   0 8.6e-02   NA     1.1 0.95     NA   NA    NA     1.3
+## 7 0.91 0.93 0.341  -4 3.2e-06   NA     1.5 0.94     NA   NA    NA     1.2
+## 8 0.91 0.92 0.619  -7 0.0e+00   NA     1.5 0.94     NA   NA    NA     1.1
+##    eChisq    SRMR  eCRMS eBIC
+## 1 5.7e+03 2.5e-01 0.2845 5424
+## 2 9.9e+00 1.1e-02 0.0138 -170
+## 3 4.5e+00 7.1e-03 0.0112 -120
+## 4 1.8e+00 4.5e-03 0.0090  -74
+## 5 5.2e-01 2.4e-03 0.0072  -34
+## 6 1.7e-02 4.4e-04     NA   NA
+## 7 1.0e-06 3.4e-06     NA   NA
+## 8 2.5e-15 1.7e-10     NA   NA
+```
+
+---
+
+## Examining the factor solutions
+
+- Finally, we draw on information from the factor solutions themselves
+- We run a series of factor analysis models with different numbers of factors
+- Look at the loadings and factor correlations:
+  - Are important distinctions blurred when the number of factors is smaller?
+  - Are there minor or 'methodological' factors when the number of factors is larger?
+  - Are the factor correlations very high?
+  - Do the factor solutions make theoretical sense?
+- In this case, given the MAP, scree and parallel analysis results we would likely want to examine the 1,2 and 3 factor solutions
+  
+---
+
+## Rotation of factors
+
+- Rotation takes an initial EFA solution and transforms it to make it more interpretable
+- An initial EFA solution typically has:
+    -  has high loadings on the first component
+    -  has a mix of positive and negative loadings on subsequent components
+    - is difficult to interpret
+ 
+- We typically try to achieve *simple structure* with a rotation  
+    - each item has a high loading on one component and close to zero loading on all others
+
+
+---
+
+## Initial EFA  solution  for the aggression items
+
+
+``` r
+FA_initial&lt;-fa(r=agg.items, nfactors=2, rotate='none')
+FA_initial$loadings
+```
+
+```
+## 
+## Loadings:
+##        MR1    MR2   
+## item1   0.517  0.520
+## item2   0.536  0.631
+## item3   0.437  0.551
+## item4   0.464  0.468
+## item5   0.498  0.665
+## item6   0.528 -0.401
+## item7   0.759 -0.456
+## item8   0.747 -0.523
+## item9   0.620 -0.345
+## item10  0.578 -0.406
+## 
+##                  MR1   MR2
+## SS loadings    3.342 2.560
+## Proportion Var 0.334 0.256
+## Cumulative Var 0.334 0.590
+```
+
+---
+
+## Different types of rotation
+
+- The initial (unrotated) loading matrix is transformed by multiplication by a *transformation matrix*
+- Different transformation matrices are used to achieve different transformations
+- The most important distinction is between *orthogonal* versus *oblique* rotations
+    - Orthogonal rotations force the components to remain uncorrelated
+        - They include varimax, quartimax and equamax
+    - Oblique rotations allow the components to be correlated
+        - They include oblimin, promax, direct oblimin, and quartimin 
+   
+---
+
+## Choosing a rotation
+
+- Orthogonal rotations are useful for e.g. reducing multicollinearity in regression
+- Oblique rotations better reflect the reality that psychological constructs tend to be correlated
+- Advice: use an oblique rotation and switch to orthogonal if correlation is very low
+  - Oblimin is a good choice for oblique rotation
+  - Varimax is a good choice for orthogonal rotation
+  - ... but trying a few and comparing is a good idea
+
+---
+
+## Interpreting an oblique rotation
+
+- When an orthogonal rotation is used only one loading matrix is produced
+- When an oblique rotation is used two loading matrices are produced:
+    - *structure matrix* (correlations between the components and the variables)
+    - *pattern matrix* (regression weights from the components to the variables)
+- Pattern is likely to be most useful for interpreting the components
+
+---
+
+## EFA solution for the aggression items using an oblique rotation
+
+
+``` r
+FA2&lt;-fa(r=agg.items, nfactors=2, rotate='oblimin')
+```
+
+```
+## Loading required namespace: GPArotation
+```
+
+``` r
+FA2$loadings
+```
+
+```
+## 
+## Loadings:
+##        MR1    MR2   
+## item1          0.724
+## item2          0.828
+## item3          0.706
+## item4          0.651
+## item5          0.835
+## item6   0.667       
+## item7   0.880       
+## item8   0.914       
+## item9   0.702       
+## item10  0.709       
+## 
+##                  MR1   MR2
+## SS loadings    3.060 2.837
+## Proportion Var 0.306 0.284
+## Cumulative Var 0.306 0.590
+```
+
+---
+
+## EFA solution for the aggression items using an oblique rotation
+
+
+``` r
+FA2&lt;-principal(r=agg.items, nfactors=2, rotate='oblimin')
+FA2$Phi
+```
+
+```
+##           TC1       TC2
+## TC1 1.0000000 0.1098654
+## TC2 0.1098654 1.0000000
+```
+
+---
+
+## Quiz question 1
+
+- Quiz question:
+    - Why do we conduct a factor rotation?
+        - A) increase the amount of variance explained
+        - B) improve the reliability of the factors
+        - C) make the factors more interpretable
+        - D) rotations should always be avoided
+
+---
+
+## Answer 1
+
+- The answer to the quiz question is...
+   - Why do we conduct a factor rotation?
+        - A) increase the amount of variance explained
+        - B) improve the reliability of the factors
+        - **C) make the factors more interpretable**
+        - D) rotations should always be avoided
+
+---
+
+## Conducting EFA in R
+
+- We can run our factor analyses using the fa() function
+- The first argument is the dataset with the items we want to factor analyse
+- We also need to mention the number of factors we want to extract, e.g.,  nfactors=1
+
+
+``` r
+onef&lt;-fa(agg.items, nfactors=1) #EFA with 1 factor
+```
+
+---
+
+## The one-factor solution
+ 
+- To help us choose an optimal number of factors, we can look at the one-factor solution...
+
+``` r
+onef&lt;-fa(agg.items, nfactors=1) #EFA with 1 factor
+onef$loadings #inspect the factor loadings
+```
+
+```
+## 
+## Loadings:
+##        MR1  
+## item1  0.401
+## item2  0.386
+## item3  0.323
+## item4  0.368
+## item5  0.345
+## item6  0.579
+## item7  0.808
+## item8  0.786
+## item9  0.673
+## item10 0.629
+## 
+##                  MR1
+## SS loadings    3.125
+## Proportion Var 0.313
+```
+
+---
+
+## The two-factor solution
+- And compare with the two-factor solution...
+
+``` r
+library(psych)
+twof&lt;-fa(agg.items, nfactors=2, rotate='oblimin') #EFA with 2 factors
+twof$loadings ##inspect the factor loadings
+```
+
+```
+## 
+## Loadings:
+##        MR1    MR2   
+## item1          0.724
+## item2          0.828
+## item3          0.706
+## item4          0.651
+## item5          0.835
+## item6   0.667       
+## item7   0.880       
+## item8   0.914       
+## item9   0.702       
+## item10  0.709       
+## 
+##                  MR1   MR2
+## SS loadings    3.060 2.837
+## Proportion Var 0.306 0.284
+## Cumulative Var 0.306 0.590
+```
+
+---
+
+## The two-factor solution factor correlations
+
+
+``` r
+twof$Phi  ## inspect the factor correlations
+```
+
+```
+##           MR1       MR2
+## MR1 1.0000000 0.1205241
+## MR2 0.1205241 1.0000000
+```
+
+---
+
+## The three-factor solution
+- And the three-factor solution
+
+``` r
+library(psych)
+threef&lt;-fa(agg.items, nfactors=3, rotate='oblimin') #EFA with 3 factors
+threef$loadings #inspect the factor loadings
+```
+
+```
+## 
+## Loadings:
+##        MR1    MR2    MR3   
+## item1                 0.989
+## item2          0.809       
+## item3          0.754       
+## item4          0.638       
+## item5          0.794       
+## item6   0.669              
+## item7   0.878              
+## item8   0.916              
+## item9   0.707              
+## item10  0.704              
+## 
+##                  MR1   MR2   MR3
+## SS loadings    3.056 2.277 0.994
+## Proportion Var 0.306 0.228 0.099
+## Cumulative Var 0.306 0.533 0.633
+```
+
+---
+
+## The three-factor solution factor correlations
+
+``` r
+threef$Phi # inspect the factor correlations
+```
+
+```
+##           MR1       MR2       MR3
+## MR1 1.0000000 0.1023358 0.1444919
+## MR2 0.1023358 1.0000000 0.7208746
+## MR3 0.1444919 0.7208746 1.0000000
+```
+
+---
+
+## Factor extraction in EFA
+- **Factor extraction** refers to the method of deriving the factors
+- PCA is itself an extraction method
+- In EFA there are a number of factor extraction options:
+    - principal axis factoring (PAF)
+    - ordinary least squares (OLS)
+    - weighted least squares (WLS)
+    - minres
+    - maximum likelihood (ML)
+
+---
+
+## Principal axis factoring (PAF)
+- Traditional method
+- An eigendecomposition of a reduced form of correlation matrix
+    - Diagonals are replaced by communalities
+    - Communalities estimates used as starting point
+        - Estimates of the variance shared with other indicators
+        - Based on e.g. multiple squared R
+    - Iteratively updated across successive PAFs
+    - Process terminates when estimates change little across iterations
+- Focus on *common* rather than all variance is key EFA vs PCA distinction
+  
+---
+
+## Other extraction methods
+
+- **OLS** finds the factor solution that minimises difference between observed and model-implied covariance matrices
+    - specifically, minimises the sum of squared residuals
+- **WLS** up-weights the variables with higher communalities
+- **minres** ignores the diagonals
+- **ML** finds the factor solution that maximises the likelihood of the observed covariance matrix
+
+---
+
+## Which to use?
+
+- PAF is a good option
+- minres can provide EFA solutions when other methods fail 
+    - minres is the default for the fa( ) function
+- choice of extraction method usually makes little difference if:
+    - communalities are similar 
+    - sample size is large
+    - the number of variables is large
+---
+
+## PAF 
+
+- We can do a factor analysis with PAF by setting fm='pa' in the fa() function:
+
+
+``` r
+library(psych)
+twof&lt;-fa(agg.items, nfactors=2, rotate='oblimin', fm='pa') #EFA with 2 factors
+twof$loadings ##inspect the factor loadings
+```
+
+```
+## 
+## Loadings:
+##        PA1    PA2   
+## item1          0.724
+## item2          0.828
+## item3          0.706
+## item4          0.651
+## item5          0.835
+## item6   0.667       
+## item7   0.880       
+## item8   0.914       
+## item9   0.702       
+## item10  0.709       
+## 
+##                  PA1   PA2
+## SS loadings    3.060 2.837
+## Proportion Var 0.306 0.284
+## Cumulative Var 0.306 0.590
+```
+
+``` r
+twof$Phi  ## inspect the factor correlations
+```
+
+```
+##           PA1       PA2
+## PA1 1.0000000 0.1205828
+## PA2 0.1205828 1.0000000
+```
+
+---
+
+## minres 
+
+- minres is the default method but we can also explicitly set fm='minres':
+
+``` r
+library(psych)
+twof&lt;-fa(agg.items, nfactors=2, rotate='oblimin', fm='minres') #EFA with 2 factors
+twof$loadings ##inspect the factor loadings
+```
+
+```
+## 
+## Loadings:
+##        MR1    MR2   
+## item1          0.724
+## item2          0.828
+## item3          0.706
+## item4          0.651
+## item5          0.835
+## item6   0.667       
+## item7   0.880       
+## item8   0.914       
+## item9   0.702       
+## item10  0.709       
+## 
+##                  MR1   MR2
+## SS loadings    3.060 2.837
+## Proportion Var 0.306 0.284
+## Cumulative Var 0.306 0.590
+```
+
+``` r
+twof$Phi  ## inspect the factor correlations
+```
+
+```
+##           MR1       MR2
+## MR1 1.0000000 0.1205241
+## MR2 0.1205241 1.0000000
+```
+
+---
+
+## Interpreting the factor solution
+
+- Label factors on basis of high loading items
+
+
+``` r
+library(psych)
+twof&lt;-fa(agg.items, nfactors=2, rotate='oblimin', fm='minres') #EFA with 2 factors
+twof$loadings ##inspect the factor loadings
+```
+
+```
+## 
+## Loadings:
+##        MR1    MR2   
+## item1          0.724
+## item2          0.828
+## item3          0.706
+## item4          0.651
+## item5          0.835
+## item6   0.667       
+## item7   0.880       
+## item8   0.914       
+## item9   0.702       
+## item10  0.709       
+## 
+##                  MR1   MR2
+## SS loadings    3.060 2.837
+## Proportion Var 0.306 0.284
+## Cumulative Var 0.306 0.590
+```
+
+---
+
+## Interpreting the factor solution
+
+- Factor 1 could be labelled *verbal aggression* and factor 2 could be labelled *physical aggression*
+
+  1. **I hit someone**
+  2. **I kicked someone**
+  3. **I shoved someone** 
+  4. **I battered someone** 
+  5. **I physically hurt someone on purpose** 
+  6. I deliberately insulted someone
+  7. I swore at someone
+  8. I threatened to hurt someone
+  9. I called someone a nasty name to their face
+  10. I shouted mean things at someone
+
+---
+
+## The magnitude of factor loadings
+
+- How large are the loadings?
+- Comfrey &amp; Lee (1992) offered the following rules of thumb:
+    - &gt;.71 (50% overlapping variance) are considered excellent
+    - &gt;.63 (40% overlapping variance) is very good
+    -	&gt;.55 (30% overlapping variance) is good
+    - &gt;.45 (20% overlapping variance) is fair
+    - &gt;.32 (10% overlapping variance) is poor
+
+---
+
+## The magnitude of factor correlations
+
+- How distinct are the factors?
+
+``` r
+library(psych)
+twof&lt;-fa(agg.items, nfactors=2, rotate='oblimin', fm='minres') #EFA with 2 factors
+twof$Phi  ## inspect the factor correlations
+```
+
+```
+##           MR1       MR2
+## MR1 1.0000000 0.1205241
+## MR2 0.1205241 1.0000000
+```
+
+---
+
+## How much variance is accounted for by the factors?
+
+- We can also check how much variance overall is accounted for by the factors
+
+```
+## 
+## Loadings:
+##        MR1    MR2   
+## item1          0.724
+## item2          0.828
+## item3          0.706
+## item4          0.651
+## item5          0.835
+## item6   0.667       
+## item7   0.880       
+## item8   0.914       
+## item9   0.702       
+## item10  0.709       
+## 
+##                  MR1   MR2
+## SS loadings    3.060 2.837
+## Proportion Var 0.306 0.284
+## Cumulative Var 0.306 0.590
+```
+
+---
+
+## Quiz question 2
+- Quiz question:
+  - Which of these best describe principal axis factoring extraction?
+      - A PCA of a correlation matrix with communalities on the diagonals?
+      - A PCA of a correlation matrix ignoring the diagonals?
+      - A PCA of a correlation matrix where the the off-diagonals are replaced with communalities?
+      - A PCA of a correlation matrix where all elements are replaced by communalities?
+
+---
+
+## Answer 2
+
+- The answer to the quiz question is...
+  - Which of these best describe principal axis factoring extraction?
+      - **A PCA of a correlation matrix with communalities on the diagonals?**
+      - A PCA of a correlation matrix ignoring the diagonals?
+      - A PCA of a correlation matrix where the the off-diagonals are replaced with communalities?
+      - A PCA of a correlation matrix where all elements are replaced by communalities?
+
+---
+
+## Checking the suitability of data for EFA
+
+- The first step in an EFA is actually to check the appropriateness of the data:
+    - Does the data look multivariate normal?
+    - Do the relations look linear?
+    - Does the correlation matrix have good factorability?
+
+---
+
+## Multivariate normality
+
+- Do the variables have (approximately) continuous measurement scales?
+    - 5 or more response options
+- Examining univariate distributions using histograms
+
+---
+
+## Univariate histogram example
+
+
+``` r
+hist(agg.items[ ,1])
+```
+
+![](week-7-lecture_files/figure-html/histograms-1.png)&lt;!-- --&gt;
+
+---
+
+## Linearity
+
+- Plot linear and lowess lines for pairwise relations and compare
+
+
+```
+## Loading required package: carData
+```
+
+```
+## 
+## Attaching package: 'car'
+```
+
+```
+## The following object is masked from 'package:psych':
+## 
+##     logit
+```
+
+![](week-7-lecture_files/figure-html/linear and lowess-1.png)&lt;!-- --&gt;
+
+---
+
+## Factorability
+
+- EFA focuses on variance **common** to items
+    - Not much point in an EFA if little variance in common
+- Use Kaiser-Meyer-Olkin (KMO) test 
+    - Provides measure of proportion of variance shared between variables
+    - Can be computed for individual variables or whole correlation matrix
+    - Overall values &gt;.60 and no variable &lt;.50 is ideal
+
+---
+
+## KMO in R
+
+
+``` r
+KMO(agg.items)
+```
+
+```
+## Kaiser-Meyer-Olkin factor adequacy
+## Call: KMO(r = agg.items)
+## Overall MSA =  0.87
+## MSA for each item = 
+##  item1  item2  item3  item4  item5  item6  item7  item8  item9 item10 
+##   0.88   0.85   0.89   0.91   0.84   0.93   0.83   0.81   0.92   0.92
+```
+
+---
+
+## Reporting EFA
+
+- Transparency and reproducibility
+- Methods
+  - Methods to determine number of factors
+  - Extraction method
+  - Rotation method
+- Results
+  - Information about data suitability for EFA
+  -  Number of factors (and why)
+  - Loading matrix
+  - Factor correlations
+  - Interpretation of factors (and why)
+  - Variance explained by factors 
+
+---
+
+## Summary
+
+- Steps in EFA are similar to PCA but...
+    - The underlying theory  and interpretation is quite different
+    - Their results can differ if there is not a lot of common variance
+- EFA involves:
+    - Checking data suitability
+    - Choosing number of factors
+    - Factor extraction
+    - Rotation
+    - Interpretation of factors
+    
+---
+
+## Live coding!
+
+- Backrground:
+  - The UN Global Report on Ageism identified the need for a new ageism measure
+  - Items were developed by experts in ageism and scale development
+  - The current data comes from a data collection in Colombia to validate the measure
+  - The data includes 19 items covering stereotypes, prejudices, discrimination
+  - The goal is to: 1) reduce to 15 items 2) establish some psychometric properties
+
+---
+
+# The items:
+
+  - Older adults have a lot to contribute to society
+  - Older adults should stick to being around people their own age
+  - Older adults are too old for romance
+  - Older adults are a burden
+  - It is worthwhile investing resources in older adults
+  - Older adults are too old to change
+  - Older adults are capable of using technology
+  - I feel comfortable around older adults
+  - I feel frustrated with older adults
+  - I feel bored listening to older adults
+  - I feel pity for older adults
+  - I enjoy being around older adults
+  - I find older adults interesting
+  - I make jokes about older adults
+  - I talk to older adults in simplified language
+  - I exclude older adults from certain conversations
+  - I avoid spending time with older adults
+  - I listen to older adults
+  - I ask older adults for their view
+
+---
+
+# Our live coding sessions
+
+- Each week I'll add some analysis based on what we cover
+- This will be written up in a real peer-reviewed paper
+- You can check the progress of the paper each week on the Learn weekly folder
+- Simulated version of the dataset in weekly folders 
+    
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
