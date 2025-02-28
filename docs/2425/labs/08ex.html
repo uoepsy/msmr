@@ -1,0 +1,3650 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Week 8 Exercises: CFA – MSMR</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+
+function toggle_visibility(id1, id2) {
+
+var e = document.getElementById(id1);
+
+var f = document.getElementById(id2);
+
+e.style.display = ((e.style.display!='none') ? 'none' : 'block');
+
+if(f.classList.contains('jk-circle-right')) {
+
+    f.classList.add('jk-circle-down')
+
+    f.classList.remove('jk-circle-right')
+
+} else {
+
+    f.classList.add('jk-circle-right')
+
+    f.classList.remove('jk-circle-down')
+
+}
+
+}
+
+</script>
+
+
+
+<!---<script src="https://kit.fontawesome.com/120b08a6f5.js" crossorigin="anonymous"></script>-->
+
+<link href="site_libs/panelset-0.3.0/panelset.css" rel="stylesheet">
+
+<script src="site_libs/panelset-0.3.0/panelset.js"></script>
+
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./08ex.html">Week 8 Exercises: CFA</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MSMR</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Extra Exercises: Regression Refresher</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 1 Exercises: Intro to MLM</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 2 Exercises: Logistic and Longitudinal</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 3 Exercises: Non-Linear Change</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 4 Exercises: Nested and Crossed</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 5 Exercises: Assumptions, Diagnostics, Writing up</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 7 Exercises: PCA &amp; EFA</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08ex.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Week 8 Exercises: CFA</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Additional</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00_pca.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PCA in 3D</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00_qdata.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Questionnaire Data Wrangling</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#conduct-problems" id="toc-conduct-problems" class="nav-link active" data-scroll-target="#conduct-problems">Conduct Problems</a></li>
+  <li><a href="#doom-scrolling" id="toc-doom-scrolling" class="nav-link" data-scroll-target="#doom-scrolling">“DOOM” Scrolling</a></li>
+  <li><a href="#optional-extra-exercises-for-the-enthusiastic" id="toc-optional-extra-exercises-for-the-enthusiastic" class="nav-link" data-scroll-target="#optional-extra-exercises-for-the-enthusiastic">Optional Extra Exercises for the Enthusiastic</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Week 8 Exercises: CFA</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="frame">
+<p><strong>New packages</strong></p>
+<p>Make sure you have these packages installed:</p>
+<ul>
+<li>lavaan</li>
+<li>semPlot</li>
+</ul>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+the language of diagrams
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>It is common to think about confirmatory factor models (and structural equation models, which we will go on to learn about) in terms of the connections between variables when drawn on a whiteboard (<em>and</em> those that are left undrawn). By representing a theoretical model as paths to and from different variables, we open up a whole new way of thinking about how we model the world around us. These <em>“path diagrams”</em> have different shapes and symbols to denote the covariances, regressions, observed variables and latent variables.</p>
+<ul>
+<li><strong>Observed variables</strong> are represented by squares or rectangles. These are the named variables of interest which exist in our dataset - i.e.&nbsp;the ones which we have measured directly.</li>
+<li><strong>Latent variables</strong> are represented as ovals/ellipses or circles. These are unobserved variables that we can only reason about and have not (or cannot) directly measured.<br>
+</li>
+<li><strong>Covariances</strong> are represented by double-headed arrows. In many diagrams these are curved.<br>
+</li>
+<li><strong>Regressions</strong> are shown by single headed arrows (e.g., an arrow from <span class="math inline">\(x\)</span> to <span class="math inline">\(y\)</span> for the path <span class="math inline">\(y \sim x\)</span>). <strong>Factor loadings</strong> are also regression paths - specifying a factor structure is simply to say that some measured variables <span class="math inline">\(y_1\,,\, ...\, ,\, y_k\)</span> are each regressed onto some unmeasured factor(s). The formula <span class="math inline">\(y_1 = \lambda_1 \cdot F + u_1\)</span> looks an awful lot like <span class="math inline">\(y = b \cdot x + \epsilon\)</span>, we just do not observe <span class="math inline">\(F\)</span>!.</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-diagsem" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-diagsem-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/semdiag.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-diagsem-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Path/SEM diagrams contain various shapes and symbols to represent different types of variable and the relationships between them.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+PCA as a diagram
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Used for:</strong><br>
+Reducing from a lot of correlated variables down to a smaller set of orthogonal (uncorrelated) components that capture a substantial amount of the variance. The components we get out are a bit like “composites” - they are a weighted sum of the original variables, and can be useful in subsequent analyses. For instance, if you have 20 predictors in a linear regression model that are highly correlated with one another (remember multicollinearity?), you might be able to instead use a small number of orthogonal components!</p>
+<p><strong>As a diagram</strong><br>
+Note that the idea of a ‘composite’ requires us to use a special shape (the hexagon), but many people would just use a square.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/diag_pca.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+optional: PCA in full
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Principal components sequentially capture the orthogonal (i.e., perpendicular) dimensions of the dataset with the most variance. The data reduction comes when we retain fewer components than we have dimensions in our original data. So if we were being pedantic, the diagram for PCA would look something like the diagram below. If the idea of ‘dimensions’ of a dataset is still a bit confusing, you can see a fun 3-dimensional explanation here: <a href="00_pca.html" target="_blank">PCA in 3D</a></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/diag_pca2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+EFA as a diagram
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Used for:</strong><br>
+EFA is generally used with the aim of understanding the underlying constructs or latent variables that may be driving observed patterns of responses or behaviors. Often used in construction of questionnaires, scale development, and in the initial stages of developing theoretical frameworks.</p>
+<p><strong>As a diagram</strong><br>
+Exploratory Factor Analysis as a diagram has arrows going from the factors to the observed variables. Unlike PCA, we also have ‘uniqueness’ factors for each variable, representing the various stray causes that are specific to each variable. Sometimes, these uniqueness are represented by an arrow only, but they are technically themselves latent variables, and so can be drawn as circles.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/diag_efa1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>When we apply a rotation to an EFA, we make it so that some loadings are smaller and some are higher - essentially creating a ‘simple structure’ (where each variable loads strongly on only one factor and weakly on all other factors). This structure simplifies the interpretation of factors, making them more distinct and easily understandable. With oblique rotations, we also allow factors to be correlated, as indicated by the double headed arrow between them in the diagram below</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/diag_efa2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+CFA as a diagram
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Used for:</strong><br>
+CFA is a method that allows us to assess the validity of a hypothesized factor structure (or to compare competing hypothesized structures). Typically factor structures fitted are ones that have been proposed based on theory or on previous research.</p>
+<p><strong>As a diagram</strong><br>
+The diagram for a Confirmatory Factor Analysis model looks very similar to that of an exploratory factor analysis, but we now have the explicit absence of some arrows - i.e.&nbsp;a variable loads on to a specific factor (or factor<strong>s</strong> - we can have a variable that loads on multiple), and <strong>not</strong> on others.</p>
+<p>Note that this is a change from the ‘exploratory’ nature of EFA, to a situation in which we are explicitly imposing a theoretical model on the data.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/diag_cfa.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<section id="conduct-problems" class="level1">
+<h1>Conduct Problems</h1>
+<div class="frame">
+<p><strong>Data: conduct_problems_2.csv</strong></p>
+<p>Last week we conducted an exploratory factor analysis of a dataset to try and identify an optimal factor structure for a new measure of conduct (i.e., antisocial behavioural) problems.</p>
+<p>This week, we’ll conduct some confirmatory factor analyses (CFA) of the same inventory to assess the extent to which this 2-factor structure fits an independent sample. To do this, we have administered our measure to a new sample of n=600 adolescents.</p>
+<p>We have re-ordered the questionnaire items to be grouped into the two types of behaviours:</p>
+<div class="columns">
+<div class="column" style="width:47.5%;">
+<p><strong>Non-Aggressive Behaviours</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">item</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">item 1</td>
+<td style="text-align: left;">Stealing</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">item 2</td>
+<td style="text-align: left;">Lying</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">item 3</td>
+<td style="text-align: left;">Skipping school</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">item 4</td>
+<td style="text-align: left;">Vandalism</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">item 5</td>
+<td style="text-align: left;">Breaking curfew</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</div><div class="column" style="width:5%;">
+
+</div><div class="column" style="width:47.5%;">
+<p><strong>Aggressive Behaviours</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">item</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">item 6</td>
+<td style="text-align: left;">Threatening others</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">item 7</td>
+<td style="text-align: left;">Bullying</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">item 8</td>
+<td style="text-align: left;">Spreading malicious rumours</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">item 9</td>
+<td style="text-align: left;">Using a weapon</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">item 10</td>
+<td style="text-align: left;">Fighting</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</div>
+</div>
+<p>The data are available as a <strong>.csv</strong> at <a href="https://uoepsy.github.io/data/conduct_problems_2.csv">https://uoepsy.github.io/data/conduct_problems_2.csv</a></p>
+</div>
+<div class="question-begin">
+Question 1
+</div>
+<div class="question-body">
+<p>Read in the data. Take a look at the correlation matrix.</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>cp2 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/conduct_problems_2.csv"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(cp2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           item1     item2      item3     item4     item5      item6     item7
+item1  1.0000000 0.5254249 0.43498606 0.4831121 0.5644047 0.13450795 0.2806369
+item2  0.5254249 1.0000000 0.50099054 0.5119842 0.6740107 0.15239358 0.3031997
+item3  0.4349861 0.5009905 1.00000000 0.4897339 0.5990709 0.09463966 0.2557407
+item4  0.4831121 0.5119842 0.48973386 1.0000000 0.6199783 0.14847703 0.2492471
+item5  0.5644047 0.6740107 0.59907089 0.6199783 1.0000000 0.11353641 0.3112458
+item6  0.1345080 0.1523936 0.09463966 0.1484770 0.1135364 1.00000000 0.5461757
+item7  0.2806369 0.3031997 0.25574075 0.2492471 0.3112458 0.54617567 1.0000000
+item8  0.2576481 0.2748175 0.19355398 0.2553712 0.2463290 0.59441335 0.8009591
+item9  0.2444337 0.2759875 0.20798523 0.2260156 0.2333758 0.36915878 0.5988582
+item10 0.1783069 0.1618631 0.12924914 0.1433759 0.1394748 0.46316014 0.5316143
+           item8     item9    item10
+item1  0.2576481 0.2444337 0.1783069
+item2  0.2748175 0.2759875 0.1618631
+item3  0.1935540 0.2079852 0.1292491
+item4  0.2553712 0.2260156 0.1433759
+item5  0.2463290 0.2333758 0.1394748
+item6  0.5944133 0.3691588 0.4631601
+item7  0.8009591 0.5988582 0.5316143
+item8  1.0000000 0.6169829 0.5557168
+item9  0.6169829 1.0000000 0.3613253
+item10 0.5557168 0.3613253 1.0000000</code></pre>
+</div>
+</div>
+<p>Just from the visual, it looks like the same factor structure is present in this sample.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggcorrplot)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcorrplot</span>(<span class="fu">cor</span>(cp2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="08ex_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 2
+</div>
+<div class="question-body">
+<p>Fit the proposed 2 factor model in <strong>lavaan</strong>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The lavaan package
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>For the remaining weeks of the course, we’re going to rely heavily on the <strong>lavaan</strong> (<strong>La</strong>tent <strong>Va</strong>riable <strong>An</strong>alysis) package. This is the main package in R for fitting structural equation models, and there is a huge scope of what we can do with it.</p>
+<p><strong>Operators in lavaan</strong></p>
+<p>The first thing to get to grips with is the various new operators which <strong>lavaan</strong> allows us to use.</p>
+<p>Our standard multiple regression formula in R was specified as</p>
+<pre><code>y ~ x1 + x2 + x3 + ...</code></pre>
+<p>In lavaan, we continue to fit regressions using the <code>~</code> symbol, but we can also specify the construction of latent variables using <code>=~</code> and residual variances &amp; covariances using <code>~~</code>.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: right;">Formula type</th>
+<th style="text-align: right;">Operator</th>
+<th style="text-align: right;">Mnemonic</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">latent variable definition</td>
+<td style="text-align: right;"><code>=~</code></td>
+<td style="text-align: right;">“is measured by”</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">regression</td>
+<td style="text-align: right;"><code>~</code></td>
+<td style="text-align: right;">“is regressed on”</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">(residual) (co)variance</td>
+<td style="text-align: right;"><code>~~</code></td>
+<td style="text-align: right;">“is correlated with”</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">intercept</td>
+<td style="text-align: right;"><code>~1</code></td>
+<td style="text-align: right;">“has an intercept”</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">defined parameters</td>
+<td style="text-align: right;"><code>:=</code></td>
+<td style="text-align: right;">“is defined as”</td>
+</tr>
+</tbody>
+</table>
+<p>(from https://lavaan.ugent.be/tutorial/syntax1.html)</p>
+<p><strong>Fitting models with lavaan</strong></p>
+<p>In practice, fitting models in lavaan tends to be a little different from things like <code>lm()</code> and <code>(g)lmer()</code>. Instead of including the model formula <em>inside</em> the fit function (e.g., <code>lm(y ~ x1 + x2, data = df)</code>), we tend to do it in a step-by-step process. This is because as our models become more complex, our formulas can pretty long!</p>
+<p>In lavaan, it is typical to write the model as a character string (e.g.&nbsp;<code>model &lt;- "y ~ x1 + x2"</code>) and then we pass that formula along with the data to the relevant <strong>lavaan</strong> function such as <code>cfa()</code> or <code>sem()</code>, giving it the formula and the data: <code>cfa(model, data = mydata)</code>.</p>
+<ol type="1">
+<li>Specify the model:</li>
+</ol>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mymodel <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="st">  factor1 =~ item1 + item2 + .....</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="st">  factor2 =~ item6 + ...... </span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="st">  ...</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="st">  ..</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol start="2" type="1">
+<li>Estimate the model (other fitting functions include <code>sem()</code>, <code>growth()</code> and <code>lavaan()</code>):</li>
+</ol>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>myfittedmodel <span class="ot">&lt;-</span> <span class="fu">cfa</span>(mymodel, <span class="at">data =</span> mydata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol start="3" type="1">
+<li>Examine the fitted model:</li>
+</ol>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(myfittedmodel)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The output of the <code>summary()</code> will show you each estimated parameter in your model. It groups these according to whether they are loadings onto latent variables, covariances, regressions, variances etc.</p>
+</div>
+</div>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lavaan)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>cpmod <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="st">  # the non-aggressive problems factor</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="st">  nonagg =~ item1 + item2 + item3 + item4 + item5</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="st">  # the aggressive problems factor</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="st">  agg =~ item6 + item7 + item8 + item9 + item10</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="st">  # covariance between the two factors</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="st">  # (this is included by default in cfa)</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="st">  agg ~~ nonagg</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>cpmod.est <span class="ot">&lt;-</span> <span class="fu">cfa</span>(cpmod, <span class="at">data =</span> cp2)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(cpmod.est)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>lavaan 0.6-19 ended normally after 27 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        21
+
+  Number of observations                           600
+
+Model Test User Model:
+                                                      
+  Test statistic                                65.765
+  Degrees of freedom                                34
+  P-value (Chi-square)                           0.001
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  nonagg =~                                           
+    item1             1.000                           
+    item2             1.217    0.076   15.965    0.000
+    item3             1.012    0.070   14.424    0.000
+    item4             1.146    0.077   14.967    0.000
+    item5             1.360    0.078   17.412    0.000
+  agg =~                                              
+    item6             1.000                           
+    item7             1.419    0.082   17.331    0.000
+    item8             1.437    0.081   17.662    0.000
+    item9             1.093    0.077   14.125    0.000
+    item10            0.950    0.073   13.073    0.000
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  nonagg ~~                                           
+    agg               0.156    0.023    6.856    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .item1             0.574    0.037   15.398    0.000
+   .item2             0.477    0.035   13.778    0.000
+   .item3             0.551    0.036   15.262    0.000
+   .item4             0.597    0.040   14.867    0.000
+   .item5             0.264    0.028    9.537    0.000
+   .item6             0.561    0.035   16.193    0.000
+   .item7             0.228    0.021   10.767    0.000
+   .item8             0.153    0.019    8.122    0.000
+   .item9             0.566    0.035   15.978    0.000
+   .item10            0.587    0.036   16.351    0.000
+    nonagg            0.453    0.052    8.701    0.000
+    agg               0.381    0.045    8.396    0.000</code></pre>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 3
+</div>
+<div class="question-body">
+<p>Latent variable models like CFA come with a whole bucket load of ‘fit indices’ as metrics of how well our model is reflecting the observed data.</p>
+<p>We can get out these indices by either asking for the most common fit indices to be printed inside all of our summary output:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(myfittedmodel, <span class="at">fit.measures =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Or by asking for <em>all</em> available indices with:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fitmeasures</span>(myfittedmodel)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># to get just a select few, we can index the desired ones:</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">fitmeasures</span>(myfittedmodel)[<span class="fu">c</span>(<span class="st">"rmsea"</span>,<span class="st">"srmr"</span>,<span class="st">"tli"</span>,<span class="st">"cfi"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Examine the fit of the 2-factor model of conduct problems to this new sample of 600 adolescents.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+“Model Fit”
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>You’ll have heard the term “model fit” many times when learning about statistics. However, the exact meaning of the phrase is different for different modelling frameworks.</p>
+<p>We can think more generally as “model fit” as asking “how well does our model reproduce the characteristics of the data that we observed?”. In things like multiple regression, this has been tied to the question of “how much variance can we explain in outcome <span class="math inline">\(y\)</span> with our set of predictors?”<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
+<p>For methods like CFA, path analysis and SEM, we are working with models that run on covariances matrices, so “model fit” becomes “how well can our model reproduce our observed covariance matrix?”.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Degrees of Freedom
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>In regression, we could only talk about model fit if we had more than 2 datapoints. This is because there is only one possible line that we can fit between 2 datapoints, and this line explains <em>all</em> of the variance in the outcome variable (it uses up all our 2 degrees of freedom to estimate 1) the intercept and 2) the slope).</p>
+<p>The logic is the same for model fit in terms of CFA and SEM - we need more degrees of freedom than we have parameters that are estimated.</p>
+<p>The difference is that it is all in terms of our covariance matrix, rather than individual observations. The idea is that we need to be estimating fewer paths (e.g.&nbsp;parameters) than there are variances/covariances in our covariance matrix. This is because if we just fit paths between all our variables, then our model would be able to reproduce the data perfectly (just like a regression with 2 datapoints has an <span class="math inline">\(R^2\)</span> of 1).</p>
+<p>The degrees of freedom for methods like CFA, Path and SEM, that are fitted to the covariance matrix of our data, correspond to the number of <em>knowns</em> (observed covariances/variances from our sample) minus the number of <em>unknowns</em> (parameters to be estimated by the model).</p>
+<ul>
+<li><strong>degrees of freedom = number of knowns - number of unknowns</strong>
+<ul>
+<li>number of knowns: how many variances/covariances in our data?<br>
+The number of knowns in a covariance matrix of <span class="math inline">\(k\)</span> observed variables is equal to <span class="math inline">\(\frac{k \cdot (k+1)}{2}\)</span>.<br>
+</li>
+<li>number of unknowns: how many parameters is our model estimating?<br>
+We can reduce the number of unknowns (thereby getting back a degree of freedom) by fixing parameters to be specific values. <em>By removing a path altogether, we are fixing it to be zero.</em></li>
+</ul></li>
+</ul>
+<p>A model is only able to be estimated if it has at least 0 degrees of freedom (if there are as many knowns as unknowns). A model with 0 degrees of freedom is termed <strong>just-identified</strong>. An <strong>under-identified</strong> model is one with <span class="math inline">\(&lt;0\)</span> degrees of freedom, and an <strong>over-identified</strong> one has <span class="math inline">\(&gt;0\)</span> degrees of freedom.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Fit Indices
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>There are <em>loads</em> of different metrics that people use to examine model fit for CFA and SEM, and there’s lots of debate over the various merits and disadvantages as well as the proposed cut-offs to be used with each method.</p>
+<p>The most fundamental test of model fit is a <span class="math inline">\(\chi^2\)</span> test, which reflects the discrepancy between our observed covariance matrix and the <em>model-implied</em> covariance matrix. If we denote the population covariance matrix as <span class="math inline">\(\Sigma\)</span> and the model-implied covariance matrix as <span class="math inline">\(\Sigma(\Theta)\)</span>, then we can think of the null hypothesis here as <span class="math inline">\(H_0: \Sigma - \Sigma(\Theta) = 0\)</span>. In this way our null hypothesis is that our theoretical model is correct (and can therefore perfectly reproduce the covariance matrix), therefore a significant result indicates <em>poor</em> fit. It is very sensitive to departures from normality, as well as sample size (for models with <span class="math inline">\(n&gt;400\)</span>, the <span class="math inline">\(\chi^2\)</span> is almost always significant), and can often lead to rejecting otherwise adequate models.</p>
+<p>Alongside this, the main four fit indices that are commonly used are known as RMSEA, SRMR, CFI and TLI. Smaller values of RMSEA and SRMR mean better fit while larger values of CFI and TLI mean better fit.</p>
+<p><strong>Convention:</strong> if <span class="math inline">\(\textrm{RMSEA} &lt; .05\)</span>, <span class="math inline">\(\textrm{SRMR} &lt; .05\)</span>, <span class="math inline">\(\textrm{TLI} &gt; .95\)</span> and <span class="math inline">\(\textrm{CFI} &gt; .95\)</span> then the model fits well.</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+optional: absolute fit indices
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/fitmeas_abs.PNG" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+optional: incremental fit indices
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/fitmeas_inc.PNG" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<p>Our model fits well by all metrics!</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fitmeasures</span>(cpmod.est)[<span class="fu">c</span>(<span class="st">"srmr"</span>,<span class="st">"rmsea"</span>,<span class="st">"cfi"</span>,<span class="st">"tli"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      srmr      rmsea        cfi        tli 
+0.03454489 0.03945991 0.98862263 0.98494172 </code></pre>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 4
+</div>
+<div class="question-body">
+<p>Take a look at the loadings of our variables on to the latent factors (these are in the <code>estimate</code> column under “Latent Variables” in the <code>summary()</code>).</p>
+<p>In EFA, our factor loadings were always &lt;1, because they were <em>standardised</em> loadings (where the factor and item were both standardised to have a variance of 1). Because a latent variable is unobserved, it’s actually up to us how we define its scale! In CFA, the default is to make it have the same scale as its first item, which is why the first loading for each factor is exactly 1, and has no standard error associated with it - it’s <em>fixed</em>, rather than estimated.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Latent Variable Scaling
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>in <a href="#fig-df1" class="quarto-xref">Figure&nbsp;2</a>, we can see a the model of a latent factor loading on to 4 items. The number of paths to be estimated here is greater than the number of known covariances. However, we can get around this by <em>fixing certain parameters to be specific values</em>. In <a href="#fig-df2" class="quarto-xref">Figure&nbsp;3</a>, the latent factor variance is set at 1, and the residual factor loadings are also set to 1.<br>
+This has the additional benefit of making our latent factor have some defining features. Because we don’t actually measure the latent variable (it is a hypothetical construct), it doesn’t really have any intrinsic ‘scale’. When we fix the variance to be 1, we are providing some property (its variance) we create a reference from which the other paths to/from the variable are in relation to. A common alternative is to fix the factor loading of the first item to be 1 (see <a href="#fig-df3" class="quarto-xref">Figure&nbsp;4</a>).</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-df1" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-df1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/cfa_df1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-df1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: A four item factor structure. There are 10 knowns, but 13 parameters
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-df2" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-df2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/cfa_df2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-df2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: A four item factor structure. By fixing 5 of these parameters to be equal to 1, we gain back degrees of freedom and make our model identifiable
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-df3" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-df3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/cfa_df3.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-df3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: A four item factor structure. The ‘marker method’ fixes the first factor loading to be 1, leaving the factor variance free to be estimated.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Fit the model again, (assign it a new name so we can compare), but this time use:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cfa</span>(model_syntax, <span class="at">data =</span> ..., <span class="at">std.lv =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Do the fit measures such as TLI, CFI, RMSEA, SRMR etc., change at all? Do the loadings change at all? Can you see a link between these loadings and those from the previously fitted model?</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<p>Here’s our original model:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>cpmod.est <span class="ot">&lt;-</span> <span class="fu">cfa</span>(cpmod, <span class="at">data =</span> cp2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here’s our model with <code>std.lv=TRUE</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>cpmod.est2 <span class="ot">&lt;-</span> <span class="fu">cfa</span>(cpmod, <span class="at">data =</span> cp2, <span class="at">std.lv=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The fit is identical! This is much like how <code>lm(y~x)</code> and <code>lm(scale(y)~scale(x))</code> are one and the same model - the difference only comes in the estimates being transformed to be in different scales.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fitmeasures</span>(cpmod.est)[<span class="fu">c</span>(<span class="st">"srmr"</span>,<span class="st">"rmsea"</span>,<span class="st">"tli"</span>,<span class="st">"cfi"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      srmr      rmsea        tli        cfi 
+0.03454489 0.03945991 0.98494172 0.98862263 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fitmeasures</span>(cpmod.est2)[<span class="fu">c</span>(<span class="st">"srmr"</span>,<span class="st">"rmsea"</span>,<span class="st">"tli"</span>,<span class="st">"cfi"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      srmr      rmsea        tli        cfi 
+0.03454489 0.03945991 0.98494172 0.98862263 </code></pre>
+</div>
+</div>
+<p>The loadings from the model with <code>std.lv=TRUE</code> are all &lt;1.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(cpmod.est2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>...
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  nonagg =~                                           
+    item1             0.673    0.039   17.402    0.000
+    item2             0.819    0.039   21.024    0.000
+    item3             0.681    0.038   17.816    0.000
+    item4             0.771    0.041   18.876    0.000
+    item5             0.915    0.036   25.425    0.000
+  agg =~                                              
+    item6             0.618    0.037   16.793    0.000
+    item7             0.877    0.033   26.319    0.000
+    item8             0.887    0.032   28.087    0.000
+    item9             0.675    0.038   17.875    0.000
+    item10            0.587    0.037   15.872    0.000
+
+...</code></pre>
+</div>
+</div>
+<p>Taking just the first factor, note that the first loading is 0.673. <em>Relative to this loading</em>, the other loadings of 0.819, 0.681, 0.771, 0.915, are all bigger. How much bigger?<br>
+If we divide each one by that first loading, we get their size relative to that loading - these are the same as our unstandardised loadings!</p>
+<p><span class="math inline">\(\frac{0.819}{0.673}=1.217\)</span><br>
+<span class="math inline">\(\frac{0.681}{0.673}=1.012\)</span><br>
+<span class="math inline">\(\frac{0.771}{0.673}=1.146\)</span><br>
+<span class="math inline">\(\frac{0.915}{0.673}=1.360\)</span></p>
+<p>Note also that we now have <em>fixed</em> values for the variances of the latent factors, which previously were being estimated for us.</p>
+<p>In the second model, with <code>std.lv=TRUE</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>...
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+    nonagg            1.000                           
+    agg               1.000                           
+...</code></pre>
+</div>
+</div>
+<p>And in the first:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>...
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+    nonagg            0.453    0.052    8.701    0.000
+    agg               0.381    0.045    8.396    0.000
+...</code></pre>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question Optional 5
+</div>
+<div class="question-body">
+<p>We don’t actually even have to re-fit the model in order to get out standardised estimates.</p>
+<p>Try doing:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>mod.est <span class="ot">&lt;-</span> <span class="fu">cfa</span>(model_syntax, <span class="at">data =</span> ...)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod.est, <span class="at">std=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>You’ll get some extra columns - can you figure out what they are?</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<p>Back to our original model fit:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>cpmod.est <span class="ot">&lt;-</span> <span class="fu">cfa</span>(cpmod, <span class="at">data =</span> cp2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We get out an extra couple of columns here. One of which we have already seen - the <code>Std.lv</code> column contains the same numbers from the previous question. The numbers in the <code>Std.all</code> column are similar, but not quite the same.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod.est, <span class="at">std=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="cell-output cell-output-stdout">
+<pre><code>...
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+  nonagg =~                                                             
+    item1             1.000                               0.673    0.664
+    item2             1.217    0.076   15.965    0.000    0.819    0.765
+    item3             1.012    0.070   14.424    0.000    0.681    0.676
+    item4             1.146    0.077   14.967    0.000    0.771    0.706
+    item5             1.360    0.078   17.412    0.000    0.915    0.872
+  agg =~                                                                
+    item6             1.000                               0.618    0.636
+    item7             1.419    0.082   17.331    0.000    0.877    0.878
+    item8             1.437    0.081   17.662    0.000    0.887    0.915
+    item9             1.093    0.077   14.125    0.000    0.675    0.668
+    item10            0.950    0.073   13.073    0.000    0.587    0.608
+
+...</code></pre>
+</div>
+</div>
+<p>The <code>Std.lv</code> column represents when the latent variables are scaled to have a variance of 1, but the measured variables variances are not.<br>
+The <code>Std.all</code> column represents when <em>both</em> latent variables <em>and</em> measured variable are scaled to have variances of 1.</p>
+<p>This means that if we <em>first</em> standardised all our observed variables manually, and <em>then</em> fitted our model to that data, then the <code>Std.lv</code> and <code>Std.all</code> columns would be identical.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 6
+</div>
+<div class="question-body">
+<p>Make a diagram of your model, using the standardised factor loadings as labels.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The semPlot package
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>For more complex models with latent variables, we will almost always have to make diagrams manually, either in generic presentation software such as powerpoint or google slides, or in specific software such as <a href="https://semdiag.psychstat.org/" target="_blank">semdiag</a>.</p>
+<p>R has a couple of packages which work well enough for some of the more common model structures such as CFA.</p>
+<p>The <code>semPaths()</code> function from <strong>semPlot</strong> package can take a fitted lavaan model and create a nice diagram.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(semPlot)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">semPaths</span>(myfittedmodel, </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">what =</span> ?, <span class="co"># line thickness &amp; color by... </span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">whatLabels =</span> ?, <span class="co"># label lines as... </span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">rotation =</span> ? <span class="co"># rotations, +1 = 90degrees</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+optional: handy functionality!
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Occasionally we might want to draw models before we even get the data. <strong>lavaan</strong> has some useful functionality where you can give it a model formula and ask it to “lavaanify” it into a model object that just hasn’t yet been fitted to anything.</p>
+<p>For instance, by setting up a pretend model and “lavaanify-ing” it, we can then make a diagram!</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>pretend_model <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="st">biscuits =~ digestive + oreo + custard_cream + bourbon + crackers</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="st">crisps =~ salt_vinegar + cheese_onion + prawn_cocktail + crackers</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="fu">lavaanify</span>(pretend_model) <span class="sc">|&gt;</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">semPaths</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="08ex_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<p>You can rotate this however you like. Convention is typically to have it downwards but I like it left to right (not sure why!)</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(semPlot)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">semPaths</span>(cpmod.est, </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">whatLabels =</span> <span class="st">"std"</span>, </span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">rotation =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="08ex_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The lines from <code>agg =~ item6</code> and <code>nonagg =~ item1</code> are dotted to indicate that the model was initially fitted with the loading fixed to 1. Because we’re showing standardised loadings, we could just use the model when fitted with <code>std.lv=TRUE</code> just to stop these dotted lines from appearing:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(semPlot)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">semPaths</span>(cpmod.est2, </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">whatLabels =</span> <span class="st">"std"</span>, </span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">rotation =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="08ex_files/figure-html/unnamed-chunk-39-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 7
+</div>
+<div class="question-body">
+<p>Make a bullet point list of everything you have done so far, and the resulting conclusions.<br>
+Then, if you feel like it, turn the bulleted list into written paragraphs, and you’ll have a write-up of your analyses!</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<p>A two-factor model was tested. Items 1-5 loaded on a ‘non-aggressive conduct problems’ factor and items 6-10 loaded on an ‘aggression’ factor and these factors were allowed to correlate. Scaling and identification were achieved by fixing the loading of item 1 on the non-aggressive conduct problems factor and item 6 on the aggression factor to 1. The model was estimated using maximum likelihood estimation. The model fit well with CFI=.99, TLI=0.99, RMSEA=.04, and SRMR=.04 (Hu &amp; Bentler, 1999). All loadings were statistically significant and &gt;|.3| on the standardised scale. Overall, therefore, a two-factor oblique model was supported for the conduct problems items. The correlation between the factors was <span class="math inline">\(r=.38\,\, (p&lt;.001)\)</span>.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">parameter</th>
+<th style="text-align: right;">est</th>
+<th style="text-align: right;">std.est</th>
+<th style="text-align: right;">se</th>
+<th style="text-align: left;">z</th>
+<th style="text-align: left;">pvalue</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">nonagg=~item1</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">0.664</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">nonagg=~item2</td>
+<td style="text-align: right;">1.217</td>
+<td style="text-align: right;">0.765</td>
+<td style="text-align: right;">0.076</td>
+<td style="text-align: left;">15.965</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">nonagg=~item3</td>
+<td style="text-align: right;">1.012</td>
+<td style="text-align: right;">0.676</td>
+<td style="text-align: right;">0.070</td>
+<td style="text-align: left;">14.424</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">nonagg=~item4</td>
+<td style="text-align: right;">1.146</td>
+<td style="text-align: right;">0.706</td>
+<td style="text-align: right;">0.077</td>
+<td style="text-align: left;">14.967</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">nonagg=~item5</td>
+<td style="text-align: right;">1.360</td>
+<td style="text-align: right;">0.872</td>
+<td style="text-align: right;">0.078</td>
+<td style="text-align: left;">17.412</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">agg=~item6</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">0.636</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">agg=~item7</td>
+<td style="text-align: right;">1.419</td>
+<td style="text-align: right;">0.878</td>
+<td style="text-align: right;">0.082</td>
+<td style="text-align: left;">17.331</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">agg=~item8</td>
+<td style="text-align: right;">1.437</td>
+<td style="text-align: right;">0.915</td>
+<td style="text-align: right;">0.081</td>
+<td style="text-align: left;">17.662</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">agg=~item9</td>
+<td style="text-align: right;">1.093</td>
+<td style="text-align: right;">0.668</td>
+<td style="text-align: right;">0.077</td>
+<td style="text-align: left;">14.125</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">agg=~item10</td>
+<td style="text-align: right;">0.950</td>
+<td style="text-align: right;">0.608</td>
+<td style="text-align: right;">0.073</td>
+<td style="text-align: left;">13.073</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">nonagg~~agg</td>
+<td style="text-align: right;">0.156</td>
+<td style="text-align: right;">0.375</td>
+<td style="text-align: right;">0.023</td>
+<td style="text-align: left;">6.856</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">item1~~item1</td>
+<td style="text-align: right;">0.574</td>
+<td style="text-align: right;">0.559</td>
+<td style="text-align: right;">0.037</td>
+<td style="text-align: left;">15.398</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">item2~~item2</td>
+<td style="text-align: right;">0.477</td>
+<td style="text-align: right;">0.416</td>
+<td style="text-align: right;">0.035</td>
+<td style="text-align: left;">13.778</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">item3~~item3</td>
+<td style="text-align: right;">0.551</td>
+<td style="text-align: right;">0.543</td>
+<td style="text-align: right;">0.036</td>
+<td style="text-align: left;">15.262</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">item4~~item4</td>
+<td style="text-align: right;">0.597</td>
+<td style="text-align: right;">0.501</td>
+<td style="text-align: right;">0.040</td>
+<td style="text-align: left;">14.867</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">item5~~item5</td>
+<td style="text-align: right;">0.264</td>
+<td style="text-align: right;">0.239</td>
+<td style="text-align: right;">0.028</td>
+<td style="text-align: left;">9.537</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">item6~~item6</td>
+<td style="text-align: right;">0.561</td>
+<td style="text-align: right;">0.595</td>
+<td style="text-align: right;">0.035</td>
+<td style="text-align: left;">16.193</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">item7~~item7</td>
+<td style="text-align: right;">0.228</td>
+<td style="text-align: right;">0.229</td>
+<td style="text-align: right;">0.021</td>
+<td style="text-align: left;">10.767</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">item8~~item8</td>
+<td style="text-align: right;">0.153</td>
+<td style="text-align: right;">0.162</td>
+<td style="text-align: right;">0.019</td>
+<td style="text-align: left;">8.122</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">item9~~item9</td>
+<td style="text-align: right;">0.566</td>
+<td style="text-align: right;">0.554</td>
+<td style="text-align: right;">0.035</td>
+<td style="text-align: left;">15.978</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">item10~~item10</td>
+<td style="text-align: right;">0.587</td>
+<td style="text-align: right;">0.630</td>
+<td style="text-align: right;">0.036</td>
+<td style="text-align: left;">16.351</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">nonagg~~nonagg</td>
+<td style="text-align: right;">0.453</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">0.052</td>
+<td style="text-align: left;">8.701</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">agg~~agg</td>
+<td style="text-align: right;">0.381</td>
+<td style="text-align: right;">1.000</td>
+<td style="text-align: right;">0.045</td>
+<td style="text-align: left;">8.396</td>
+<td style="text-align: left;">&lt; 0.001</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Modification indices and expected parameter changes were inspected but no modifications were made because no expected parameter changes were judged large enough to merit the inclusion of additional parameters given that there was little theoretical rationale for their inclusion. -->
+</div>
+<p class="solution-end">
+</p>
+<p><br></p>
+</section>
+<section id="doom-scrolling" class="level1">
+<h1>“DOOM” Scrolling</h1>
+<div class="frame">
+<p><strong>Dataset: doom.csv</strong></p>
+<p>The “Domains of Online Obsession Measure” (DOOM) is a fictitious scale that aims to assess the sub types of addictions to online content. It was developed to measure 2 separate domains of online obsession: items 1 to 9 are representative of the “emotional” relationships people have with their internet usage (i.e.&nbsp;how it makes them feel), and items 10 to 15 reflect “practical” relationship (i.e., how it connects or interferes with their day-to-day life). Each item is measured on a 7-point likert scale from “strongly disagree” to “strongly agree”.</p>
+<p>We administered this scale to 476 participants in order to assess the validity of the 2 domain structure of the online obsession measure that we obtained during scale development.</p>
+<p>The data are available at <a href="https://uoepsy.github.io/data/doom.csv" target="_blank">https://uoepsy.github.io/data/doom.csv</a>, and the table below shows the individual item wordings.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="gizlxktdxe" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#gizlxktdxe table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#gizlxktdxe thead, #gizlxktdxe tbody, #gizlxktdxe tfoot, #gizlxktdxe tr, #gizlxktdxe td, #gizlxktdxe th {
+  border-style: none;
+}
+
+#gizlxktdxe p {
+  margin: 0;
+  padding: 0;
+}
+
+#gizlxktdxe .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#gizlxktdxe .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#gizlxktdxe .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#gizlxktdxe .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#gizlxktdxe .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#gizlxktdxe .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gizlxktdxe .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#gizlxktdxe .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#gizlxktdxe .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#gizlxktdxe .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#gizlxktdxe .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#gizlxktdxe .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#gizlxktdxe .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#gizlxktdxe .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#gizlxktdxe .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#gizlxktdxe .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#gizlxktdxe .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#gizlxktdxe .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#gizlxktdxe .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gizlxktdxe .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#gizlxktdxe .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#gizlxktdxe .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#gizlxktdxe .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gizlxktdxe .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#gizlxktdxe .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#gizlxktdxe .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gizlxktdxe .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gizlxktdxe .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#gizlxktdxe .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gizlxktdxe .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#gizlxktdxe .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gizlxktdxe .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#gizlxktdxe .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gizlxktdxe .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#gizlxktdxe .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gizlxktdxe .gt_left {
+  text-align: left;
+}
+
+#gizlxktdxe .gt_center {
+  text-align: center;
+}
+
+#gizlxktdxe .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#gizlxktdxe .gt_font_normal {
+  font-weight: normal;
+}
+
+#gizlxktdxe .gt_font_bold {
+  font-weight: bold;
+}
+
+#gizlxktdxe .gt_font_italic {
+  font-style: italic;
+}
+
+#gizlxktdxe .gt_super {
+  font-size: 65%;
+}
+
+#gizlxktdxe .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#gizlxktdxe .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#gizlxktdxe .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#gizlxktdxe .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#gizlxktdxe .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#gizlxktdxe .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#gizlxktdxe .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#gizlxktdxe .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#gizlxktdxe div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_col_headings">
+<th id="variable" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">variable</th>
+<th id="question" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">question</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="variable">item_1</td>
+<td class="gt_row gt_left" headers="question">i just can't stop watching videos of animals</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="variable">item_2</td>
+<td class="gt_row gt_left" headers="question">i spend hours scrolling through tutorials but never actually attempt any projects.</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="variable">item_3</td>
+<td class="gt_row gt_left" headers="question">cats are my main source of entertainment.</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="variable">item_4</td>
+<td class="gt_row gt_left" headers="question">life without the internet would be boring, empty, and joyless</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="variable">item_5</td>
+<td class="gt_row gt_left" headers="question">i try to hide how long i’ve been online</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="variable">item_6</td>
+<td class="gt_row gt_left" headers="question">i avoid thinking about things by scrolling on the internet</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="variable">item_7</td>
+<td class="gt_row gt_left" headers="question">everything i see online is either sad or terrifying</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="variable">item_8</td>
+<td class="gt_row gt_left" headers="question">all the negative stuff online makes me feel better about my own life</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="variable">item_9</td>
+<td class="gt_row gt_left" headers="question">i feel better the more 'likes' i receive</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="variable">item_10</td>
+<td class="gt_row gt_left" headers="question">most of my time online is spent communicating with others</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="variable">item_11</td>
+<td class="gt_row gt_left" headers="question">my work suffers because of the amount of time i spend online</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="variable">item_12</td>
+<td class="gt_row gt_left" headers="question">i spend a lot of time online for work</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="variable">item_13</td>
+<td class="gt_row gt_left" headers="question">i check my emails very regularly</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="variable">item_14</td>
+<td class="gt_row gt_left" headers="question">others in my life complain about the amount of time i spend online</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="variable">item_15</td>
+<td class="gt_row gt_left" headers="question">i neglect household chores to spend more time online</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<div class="question-begin">
+Question 8
+</div>
+<div class="question-body">
+<p>Assess whether the 2 domain model of online obsession provides a good fit to the validation sample of 476 participants.</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<p>From the visual of the correlation matrix, you can see the vague outline of two groups of items correlations. Note there’s a little overlap..</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>doom <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/doom.csv"</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcorrplot</span>(<span class="fu">cor</span>(doom))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="08ex_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>first we write our model:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>moddoom <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="st"># emotional domain</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="st">emot =~ item_1 + item_2 + item_3 + item_4 + item_5 + item_6 + item_7 + item_8 + item_9</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="st"># practical domain</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="st">pract =~ item_10 + item_11 + item_13 + item_14 + item_15</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="st"># correlated domains (will be estimated by default)</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="st">emot ~~ pract</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then we fit it to the data:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>moddoom.est <span class="ot">&lt;-</span> <span class="fu">cfa</span>(moddoom, <span class="at">data =</span> doom)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then we inspect that fitted model object.<br>
+I’m just going to extract the fit indices here first.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fitmeasures</span>(moddoom.est)[<span class="fu">c</span>(<span class="st">"rmsea"</span>,<span class="st">"srmr"</span>,<span class="st">"cfi"</span>,<span class="st">"tli"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     rmsea       srmr        cfi        tli 
+0.07331272 0.06227484 0.84791972 0.81790388 </code></pre>
+</div>
+</div>
+<p>Uh-oh.. they don’t look great.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 9
+</div>
+<div class="question-body">
+<p>Are there any areas of local misfit (certain parameters that are not in the model (and are therefore fixed to zero) but that could improve model fit <em>if they were</em> estimated?).</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+modification indices
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>When a factor structure does not fit well, we can either start over and go back to doing EFA, deciding on an appropriate factor structure, on whether we should drop certain items, etc. The downside of this is that we essentially result in <em>another</em> version of the scale, and before we know it, we have 10 versions of the same measure floating around, in a perpetual state of scale-development. Alternatively, we can see if it is possible to minimally adjust our model based on areas of local misfit in order to see if our global fit improves. Note that this would still be in a sense <em>exploratory,</em> and we should be very clear when writing up about the process that we undertook. We should also avoid just shoving any parameter in that might make it fit better - we should let common sense and theoretical knowledge support any adjustments we make.</p>
+<p>The <code>modindices()</code> function takes a fitted model object from <strong>lavaan</strong> and provides a table of all the possible additional parameters we <em>could</em> estimate.</p>
+<p>The output is a table, which we can ask to be sorted according to the <code>mi</code> column using <code>sort = TRUE</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">modindices</span>(myfittedmodel, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<pre><code>      lhs op    rhs     mi    epc sepc.lv sepc.all sepc.nox
+72  item6 ~~ item10 10.747  0.082   0.082    0.144    0.144
+25 fact1  =~  item7  8.106  0.119   0.080    0.080    0.080
+65  item5 ~~  item7  6.720  0.039   0.039    0.160    0.160
+71  item6 ~~  item9  6.675 -0.065  -0.065   -0.115   -0.115
+.   ...   .   ...    ...    ...     ...      ...      ...</code></pre>
+<p>The columns show:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 26%">
+<col style="width: 24%">
+<col style="width: 24%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><code>lhs</code>,<code>op</code>,<code>rhs</code></th>
+<th><code>mi</code></th>
+<th><code>epc</code></th>
+<th><code>sepc.lv</code>, <code>sepc.all</code>,<code>sepc.nox</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>these three columns show the specific parameter, in lavaan syntax. So <code>fact1 =~ item7</code> is for the possible inclusion of <code>item7</code> being loaded on to the latent variable <code>fact1</code>. <code>item6 ~~ item10</code> is for the inclusion of a covariance between <code>item6</code> and <code>item10</code>, and so on.</td>
+<td>“modification index” = the change in the model <span class="math inline">\(\chi^2\)</span> value <em>were we to include this parameter in the model</em></td>
+<td>“expected parameter change” = the estimated value that the parameter <em>would take were it included in the model</em></td>
+<td>these provide the <code>epc</code> values but scaled to when a) the latent variables are standardised, b) all variables are standardised, and c) all except exogenous observed variables are standardised (not relevant for CFA)</td>
+</tr>
+</tbody>
+</table>
+<p>Often, the <code>sepc.all</code>is a useful column to look at, because it shows the proposed parameter estimate in a standardised metric. i.e.&nbsp;if the <code>op</code> is <code>~~</code>, then the <code>sepc.all</code> value is a correlation, and so we can consider anything &lt;.2/.3ish to be quite small. If <code>op</code> is <code>=~</code>, then the <code>sepc.all</code> value is a standardised factor loading, so values &gt;.3 or &gt;.4 are worth thinking about, and so on.</p>
+</div>
+</div>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<p>I’m printing out just the <code>head()</code>, so that I can look at the few parameters with the greatest modification indices.<br>
+The top three parameters jump out immediately to me.<br>
+<code>item_1</code> and <code>item_3</code> have a suggested correlation of c0.5, as do <code>item_7</code> and <code>item_8</code>. In addition, it’s suggested that including a loading (estimated to be about 0.6) from <code>item_10</code> to the <code>emot</code> factor would improve the model fit.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">modindices</span>(moddoom.est, <span class="at">sort=</span><span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        lhs op     rhs     mi    epc sepc.lv sepc.all sepc.nox
+47   item_1 ~~  item_3 88.700  0.560   0.560    0.459    0.459
+32     emot =~ item_10 74.374  1.690   0.817    0.640    0.640
+109  item_7 ~~  item_8 61.930  0.370   0.370    0.432    0.432
+34     emot =~ item_13 14.824 -0.655  -0.317   -0.275   -0.275
+122  item_9 ~~ item_10 12.634  0.145   0.145    0.217    0.217
+135 item_13 ~~ item_15  8.956  0.178   0.178    0.171    0.171</code></pre>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 10
+</div>
+<div class="question-body">
+<p><strong>Beware:</strong> there’s a slightly blurred line here that we’re about to step over, and move from confirmatory back to ‘exploratory’.</p>
+<p>Look carefully at the item wordings,do any of the suggested modifications make theoretical sense? Add them to the model and re-fit it. Does this new model fit well?</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+model modifications are exploratory!!
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>It’s likely you will have to make a couple of modifications in order to obtain a model that fits well to this data.</p>
+<p><strong>BUT…</strong> we could simply keep adding suggested parameters to our model and we will eventually end up with a perfectly fitting model.</p>
+<p>It’s very important to think critically here about <em>why</em> such modifications may be necessary.</p>
+<ul>
+<li>The initial model may have failed to capture the complexity of the underlying relationships among variables. For instance, suggested residual covariances, representing unexplained covariation among observed variables, may indicate misspecification in the initial model.</li>
+<li>The structure of the construct is genuinely different in your population from the initial one in which the scale is developed (this could be a research question in and of itself - i.e.&nbsp;does the structure of “anxiety” differ as people age, or differ between cultures?)</li>
+</ul>
+<p>Modifications to a CFA model should be made judiciously, with careful consideration of theory as well as quantitative metrics. The goal is to develop a model that accurately represents the underlying structure of the data while maintaining theoretical coherence and generalizability.</p>
+</div>
+</div>
+</div>
+<p>In this case, the likely reason for the poor fit of the “DOOM” scale, is that the person who made the items (ahem, me) doesn’t really know anything about the construct they are talking about, and didn’t put much care into constructing the items!</p>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<p>There are three main proposed adjustments from our initial model:</p>
+<ol type="1">
+<li><p><code>item_1 ~~ item_3</code>. These questions are both about animals. It would make sense that these are related over and above the underlying “emotional internet usage” factor.</p></li>
+<li><p><code>item_7 ~~ item_8</code>. These are both about viewing negative content online, so it makes sense here that they would be related beyond the ‘emotional’ factor.</p></li>
+<li><p><code>emot =~ item_10</code>. This item is about communicating with others. It currently loads highly on the <code>pract</code> factor too. It maybe makes sense here that “communicating with others” will capture both a practical element of internet useage <em>and</em> an emotional one.</p></li>
+</ol>
+<p>Putting them all in at once could be a mistake - if we added in <code>emot =~ item_10</code>, then we change slightly the underlying construct of the <code>emot</code> factor, meaning it might make other suggested modifications (<code>item_7 ~~ item_8</code>) less important. It’s a bit like <a href="https://en.wikipedia.org/wiki/Whac-A-Mole" target="_blank">Whac-A-Mole</a> - you make one modification and then a whole new area of misfits appears!</p>
+<p>Let’s adjust our model:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>moddoom2 <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="st"># emotional domain</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="st">emot =~ item_1 + item_2 + item_3 + item_4 + item_5 + item_6 + item_7 + item_8 + item_9 + item_10</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="st"># practical domain</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="st">pract =~ item_10 + item_11 + item_13 + item_14 + item_15</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="st"># correlated domains (will be estimated by default)</span></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="st">emot ~~ pract</span></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then fit it to the data:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>moddoom2.est <span class="ot">&lt;-</span> <span class="fu">cfa</span>(moddoom2, <span class="at">data =</span> doom)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">fitmeasures</span>(moddoom2.est)[<span class="fu">c</span>(<span class="st">"rmsea"</span>,<span class="st">"srmr"</span>,<span class="st">"cfi"</span>,<span class="st">"tli"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     rmsea       srmr        cfi        tli 
+0.06013775 0.05147585 0.89901514 0.87747171 </code></pre>
+</div>
+</div>
+<p>The fit is still not great, and the same suggested correlations are present in modification indices:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">modindices</span>(moddoom2.est, <span class="at">sort=</span><span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       lhs op     rhs     mi    epc sepc.lv sepc.all sepc.nox
+47  item_1 ~~  item_3 87.679  0.553   0.553    0.455    0.455
+109 item_7 ~~  item_8 61.827  0.365   0.365    0.421    0.421
+43   pract =~  item_7  7.117 -0.300  -0.178   -0.159   -0.159
+48  item_1 ~~  item_4  6.264 -0.139  -0.139   -0.128   -0.128
+117 item_8 ~~ item_10  6.072 -0.110  -0.110   -0.151   -0.151
+44   pract =~  item_8  5.065 -0.244  -0.145   -0.130   -0.130</code></pre>
+</div>
+</div>
+<p>Let’s go ahead and put the covariance between <code>item_1</code> and <code>item_3</code> in. I personally went for this first because they seem more similar to me than <code>item_7</code> and <code>item_8</code> do.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>moddoom3 <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="st"># emotional domain</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="st">emot =~ item_1 + item_2 + item_3 + item_4 + item_5 + item_6 + item_7 + item_8 + item_9 + item_10</span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="st"># practical domain</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="st">pract =~ item_10 + item_11 + item_13 + item_14 + item_15</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a><span class="st"># correlated domains (will be estimated by default)</span></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a><span class="st">emot ~~ pract</span></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a><span class="st">item_1 ~~ item_3</span></span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>moddoom3.est <span class="ot">&lt;-</span> <span class="fu">cfa</span>(moddoom3, <span class="at">data =</span> doom)</span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a><span class="fu">fitmeasures</span>(moddoom3.est)[<span class="fu">c</span>(<span class="st">"rmsea"</span>,<span class="st">"srmr"</span>,<span class="st">"cfi"</span>,<span class="st">"tli"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     rmsea       srmr        cfi        tli 
+0.03282045 0.03830848 0.97032291 0.96350520 </code></pre>
+</div>
+</div>
+<p>Whoop! It fits well! It may well be that if we inspect modification indices again, we still see that <code>item_1 ~~ item_3</code> would improve our model fit. The thing to remember however, is that we could simply keep adding parameters until we run out of degrees of freedom, and our model would “fit better”. But such a model would not be useful. It would not generalise well, becaue it runs the risk of being overfitted to the nuances of this specific sample.</p>
+</div>
+<p class="solution-end">
+</p>
+<p><br></p>
+</section>
+<section id="optional-extra-exercises-for-the-enthusiastic" class="level1">
+<h1>Optional Extra Exercises for the Enthusiastic</h1>
+<div class="frame">
+<p><strong>Dataset: radakovic_das.csv</strong></p>
+<p>Apathy is lack of motivation towards goal-directed behaviours. It is pervasive in a majority of psychiatric and neurological diseases, and impacts everyday life. Traditionally, apathy has been measured as a one-dimensional construct but is in fact composed of different types of demotivation.</p>
+<p>Dimensional Apathy Scale (DAS) The Dimensional Apathy Scale (DAS) is a multidimensional assessment for demotivation, in which 3 subtypes of apathy are assessed:</p>
+<ul>
+<li><strong>Executive:</strong> lack of motivation for planning, attention or organisation</li>
+<li><strong>Emotional:</strong> lack of emotional motivation (indifference, affective or emotional neutrality, flatness or blunting)</li>
+<li><strong>Initiation:</strong> lack of motivation for self-generation of thoughts and/or actions</li>
+</ul>
+<p>The DAS measures these subtypes of apathy and allows for quick and easy assessment, through self-assessment, observations by informants/carers or administration by researchers or healthcare professionals.</p>
+<p>You can find data for the DAS when administered to 250 healthy adults at <a href="https://uoepsy.github.io/data/radakovic_das.csv" target="_blank">https://uoepsy.github.io/data/radakovic_das.csv</a>, and information on the items is below.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+DAS Dictionary
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>All items are measured on a 6-point Likert scale of Always (0), Almost Always (1), Often (2), Occasionally (3), Hardly Ever (4), and Never (5). Certain items (indicated in the table below with a <code>-</code> direction) are reverse scored to ensure that higher scores indicate greater levels of apathy.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="uomxcmwtah" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#uomxcmwtah table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#uomxcmwtah thead, #uomxcmwtah tbody, #uomxcmwtah tfoot, #uomxcmwtah tr, #uomxcmwtah td, #uomxcmwtah th {
+  border-style: none;
+}
+
+#uomxcmwtah p {
+  margin: 0;
+  padding: 0;
+}
+
+#uomxcmwtah .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#uomxcmwtah .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#uomxcmwtah .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#uomxcmwtah .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#uomxcmwtah .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#uomxcmwtah .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#uomxcmwtah .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#uomxcmwtah .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#uomxcmwtah .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#uomxcmwtah .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#uomxcmwtah .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#uomxcmwtah .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#uomxcmwtah .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#uomxcmwtah .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#uomxcmwtah .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#uomxcmwtah .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#uomxcmwtah .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#uomxcmwtah .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#uomxcmwtah .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#uomxcmwtah .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#uomxcmwtah .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#uomxcmwtah .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#uomxcmwtah .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#uomxcmwtah .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#uomxcmwtah .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#uomxcmwtah .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#uomxcmwtah .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#uomxcmwtah .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#uomxcmwtah .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#uomxcmwtah .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#uomxcmwtah .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#uomxcmwtah .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#uomxcmwtah .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#uomxcmwtah .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#uomxcmwtah .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#uomxcmwtah .gt_left {
+  text-align: left;
+}
+
+#uomxcmwtah .gt_center {
+  text-align: center;
+}
+
+#uomxcmwtah .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#uomxcmwtah .gt_font_normal {
+  font-weight: normal;
+}
+
+#uomxcmwtah .gt_font_bold {
+  font-weight: bold;
+}
+
+#uomxcmwtah .gt_font_italic {
+  font-style: italic;
+}
+
+#uomxcmwtah .gt_super {
+  font-size: 65%;
+}
+
+#uomxcmwtah .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#uomxcmwtah .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#uomxcmwtah .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#uomxcmwtah .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#uomxcmwtah .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#uomxcmwtah .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#uomxcmwtah .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#uomxcmwtah .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#uomxcmwtah div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_col_headings">
+<th id="item" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">item</th>
+<th id="direction" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">direction</th>
+<th id="dimension" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">dimension</th>
+<th id="question" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">question</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_right" headers="item">1</td>
+<td class="gt_row gt_right" headers="direction">+</td>
+<td class="gt_row gt_left" headers="dimension">Executive</td>
+<td class="gt_row gt_left" headers="question">I need a bit of encouragement to get things started</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="item">2</td>
+<td class="gt_row gt_right" headers="direction">-</td>
+<td class="gt_row gt_left" headers="dimension">Initiation</td>
+<td class="gt_row gt_left" headers="question">I contact my friends</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="item">3</td>
+<td class="gt_row gt_right" headers="direction">-</td>
+<td class="gt_row gt_left" headers="dimension">Emotional</td>
+<td class="gt_row gt_left" headers="question">I express my emotions</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="item">4</td>
+<td class="gt_row gt_right" headers="direction">-</td>
+<td class="gt_row gt_left" headers="dimension">Initiation</td>
+<td class="gt_row gt_left" headers="question">I think of new things to do during the day</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="item">5</td>
+<td class="gt_row gt_right" headers="direction">-</td>
+<td class="gt_row gt_left" headers="dimension">Emotional</td>
+<td class="gt_row gt_left" headers="question">I am concerned about how my family feel</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="item">6</td>
+<td class="gt_row gt_right" headers="direction">+</td>
+<td class="gt_row gt_left" headers="dimension">Executive</td>
+<td class="gt_row gt_left" headers="question">I find myself staring in to space</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="item">7</td>
+<td class="gt_row gt_right" headers="direction">-</td>
+<td class="gt_row gt_left" headers="dimension">Emotional</td>
+<td class="gt_row gt_left" headers="question">Before I do something I think about how others would feel about it</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="item">8</td>
+<td class="gt_row gt_right" headers="direction">-</td>
+<td class="gt_row gt_left" headers="dimension">Initiation</td>
+<td class="gt_row gt_left" headers="question">I plan my days activities in advance</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="item">9</td>
+<td class="gt_row gt_right" headers="direction">-</td>
+<td class="gt_row gt_left" headers="dimension">Emotional</td>
+<td class="gt_row gt_left" headers="question">When I receive bad news I feel bad about it</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="item">10</td>
+<td class="gt_row gt_right" headers="direction">-</td>
+<td class="gt_row gt_left" headers="dimension">Executive</td>
+<td class="gt_row gt_left" headers="question">I am unable to focus on a task until it is finished</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="item">11</td>
+<td class="gt_row gt_right" headers="direction">+</td>
+<td class="gt_row gt_left" headers="dimension">Executive</td>
+<td class="gt_row gt_left" headers="question">I lack motivation</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="item">12</td>
+<td class="gt_row gt_right" headers="direction">+</td>
+<td class="gt_row gt_left" headers="dimension">Emotional</td>
+<td class="gt_row gt_left" headers="question">I struggle to empathise with other people</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="item">13</td>
+<td class="gt_row gt_right" headers="direction">-</td>
+<td class="gt_row gt_left" headers="dimension">Initiation</td>
+<td class="gt_row gt_left" headers="question">I set goals for myself</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="item">14</td>
+<td class="gt_row gt_right" headers="direction">-</td>
+<td class="gt_row gt_left" headers="dimension">Initiation</td>
+<td class="gt_row gt_left" headers="question">I try new things</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="item">15</td>
+<td class="gt_row gt_right" headers="direction">+</td>
+<td class="gt_row gt_left" headers="dimension">Emotional</td>
+<td class="gt_row gt_left" headers="question">I am unconcerned about how others feel about my behaviour</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="item">16</td>
+<td class="gt_row gt_right" headers="direction">-</td>
+<td class="gt_row gt_left" headers="dimension">Initiation</td>
+<td class="gt_row gt_left" headers="question">I act on things I have thought about during the day</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="item">17</td>
+<td class="gt_row gt_right" headers="direction">+</td>
+<td class="gt_row gt_left" headers="dimension">Executive</td>
+<td class="gt_row gt_left" headers="question">When doing a demanding task, I have difficulty working out what I have to do</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="item">18</td>
+<td class="gt_row gt_right" headers="direction">-</td>
+<td class="gt_row gt_left" headers="dimension">Initiation</td>
+<td class="gt_row gt_left" headers="question">I keep myself busy</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="item">19</td>
+<td class="gt_row gt_right" headers="direction">+</td>
+<td class="gt_row gt_left" headers="dimension">Executive</td>
+<td class="gt_row gt_left" headers="question">I get easily confused when doing several things at once</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="item">20</td>
+<td class="gt_row gt_right" headers="direction">-</td>
+<td class="gt_row gt_left" headers="dimension">Emotional</td>
+<td class="gt_row gt_left" headers="question">I become emotional easily when watching something happy or sad on TV</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="item">21</td>
+<td class="gt_row gt_right" headers="direction">+</td>
+<td class="gt_row gt_left" headers="dimension">Executive</td>
+<td class="gt_row gt_left" headers="question">I find it difficult to keep my mind on things</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="item">22</td>
+<td class="gt_row gt_right" headers="direction">-</td>
+<td class="gt_row gt_left" headers="dimension">Initiation</td>
+<td class="gt_row gt_left" headers="question">I am spontaneous</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="item">23</td>
+<td class="gt_row gt_right" headers="direction">+</td>
+<td class="gt_row gt_left" headers="dimension">Executive</td>
+<td class="gt_row gt_left" headers="question">I am easily distracted</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="item">24</td>
+<td class="gt_row gt_right" headers="direction">+</td>
+<td class="gt_row gt_left" headers="dimension">Emotional</td>
+<td class="gt_row gt_left" headers="question">I feel indifferent to what is going on around me</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="question-begin">
+Question 11
+</div>
+<div class="question-body">
+<p>Read in the data. It will need a little bit of tidying before we can get to fitting a CFA.<br>
+If you haven’t already, check out the page on <a href="00_qdata.html" target="_blank">Questionnaire Data Wrangling</a>.</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-1" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-1', 'sol-start-1')">
+1 - Read and check
+</button>
+</div>
+<div id="sol-body-1" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 1</em>. </span>First let’s just read in the dataset:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>rdas <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/radakovic_das.csv"</span>)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(rdas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 24
+  I need a bit of encouragement …¹ `I contact my friends` I express my emotion…²
+  &lt;chr&gt;                            &lt;chr&gt;                  &lt;chr&gt;                 
+1 Often                            Almost Always          Almost Always         
+2 Almost Always                    Hardly Ever            Occasionally          
+3 Often                            Occasionally           Occasionally          
+4 Hardly Ever                      Occasionally           Almost Always         
+5 Occasionally                     Hardly Ever            Occasionally          
+6 Occasionally                     Occasionally           Almost Always         
+# ℹ abbreviated names: ¹​`I need a bit of encouragement to get things started`,
+#   ²​`I express my emotions`
+# ℹ 21 more variables: `I think of new things to do during the day` &lt;chr&gt;,
+#   `I am concerned about how my family feel` &lt;chr&gt;,
+#   `I find myself staring in to space` &lt;chr&gt;,
+#   `Before I do something I think about how others would feel about it` &lt;chr&gt;,
+#   `I plan my days activities in advance` &lt;chr&gt;, …</code></pre>
+</div>
+</div>
+<p>The names we’re getting are useful in that they show the items, but they’re horrible to have to use in R, so we will ideally replace them with easy to use names. Note also that the data is being read in as the actual response option - e.g., “Almost Always” - and we want to treat these as a numeric scale. So those will have to change too.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-2" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-2', 'sol-start-2')">
+2 - Renaming variables
+</button>
+</div>
+<div id="sol-body-2" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 2</em>. </span>I like to make a “data dictionary” whenever I get data like this. While I want to rename the variables to make it easier for me to use, I also want to keep track of what the questions were.<br>
+Here I make a “tibble” (the function <code>data.frame()</code> would work too, tibble is just tidyverse version). I indicate what I am going to rename things as (“q1”,“q2”, …, “q24”), and then I have the current names of the variables</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>rdas_dict <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">variable =</span> <span class="fu">paste0</span>(<span class="st">"q"</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">24</span>),</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">item =</span> <span class="fu">names</span>(rdas)</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Doing this is really useful because I can’t keep track in my head of what “q5” was.<br>
+If I want to know, then I can just do:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>rdas_dict[<span class="dv">5</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+  variable item                                   
+  &lt;chr&gt;    &lt;chr&gt;                                  
+1 q5       I am concerned about how my family feel</code></pre>
+</div>
+</div>
+<p>Now let’s actually change the names in our data to what we said we would:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rdas) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"q"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">24</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-3" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-3', 'sol-start-3')">
+3 - Recoding responses
+</button>
+</div>
+<div id="sol-body-3" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 3</em>. </span>Okay, so we have all our data in words, not numbers. Views on how to treat Likert data are mixed, but it’s very common to treat it as continuous in Psychology.</p>
+<p>Let’s check the response values we have. Just in question 1 for now:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(rdas<span class="sc">$</span>q1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Often"         "Almost Always" "Hardly Ever"   "Occasionally" 
+[5] "Always"        NA              "Never"        </code></pre>
+</div>
+</div>
+<p>A little trick that we can use to find the unique values in an entire dataset is to quickly convert the dataframe into one big long vector. Technically, a dataframe is a “list of vectors”, and the function <code>unlist()</code> will remove this structure.<br>
+So we can find all the unique values in all the questions with:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(<span class="fu">unlist</span>(rdas))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Often"         "Almost Always" "Hardly Ever"   "Occasionally" 
+[5] "Always"        NA              "Never"         "[NO ENTRY]"   </code></pre>
+</div>
+</div>
+<p>Perfect. So we know we have uniformity of spelling. It happens less often these days as questionnaire software is improving, but you might occasionally encounter typos in <em>some</em> of the questions, or things with and without capital letters (R is a bit thick, and doesn’t recognise that “Often” and “often” are the same thing).<br>
+Note that we have the 6 responses that we would expect given the description of the scale, but we also have some <code>NA</code> values, and some <code>[NO ENTRY]</code> values. Not sure how those got there.<br>
+We want to turn each “Always” in to 0, each “Almost Always” in to 1, “Often” in to 2, and so on. If we simply leave out the “[NO ENTRY]”, then this will be turned into a missing value <code>NA</code>, which is handy.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>rdas <span class="ot">&lt;-</span> rdas <span class="sc">|&gt;</span> </span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(q1<span class="sc">:</span>q24, <span class="sc">~</span><span class="fu">case_match</span>(.,</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Always"</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Almost Always"</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Often"</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Occasionally"</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Hardly Ever"</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Never"</span> <span class="sc">~</span> <span class="dv">5</span></span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>  )))</span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(rdas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 24
+     q1    q2    q3    q4    q5    q6    q7    q8    q9   q10   q11   q12   q13
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1     2     1     1     4     1     3     1     4     2     2     3     2     3
+2     1     4     3     4    NA     0    NA     2    NA     2     1     2     3
+3     2     3     3     4     3     3     2     2     4     1     3     2     3
+4     4     3     1     3     1    NA     2     2    NA     2     3     4     2
+5     3     4     3     5     2     2     2     3     3     2     2     2     1
+6     3     3     1     0     1     2     1     1     0     2     1     4     3
+# ℹ 11 more variables: q14 &lt;dbl&gt;, q15 &lt;dbl&gt;, q16 &lt;dbl&gt;, q17 &lt;dbl&gt;, q18 &lt;dbl&gt;,
+#   q19 &lt;dbl&gt;, q20 &lt;dbl&gt;, q21 &lt;dbl&gt;, q22 &lt;dbl&gt;, q23 &lt;dbl&gt;, q24 &lt;dbl&gt;</code></pre>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-4" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-4', 'sol-start-4')">
+4 - Removing missingness
+</button>
+</div>
+<div id="sol-body-4" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 4</em>. </span>We haven’t learned about more sophisticated methods of handling missing data, so for now we will just remove any rows in which there is missingness - i.e., we’ll do “listwise deletion”:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>compl_rdas <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(rdas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 12
+</div>
+<div class="question-body">
+<p>How well does the 3-dimensional model of apathy fit to this dataset?</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hints
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>You’ll have to use the data dictionary to figure out which items are associated with with dimensions.</p>
+</div>
+</div>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div style="display:none;">
+<p>Here is the model structure, according to the list of items in the dictionary.<br>
+I’m calling my factors “Em”, “Ex”, and “BCI” for “emotional”, “executive” and “behavioural/cognitive initiation” respectively. The factor correlations will be estimated by default, but I like to write things explicitly.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>dasmod <span class="ot">=</span> <span class="st">"</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="st">Em =~ q1 + q6 + q10 + q11 + q17 + q19 + q23</span></span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a><span class="st">Ex =~ q3 + q5 + q7 + q9 + q12 + q15 + q20 + q24</span></span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a><span class="st">BCI =~ q2 + q4 + q8 + q13 + q14 + q16 + q18 + q22</span></span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a><span class="st">Em ~~ Ex</span></span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a><span class="st">Em ~~ BCI</span></span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a><span class="st">Ex ~~ BCI</span></span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s fit the model!</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>dasmod.est <span class="ot">=</span> <span class="fu">cfa</span>(dasmod, compl_rdas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And examine the global fit:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fitmeasures</span>(dasmod.est)[<span class="fu">c</span>(<span class="st">"srmr"</span>,<span class="st">"rmsea"</span>,<span class="st">"tli"</span>,<span class="st">"cfi"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      srmr      rmsea        tli        cfi 
+0.05484788 0.02614997 0.95698828 0.96140846 </code></pre>
+</div>
+</div>
+<p>All looks pretty good! Cut-offs for SRMR tend to vary, with some using &lt;0.08, or &lt;0.09, and some being stricter with &lt;0.05. Remember, these criteria are somewhat arbitrary.</p>
+<p>Modification indices suggest a whole bunch of items that could have some associations beyond that modelled in the factors, but these are all weak correlations at around 0.2.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">modindices</span>(dasmod.est, <span class="at">sort=</span><span class="cn">TRUE</span>) <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    lhs op rhs     mi    epc sepc.lv sepc.all sepc.nox
+126  q6 ~~  q3 15.790 -0.221  -0.221   -0.284   -0.284
+108  q1 ~~  q9 11.413  0.169   0.169    0.264    0.264
+206 q19 ~~ q20 10.884 -0.167  -0.167   -0.257   -0.257
+331  q4 ~~  q8  7.552  0.201   0.201    0.208    0.208
+99   q1 ~~  q6  7.310  0.150   0.150    0.224    0.224
+101  q1 ~~ q11  6.183 -0.149  -0.149   -0.236   -0.236</code></pre>
+</div>
+</div>
+<p>These are the top 3 being suggested. I can’t see any obvious link between any of these that would make me think they are related beyond their measuring of ‘apathy’.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>rdas_dict[<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">6</span>),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  variable item                             
+  &lt;chr&gt;    &lt;chr&gt;                            
+1 q3       I express my emotions            
+2 q6       I find myself staring in to space</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>rdas_dict[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">9</span>),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  variable item                                               
+  &lt;chr&gt;    &lt;chr&gt;                                              
+1 q1       I need a bit of encouragement to get things started
+2 q9       When I receive bad news I feel bad about it        </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>rdas_dict[<span class="fu">c</span>(<span class="dv">19</span>,<span class="dv">20</span>),]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 2
+  variable item                                                                
+  &lt;chr&gt;    &lt;chr&gt;                                                               
+1 q19      I get easily confused when doing several things at once             
+2 q20      I become emotional easily when watching something happy or sad on TV</code></pre>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 13
+</div>
+<div class="question-body">
+<p>Much like for EFA, we can estimate individuals’ scores on the latent factors. In lavaan, the function <code>lavPredict()</code> will get us some estimates.</p>
+<p>However, for a clinician administering the DAS to a patient, this option is not available. Instead, it is common that scores on the individual items associated with a given factor are used to create a sum score or a mean score which can be used in a practical setting (e.g., scores above a given threshold might indicate cause for concern).</p>
+<p>Calculate sum scores for each of the dimensions of apathy.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hints
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>You’ll need to reverse some items first! See <a href="00_qdata.html#reverse-coding" target="_blank">Questionnaire Data Wrangling #reverse-coding</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-5" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-5', 'sol-start-5')">
+1 - Reversing items
+</button>
+</div>
+<div id="sol-body-5" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 5</em>. </span>According to the table of items, the ones which need to be reverse scored are:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>reversed <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">9</span>,<span class="dv">10</span>,<span class="dv">13</span>,<span class="dv">14</span>,<span class="dv">16</span>,<span class="dv">18</span>,<span class="dv">20</span>,<span class="dv">22</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For these items, we want 5s to become 0s, 4s become 1s, and so on..</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>compl_rdas[, reversed] <span class="ot">&lt;-</span> <span class="fu">apply</span>(</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>  compl_rdas[, reversed], <span class="at">MARGIN =</span> <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="dv">5</span><span class="sc">-</span>x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Note:</strong> The above code works nicely because our dataset is currently ordered such that the first column is item 1, 2nd column is item 2, and so on. This means we can use <em>numbers</em> to index the appropriate variables, rather than <em>names</em>. It would need adjusting if, for instance, our first column contained “participant ID”, and our items only began later.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-6" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-6', 'sol-start-6')">
+2 - Sum Scoring
+</button>
+</div>
+<div id="sol-body-6" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 6</em>. </span>Here are the sets of items associated with each dimension:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>Exitems <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">6</span>,<span class="dv">10</span>,<span class="dv">11</span>,<span class="dv">17</span>,<span class="dv">19</span>,<span class="dv">21</span>,<span class="dv">23</span>)</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>Emitems <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">5</span>,<span class="dv">7</span>,<span class="dv">9</span>,<span class="dv">12</span>,<span class="dv">15</span>,<span class="dv">20</span>,<span class="dv">24</span>)</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>BCIitems <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">8</span>,<span class="dv">13</span>,<span class="dv">14</span>,<span class="dv">16</span>,<span class="dv">18</span>,<span class="dv">22</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Again, because the item numbers correspond to the column positions in our data, we can just do rowSums indexing on those column numbers to get our scores:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>compl_rdas<span class="sc">$</span>ExSCORE <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(compl_rdas[,Exitems])</span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>compl_rdas<span class="sc">$</span>EmSCORE <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(compl_rdas[,Emitems])</span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>compl_rdas<span class="sc">$</span>BCIScore <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(compl_rdas[,BCIitems])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+optional: what is a sum score but a constrained factor model?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Computing sum scores can feel like a ‘model free’ calculation, but actually it <strong>does</strong> pre-suppose a factor structure, and a much more constrained one than those we have been estimating. For a full explanation of this, see <a href="https://doi.org/10.3758/s13428-020-01398-0" target="_blank">“Thinking twice about sum scores”, McNeish &amp; Wolf 2020</a>.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/diag_sumscore.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>or in logistic regression, “what is the likelihood of observing the outcome <span class="math inline">\(y\)</span> given our model parameters?”<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>© Copyright 2019-2025 <a href="https://www.ed.ac.uk/">The University of Edinburgh</a>. Site licensed under the <a href="https://www.gnu.org/licenses/agpl-3.0.en.html">GNU AGPLv3</a> license.</p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

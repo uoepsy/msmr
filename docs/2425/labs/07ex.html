@@ -245,6 +245,35 @@ window.Quarto = {
  <span class="menu-text">Week 7 Exercises: PCA &amp; EFA</span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 8 Exercises: CFA</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Additional</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00_pca.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">PCA in 3D</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00_qdata.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Questionnaire Data Wrangling</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -966,7 +995,13 @@ Question 1
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<button id="sol-start-1" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-1', 'sol-start-1')">
+Solution
+</button>
+</div>
+<div id="sol-body-1" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 1</em>. </span></p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>jobperf <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/jobperfbonus.csv"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(jobperf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1061,8 +1096,13 @@ Scatterplot Matrix
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>Let’s keep the full data with the names, but make a new object that is just the performance data:</p>
+<div class="solution-begin">
+<button id="sol-start-2" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-2', 'sol-start-2')">
+Solution
+</button>
+</div>
+<div id="sol-body-2" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 2</em>. </span>Let’s keep the full data with the names, but make a new object that is just the performance data:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>qperf <span class="ot">&lt;-</span> jobperf <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>name)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -1117,8 +1157,13 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>All of it!<br>
+<div class="solution-begin">
+<button id="sol-start-3" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-3', 'sol-start-3')">
+Solution
+</button>
+</div>
+<div id="sol-body-3" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 3</em>. </span>All of it!<br>
 The right hand entry of the “Cumulative Var” row is 1 - it explains everything.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">principal</span>(qperf, <span class="at">nfactors =</span> <span class="dv">15</span>, <span class="at">rotate =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1333,8 +1378,13 @@ When conducting an EFA as opposed to a PCA, you can set <code>fa = "both"</code>
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>According to Kaiser’s rule, we should keep 3 components</p>
+<div class="solution-begin">
+<button id="sol-start-4" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-4', 'sol-start-4')">
+Kaiser
+</button>
+</div>
+<div id="sol-body-4" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 4</em>. </span>According to Kaiser’s rule, we should keep 3 components</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">principal</span>(qperf, <span class="at">nfactors =</span> <span class="dv">15</span>, <span class="at">rotate =</span> <span class="st">"none"</span>)<span class="sc">$</span>values</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1346,8 +1396,13 @@ When conducting an EFA as opposed to a PCA, you can set <code>fa = "both"</code>
 </div>
 <p class="solution-end">
 </p>
-<div style="display:none;">
-<p>According to the Scree plot, I would suggest keeping 3 components</p>
+<div class="solution-begin">
+<button id="sol-start-5" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-5', 'sol-start-5')">
+Scree
+</button>
+</div>
+<div id="sol-body-5" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 5</em>. </span>According to the Scree plot, I would suggest keeping 3 components</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">scree</span>(qperf, <span class="at">factors =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -1361,8 +1416,13 @@ When conducting an EFA as opposed to a PCA, you can set <code>fa = "both"</code>
 </div>
 <p class="solution-end">
 </p>
-<div style="display:none;">
-<p>According to the MAP, we should keep 3 components</p>
+<div class="solution-begin">
+<button id="sol-start-6" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-6', 'sol-start-6')">
+MAP
+</button>
+</div>
+<div id="sol-body-6" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 6</em>. </span>According to the MAP, we should keep 3 components</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">VSS</span>(qperf, <span class="at">n =</span> <span class="fu">ncol</span>(qperf), </span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">rotate =</span> <span class="st">"none"</span>, <span class="at">fm =</span> <span class="st">"pc"</span>, <span class="at">plot =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1421,8 +1481,13 @@ Statistics by number of factors
 </div>
 <p class="solution-end">
 </p>
-<div style="display:none;">
-<p>According to the parallel analysis, we should keep 3 components</p>
+<div class="solution-begin">
+<button id="sol-start-7" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-7', 'sol-start-7')">
+Parallel Analysis
+</button>
+</div>
+<div id="sol-body-7" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 7</em>. </span>According to the parallel analysis, we should keep 3 components</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fa.parallel</span>(qperf, <span class="at">fa=</span><span class="st">"pc"</span>, <span class="at">n.iter =</span> <span class="dv">500</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -1439,8 +1504,13 @@ Statistics by number of factors
 </div>
 <p class="solution-end">
 </p>
-<div style="display:none;">
-<p>In this case, everything agrees that we should retain 3 components:</p>
+<div class="solution-begin">
+<button id="sol-start-8" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-8', 'sol-start-8')">
+Making a decision
+</button>
+</div>
+<div id="sol-body-8" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 8</em>. </span>In this case, everything agrees that we should retain 3 components:</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div id="wfzesjtpon" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
@@ -1936,8 +2006,13 @@ Question 5
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>It’s rarely as neat as this, but we can see the patterns of higher loadings for the groups of 5 questions on each component.</p>
+<div class="solution-begin">
+<button id="sol-start-9" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-9', 'sol-start-9')">
+Solution
+</button>
+</div>
+<div id="sol-body-9" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 9</em>. </span>It’s rarely as neat as this, but we can see the patterns of higher loadings for the groups of 5 questions on each component.</p>
 <ul>
 <li>PC1 has higher loadings for q1 to q5</li>
 <li>PC2 has higher loadings for q6 to q10</li>
@@ -2013,8 +2088,13 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>The second component seems to capture a lot of ‘teamwork’ related questions. So if we extract scores on that second component, we could then pick the 10 people for whom they are highest on that component.</p>
+<div class="solution-begin">
+<button id="sol-start-10" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-10', 'sol-start-10')">
+Solution
+</button>
+</div>
+<div id="sol-body-10" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 10</em>. </span>The second component seems to capture a lot of ‘teamwork’ related questions. So if we extract scores on that second component, we could then pick the 10 people for whom they are highest on that component.</p>
 <p>This will extract the scores:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">principal</span>(qperf, <span class="at">nfactors =</span> <span class="dv">3</span>, <span class="at">rotate =</span> <span class="st">"none"</span>)<span class="sc">$</span>scores</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -2169,7 +2249,13 @@ Kaiser, Meyer, Olkin Measure of Sampling Adequacy
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<button id="sol-start-11" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-11', 'sol-start-11')">
+Solution
+</button>
+</div>
+<div id="sol-body-11" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 11</em>. </span></p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>cpdata <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"https://uoepsy.github.io/data/conduct_probs_scale.csv"</span>)</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="co"># discard the first column</span></span>
@@ -2240,8 +2326,13 @@ Question 8
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>The scree plot shows a kink at 3, which suggests retaining 2 components.</p>
+<div class="solution-begin">
+<button id="sol-start-12" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-12', 'sol-start-12')">
+Scree
+</button>
+</div>
+<div id="sol-body-12" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 12</em>. </span>The scree plot shows a kink at 3, which suggests retaining 2 components.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">scree</span>(cpdata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -2255,8 +2346,13 @@ Question 8
 </div>
 <p class="solution-end">
 </p>
-<div style="display:none;">
-<p>The MAP suggests retaining 2 factors. I’m just extracting the actuall <code>map</code> values here to save having to show all the other output. We can see that the 2nd entry is the smallest:</p>
+<div class="solution-begin">
+<button id="sol-start-13" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-13', 'sol-start-13')">
+MAP
+</button>
+</div>
+<div id="sol-body-13" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 13</em>. </span>The MAP suggests retaining 2 factors. I’m just extracting the actuall <code>map</code> values here to save having to show all the other output. We can see that the 2nd entry is the smallest:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">VSS</span>(cpdata, <span class="at">plot =</span> <span class="cn">FALSE</span>, <span class="at">n =</span> <span class="fu">ncol</span>(cpdata))<span class="sc">$</span>map</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -2267,8 +2363,13 @@ Question 8
 </div>
 <p class="solution-end">
 </p>
-<div style="display:none;">
-<p>Parallel analysis suggests 2 factors as well:</p>
+<div class="solution-begin">
+<button id="sol-start-14" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-14', 'sol-start-14')">
+Parallel Analysis
+</button>
+</div>
+<div id="sol-body-14" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 14</em>. </span>Parallel analysis suggests 2 factors as well:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fa.parallel</span>(cpdata, <span class="at">fa =</span> <span class="st">"both"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -2285,8 +2386,13 @@ Question 8
 </div>
 <p class="solution-end">
 </p>
-<div style="display:none;">
-<p>Again, a quite clear picture that 2 factors is preferred:</p>
+<div class="solution-begin">
+<button id="sol-start-15" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-15', 'sol-start-15')">
+Making a decision
+</button>
+</div>
+<div id="sol-body-15" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 15</em>. </span>Again, a quite clear picture that 2 factors is preferred:</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div id="jorhmxkoqt" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
@@ -2843,8 +2949,13 @@ Factor Extraction Methods
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>For example, you could choose an oblimin rotation to allow factors to correlate and use ml as the extraction method.</p>
+<div class="solution-begin">
+<button id="sol-start-16" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-16', 'sol-start-16')">
+Solution
+</button>
+</div>
+<div id="sol-body-16" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 16</em>. </span>For example, you could choose an oblimin rotation to allow factors to correlate and use ml as the extraction method.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>conduct_efa <span class="ot">&lt;-</span> <span class="fu">fa</span>(cpdata, <span class="at">nfactors=</span><span class="dv">2</span>, <span class="at">rotate=</span><span class="st">'oblimin'</span>, <span class="at">fm=</span><span class="st">"ml"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -2887,8 +2998,13 @@ You can extract individual parts using:</p>
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>Things look pretty good here. Each item has a clear primary loading on to one of the factors, and the complexity for all items is 1 (meaning they’re clearly link to just one of the factors). The <code>h2</code> column is showing that the 2 factor solution is explaining 38%+ of the variance in each item. Both factors are well determined, having at least 3 salient loadings.</p>
+<div class="solution-begin">
+<button id="sol-start-17" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-17', 'sol-start-17')">
+Solution
+</button>
+</div>
+<div id="sol-body-17" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 17</em>. </span>Things look pretty good here. Each item has a clear primary loading on to one of the factors, and the complexity for all items is 1 (meaning they’re clearly link to just one of the factors). The <code>h2</code> column is showing that the 2 factor solution is explaining 38%+ of the variance in each item. Both factors are well determined, having at least 3 salient loadings.</p>
 <p>The 2 factors together explain 57% of the variance in the data - both factors explain a similar amount (29% for factor 1, 28% for factor 2).</p>
 <p>We can also see that there is a moderate correlation between the two factors. Use of an oblique rotation was appropriate - if the correlation had been very weak, then it might not have differed much from if we used an orthogonal rotation.</p>
 <div class="cell" data-layout-align="center">
@@ -2956,8 +3072,13 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>You can inspect the loadings using:</p>
+<div class="solution-begin">
+<button id="sol-start-18" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-18', 'sol-start-18')">
+Solution
+</button>
+</div>
+<div id="sol-body-18" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 18</em>. </span>You can inspect the loadings using:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(conduct_efa<span class="sc">$</span>loadings, <span class="at">sort=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -3025,8 +3146,13 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>The 1-factor model explains 37% of the variance (as opposed to the 57% explained by the 2 factor solution), and all items load fairly high on the factor. The downside here is that we’re not discerning between different types of conduct problems that we did in the 2 factor solution.</p>
+<div class="solution-begin">
+<button id="sol-start-19" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-19', 'sol-start-19')">
+Solution
+</button>
+</div>
+<div id="sol-body-19" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 19</em>. </span>The 1-factor model explains 37% of the variance (as opposed to the 57% explained by the 2 factor solution), and all items load fairly high on the factor. The downside here is that we’re not discerning between different types of conduct problems that we did in the 2 factor solution.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>conduct_1 <span class="ot">&lt;-</span> <span class="fu">fa</span>(cpdata, <span class="at">nfactors=</span><span class="dv">1</span>, <span class="at">fm=</span><span class="st">"ml"</span>)</span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>conduct_1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -3156,8 +3282,13 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>The main principles governing the reporting of statistical results are transparency and reproducibility (i.e., someone should be able to reproduce your analysis based on your description).</p>
+<div class="solution-begin">
+<button id="sol-start-20" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-20', 'sol-start-20')">
+Solution
+</button>
+</div>
+<div id="sol-body-20" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 20</em>. </span>The main principles governing the reporting of statistical results are transparency and reproducibility (i.e., someone should be able to reproduce your analysis based on your description).</p>
 <p>An example summary would be:</p>
 <div class="int">
 <p>First, the data were checked for their suitability for factor analysis. Normality was checked using visual inspection of histograms, linearity was checked through the inspection of the linear and lowess lines for the pairwise relations of the variables, and factorability was confirmed using a KMO test, which yielded an overall KMO of <span class="math inline">\(.87\)</span> with no variable KMOs <span class="math inline">\(&lt;.50\)</span>. An exploratory factor analysis was conducted to inform the structure of a new conduct problems test. Inspection of a scree plot alongside parallel analysis (using principal components analysis; PA-PCA) and the MAP test were used to guide the number of factors to retain. All three methods suggested retaining two factors; however, a one-factor and three-factor solution were inspected to confirm that the two-factor solution was optimal from a substantive and practical perspective, e.g., that it neither blurred important factor distinctions nor included a minor factor that would be better combined with the other in a one-factor solution. These factor analyses were conducted using maximum likelihood estimation and (for the two- and three-factor solutions) an oblimin rotation, because it was expected that the factors would correlate. Inspection of the factor loadings and correlations reinforced that the two-factor solution was optimal: both factors were well-determined, including 5 loadings <span class="math inline">\(&gt;|0.3|\)</span> and the one-factor model blurred the distinction between different forms of conduct problems. The factor loadings are provided in <a href="#tbl-loadingtab" class="quarto-xref">Table&nbsp;2</a><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. Based on the pattern of factor loadings, the two factors were labelled ‘aggressive conduct problems’ and ‘non-aggressive conduct problems’. These factors had a correlation of <span class="math inline">\(r=.43\)</span>. Overall, they accounted for 57% of the variance in the items, suggesting that a two-factor solution effectively summarised the variation in the items.</p>
