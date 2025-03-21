@@ -1,7 +1,7 @@
 ---
 title: "Week 10 Exercises: Structural Equation Modelling (SEM)"
 params: 
-    SHOW_SOLS: FALSE
+    SHOW_SOLS: TRUE
     TOGGLE: TRUE
 editor_options: 
   chunk_output_type: console
@@ -338,11 +338,17 @@ Examine the modification indices and expected parameter changes - are there any 
 `r qend()` 
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
 
+Making adjustments our theoretical model in order to better represent _this_ sample, we are risking a) over-fitting to the specifics of this sample, and b) testing a theory that we didn't really have _a priori_ (i.e. we didn't have this theoretical model before seeing this data).  
+
+However, it can still be worth looking at modindices in order to assess any places of local misfit in the model. These can provide useful discussion points and make us pause for thought, even if we are happy with our current model fit. 
+
+In this case, none of the expected parameter changes are very large.  
+
 ```{r modindices}
 modindices(TPB_model.est, sort = TRUE) |> head()
 ```
 
-In this case, none of the expected parameter changes are large enough that we would consider including any additional parameters
+
 `r solend()`
 
 `r qbegin(qcounter())`
