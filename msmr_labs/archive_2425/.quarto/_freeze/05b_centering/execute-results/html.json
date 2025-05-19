@@ -1,0 +1,18 @@
+{
+  "hash": "50efb1d090a1ab5b5a4f6ef65c06e694",
+  "result": {
+    "markdown": "---\ntitle: \"5B: Centering\"\nparams: \n    SHOW_SOLS: FALSE\n    TOGGLE: TRUE\neditor_options: \n  chunk_output_type: console\n---\n\n\n\n\n\n:::lo\nThis reading:  \n\n\n:::\n\n\n# Centering predictors in `lm()`\n\n\n\n \n\n\n\n::: {.cell layout-align=\"center\"}\n\n```{.r .cell-code}\nschoolmot <- read_csv(\"https://uoepsy.github.io/data/schoolmot.csv\")\n\nsmod3 <- lmer(grade ~ motiv + (1 + motiv | schoolid), \n              data = schoolmot)\n\nschoolmot <-\n  schoolmot |> group_by(schoolid) |>\n  mutate(\n    mm = mean(motiv),\n    md = motiv-mean(motiv)\n  )\n\nsmod4 <- lmer(grade ~ (mm + md) + (1 + md | schoolid), \n              data = schoolmot)\n```\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {
+      "include-in-header": [
+        "<link href=\"site_libs/panelset-0.2.6/panelset.css\" rel=\"stylesheet\" />\r\n<script src=\"site_libs/panelset-0.2.6/panelset.js\"></script>\r\n"
+      ]
+    },
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

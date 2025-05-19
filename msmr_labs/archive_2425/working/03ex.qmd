@@ -1,0 +1,513 @@
+---
+title: "Week 3 Exercises: Non-Linear Change"
+params: 
+    SHOW_SOLS: FALSE
+    TOGGLE: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+source('assets/setup.R')
+library(xaringanExtra)
+library(tidyverse)
+library(patchwork)
+library(ggdist)
+xaringanExtra::use_panelset()
+qcounter <- function(){
+  if(!exists("qcounter_i")){
+    qcounter_i <<- 1
+  }else{
+    qcounter_i <<- qcounter_i + 1
+  }
+  qcounter_i
+}
+```
+
+# Cognitive performance
+
+:::frame
+__Dataset: Az.rda__  
+  
+These data are available at [https://uoepsy.github.io/data/Az.rda](https://uoepsy.github.io/data/Az.rda).  
+You can load the dataset using:  
+```{r}
+load(url("https://uoepsy.github.io/data/Az.rda"))
+```
+and you will find the `Az` object in your environment.  
+
+The `Az` object contains information on 30 Participants with probable Alzheimer's Disease, who completed 3 tasks over 10 time points: A memory task, and two scales investigating ability to undertake complex activities of daily living (cADL) and simple activities of daily living (sADL). Performance on all of tasks was calculated as a percentage of total possible score, thereby ranging from 0 to 100. 
+
+```{r}
+#| echo: false
+tibble(
+    variable = names(Az),
+    description = c("Unique Subject Identifier","Time point of the study (1 to 10)","Task type (Memory, cADL, sADL)","Score on test (range 0 to 100)")
+) |> gt::gt()
+```
+:::
+
+`r qbegin(qcounter())`
+Load in the data and examine it.  
+How many participants, how many observations per participant, per task?  
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+load(url("https://uoepsy.github.io/data/Az.rda"))
+summary(Az)
+```
+
+30 participants: 
+```{r}
+length(unique(Az$Subject))
+```
+
+Does every participant have 10 datapoints for each Task type?  
+```{r}
+any( table(Az$Subject, Az$Task) != 10 )
+```
+
+`r solend()`
+
+`r qbegin(qcounter())`
+No modelling just yet.  
+
+Plot the performance over time for each type of task.  
+
+Try using `stat_summary` so that you are plotting the means (and standard errors) of each task, rather than every single data point. Why? Because this way you can get a shape of the average trajectories of performance over time in each task.  
+
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+ggplot(Az, aes(Time, Performance, color=Task, fill=Task)) + 
+  stat_summary(fun.data=mean_se, geom="ribbon", color=NA, alpha=0.5) +
+  stat_summary(fun=mean, geom="line")
+```
+`r solend()`
+
+`r qbegin(qcounter())`
+Why do you think *raw/natural* polynomials might be more useful than *orthogonal* polynomials for these data?  
+
+::: {.callout-tip collapse="true"}
+#### Hints
+
+Are we somewhat interested in group differences (i.e. differences in scores, or differences in rates of change) at a specific point in time?  
+
+:::
+
+
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+TODO 
+Because we're likely to be interested in whether there are task differences at the starting baseline point
+`r solend()`
+
+
+`r qbegin(qcounter())`
+fit full model  
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+TODO 
+```{r}
+Az <- Az |> mutate(
+  poly1 = poly(Time,2,raw=T)[,1],
+  poly2 = poly(Time,2,raw=T)[,2]
+)
+
+m1 = lmer(Performance ~ (poly1 + poly2) * Task +
+            (1 + poly1 + poly2 + Task + poly1:Task + poly2:Task| Subject),
+          data=Az, REML=F, control=lmerControl(optimizer = "bobyqa"))
+
+m2 = lmer(Performance ~ (poly1 + poly2) * Task +
+           (1 + poly1 + poly2 + Task + poly1:Task| Subject),
+         data=Az, REML=F, control=lmerControl(optimizer = "bobyqa"))
+
+m3 = lmer(Performance ~ (poly1 + poly2) * Task +
+            (1 + poly1 + Task + poly1:Task + poly2:Task| Subject),
+          data=Az, REML=F, control=lmerControl(optimizer = "bobyqa"))
+
+
+m4 = lmer(Performance ~ (poly1 + poly2) * Task +
+            (1 + poly1 + Task + poly1:Task | Subject),
+          data=Az, REML=F, control=lmerControl(optimizer = "bobyqa"))
+```
+
+`r solend()`
+
+
+
+- doesn't converge, but there's a neat trick with random slopes of categorical variables like `Task` that we haven't come across yet. try to apply logic here.
+(sol visible)
+
+- simplify.. how?  
+
+- run series of model comparisons investigating whether
+  - do tasks differ in linear
+  - do tasks differ in quadratic
+
+- interpretation
+
+- from coefficients, sketch out plot
+
+- make plot of fitted values
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+`r qbegin(qcounter())`
+
+Okay! Let's do some modeling! 
+
+First steps:  
+
+1. Add 1st and 2nd order raw polynomials to the data.  
+2. Create a "baseline model", in which performance varies over time (with both linear and quadratic change), but no differences in Task are estimated. 
+
+We need to think about our random effect structure. We'll talk you through this bit because it's getting a bit more complicated now.  
+
+`r optbegin("1. What are the observations grouped by?", olabel=F,toggle=params$TOGGLE)`
+We have multiple observations for each participant. We can see this easily if we plot performance over time, and make a separate facet for each subject:
+```{r}
+ggplot(Az, aes(x=Time,y=Performance))+
+  geom_point()+
+  facet_wrap(~Subject)
+```
+
+We also have multiple observations for each task, and multiple observations for each time point (1 to 10). This is true, but importantly, these things (e.g. effects of time, differences between tasks) are things that we are specifically interested in estimating. The subjects, on the other hand, are simply a random sample of people in the study. We want to account for subject-level variation, but we're not interested in estimating specific differences between specific subjects. This lends itself perfectly to being a grouping variable in a multi-level model. 
+`r optend()`
+`r optbegin("2. Are observations nested?",olabel=F,toggle=params$TOGGLE)`
+There's another grouping _within_ each subjects' data, and that is the task they are measured on:
+```{r}
+ggplot(Az, aes(x=Time,y=Performance,col=Task))+
+  geom_point()+
+  facet_wrap(~Subject)
+```
+`r optend()`
+`r optbegin("3. What effects can vary by-groups?",olabel=F,toggle=params$TOGGLE)`
+For a given subject, on a given task, we can see that there is "an effect of time". 
+So we can conceivably think of the effect of time on performance as varying by subject and tasks within subjects.  
+```{r}
+Az %>% filter(Subject == 4) %>%
+ggplot(., aes(x=Time,y=Performance,col=Task))+
+  geom_point()+
+  facet_wrap(~Task)+
+  ylim(0,80)
+```
+`r optend()`
+`r optbegin("4. What should our random effect structure be?",olabel=F,toggle=params$TOGGLE)`
+So we know that we want to account for subject-level variation, and we also know that within each subjects' data there are different tasks.  
+Previously we have just been modelling one-level of grouping. This would be something like `(1 + ... | Subject)`. 
+
+We can extend this to model variation by-tasks-within-subjects, by using `(1 + ... | Subject/Task)`. This can also be written as: `(1 + ... | Subject) + (1 + ... | Subject:Task)` (which allows us to include different predictors as random effects in each grouping).  
+
+
+- `(1 | Subject/Task)` = Allow subjects to vary in their intercepts, and within each subject, allow the tasks to vary in their intercepts. 
+
+We also know that the trajectories of performance over time could be different for each subject, and it could also be different for each task for each subject. 
+So we can allow our effects that encode time (`poly1`, `poly2`) to vary by-subject/task:  
+
+- `(1 + poly1 + poly2 | Subject/Task)` = Allow subjects to vary in their intercepts and trajectories over time, and within each subject, allow the tasks to vary in their intercepts and trajectories over time. 
+`r optend()`
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+# prep for analysis
+Az <- code_poly(Az, predictor="Time", poly.order=2, orthogonal=F, draw.poly = F)
+
+# fit the base model
+m.base <- lmer(Performance ~ (poly1 + poly2) + 
+                 (poly1 + poly2 | Subject/Task),
+               data=Az, REML=F, control=lmerControl(optimizer="bobyqa"))
+summary(m.base)
+```
+`r solend()`
+
+`r qbegin("A5")`
+Hopefully, you fitted a model like this (or thereabouts)
+```{r eval=F}
+m.base <- lmer(Performance ~ (poly1 + poly2) + 
+                 (1 + poly1 + poly2 | Subject/Task),
+               data=Az, REML=F, control=lmerControl(optimizer="bobyqa"))
+```
+
+Remember what we learned last week about "singular fits"? It looks like this model might be a too complex for the data to sustain. 
+
+What random effect term might we consider removing? (there isn't necessarily a "right" answer here - many may be defensible, but your decision should be based on multiple considerations/evidence).  
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+I would be inclined to remove the `poly2` term from either subjects, or tasks within subjects. I probably wouldn't try removing it from both straight away, so we'll need to split the random effect terms from `(1 + poly1 + poly2| Subject/Task)` to `(1 + poly1 | Subject) + (1 + poly1 + poly2 | Subject:Task)`.  
+
+- Removing `poly2 | Subject:Task` will mean that within each subject, the linear trend will still vary by task, but quadratic trend will not. For a given subject, the model will think that the performance might go up on some tasks and down on others, but the curvature will be the same.  
+- Removing `poly2 | Subject` will mean that the linear trend will still vary by subjects, but the quadratic trend will not. The model will assume all Subjects have the same curvature to their trajectories. 
+
+```{r echo=FALSE, out.width = "100%", fig.cap="Model fits for 6 subjects when excluding different random effect terms"}
+m.base1 <- lmer(Performance ~ (poly1 + poly2)*Task + 
+                 (1 + poly1 | Subject) + (1 + poly1 + poly2 | Subject:Task),
+               data=Az, REML=F, control=lmerControl(optimizer="bobyqa"))
+m.base2 <- lmer(Performance ~ (poly1 + poly2)*Task + 
+                 (1 + poly1 + poly2 | Subject) + (1 + poly1 | Subject:Task),
+               data=Az, REML=F, control=lmerControl(optimizer="bobyqa"))
+broom.mixed::augment(m.base1) %>%
+  filter(Subject %in% as.character(1:6)) %>% 
+  ggplot(.,aes(x=poly1,y=.fitted))+
+  geom_line(aes(col=Task))+
+  facet_wrap(~Subject)+
+  labs(title="removing poly2 | Subject")+
+  theme(legend.position="none")-> p1
+broom.mixed::augment(m.base2) %>%
+  filter(Subject %in% as.character(1:6)) %>% 
+  ggplot(.,aes(x=poly1,y=.fitted))+
+  geom_line(aes(col=Task)) +
+  facet_wrap(~Subject)+
+  labs(title="removing poly2 | Subject:Task") -> p2
+p1 + p2 & theme_bw(base_size=11)
+
+```
+
+Personally I'm more tempted to remove `poly2 | Subject`, in part because there is far less estimated variance in this term (see below):
+```{r}
+# show the random effects
+VarCorr(m.base)
+```
+
+```{r}
+m.base <- lmer(Performance ~ (poly1 + poly2) + 
+                 (1 + poly1 | Subject) + (1 + poly1 + poly2 | Subject:Task),
+               data=Az, REML=F, control=lmerControl(optimizer="bobyqa"))
+summary(m.base)
+```
+`r solend()`
+
+`r qbegin("A6")`
+Let's start adding in our effects of interest.  
+
+1. Create a new model with a fixed effect of Task
+2. Create a new model in which performance varies linearly over time between Task type.
+3. Create a new model in which linear _and_ quadratic performance over time varies between Task type.
+4. Run model comparisons.  
+
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+m.0 <- lmer(Performance ~ (poly1 + poly2) + Task +
+              (1 + poly1 | Subject) + (1 + poly1 + poly2 | Subject:Task),
+            data=Az, REML=F, control=lmerControl(optimizer="bobyqa"))
+m.1 <- lmer(Performance ~ poly1*Task + poly2 +
+              (1 + poly1 | Subject) + (1 + poly1 + poly2 | Subject:Task),
+            data=Az, REML=F, control=lmerControl(optimizer="bobyqa"))
+m.Az.full <- lmer(Performance ~ (poly1 + poly2)*Task + 
+                  (1 + poly1 | Subject) + (1 + poly1 + poly2 | Subject:Task),
+                data=Az, REML=F, control=lmerControl(optimizer="bobyqa"))
+anova(m.base, m.0, m.1, m.Az.full)
+```
+`r solend()`
+
+:::frame
+
+We'd like to do some inferential tests of our coefficients values. We could consider computing some confidence intervals with `confint(m.Az.full, method="boot")`, but this may take quite a long time with such a complex model (if we bootstrap, we're essentially fitting thousands of models!).  
+
+For now, let's refit the full model and obtain p-values for our coefficients by using the Satterthwaite approximations for the denominator degrees of freedom.  
+The code below does this for us  
+
+:::rtip
+By using `lmerTest::lmer()` we don't have to load the package `library(lmerTest)`, and so it is just this single model that's get fitted this way. 
+:::
+
+```{r}
+m.full_satter <- 
+    lmerTest::lmer(Performance ~ (poly1 + poly2) * Task +
+                       (1 + poly1 | Subject) + (1 + poly1 + poly2 | Subject:Task),
+                   data=Az, REML=F, control=lmerControl(optimizer="bobyqa"))
+
+tidy(m.full_satter) %>% 
+    filter(effect=="fixed")
+```
+
+`r optbegin("Optional: Quick refresher of scientific notation", olabel=F,toggle=params$TOGGLE)`
+5.4e-3 = 0.0054  
+5.4e-2 = 0.054  
+5.4e-1 = 0.54  
+5.4e-0 = 5.4  
+5.4e+1 = 54  
+5.4e+2 = 540  
+`r optend()`
+
+:::
+
+`r qbegin("A7")`
+```{r echo=FALSE}
+tidy(m.full_satter) %>% 
+    filter(effect=="fixed") %>% 
+    mutate_if(is.numeric,~round(.,3)) %>%
+    mutate(p.value = ifelse(p.value == 0, "<.001 ***", as.character(str_replace(p.value, "0.",".")))) %>%
+    mutate_if(is.numeric,~round(.,2)) %>% select(-effect,-group) %>% 
+    kableExtra::kable() %>%
+    kableExtra::kable_styling(full_width = FALSE)
+```
+
+
+a) For the cADL Task, what is the estimated average performance where x = 0?  
+b) For the sADL and Memory Tasks, is the estimated average where x = 0 different to the cADL Task? 
+c) For the cADL Task, how does performance change for every increasing time point? (what is the estimated linear slope?)
+    - Note, the quadratic term `poly2` is non-significant, so we'll ignore it here  
+d) For the sADL Task, how is the change in performance over time different from the cADL Task? 
+e) The answer to c) + the answer to d) will give you the estimated slope for the sADL Task.
+f) For the Memory task, how does performance change for every increasing time point? In other words, what is the slope for the Memory task and what effect does time have?
+    - This is more difficult. The quadratic term is significant. 
+    - Recall the direction of the quadratic term (positive/negative) and how this relates to the visual curvature (see back in ["What's a polynomial?"](#whats-a-polynomial)). 
+    
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+a) For the cADL Task, what is the estimated average performance where x = 0?  
+    - __`r fixef(m.Az.full)[1] %>% round(.,2)`__
+b) For the sADL and Memory Tasks, is the estimated average where x = 0 different to the cADL Task? 
+    - __No. Neither of their differences from the intercept are significant.__  
+c) For the cADL Task, how does performance change for every increasing time point? (what is the estimated linear slope?)
+    - __Note, the quadratic term `poly2` is non-significant, so we'll ignore it here__  
+    - __For every increase in one timepoint, cADL performance changes by `r fixef(m.Az.full)[2] %>% round(.,2)`.__ 
+d) For the sADL Task, how is the change in performance over time different from the cADL Task? 
+    - __For every increase in one timepoint sADL performance change is `r fixef(m.Az.full)[6] %>% round(.,2)` different from change in cADL__
+e) The answer to c) + the answer to d) will give you the estimated slope for the sADL Task.
+    - __`r fixef(m.Az.full)[2] %>% round(.,2)` + `r fixef(m.Az.full)[6] %>% round(.,2)` = `r (fixef(m.Az.full)[2] + fixef(m.Az.full)[6]) %>% round(.,2)`__
+    - __For every increase in one timepoint, sADL performance changes by `r (fixef(m.Az.full)[2] + fixef(m.Az.full)[6]) %>% round(.,2)`__
+f) For the Memory task, how does performance change for every increasing time point? In other words, what is the slope for the Memory task and what effect does time have?
+    - __Memory performance declines even more steeply than cADL, with linear change of `r fixef(m.Az.full)[2] %>% round(.,2)` + `r fixef(m.Az.full)[7] %>% round(.,2)` = `r (fixef(m.Az.full)[2] + fixef(m.Az.full)[7]) %>% round(.,2)`. It also has a quadratic effect of `r round(fixef(m.Az.full)[3], 2)` + `r round(fixef(m.Az.full)[9],2)` = `r  round(fixef(m.Az.full)[3] + fixef(m.Az.full)[9], 2)`. This is positive, which means it is $\cup$-shaped (rather than $\cap$-shaped).__ 
+    
+`r solend()`
+
+`r qbegin("A8")`
+  
+Based on your answers above, can you sketch out (on paper) the model fit?
+
+Then provide a written description.  
+  
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+:::int
+Performance in all tasks starts out the same [thanks, natural polynomials!]. Linear change over time is different depending on task type: compared to complex ADL tasks, decline in simple ADL tasks is slower and decline in Memory is faster. Decline in cADL and sADL tasks is approximately linear, whereas decline in Memory has more curvature (reaching floor?)
+:::
+
+<center><video width="480" height="360" controls>
+  <source src="images/msmrcogsketch.mp4" type="video/mp4">
+</video></center>
+
+
+`r solend()`
+
+`r qbegin("A9")`
+To what extent do model comparisons (Question A6) and the parameter-specific p-values (Question A7) yield the same results? 
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+Model comparisons suggest:  
+
++ Linear slopes are different: $\chi^2(2)=30.41, p < .001$ (comparison `m.0` and `m.1` above).  
++ Quadratic term is different: $\chi^2(2)=171.53, p < .001$ (comparison `m.1` and `m.Az.full` above).  
+
+*Note:* We can't investigate the intercept difference via the model comparisons above. Comparison between `m.base` and `m.0` indicates difference holding polynomial terms constant (not the conditional effect where poly1 and poly2 are 0).
+
+`r solend()`
+
+`r qbegin("A10")`
+Plot the model fitted values. This might be pretty similar to the plot you created in Question A2, and (hopefully) similar to the one you drew on paper for Question A8.
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r fig.width=6, fig.height=4}
+ggplot(Az, aes(Time, Performance, color=Task)) + 
+  stat_summary(fun.data=mean_se, geom="pointrange") + 
+  stat_summary(fun=mean, geom="line", aes(y=fitted(m.Az.full)))
+```
+`r solend()`
+
+
+
+
+
+
+`r optbegin("Optional: TIMTOWTDI",olabel=F,toggle=params$TOGGLE)`
+**TIMTOWTDI** *(There is more than one way to do it)*  
+
+The approach we are learning about in this course is only one of many approaches to studying non-linearity. 
+Some alternatives, which you may come across in future work, are listed below.
+
+**Piecewise linear regression:** fit a linear model with cut point(s) along x (determine cut points by greatest reduction in mean squared error $\sigma$)
+```{r echo=FALSE, out.width="350px"}
+MASS::mcycle %>%
+  rename(y=accel,x=times) %>% filter(x>20) -> df
+breaks <- df$x[which(df$x >= 20 & df$x <= 40)]
+mse <- numeric(length(breaks))
+for(i in 1:length(breaks)){
+ piecewise1 <- lm(y ~ x*(x < breaks[i]) + x*(x>=breaks[i]),df)
+ mse[i] <- summary(piecewise1)[6]
+}
+mse <- as.numeric(mse)
+#breaks[which(mse==min(mse))]
+piecewise2 <- lm(y ~ x*(x <= 33) + x*(x > 33), df)
+df %>% mutate(
+  pred = predict(piecewise2),
+  se = predict(piecewise2,se.fit = T)$se
+) %>% 
+  ggplot(.,aes(x=x,y=pred))+
+  geom_line(aes(group=x>33),lwd=1)+
+  #geom_ribbon(aes(ymin=pred-(1.96*se),ymax=pred+(1.96*se),group=x>33),alpha=.2)+
+  geom_point(aes(y=y))+labs(y="y",title="Predicted values of y", subtitle="y ~ x*(x < 33) + x*(x > 33)")
+```
+
+**Piecewise polynomial** fit the model $y \sim x + x^2 + x^3$ to equal chunks of x.  
+
+```{r echo=FALSE, out.width="350px"}
+mod<-function(ddf){lm(y~poly(x,3), data=ddf)}
+
+df %>% mutate(pieces = cut(x,3)) %>% 
+  group_by(pieces) %>%
+  nest_legacy() %>%
+  mutate(
+    model = map(data, mod),
+    fit = map(model, ~fitted(.))
+  ) %>%
+  unnest_legacy(data,fit) %>%
+  ggplot(., aes(x=x))+
+  geom_point(aes(y=y))+
+  geom_line(aes(y=fit, col=pieces),lwd=1)+
+  theme_minimal() + guides(col=FALSE)+
+  labs(title="Predicted values of y",subtitle="y~ x + x^2 + x^3 for 3 cuts of x")
+```
+
+
+**Splines, penalised splines & GAMS** 
+
+This begins to open a huge can of worms, but if you foresee yourself needing these sort of tools, then Simon Wood, author of the **mgcv** R package for fitting generalised additive models (GAMS), is now in the maths department at Edinburgh. He has plenty of materials on [his webpage](https://www.maths.ed.ac.uk/~swood34/talks/snw-Koln.pdf) (Warning, these are fairly technical). There are also a reasonable number of tutorials [online which are really good](https://www.google.com/search?hl=&site=&q=gam+in+r+tutorial).  
+```{r echo=FALSE, out.width="350px"}
+library(mgcv)
+gam(y~s(x,bs="cr"),df, family="gaussian") -> m
+df %>% mutate(
+  pred = predict(m),
+  se = predict(m,se.fit = T)$se
+) %>% 
+  ggplot(.,aes(x=x,y=pred))+
+  geom_line(lwd=1)+
+  geom_ribbon(aes(ymin=pred-(1.96*se),ymax=pred+(1.96*se)),alpha=.2)+
+  geom_point(aes(y=y))+labs(y="y",title="Predicted values of y", subtitle="mgcv::gam(y ~ s(x, b = 'cr'))")
+```
+
+
+`r optend()`
+
+
+
