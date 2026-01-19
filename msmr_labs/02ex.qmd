@@ -735,6 +735,7 @@ Don't worry if it gives you an error/warning, we'll deal with that in a second.
 #### Hints
 
 - Remember, a good way to start is to split this up into 3 parts: 1) the outcome and fixed effects, 2) the grouping structure, and 3) the random slopes.  
+- If we have an interaction `y ~ 1 + x1*x2 + (1 .... | groups)`, and both predictors `x1` and `x2` vary within groups (i.e., each group has various values of the predictor), then because we can put random slopes of these variables --- `(1 + x1 + x2 | groups)` --- we can almost always also put the interaction in and have `(1 + x1 * x2 | groups)`  
 - fitting (or attempting to fit!) `glmer` models might take time!  
 
 
@@ -814,20 +815,28 @@ Sometimes changing the optimizer can help, but ideally we wouldn't want to just 
 
 The aim here is to simplify our random effect structure in order to obtain a converging model, but be careful not to over simplify.  
 
+There are no hard-and-fast rules on how to simplify, but the guiding principles might be thought of as: 
+
+1. we are **only** simplifying the random effects part, and **not** the fixed effects
+2. remove one thing at a time!  
+3. consider removing "more complex" parts first (interactions, slopes of categorical predictors)
+3. sometimes, the estimated variances in the non-converging model can guide us by indicating the parts of the structure for which there is not enough variability in the data (essentially, look for the tiny variances!).  
+
+
 Try it now. What model do you end up with? (You might not end up with the same model as each other, which is fine. These methods don't have "cookbook recipes"!)
 
 ::: {.callout-tip collapse="true"}
 #### Hints
 
-you could think of the interaction as the 'most complex' part of our random effects, so you might want to remove that first.  
+You could think of the interaction as the 'most complex' part of our random effects, so you might want to remove that first.  
 
 :::
 
 
 `r qend()`
-`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+`r solbegin(show=TRUE, toggle=params$TOGGLE)`
 
-This model still does not converge:  
+We'll remove the interaction first. But this model still does not converge:  
 ```{r}
 mod2 <- glmer(lever ~ frame * lives + 
       (1 + frame + lives | PID),  
@@ -839,7 +848,10 @@ In checkConv(attr(opt, "derivs"), opt\$par, ctrl = control\$checkConv,  :
   Model failed to converge with max|grad| = 0.00734804 (tol = 0.002, component 1)
 </p>
 
-We have a choice here - do we remove `frame|PID` or `lives|PID`? One practical point is that each participant has only 4 observations for each `frame` type, but they have 6 observations for each `lives` type, which might make it easier to fit.  
+We have a choice here - do we remove `frame|PID` or `lives|PID`?  
+One practical point is that each participant has only 4 observations for each `frame` type, but they have 6 observations for each `lives` type, which might make it easier to fit.  
+
+Another argument is that when doing this experiment, the `lives` manipulation is perhaps more *salient* than the specific wording. I could imagine, taking this study as a participant, that I might sort of skim read each version and not fully attend to the framing, but notice quite clearly the number of lives at stake. So it's possible that this effect may be bigger (and therefore more variable between people) than the effect of framing.  
 ```{r}
 mod3 <- glmer(lever ~ frame * lives + 
       (1 + lives | PID),  

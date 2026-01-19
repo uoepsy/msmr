@@ -3438,6 +3438,8 @@ Hints
 <ul>
 <li>Remember, a good way to start is to split this up into 3 parts: 1) the outcome and fixed effects, 2) the grouping structure, and 3) the random slopes.<br>
 </li>
+<li>If we have an interaction <code>y ~ 1 + x1*x2 + (1 .... | groups)</code>, and both predictors <code>x1</code> and <code>x2</code> vary within groups (i.e., each group has various values of the predictor), then because we can put random slopes of these variables — <code>(1 + x1 + x2 | groups)</code> — we can almost always also put the interaction in and have <code>(1 + x1 * x2 | groups)</code><br>
+</li>
 <li>fitting (or attempting to fit!) <code>glmer</code> models might take time!</li>
 </ul>
 </div>
@@ -3518,6 +3520,14 @@ Question 13
 <p>This is probably the first time we’ve had to deal with a model not converging.</p>
 <p>Sometimes changing the optimizer can help, but ideally we wouldn’t want to just shop around until we find one that doesn’t tell us about an error! More often than not, the model we are trying to fit is just too complex for our sample. Often, the groups in our sample just don’t vary enough for us to estimate a random slope (this doesn’t mean there is no variance in the real world, we might simply not have enough groups to see it).</p>
 <p>The aim here is to simplify our random effect structure in order to obtain a converging model, but be careful not to over simplify.</p>
+<p>There are no hard-and-fast rules on how to simplify, but the guiding principles might be thought of as:</p>
+<ol type="1">
+<li>we are <strong>only</strong> simplifying the random effects part, and <strong>not</strong> the fixed effects</li>
+<li>remove one thing at a time!<br>
+</li>
+<li>consider removing “more complex” parts first (interactions, slopes of categorical predictors)</li>
+<li>sometimes, the estimated variances in the non-converging model can guide us by indicating the parts of the structure for which there is not enough variability in the data (essentially, look for the tiny variances!).</li>
+</ol>
 <p>Try it now. What model do you end up with? (You might not end up with the same model as each other, which is fine. These methods don’t have “cookbook recipes”!)</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
@@ -3531,15 +3541,20 @@ Hints
 </div>
 <div id="callout-11" class="callout-11-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>you could think of the interaction as the ‘most complex’ part of our random effects, so you might want to remove that first.</p>
+<p>You could think of the interaction as the ‘most complex’ part of our random effects, so you might want to remove that first.</p>
 </div>
 </div>
 </div>
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>This model still does not converge:</p>
+<div class="solution-begin">
+<button id="sol-start-8" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-8', 'sol-start-8')">
+Solution
+</button>
+</div>
+<div id="sol-body-8" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 8</em>. </span>We’ll remove the interaction first. But this model still does not converge:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>mod2 <span class="ot">&lt;-</span> <span class="fu">glmer</span>(lever <span class="sc">~</span> frame <span class="sc">*</span> lives <span class="sc">+</span> </span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>      (<span class="dv">1</span> <span class="sc">+</span> frame <span class="sc">+</span> lives <span class="sc">|</span> PID),  </span>
@@ -3548,7 +3563,9 @@ Hints
 <p style="color:red;">
 Warning message:<br> In checkConv(attr(opt, “derivs”), opt$par, ctrl = control$checkConv, : Model failed to converge with max|grad| = 0.00734804 (tol = 0.002, component 1)
 </p>
-<p>We have a choice here - do we remove <code>frame|PID</code> or <code>lives|PID</code>? One practical point is that each participant has only 4 observations for each <code>frame</code> type, but they have 6 observations for each <code>lives</code> type, which might make it easier to fit.</p>
+<p>We have a choice here - do we remove <code>frame|PID</code> or <code>lives|PID</code>?<br>
+One practical point is that each participant has only 4 observations for each <code>frame</code> type, but they have 6 observations for each <code>lives</code> type, which might make it easier to fit.</p>
+<p>Another argument is that when doing this experiment, the <code>lives</code> manipulation is perhaps more <em>salient</em> than the specific wording. I could imagine, taking this study as a participant, that I might sort of skim read each version and not fully attend to the framing, but notice quite clearly the number of lives at stake. So it’s possible that this effect may be bigger (and therefore more variable between people) than the effect of framing.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>mod3 <span class="ot">&lt;-</span> <span class="fu">glmer</span>(lever <span class="sc">~</span> frame <span class="sc">*</span> lives <span class="sc">+</span> </span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>      (<span class="dv">1</span> <span class="sc">+</span> lives <span class="sc">|</span> PID),  </span>
@@ -4179,12 +4196,12 @@ Question 16
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-8" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-8', 'sol-start-8')">
+<button id="sol-start-9" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-9', 'sol-start-9')">
 Solution
 </button>
 </div>
-<div id="sol-body-8" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 8</em>. </span></p>
+<div id="sol-body-9" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 9</em>. </span></p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">url</span>(<span class="st">"https://uoepsy.github.io/msmr/data/nwl.RData"</span>))</span>
 <span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(nwl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -4249,12 +4266,12 @@ Hints
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-9" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-9', 'sol-start-9')">
+<button id="sol-start-10" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-10', 'sol-start-10')">
 Solution
 </button>
 </div>
-<div id="sol-body-9" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 9</em>. </span>The outcome here is (in words) the proportion of correct answers or, equivalently, the probability of answering correctly. A proportion/probability can only vary between 0 and 1 and, as such, we cannot use traditional linear regression or we could end up with predictions outside of the [0, 1] range.</p>
+<div id="sol-body-10" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 10</em>. </span>The outcome here is (in words) the proportion of correct answers or, equivalently, the probability of answering correctly. A proportion/probability can only vary between 0 and 1 and, as such, we cannot use traditional linear regression or we could end up with predictions outside of the [0, 1] range.</p>
 <p>As said, the outcome is the proportion of correct answers in each block. This makes it tempting to look at the variable called <code>PropCorrect</code>, but this is encoded as a proportion. We have learned to use logistic models, but these require either:</p>
 <ul>
 <li>a binary outcome variable, where the values are 0s or 1s</li>
@@ -5286,12 +5303,12 @@ Hints
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-10" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-10', 'sol-start-10')">
+<button id="sol-start-11" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-11', 'sol-start-11')">
 1 - answers to the hints
 </button>
 </div>
-<div id="sol-body-10" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 10</em>. </span></p>
+<div id="sol-body-11" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 11</em>. </span></p>
 <ul>
 <li><p>Do we want <code>cbind(successes, failures)</code>?</p>
 <ul>
@@ -5331,12 +5348,12 @@ What do you want your model to allow to vary within these groups?</li>
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-11" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-11', 'sol-start-11')">
+<button id="sol-start-12" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-12', 'sol-start-12')">
 2 - modelling
 </button>
 </div>
-<div id="sol-body-11" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 11</em>. </span></p>
+<div id="sol-body-12" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 12</em>. </span></p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>m.base <span class="ot">&lt;-</span> <span class="fu">glmer</span>(<span class="fu">cbind</span>(NumCorrect, NumError) <span class="sc">~</span> block <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> block <span class="sc">|</span> ID), </span>
 <span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> <span class="fu">filter</span>(nwl, block <span class="sc">&lt;</span> <span class="dv">8</span>, <span class="sc">!</span><span class="fu">is.na</span>(lesion_location)),</span>
@@ -5401,12 +5418,12 @@ Hints
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-12" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-12', 'sol-start-12')">
+<button id="sol-start-13" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-13', 'sol-start-13')">
 Solution
 </button>
 </div>
-<div id="sol-body-12" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 12</em>. </span></p>
+<div id="sol-body-13" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 13</em>. </span></p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>nwl_test <span class="ot">&lt;-</span> <span class="fu">filter</span>(nwl, block <span class="sc">&gt;</span> <span class="dv">7</span>, <span class="sc">!</span><span class="fu">is.na</span>(lesion_location)) <span class="sc">|&gt;</span></span>
 <span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
@@ -5486,12 +5503,12 @@ Question 20
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-13" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-13', 'sol-start-13')">
+<button id="sol-start-14" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-14', 'sol-start-14')">
 Solution
 </button>
 </div>
-<div id="sol-body-13" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 13</em>. </span></p>
+<div id="sol-body-14" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 14</em>. </span></p>
 <ol type="1">
 <li><p>The link function is the <code>logit</code>, or log-odds (other link functions are available).</p></li>
 <li><p>To convert log-odds to odds, we can use <code>exp()</code>, to get odds and odds ratios.</p></li>
@@ -5510,7 +5527,7 @@ These can be difficult, especially when it’s logistic, and especially when the
 </ul>
 <!-- 
 
-<div class="optional-begin"><button id='opt-start-14' class="jk-circle-right optional-icon clickable" onclick="toggle_visibility('opt-body-14', 'opt-start-14')"> Optional help: Our Solution to A4 </button></div><div class="optional-body" id = "opt-body-14" style="display: none;">
+<div class="optional-begin"><button id='opt-start-15' class="jk-circle-right optional-icon clickable" onclick="toggle_visibility('opt-body-15', 'opt-start-15')"> Optional help: Our Solution to A4 </button></div><div class="optional-body" id = "opt-body-15" style="display: none;">
 
  -->
 <!-- ```{r eval=F} -->
@@ -5581,12 +5598,12 @@ Figure&nbsp;2: Differences between groups in the average proportion of correct r
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-15" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-15', 'sol-start-15')">
+<button id="sol-start-16" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-16', 'sol-start-16')">
 Solution
 </button>
 </div>
-<div id="sol-body-15" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 14</em>. </span></p>
+<div id="sol-body-16" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 15</em>. </span></p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">filter</span>(nwl, <span class="sc">!</span><span class="fu">is.na</span>(lesion_location)), <span class="fu">aes</span>(block, PropCorrect, </span>
 <span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>                                                 <span class="at">color=</span>lesion_location, </span>
@@ -5639,7 +5656,7 @@ Solution
  -->
 <!-- 
 
-<div class="solution-begin"><button id='sol-start-16' class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-16', 'sol-start-16')">  Solution </button></div><div class="solution-body" id = "sol-body-16" style="display: none;">
+<div class="solution-begin"><button id='sol-start-17' class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-17', 'sol-start-17')">  Solution </button></div><div class="solution-body" id = "sol-body-17" style="display: none;">
 
  -->
 <!-- * `(Intercept)` ==> Overall performance in immediate test. This is the overall log-odds of answering correctly in the immediate test.  -->

@@ -3486,6 +3486,8 @@ Hints
 <ul>
 <li>Remember, a good way to start is to split this up into 3 parts: 1) the outcome and fixed effects, 2) the grouping structure, and 3) the random slopes.<br>
 </li>
+<li>If we have an interaction <code>y ~ 1 + x1*x2 + (1 .... | groups)</code>, and both predictors <code>x1</code> and <code>x2</code> vary within groups (i.e., each group has various values of the predictor), then because we can put random slopes of these variables — <code>(1 + x1 + x2 | groups)</code> — we can almost always also put the interaction in and have <code>(1 + x1 * x2 | groups)</code><br>
+</li>
 <li>fitting (or attempting to fit!) <code>glmer</code> models might take time!</li>
 </ul>
 </div>
@@ -3566,6 +3568,14 @@ Question 13
 <p>This is probably the first time we’ve had to deal with a model not converging.</p>
 <p>Sometimes changing the optimizer can help, but ideally we wouldn’t want to just shop around until we find one that doesn’t tell us about an error! More often than not, the model we are trying to fit is just too complex for our sample. Often, the groups in our sample just don’t vary enough for us to estimate a random slope (this doesn’t mean there is no variance in the real world, we might simply not have enough groups to see it).</p>
 <p>The aim here is to simplify our random effect structure in order to obtain a converging model, but be careful not to over simplify.</p>
+<p>There are no hard-and-fast rules on how to simplify, but the guiding principles might be thought of as:</p>
+<ol type="1">
+<li>we are <strong>only</strong> simplifying the random effects part, and <strong>not</strong> the fixed effects</li>
+<li>remove one thing at a time!<br>
+</li>
+<li>consider removing “more complex” parts first (interactions, slopes of categorical predictors)</li>
+<li>sometimes, the estimated variances in the non-converging model can guide us by indicating the parts of the structure for which there is not enough variability in the data (essentially, look for the tiny variances!).</li>
+</ol>
 <p>Try it now. What model do you end up with? (You might not end up with the same model as each other, which is fine. These methods don’t have “cookbook recipes”!)</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
@@ -3579,7 +3589,7 @@ Hints
 </div>
 <div id="callout-11" class="callout-11-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>you could think of the interaction as the ‘most complex’ part of our random effects, so you might want to remove that first.</p>
+<p>You could think of the interaction as the ‘most complex’ part of our random effects, so you might want to remove that first.</p>
 </div>
 </div>
 </div>
@@ -3592,7 +3602,7 @@ Solution
 </button>
 </div>
 <div id="sol-body-17" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 17</em>. </span>This model still does not converge:</p>
+<p><span class="proof-title"><em>Solution 17</em>. </span>We’ll remove the interaction first. But this model still does not converge:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>mod2 <span class="ot">&lt;-</span> <span class="fu">glmer</span>(lever <span class="sc">~</span> frame <span class="sc">*</span> lives <span class="sc">+</span> </span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>      (<span class="dv">1</span> <span class="sc">+</span> frame <span class="sc">+</span> lives <span class="sc">|</span> PID),  </span>
@@ -3601,7 +3611,9 @@ Solution
 <p style="color:red;">
 Warning message:<br> In checkConv(attr(opt, “derivs”), opt$par, ctrl = control$checkConv, : Model failed to converge with max|grad| = 0.00734804 (tol = 0.002, component 1)
 </p>
-<p>We have a choice here - do we remove <code>frame|PID</code> or <code>lives|PID</code>? One practical point is that each participant has only 4 observations for each <code>frame</code> type, but they have 6 observations for each <code>lives</code> type, which might make it easier to fit.</p>
+<p>We have a choice here - do we remove <code>frame|PID</code> or <code>lives|PID</code>?<br>
+One practical point is that each participant has only 4 observations for each <code>frame</code> type, but they have 6 observations for each <code>lives</code> type, which might make it easier to fit.</p>
+<p>Another argument is that when doing this experiment, the <code>lives</code> manipulation is perhaps more <em>salient</em> than the specific wording. I could imagine, taking this study as a participant, that I might sort of skim read each version and not fully attend to the framing, but notice quite clearly the number of lives at stake. So it’s possible that this effect may be bigger (and therefore more variable between people) than the effect of framing.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>mod3 <span class="ot">&lt;-</span> <span class="fu">glmer</span>(lever <span class="sc">~</span> frame <span class="sc">*</span> lives <span class="sc">+</span> </span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>      (<span class="dv">1</span> <span class="sc">+</span> lives <span class="sc">|</span> PID),  </span>
