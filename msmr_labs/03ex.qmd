@@ -1,7 +1,7 @@
 ---
 title: "Week 3 Exercises: Non-Linear Change"
 params: 
-    SHOW_SOLS: FALSE
+    SHOW_SOLS: TRUE
     TOGGLE: TRUE
 editor_options: 
   chunk_output_type: console
@@ -469,6 +469,145 @@ res = anova(m3int, m3lin, m3)
 
 The linear change over time differs between Tasks ($\chi^2(`r round(res[2,7],2)`) = `r round(res[2,6],2)`, p `r format.pval(res[2,8],eps=.001)`).  
 The quadratic change over time differs between Tasks ($\chi^2(`r round(res[3,7],2)`) = `r round(res[3,6],2)`, p `r format.pval(res[3,8],eps=.001)`).  
+
+:::
+
+::: {.callout-caution collapse="true"}
+#### completely optional - comparisons and raw/orthogonal 
+
+```{r}
+#| include: false
+Aggaz <- Az |> group_by(Time1,poly1,poly2,Task) |>
+  summarise(Performance = mean(Performance)) |>
+  ungroup() |>
+  mutate(opoly1 = poly(Time1,degree=2)[,1],
+         opoly2 = poly(Time1,degree=2)[,2])
+
+modA <- lm(Performance ~ poly1 + poly2 + Task,Aggaz)
+modB <- lm(Performance ~ poly1*Task + poly2,Aggaz)
+modC <- lm(Performance ~ poly1 + poly2*Task,Aggaz)
+modD <- lm(Performance ~ (poly1 + poly2)*Task,Aggaz)
+
+
+# modAo <- lm(Performance ~ opoly1 + opoly2 + Task,Aggaz)
+# modBo <- lm(Performance ~ opoly1*Task + opoly2,Aggaz)
+# modCo <- lm(Performance ~ opoly1 + opoly2*Task,Aggaz)
+# modDo <- lm(Performance ~ (opoly1 + opoly2)*Task,Aggaz)
+# 
+# 
+# # anova(modA,modB)
+# # anova(modAo,modBo)
+# # 
+# # anova(modC,modD)
+# # anova(modCo,modDo)
+# 
+p1 <- broom::augment(modA) |>
+  ggplot(aes(x=poly1,y=.fitted,col=Task))+
+  geom_line()+
+  labs(title="A",subtitle="Perf ~ poly1 + poly2 + Task",
+       x="time")+
+  guides(col="none")
+
+p2 <- broom::augment(modB) |>
+  ggplot(aes(x=poly1,y=.fitted,col=Task))+
+  geom_line()+
+  labs(title="B",subtitle="Perf ~ poly1*Task + poly2",x="time")+
+  guides(col="none")
+
+p3 <- broom::augment(modC) |>
+  ggplot(aes(x=poly1,y=.fitted,col=Task))+
+  geom_line()+
+  labs(title="C",subtitle="Perf ~ poly1 + poly2*Task",x="time")+
+  guides(col="none")
+
+p4 <- broom::augment(modD) |>
+  ggplot(aes(x=poly1,y=.fitted,col=Task))+
+  geom_line()+
+  labs(title="D",subtitle="Perf ~ (poly1 + poly2)*Task",x="time")+
+  guides(col="none")
+
+
+
+
+
+```
+
+
+There's an argument to be made that to ask "do tasks differ in Linear change?" we could test either (as above): 
+
+**A:** `Performance ~ poly1 + poly2 + Task`  
+vs 
+**B:**  `Performance ~ poly1*Task + poly2`  
+
+Or 
+
+**C:**  `Performance ~ poly1 + poly2*Task`  
+vs 
+**D:**  `Performance ~ (poly1 + poly2)*Task`  
+
+The comparison between models A and B assumes that all the Tasks have the same curvature. Visually, this is the comparison of which of the two patterns below best fits the data. In the left hand plot, the lines have the same linear slope and the same curvature. In the right hand plot, the lines have the same curvature but different linear slopes.  
+
+```{r}
+#| echo: false
+(p1 + p2)
+```
+
+The comparison between models C and D are more like the comparison below. The left hand plot has lines that have different curvatures but the same linear slope, and the right hand plot has lines that have different curvatures and different linear slopes.  
+
+```{r}
+#| echo: false
+(p3 + p4)
+```
+
+
+BUT... in the descriptions above, I have used the term "linear slope" a little ambiguously. Because we are using raw polynomials, this is actually meaning specifically the tangent **at the start** (i.e., at the left hand side of the plot).  
+
+Note that plots for A and B both have the same amount of curvature - i.e., the lines in B are equally curvy as those in A. But this isn't true for C and D. 
+
+This is because in model C, by *not* having the `poly1:Task` interaction in there, all we are saying is that the tangent at 0 is the same for all tasks. The quadratic term `poly2` then tries to "make up for" this and so it suggests the green line is curvy (when actually it's just a shallower straight line). 
+
+So this comparison (when using raw polynomials) is doesn't ask "do tasks differ in their overall linear trend?". Instead it asks "do tasks differ in linear trend *at the outset*?.  
+
+Note that with orthogonal polynomials, we would have something more like this: 
+
+
+```{r}
+#| echo: false
+#| fig-cap: "Model comparisons with orthogonal polynomials"
+modAo <- lm(Performance ~ opoly1 + opoly2 + Task,Aggaz)
+modBo <- lm(Performance ~ opoly1*Task + opoly2,Aggaz)
+modCo <- lm(Performance ~ opoly1 + opoly2*Task,Aggaz)
+modDo <- lm(Performance ~ (opoly1 + opoly2)*Task,Aggaz)
+
+p1 <- broom::augment(modAo) |>
+  ggplot(aes(x=opoly1,y=.fitted,col=Task))+
+  geom_line()+
+  labs(title="A",subtitle="Perf ~ poly1 + poly2 + Task",
+       x="time")+
+  guides(col="none")
+
+p2 <- broom::augment(modBo) |>
+  ggplot(aes(x=opoly1,y=.fitted,col=Task))+
+  geom_line()+
+  labs(title="B",subtitle="Perf ~ poly1*Task + poly2",x="time")+
+  guides(col="none")
+
+p3 <- broom::augment(modCo) |>
+  ggplot(aes(x=opoly1,y=.fitted,col=Task))+
+  geom_line()+
+  labs(title="C",subtitle="Perf ~ poly1 + poly2*Task",x="time")+
+  guides(col="none")
+
+p4 <- broom::augment(modDo) |>
+  ggplot(aes(x=opoly1,y=.fitted,col=Task))+
+  geom_line()+
+  labs(title="D",subtitle="Perf ~ (poly1 + poly2)*Task",x="time")+
+  guides(col="none")
+
+(p1 + p2) / (p3 + p4)
+```
+
+This is because essentially in raw polynomials, `poly1` and `poly2` are correlated. So excluding one of the terms (or an interaction with one of the terms) will change the estimates for the others. In orthogonal polynomials, we don't have that issue. 
 
 :::
 
