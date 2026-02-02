@@ -467,8 +467,8 @@ anova(m3int, m3lin, m3full)
 res = anova(m3int, m3lin, m3)
 ```
 
-The linear change over time differs between Tasks ($\chi^2(`r round(res[2,7],2)`) = `r round(res[2,6],2)`, p `r format.pval(res[2,8],eps=.001)`).  
-The quadratic change over time differs between Tasks ($\chi^2(`r round(res[3,7],2)`) = `r round(res[3,6],2)`, p `r format.pval(res[3,8],eps=.001)`).  
+The linear change over time differs between Tasks ($\chi^2(`r round(res[2,7],2)`) = `r round(res[2,6],2)`, p `r format.pval(res[2,8],eps=.001)`$).  
+The quadratic change over time differs between Tasks ($\chi^2(`r round(res[3,7],2)`) = `r round(res[3,6],2)`, p `r format.pval(res[3,8],eps=.001)`$).  
 
 :::
 
@@ -536,44 +536,39 @@ p4 <- broom::augment(modD) |>
 There's an argument to be made that to ask "do tasks differ in Linear change?" we could test either (as above): 
 
 **A:** `Performance ~ poly1 + poly2 + Task`  
-vs 
+vs   
 **B:**  `Performance ~ poly1*Task + poly2`  
-
-Or 
-
+  
+Or   
+  
 **C:**  `Performance ~ poly1 + poly2*Task`  
-vs 
-**D:**  `Performance ~ (poly1 + poly2)*Task`  
+vs  
+**D:**  `Performance ~ (poly1 + poly2)*Task`   
 
-The comparison between models A and B assumes that all the Tasks have the same curvature. Visually, this is the comparison of which of the two patterns below best fits the data. In the left hand plot, the lines have the same linear slope and the same curvature. In the right hand plot, the lines have the same curvature but different linear slopes.  
+The comparison between models A and B assumes that all the Tasks have the same curvature. Visually, this is the comparison of which of the two patterns in plots A and B in @fig-rawcomp best fits the data. In A, the lines have the same linear slope and the same curvature. In B, the lines have the same curvature but different linear slopes.  
 
-```{r}
-#| echo: false
-(p1 + p2)
-```
-
-The comparison between models C and D are more like the comparison below. The left hand plot has lines that have different curvatures but the same linear slope, and the right hand plot has lines that have different curvatures and different linear slopes.  
+The comparison between models C and D is similar, but not quite the same. C has lines that have different curvatures but the same linear slope, and plot D has lines that have different curvatures and different linear slopes.  
 
 ```{r}
 #| echo: false
-(p3 + p4)
+#| fig-cap: "Model comparisons with raw polynomials"
+#| label: fig-rawcomp
+(p1 + p2) / (p3 + p4)
 ```
 
 
-BUT... in the descriptions above, I have used the term "linear slope" a little ambiguously. Because we are using raw polynomials, this is actually meaning specifically the tangent **at the start** (i.e., at the left hand side of the plot).  
+BUT... in all these descriptions, I have used the term "linear slope" a little ambiguously. Because we are using raw polynomials, this is actually meaning specifically the tangent **at the start** (i.e., at the left hand side of the plot).  
 
-Note that plots for A and B both have the same amount of curvature - i.e., the lines in B are equally curvy as those in A. But this isn't true for C and D. 
+Note that plots for A and B both have the same amount of curvature - i.e., the lines in B are equally curvy as those in A. But this isn't true for C and D. This is because in model C, by *not* having the `poly1:Task` interaction in there, all we are saying is that the tangent at 0 is the same for all tasks. The quadratic term interaction `poly2:Task` then tries to "make up for" this by making the green line curvy (when actually it's just a shallower straight line).  
 
-This is because in model C, by *not* having the `poly1:Task` interaction in there, all we are saying is that the tangent at 0 is the same for all tasks. The quadratic term `poly2` then tries to "make up for" this and so it suggests the green line is curvy (when actually it's just a shallower straight line). 
-
-So this comparison (when using raw polynomials) is doesn't ask "do tasks differ in their overall linear trend?". Instead it asks "do tasks differ in linear trend *at the outset*?.  
-
-Note that with orthogonal polynomials, we would have something more like this: 
+So the comparison between C and D (when using raw polynomials) doesn't ask "do tasks differ in their overall linear trend?". Instead it asks "do tasks differ in linear trend *at the outset*? 
+With orthogonal polynomials, we would have something more like @fig-orthcomp.  
 
 
 ```{r}
 #| echo: false
 #| fig-cap: "Model comparisons with orthogonal polynomials"
+#| label: fig-orthcomp
 modAo <- lm(Performance ~ opoly1 + opoly2 + Task,Aggaz)
 modBo <- lm(Performance ~ opoly1*Task + opoly2,Aggaz)
 modCo <- lm(Performance ~ opoly1 + opoly2*Task,Aggaz)
@@ -607,7 +602,7 @@ p4 <- broom::augment(modDo) |>
 (p1 + p2) / (p3 + p4)
 ```
 
-This is because essentially in raw polynomials, `poly1` and `poly2` are correlated. So excluding one of the terms (or an interaction with one of the terms) will change the estimates for the others. In orthogonal polynomials, we don't have that issue. 
+This whole thing is because essentially in raw polynomials, `poly1` and `poly2` are correlated. So excluding one of the terms (or an interaction with one of the terms) will change the estimates for the others. In orthogonal polynomials, we don't have that issue.  
 
 :::
 
