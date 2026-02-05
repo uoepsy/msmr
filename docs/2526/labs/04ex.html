@@ -238,6 +238,12 @@ window.Quarto = {
  <span class="menu-text">Week 4 Exercises: Nested and Crossed</span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 5 Exercises: Assumptions, Diagnostics, Writing up</span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -511,8 +517,13 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>Here’s the overall picture. The average score on the GAD7 at each visit gets more and more different between the two groups. The treatment looks effective..</p>
+<div class="solution-begin">
+<button id="sol-start-4" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-4', 'sol-start-4')">
+Solution
+</button>
+</div>
+<div id="sol-body-4" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 4</em>. </span>Here’s the overall picture. The average score on the GAD7 at each visit gets more and more different between the two groups. The treatment looks effective..</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(geduc_long, <span class="fu">aes</span>(<span class="at">x =</span> visit, <span class="at">y =</span> GAD, <span class="at">col =</span> group)) <span class="sc">+</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">geom=</span><span class="st">"pointrange"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -549,8 +560,13 @@ Question 3
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>We want to know if how anxiety (<code>GAD</code>) changes over time (<code>visit</code>) is different between treatment and control (<code>group</code>).</p>
+<div class="solution-begin">
+<button id="sol-start-5" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-5', 'sol-start-5')">
+1 - fixed effects
+</button>
+</div>
+<div id="sol-body-5" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 5</em>. </span>We want to know if how anxiety (<code>GAD</code>) changes over time (<code>visit</code>) is different between treatment and control (<code>group</code>).</p>
 <p>Hopefully this should hopefully come as no surprise<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> - it’s an interaction!</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lmer</span>(GAD <span class="sc">~</span> visit <span class="sc">*</span> group <span class="sc">+</span> ...</span>
@@ -560,8 +576,13 @@ Question 3
 </div>
 <p class="solution-end">
 </p>
-<div style="display:none;">
-<p>We have multiple observations for each of the 482 patients, and those patients are nested within 30 therapists.</p>
+<div class="solution-begin">
+<button id="sol-start-6" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-6', 'sol-start-6')">
+2 - grouping structure
+</button>
+</div>
+<div id="sol-body-6" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 6</em>. </span>We have multiple observations for each of the 482 patients, and those patients are nested within 30 therapists.</p>
 <p>Note that in our data, the patient variable does not uniquely specify the individual patients. i.e.&nbsp;patient “1” from therapist “AO” is a different person from patient “1” from therapist “BJ”. To correctly group the observations into different patients (and not ‘patient numbers’), we need to have <code>therapist:patient</code>.</p>
 <p>So we capture therapist-level differences in <code>( ... | therapist)</code> and the patients-within-therapist-level differences in <code>( ... | therapist:patient)</code>:</p>
 <div class="cell" data-layout-align="center">
@@ -573,8 +594,13 @@ Question 3
 </div>
 <p class="solution-end">
 </p>
-<div style="display:none;">
-<p>Note that each patient can change differently in their anxiety levels over time - i.e.&nbsp;the slope of <code>visit</code> could vary by participant.</p>
+<div class="solution-begin">
+<button id="sol-start-7" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-7', 'sol-start-7')">
+3 - random effects
+</button>
+</div>
+<div id="sol-body-7" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 7</em>. </span>Note that each patient can change differently in their anxiety levels over time - i.e.&nbsp;the slope of <code>visit</code> could vary by participant.</p>
 <p>Likewise, some therapists could have patients who change differently from patients from another therapist, so <code>visit|therapist</code> can be included.</p>
 <p>Each patient is in one of the two groups - they’re <em>either</em> treatment <em>or</em> control. So we can’t say that “differences in anxiety due to treatment varies between patients”, because for any one patient the “difference in anxiety due to treatment” is not defined in our study design.</p>
 <p>However, therapists see multiple different patients, some of which are in the treatment group, and some of which are in the control group. So the treatment effect <em>could</em> be different for different therapists!</p>
@@ -606,7 +632,13 @@ Question 4
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<button id="sol-start-8" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-8', 'sol-start-8')">
+Solution
+</button>
+</div>
+<div id="sol-body-8" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 8</em>. </span></p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>modelA <span class="ot">&lt;-</span> <span class="fu">lmer</span>(GAD <span class="sc">~</span> visit<span class="sc">*</span>group <span class="sc">+</span> </span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>               (<span class="dv">1</span><span class="sc">+</span>visit<span class="sc">*</span>group<span class="sc">|</span>therapist)<span class="sc">+</span></span>
@@ -648,8 +680,13 @@ You can read about <code>ranef</code> in <a href="https://uoepsy.github.io/lmm/0
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>It would be best to go to one of the therapists <code>SZ</code>, <code>YS</code>, or <code>IT</code>…</p>
+<div class="solution-begin">
+<button id="sol-start-9" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-9', 'sol-start-9')">
+Solution
+</button>
+</div>
+<div id="sol-body-9" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 9</em>. </span>It would be best to go to one of the therapists <code>SZ</code>, <code>YS</code>, or <code>IT</code>…</p>
 <p>Why? These therapists all have the most negative slope of visit:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot.ranef.mer</span>(<span class="fu">ranef</span>(mod1))<span class="sc">$</span>therapist</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -711,12 +748,12 @@ Hints
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-4" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-4', 'sol-start-4')">
+<button id="sol-start-10" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-10', 'sol-start-10')">
 1 - the relevant parts
 </button>
 </div>
-<div id="sol-body-4" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 4</em>. </span>The <strong>effects</strong> package will give us the fixed effect estimates:</p>
+<div id="sol-body-10" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 10</em>. </span>The <strong>effects</strong> package will give us the fixed effect estimates:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effects)</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom.mixed)</span>
@@ -754,12 +791,12 @@ So we can create a new column called <code>upatient</code> which pastes together
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-5" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-5', 'sol-start-5')">
+<button id="sol-start-11" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-11', 'sol-start-11')">
 2 - constructing the plot
 </button>
 </div>
-<div id="sol-body-5" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 5</em>. </span></p>
+<div id="sol-body-11" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 11</em>. </span></p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effects)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom.mixed)</span>
@@ -806,23 +843,23 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
 </figcaption>
 <div aria-describedby="tbl-laughdict-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="dfwpoputda" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#dfwpoputda table {
+<div id="fbhjpfmjqk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#fbhjpfmjqk table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#dfwpoputda thead, #dfwpoputda tbody, #dfwpoputda tfoot, #dfwpoputda tr, #dfwpoputda td, #dfwpoputda th {
+#fbhjpfmjqk thead, #fbhjpfmjqk tbody, #fbhjpfmjqk tfoot, #fbhjpfmjqk tr, #fbhjpfmjqk td, #fbhjpfmjqk th {
   border-style: none;
 }
 
-#dfwpoputda p {
+#fbhjpfmjqk p {
   margin: 0;
   padding: 0;
 }
 
-#dfwpoputda .gt_table {
+#fbhjpfmjqk .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -848,12 +885,12 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   border-left-color: #D3D3D3;
 }
 
-#dfwpoputda .gt_caption {
+#fbhjpfmjqk .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#dfwpoputda .gt_title {
+#fbhjpfmjqk .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -865,7 +902,7 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   border-bottom-width: 0;
 }
 
-#dfwpoputda .gt_subtitle {
+#fbhjpfmjqk .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -877,7 +914,7 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   border-top-width: 0;
 }
 
-#dfwpoputda .gt_heading {
+#fbhjpfmjqk .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -889,13 +926,13 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   border-right-color: #D3D3D3;
 }
 
-#dfwpoputda .gt_bottom_border {
+#fbhjpfmjqk .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#dfwpoputda .gt_col_headings {
+#fbhjpfmjqk .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -910,7 +947,7 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   border-right-color: #D3D3D3;
 }
 
-#dfwpoputda .gt_col_heading {
+#fbhjpfmjqk .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -930,7 +967,7 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   overflow-x: hidden;
 }
 
-#dfwpoputda .gt_column_spanner_outer {
+#fbhjpfmjqk .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -942,15 +979,15 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   padding-right: 4px;
 }
 
-#dfwpoputda .gt_column_spanner_outer:first-child {
+#fbhjpfmjqk .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#dfwpoputda .gt_column_spanner_outer:last-child {
+#fbhjpfmjqk .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#dfwpoputda .gt_column_spanner {
+#fbhjpfmjqk .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -962,11 +999,11 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   width: 100%;
 }
 
-#dfwpoputda .gt_spanner_row {
+#fbhjpfmjqk .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#dfwpoputda .gt_group_heading {
+#fbhjpfmjqk .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -992,7 +1029,7 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   text-align: left;
 }
 
-#dfwpoputda .gt_empty_group_heading {
+#fbhjpfmjqk .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1007,15 +1044,15 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   vertical-align: middle;
 }
 
-#dfwpoputda .gt_from_md > :first-child {
+#fbhjpfmjqk .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#dfwpoputda .gt_from_md > :last-child {
+#fbhjpfmjqk .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#dfwpoputda .gt_row {
+#fbhjpfmjqk .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1034,7 +1071,7 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   overflow-x: hidden;
 }
 
-#dfwpoputda .gt_stub {
+#fbhjpfmjqk .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1047,7 +1084,7 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   padding-right: 5px;
 }
 
-#dfwpoputda .gt_stub_row_group {
+#fbhjpfmjqk .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1061,15 +1098,15 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   vertical-align: top;
 }
 
-#dfwpoputda .gt_row_group_first td {
+#fbhjpfmjqk .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#dfwpoputda .gt_row_group_first th {
+#fbhjpfmjqk .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#dfwpoputda .gt_summary_row {
+#fbhjpfmjqk .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1079,16 +1116,16 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   padding-right: 5px;
 }
 
-#dfwpoputda .gt_first_summary_row {
+#fbhjpfmjqk .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#dfwpoputda .gt_first_summary_row.thick {
+#fbhjpfmjqk .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#dfwpoputda .gt_last_summary_row {
+#fbhjpfmjqk .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1098,7 +1135,7 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   border-bottom-color: #D3D3D3;
 }
 
-#dfwpoputda .gt_grand_summary_row {
+#fbhjpfmjqk .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1108,7 +1145,7 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   padding-right: 5px;
 }
 
-#dfwpoputda .gt_first_grand_summary_row {
+#fbhjpfmjqk .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1118,7 +1155,7 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   border-top-color: #D3D3D3;
 }
 
-#dfwpoputda .gt_last_grand_summary_row_top {
+#fbhjpfmjqk .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1128,11 +1165,11 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   border-bottom-color: #D3D3D3;
 }
 
-#dfwpoputda .gt_striped {
+#fbhjpfmjqk .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#dfwpoputda .gt_table_body {
+#fbhjpfmjqk .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1141,7 +1178,7 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   border-bottom-color: #D3D3D3;
 }
 
-#dfwpoputda .gt_footnotes {
+#fbhjpfmjqk .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1155,7 +1192,7 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   border-right-color: #D3D3D3;
 }
 
-#dfwpoputda .gt_footnote {
+#fbhjpfmjqk .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1164,7 +1201,7 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   padding-right: 5px;
 }
 
-#dfwpoputda .gt_sourcenotes {
+#fbhjpfmjqk .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1178,7 +1215,7 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   border-right-color: #D3D3D3;
 }
 
-#dfwpoputda .gt_sourcenote {
+#fbhjpfmjqk .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1186,72 +1223,72 @@ Table&nbsp;2: Data Dictionary: lmm_laughs.csv
   padding-right: 5px;
 }
 
-#dfwpoputda .gt_left {
+#fbhjpfmjqk .gt_left {
   text-align: left;
 }
 
-#dfwpoputda .gt_center {
+#fbhjpfmjqk .gt_center {
   text-align: center;
 }
 
-#dfwpoputda .gt_right {
+#fbhjpfmjqk .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#dfwpoputda .gt_font_normal {
+#fbhjpfmjqk .gt_font_normal {
   font-weight: normal;
 }
 
-#dfwpoputda .gt_font_bold {
+#fbhjpfmjqk .gt_font_bold {
   font-weight: bold;
 }
 
-#dfwpoputda .gt_font_italic {
+#fbhjpfmjqk .gt_font_italic {
   font-style: italic;
 }
 
-#dfwpoputda .gt_super {
+#fbhjpfmjqk .gt_super {
   font-size: 65%;
 }
 
-#dfwpoputda .gt_footnote_marks {
+#fbhjpfmjqk .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#dfwpoputda .gt_asterisk {
+#fbhjpfmjqk .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#dfwpoputda .gt_indent_1 {
+#fbhjpfmjqk .gt_indent_1 {
   text-indent: 5px;
 }
 
-#dfwpoputda .gt_indent_2 {
+#fbhjpfmjqk .gt_indent_2 {
   text-indent: 10px;
 }
 
-#dfwpoputda .gt_indent_3 {
+#fbhjpfmjqk .gt_indent_3 {
   text-indent: 15px;
 }
 
-#dfwpoputda .gt_indent_4 {
+#fbhjpfmjqk .gt_indent_4 {
   text-indent: 20px;
 }
 
-#dfwpoputda .gt_indent_5 {
+#fbhjpfmjqk .gt_indent_5 {
   text-indent: 25px;
 }
 
-#dfwpoputda .katex-display {
+#fbhjpfmjqk .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#dfwpoputda div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#fbhjpfmjqk div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1319,8 +1356,13 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>We want to estimate the effect of delivery on humour rating of jokes:<br>
+<div class="solution-begin">
+<button id="sol-start-12" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-12', 'sol-start-12')">
+Solution
+</button>
+</div>
+<div id="sol-body-12" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 12</em>. </span>We want to estimate the effect of delivery on humour rating of jokes:<br>
 <code>rating ~ delivery</code></p>
 <p>We have 30 observations for each participant. Participants are just another sampling unit here.<br>
 <code>rating ~ delivery + (1 | ppt)</code></p>
@@ -1365,8 +1407,13 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>Here is one using <code>facet_wrap</code>:</p>
+<div class="solution-begin">
+<button id="sol-start-13" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-13', 'sol-start-13')">
+Solution
+</button>
+</div>
+<div id="sol-body-13" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 13</em>. </span>Here is one using <code>facet_wrap</code>:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(laughs, <span class="fu">aes</span>(<span class="at">x =</span> delivery, <span class="at">y =</span> rating)) <span class="sc">+</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
@@ -1421,7 +1468,13 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<button id="sol-start-14" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-14', 'sol-start-14')">
+Solution
+</button>
+</div>
+<div id="sol-body-14" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 14</em>. </span></p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">lmer</span>(rating <span class="sc">~</span> delivery <span class="sc">+</span> </span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>              (<span class="dv">1</span> <span class="sc">+</span> delivery <span class="sc">|</span> joke_id) <span class="sc">+</span></span>
@@ -1456,7 +1509,13 @@ See <a href="https://uoepsy.github.io/lmm/02_lmm.html#making-model-predictions" 
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<button id="sol-start-15" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-15', 'sol-start-15')">
+Solution
+</button>
+</div>
+<div id="sol-body-15" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 15</em>. </span></p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dotplot.ranef.mer</span>(<span class="fu">ranef</span>(mod))<span class="sc">$</span>joke_id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -1522,7 +1581,13 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<button id="sol-start-16" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-16', 'sol-start-16')">
+Solution
+</button>
+</div>
+<div id="sol-body-16" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 16</em>. </span></p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">VarCorr</span>(mod)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1573,7 +1638,13 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<button id="sol-start-17" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-17', 'sol-start-17')">
+Solution
+</button>
+</div>
+<div id="sol-body-17" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 17</em>. </span></p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effects)</span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1687,12 +1758,12 @@ Hints
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-6" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-6', 'sol-start-6')">
+<button id="sol-start-18" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-18', 'sol-start-18')">
 1 - initial data checks
 </button>
 </div>
-<div id="sol-body-6" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 6</em>. </span>Let’s read in the data:</p>
+<div id="sol-body-18" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 18</em>. </span>Let’s read in the data:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>pvt <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/pvt_bilingual.csv"</span>)</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pvt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1802,12 +1873,12 @@ Hints
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-7" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-7', 'sol-start-7')">
+<button id="sol-start-19" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-19', 'sol-start-19')">
 2 - exploratory plots and descriptives
 </button>
 </div>
-<div id="sol-body-7" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 7</em>. </span>How many bilingual children?</p>
+<div id="sol-body-19" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 19</em>. </span>How many bilingual children?</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>pvt <span class="sc">|&gt;</span> <span class="fu">group_by</span>(isBilingual) <span class="sc">|&gt;</span></span>
 <span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">nchild =</span> <span class="fu">n_distinct</span>(child))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1881,12 +1952,12 @@ Fixed effects:
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-8" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-8', 'sol-start-8')">
+<button id="sol-start-20" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-20', 'sol-start-20')">
 3 - modelling
 </button>
 </div>
-<div id="sol-body-8" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 8</em>. </span>I feel like either raw or orthogonal polynomials would be fine here - there’s nothing explicit from the study background about stuff “at baseline”. There’s the stuff about the plateau at 7 or 8, but we can get that from the model plots. Orthogonal will allow us to compare the trajectories overall (their linear trend, the ‘curviness’ and ‘wiggliness’).</p>
+<div id="sol-body-20" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 20</em>. </span>I feel like either raw or orthogonal polynomials would be fine here - there’s nothing explicit from the study background about stuff “at baseline”. There’s the stuff about the plateau at 7 or 8, but we can get that from the model plots. Orthogonal will allow us to compare the trajectories overall (their linear trend, the ‘curviness’ and ‘wiggliness’).</p>
 <p>An additional benefit of orthogonal polynomials is that we are less likely to get singular fits when we include polynomial terms in our random effects. Remember, raw polynomials are correlated, so often the by-participant variances in raw poly terms are highly correlated.</p>
 <p>I’ve gone for 3 degrees of polynomials here because the plot above shows a bit of an S-shape for the bilinguals.</p>
 <div class="cell" data-layout-align="center">
@@ -1942,12 +2013,12 @@ I’ve tried to preserve the by-child random effects of time, because while I th
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-9" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-9', 'sol-start-9')">
+<button id="sol-start-21" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-21', 'sol-start-21')">
 4 - model plots
 </button>
 </div>
-<div id="sol-body-9" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 9</em>. </span>Let’s plot the predictions:</p>
+<div id="sol-body-21" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 21</em>. </span>Let’s plot the predictions:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom.mixed)</span>
 <span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="fu">augment</span>(mod7) <span class="sc">|&gt;</span> </span>
@@ -2049,32 +2120,32 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-10" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-10', 'sol-start-10')">
+<button id="sol-start-22" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-22', 'sol-start-22')">
 5 - model interpretation
 </button>
 </div>
-<div id="sol-body-10" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 10</em>. </span>The exact value of the coefficients here don’t really give us anything meaningful. Note that in our plots above, the x-axis is “poly1”, which is some weirdly re-scaled version of “age”, so these coefficients represent things like the estimated change in PVT when “moving up 1 in poly1”. But these units are not remotely useful to us. Even if we wanted to try and scale back to get out something we could interpret in terms of years of age, the whole point of non-linear change is that we can’t just say “PVT increases by <span class="math inline">\(b\)</span> with every extra year of age”, because we need to consider the higher order polynomial terms.</p>
+<div id="sol-body-22" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 22</em>. </span>The exact value of the coefficients here don’t really give us anything meaningful. Note that in our plots above, the x-axis is “poly1”, which is some weirdly re-scaled version of “age”, so these coefficients represent things like the estimated change in PVT when “moving up 1 in poly1”. But these units are not remotely useful to us. Even if we wanted to try and scale back to get out something we could interpret in terms of years of age, the whole point of non-linear change is that we can’t just say “PVT increases by <span class="math inline">\(b\)</span> with every extra year of age”, because we need to consider the higher order polynomial terms.</p>
 <p>The long and the short of it is that while the numbers don’t really matter here, the sign (+ or -) and the significance <em>does</em> tell us stuff:</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="askzggldlu" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#askzggldlu table {
+<div id="xxceefnvlg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#xxceefnvlg table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#askzggldlu thead, #askzggldlu tbody, #askzggldlu tfoot, #askzggldlu tr, #askzggldlu td, #askzggldlu th {
+#xxceefnvlg thead, #xxceefnvlg tbody, #xxceefnvlg tfoot, #xxceefnvlg tr, #xxceefnvlg td, #xxceefnvlg th {
   border-style: none;
 }
 
-#askzggldlu p {
+#xxceefnvlg p {
   margin: 0;
   padding: 0;
 }
 
-#askzggldlu .gt_table {
+#xxceefnvlg .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2100,12 +2171,12 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#askzggldlu .gt_caption {
+#xxceefnvlg .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#askzggldlu .gt_title {
+#xxceefnvlg .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2117,7 +2188,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-bottom-width: 0;
 }
 
-#askzggldlu .gt_subtitle {
+#xxceefnvlg .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2129,7 +2200,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-top-width: 0;
 }
 
-#askzggldlu .gt_heading {
+#xxceefnvlg .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2141,13 +2212,13 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#askzggldlu .gt_bottom_border {
+#xxceefnvlg .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#askzggldlu .gt_col_headings {
+#xxceefnvlg .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2162,7 +2233,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#askzggldlu .gt_col_heading {
+#xxceefnvlg .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2182,7 +2253,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   overflow-x: hidden;
 }
 
-#askzggldlu .gt_column_spanner_outer {
+#xxceefnvlg .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2194,15 +2265,15 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   padding-right: 4px;
 }
 
-#askzggldlu .gt_column_spanner_outer:first-child {
+#xxceefnvlg .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#askzggldlu .gt_column_spanner_outer:last-child {
+#xxceefnvlg .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#askzggldlu .gt_column_spanner {
+#xxceefnvlg .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2214,11 +2285,11 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   width: 100%;
 }
 
-#askzggldlu .gt_spanner_row {
+#xxceefnvlg .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#askzggldlu .gt_group_heading {
+#xxceefnvlg .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2244,7 +2315,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   text-align: left;
 }
 
-#askzggldlu .gt_empty_group_heading {
+#xxceefnvlg .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2259,15 +2330,15 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   vertical-align: middle;
 }
 
-#askzggldlu .gt_from_md > :first-child {
+#xxceefnvlg .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#askzggldlu .gt_from_md > :last-child {
+#xxceefnvlg .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#askzggldlu .gt_row {
+#xxceefnvlg .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2286,7 +2357,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   overflow-x: hidden;
 }
 
-#askzggldlu .gt_stub {
+#xxceefnvlg .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2299,7 +2370,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   padding-right: 5px;
 }
 
-#askzggldlu .gt_stub_row_group {
+#xxceefnvlg .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2313,15 +2384,15 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   vertical-align: top;
 }
 
-#askzggldlu .gt_row_group_first td {
+#xxceefnvlg .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#askzggldlu .gt_row_group_first th {
+#xxceefnvlg .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#askzggldlu .gt_summary_row {
+#xxceefnvlg .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2331,16 +2402,16 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   padding-right: 5px;
 }
 
-#askzggldlu .gt_first_summary_row {
+#xxceefnvlg .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#askzggldlu .gt_first_summary_row.thick {
+#xxceefnvlg .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#askzggldlu .gt_last_summary_row {
+#xxceefnvlg .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2350,7 +2421,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#askzggldlu .gt_grand_summary_row {
+#xxceefnvlg .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2360,7 +2431,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   padding-right: 5px;
 }
 
-#askzggldlu .gt_first_grand_summary_row {
+#xxceefnvlg .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2370,7 +2441,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#askzggldlu .gt_last_grand_summary_row_top {
+#xxceefnvlg .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2380,11 +2451,11 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#askzggldlu .gt_striped {
+#xxceefnvlg .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#askzggldlu .gt_table_body {
+#xxceefnvlg .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2393,7 +2464,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#askzggldlu .gt_footnotes {
+#xxceefnvlg .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2407,7 +2478,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#askzggldlu .gt_footnote {
+#xxceefnvlg .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2416,7 +2487,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   padding-right: 5px;
 }
 
-#askzggldlu .gt_sourcenotes {
+#xxceefnvlg .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2430,7 +2501,7 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#askzggldlu .gt_sourcenote {
+#xxceefnvlg .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2438,72 +2509,72 @@ ply3:sBlng1 -0.009 -0.020 -0.050 -0.566  0.034  0.038  0.079</code></pre>
   padding-right: 5px;
 }
 
-#askzggldlu .gt_left {
+#xxceefnvlg .gt_left {
   text-align: left;
 }
 
-#askzggldlu .gt_center {
+#xxceefnvlg .gt_center {
   text-align: center;
 }
 
-#askzggldlu .gt_right {
+#xxceefnvlg .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#askzggldlu .gt_font_normal {
+#xxceefnvlg .gt_font_normal {
   font-weight: normal;
 }
 
-#askzggldlu .gt_font_bold {
+#xxceefnvlg .gt_font_bold {
   font-weight: bold;
 }
 
-#askzggldlu .gt_font_italic {
+#xxceefnvlg .gt_font_italic {
   font-style: italic;
 }
 
-#askzggldlu .gt_super {
+#xxceefnvlg .gt_super {
   font-size: 65%;
 }
 
-#askzggldlu .gt_footnote_marks {
+#xxceefnvlg .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#askzggldlu .gt_asterisk {
+#xxceefnvlg .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#askzggldlu .gt_indent_1 {
+#xxceefnvlg .gt_indent_1 {
   text-indent: 5px;
 }
 
-#askzggldlu .gt_indent_2 {
+#xxceefnvlg .gt_indent_2 {
   text-indent: 10px;
 }
 
-#askzggldlu .gt_indent_3 {
+#xxceefnvlg .gt_indent_3 {
   text-indent: 15px;
 }
 
-#askzggldlu .gt_indent_4 {
+#xxceefnvlg .gt_indent_4 {
   text-indent: 20px;
 }
 
-#askzggldlu .gt_indent_5 {
+#xxceefnvlg .gt_indent_5 {
   text-indent: 25px;
 }
 
-#askzggldlu .katex-display {
+#xxceefnvlg .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#askzggldlu div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#xxceefnvlg div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -2734,12 +2805,12 @@ Hints
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-11" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-11', 'sol-start-11')">
+<button id="sol-start-23" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-23', 'sol-start-23')">
 Solution
 </button>
 </div>
-<div id="sol-body-11" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 11</em>. </span></p>
+<div id="sol-body-23" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 23</em>. </span></p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">url</span>(<span class="st">"https://uoepsy.github.io/data/testenhancedlearning.RData"</span>))</span>
 <span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -2790,12 +2861,12 @@ Hints
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-12" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-12', 'sol-start-12')">
+<button id="sol-start-24" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-24', 'sol-start-24')">
 1 - maximal model
 </button>
 </div>
-<div id="sol-body-12" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 12</em>. </span>We have a <strong>crossed</strong> random effect structure here. Each participant was tested on every word, and each word was seen by every participant.</p>
+<div id="sol-body-24" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 24</em>. </span>We have a <strong>crossed</strong> random effect structure here. Each participant was tested on every word, and each word was seen by every participant.</p>
 <p>Subjects were tested at both the <code>min</code> and <code>week</code>, so <code>Delay|Subject_ID</code> can be included (some people might retain the items better than others).<br>
 Likewise the words were seen at both <code>min</code> and <code>week</code>, and some words might be more easy to retain than others (<code>Delay|Test_word</code>).</p>
 <p>The participants are in either one group or another, so we can’t have <code>Group|Subject_ID</code>. However, the words were seen by people in both groups, so we <em>can</em> have <code>Group|Test_word</code>.</p>
@@ -2825,12 +2896,12 @@ Warning message:<br> In checkConv(attr(opt, “derivs”), opt$par, ctrl = contr
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-13" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-13', 'sol-start-13')">
+<button id="sol-start-25" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-25', 'sol-start-25')">
 2 - Removing Delay*Group|Test_word
 </button>
 </div>
-<div id="sol-body-13" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 13</em>. </span>Lets remove the interaction in the by-word random effects.<br>
+<div id="sol-body-25" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 25</em>. </span>Lets remove the interaction in the by-word random effects.<br>
 This one took about 5 minutes…</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>mod2 <span class="ot">&lt;-</span> <span class="fu">glmer</span>(Correct <span class="sc">~</span> Delay<span class="sc">*</span>Group <span class="sc">+</span></span>
@@ -2856,12 +2927,12 @@ Warning message:<br> In checkConv(attr(opt, “derivs”), opt$par, ctrl = contr
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-14" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-14', 'sol-start-14')">
+<button id="sol-start-26" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-26', 'sol-start-26')">
 3 - Removing Group|Test_word
 </button>
 </div>
-<div id="sol-body-14" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 14</em>. </span>We still have a singular fit here. Thinking about the study, if we are going to remove <strong>one</strong> of the by-testword random effects (<code>Delay</code> or <code>Group</code>), which one do we consider to be more theoretically justified? Is the effect of Delay likely to vary by test-words? More so than the effect of group is likely to vary by test-words?<br>
+<div id="sol-body-26" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 26</em>. </span>We still have a singular fit here. Thinking about the study, if we are going to remove <strong>one</strong> of the by-testword random effects (<code>Delay</code> or <code>Group</code>), which one do we consider to be more theoretically justified? Is the effect of Delay likely to vary by test-words? More so than the effect of group is likely to vary by test-words?<br>
 Quite possibly - it’s reasonable to think that some words will be more easily retained over a week than others, but I can’t come up with a reason to think why <code>StudyTest</code> vs <code>StudyStudy</code> would have a different effect for some words than others.</p>
 <p>Let’s remove the by-testword random effect of group.</p>
 <div class="cell" data-layout-align="center">
@@ -2901,12 +2972,12 @@ Why did we not get a warning message?</p>
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-15" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-15', 'sol-start-15')">
+<button id="sol-start-27" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-27', 'sol-start-27')">
 4 - Removing Delay|Test_word
 </button>
 </div>
-<div id="sol-body-15" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 15</em>. </span></p>
+<div id="sol-body-27" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 27</em>. </span></p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a>mod4 <span class="ot">&lt;-</span> <span class="fu">glmer</span>(Correct <span class="sc">~</span> Delay<span class="sc">*</span>Group <span class="sc">+</span></span>
 <span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a>             (<span class="dv">1</span> <span class="sc">+</span> Delay <span class="sc">|</span> Subject_ID) <span class="sc">+</span></span>
@@ -2934,33 +3005,33 @@ Why did we not get a warning message?</p>
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-16" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-16', 'sol-start-16')">
+<button id="sol-start-28" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-28', 'sol-start-28')">
 5 - Comparisons
 </button>
 </div>
-<div id="sol-body-16" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 16</em>. </span>In the process of getting to our final model, we’ve just fitted quite a few models that didn’t converge. We definitely don’t want to do anything with these models (i.e.&nbsp;we shouldn’t report them or use them in model comparisons etc).</p>
+<div id="sol-body-28" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 28</em>. </span>In the process of getting to our final model, we’ve just fitted quite a few models that didn’t converge. We definitely don’t want to do anything with these models (i.e.&nbsp;we shouldn’t report them or use them in model comparisons etc).</p>
 <p>However, it can sometimes be useful to just check how estimates of fixed effects and their standard errors differ across these models. More often than not, this simply provides us with reassurance that the removal of random effects hasn’t actually had too much of an impact on anything we’re going to conduct inferences on.</p>
 <p>For instance, in all these models, the fixed effects estimates are all pretty similar, suggesting that they’ve all found similar estimates of these parameters which have been largely invariant to our refinement of the random effects.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
-<div id="cltdjrkuns" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#cltdjrkuns table {
+<div id="rpftlzkopw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#rpftlzkopw table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#cltdjrkuns thead, #cltdjrkuns tbody, #cltdjrkuns tfoot, #cltdjrkuns tr, #cltdjrkuns td, #cltdjrkuns th {
+#rpftlzkopw thead, #rpftlzkopw tbody, #rpftlzkopw tfoot, #rpftlzkopw tr, #rpftlzkopw td, #rpftlzkopw th {
   border-style: none;
 }
 
-#cltdjrkuns p {
+#rpftlzkopw p {
   margin: 0;
   padding: 0;
 }
 
-#cltdjrkuns .gt_table {
+#rpftlzkopw .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2986,12 +3057,12 @@ Why did we not get a warning message?</p>
   border-left-color: #D3D3D3;
 }
 
-#cltdjrkuns .gt_caption {
+#rpftlzkopw .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#cltdjrkuns .gt_title {
+#rpftlzkopw .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -3003,7 +3074,7 @@ Why did we not get a warning message?</p>
   border-bottom-width: 0;
 }
 
-#cltdjrkuns .gt_subtitle {
+#rpftlzkopw .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -3015,7 +3086,7 @@ Why did we not get a warning message?</p>
   border-top-width: 0;
 }
 
-#cltdjrkuns .gt_heading {
+#rpftlzkopw .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -3027,13 +3098,13 @@ Why did we not get a warning message?</p>
   border-right-color: #D3D3D3;
 }
 
-#cltdjrkuns .gt_bottom_border {
+#rpftlzkopw .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#cltdjrkuns .gt_col_headings {
+#rpftlzkopw .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -3048,7 +3119,7 @@ Why did we not get a warning message?</p>
   border-right-color: #D3D3D3;
 }
 
-#cltdjrkuns .gt_col_heading {
+#rpftlzkopw .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3068,7 +3139,7 @@ Why did we not get a warning message?</p>
   overflow-x: hidden;
 }
 
-#cltdjrkuns .gt_column_spanner_outer {
+#rpftlzkopw .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3080,15 +3151,15 @@ Why did we not get a warning message?</p>
   padding-right: 4px;
 }
 
-#cltdjrkuns .gt_column_spanner_outer:first-child {
+#rpftlzkopw .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#cltdjrkuns .gt_column_spanner_outer:last-child {
+#rpftlzkopw .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#cltdjrkuns .gt_column_spanner {
+#rpftlzkopw .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -3100,11 +3171,11 @@ Why did we not get a warning message?</p>
   width: 100%;
 }
 
-#cltdjrkuns .gt_spanner_row {
+#rpftlzkopw .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#cltdjrkuns .gt_group_heading {
+#rpftlzkopw .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3130,7 +3201,7 @@ Why did we not get a warning message?</p>
   text-align: left;
 }
 
-#cltdjrkuns .gt_empty_group_heading {
+#rpftlzkopw .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -3145,15 +3216,15 @@ Why did we not get a warning message?</p>
   vertical-align: middle;
 }
 
-#cltdjrkuns .gt_from_md > :first-child {
+#rpftlzkopw .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#cltdjrkuns .gt_from_md > :last-child {
+#rpftlzkopw .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#cltdjrkuns .gt_row {
+#rpftlzkopw .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3172,7 +3243,7 @@ Why did we not get a warning message?</p>
   overflow-x: hidden;
 }
 
-#cltdjrkuns .gt_stub {
+#rpftlzkopw .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3185,7 +3256,7 @@ Why did we not get a warning message?</p>
   padding-right: 5px;
 }
 
-#cltdjrkuns .gt_stub_row_group {
+#rpftlzkopw .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -3199,15 +3270,15 @@ Why did we not get a warning message?</p>
   vertical-align: top;
 }
 
-#cltdjrkuns .gt_row_group_first td {
+#rpftlzkopw .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#cltdjrkuns .gt_row_group_first th {
+#rpftlzkopw .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#cltdjrkuns .gt_summary_row {
+#rpftlzkopw .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -3217,16 +3288,16 @@ Why did we not get a warning message?</p>
   padding-right: 5px;
 }
 
-#cltdjrkuns .gt_first_summary_row {
+#rpftlzkopw .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#cltdjrkuns .gt_first_summary_row.thick {
+#rpftlzkopw .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#cltdjrkuns .gt_last_summary_row {
+#rpftlzkopw .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3236,7 +3307,7 @@ Why did we not get a warning message?</p>
   border-bottom-color: #D3D3D3;
 }
 
-#cltdjrkuns .gt_grand_summary_row {
+#rpftlzkopw .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -3246,7 +3317,7 @@ Why did we not get a warning message?</p>
   padding-right: 5px;
 }
 
-#cltdjrkuns .gt_first_grand_summary_row {
+#rpftlzkopw .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3256,7 +3327,7 @@ Why did we not get a warning message?</p>
   border-top-color: #D3D3D3;
 }
 
-#cltdjrkuns .gt_last_grand_summary_row_top {
+#rpftlzkopw .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -3266,11 +3337,11 @@ Why did we not get a warning message?</p>
   border-bottom-color: #D3D3D3;
 }
 
-#cltdjrkuns .gt_striped {
+#rpftlzkopw .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#cltdjrkuns .gt_table_body {
+#rpftlzkopw .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -3279,7 +3350,7 @@ Why did we not get a warning message?</p>
   border-bottom-color: #D3D3D3;
 }
 
-#cltdjrkuns .gt_footnotes {
+#rpftlzkopw .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3293,7 +3364,7 @@ Why did we not get a warning message?</p>
   border-right-color: #D3D3D3;
 }
 
-#cltdjrkuns .gt_footnote {
+#rpftlzkopw .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -3302,7 +3373,7 @@ Why did we not get a warning message?</p>
   padding-right: 5px;
 }
 
-#cltdjrkuns .gt_sourcenotes {
+#rpftlzkopw .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -3316,7 +3387,7 @@ Why did we not get a warning message?</p>
   border-right-color: #D3D3D3;
 }
 
-#cltdjrkuns .gt_sourcenote {
+#rpftlzkopw .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -3324,72 +3395,72 @@ Why did we not get a warning message?</p>
   padding-right: 5px;
 }
 
-#cltdjrkuns .gt_left {
+#rpftlzkopw .gt_left {
   text-align: left;
 }
 
-#cltdjrkuns .gt_center {
+#rpftlzkopw .gt_center {
   text-align: center;
 }
 
-#cltdjrkuns .gt_right {
+#rpftlzkopw .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#cltdjrkuns .gt_font_normal {
+#rpftlzkopw .gt_font_normal {
   font-weight: normal;
 }
 
-#cltdjrkuns .gt_font_bold {
+#rpftlzkopw .gt_font_bold {
   font-weight: bold;
 }
 
-#cltdjrkuns .gt_font_italic {
+#rpftlzkopw .gt_font_italic {
   font-style: italic;
 }
 
-#cltdjrkuns .gt_super {
+#rpftlzkopw .gt_super {
   font-size: 65%;
 }
 
-#cltdjrkuns .gt_footnote_marks {
+#rpftlzkopw .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#cltdjrkuns .gt_asterisk {
+#rpftlzkopw .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#cltdjrkuns .gt_indent_1 {
+#rpftlzkopw .gt_indent_1 {
   text-indent: 5px;
 }
 
-#cltdjrkuns .gt_indent_2 {
+#rpftlzkopw .gt_indent_2 {
   text-indent: 10px;
 }
 
-#cltdjrkuns .gt_indent_3 {
+#rpftlzkopw .gt_indent_3 {
   text-indent: 15px;
 }
 
-#cltdjrkuns .gt_indent_4 {
+#rpftlzkopw .gt_indent_4 {
   text-indent: 20px;
 }
 
-#cltdjrkuns .gt_indent_5 {
+#rpftlzkopw .gt_indent_5 {
   text-indent: 25px;
 }
 
-#cltdjrkuns .katex-display {
+#rpftlzkopw .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#cltdjrkuns div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#rpftlzkopw div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -3451,12 +3522,12 @@ Question 16
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-17" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-17', 'sol-start-17')">
+<button id="sol-start-29" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-29', 'sol-start-29')">
 Solution
 </button>
 </div>
-<div id="sol-body-17" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 17</em>. </span></p>
+<div id="sol-body-29" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 29</em>. </span></p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effects)</span>
 <span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a>effplot <span class="ot">&lt;-</span> <span class="fu">effect</span>(<span class="st">"Delay:Group"</span>, mod4) <span class="sc">|&gt;</span></span>
@@ -3506,12 +3577,12 @@ Delayweek:GroupStudyTest 2.1734992 1.7894502 2.6399723</code></pre>
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-18" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-18', 'sol-start-18')">
+<button id="sol-start-30" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-30', 'sol-start-30')">
 Solution
 </button>
 </div>
-<div id="sol-body-18" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 18</em>. </span>We’ll get the benefits of test-enhanced learning if we try these exercises before looking at any of the solutions that are visible! If we don’t test ourselves, we’re more likely to forget it in the long run.</p>
+<div id="sol-body-30" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 30</em>. </span>We’ll get the benefits of test-enhanced learning if we try these exercises before looking at any of the solutions that are visible! If we don’t test ourselves, we’re more likely to forget it in the long run.</p>
 </div>
 <p class="solution-end">
 </p>
