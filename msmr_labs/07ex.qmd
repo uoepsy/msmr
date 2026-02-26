@@ -667,10 +667,11 @@ loadings = unclass(conduct_efa$loadings)
 loadings = round(loadings, 3)
 loadings = loadings[order(loadings[,1],decreasing = T),]
 loadings[abs(loadings) < 0.3] = NA
-loadings[!is.na(loadings[,2]),] <- 
-  loadings[!is.na(loadings[,2]),][
-    order(loadings[!is.na(loadings[,2]),2],decreasing = T),
-  ]
+# loadings[!is.na(loadings[,2]),] <- 
+#   loadings[!is.na(loadings[,2]),][
+#     order(loadings[!is.na(loadings[,2]),2],decreasing = T),
+#   ]
+loadings
 options(knitr.kable.NA = '')
 knitr::kable(loadings, digits = 2)
 ```
