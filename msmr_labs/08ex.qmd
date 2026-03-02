@@ -173,17 +173,17 @@ unique(unlist(rdas))
 
 Perfect. So we know we have uniformity of spelling. It happens less often these days as questionnaire software is improving, but you might occasionally encounter typos in _some_ of the questions, or things with and without capital letters (R is a bit thick, and doesn't recognise that "Often" and "often" are the same thing).  
 Note that we have the 6 responses that we would expect given the description of the scale, but we also have some `NA` values, and some `[NO ENTRY]` values. Not sure how those got there.  
-We want to turn each "Always" in to 0, each "Almost Always" in to 1, "Often" in to 2, and so on. If we simply leave out the "[NO ENTRY]", then this will be turned into a missing value `NA`, which is handy.  
+We want to turn each "Always" in to 1, each "Almost Always" in to 2, "Often" in to 3, and so on. If we simply leave out the "[NO ENTRY]", then this will be turned into a missing value `NA`, which is handy.  
 
 ```{r}
 rdas <- rdas |> 
   mutate(across(q1:q24, ~case_match(.,
-    "Always" ~ 0,
-    "Almost Always" ~ 1,
-    "Often" ~ 2,
-    "Occasionally" ~ 3,
-    "Hardly Ever" ~ 4,
-    "Never" ~ 5
+    "Always" ~ 1,
+    "Almost Always" ~ 2,
+    "Often" ~ 3,
+    "Occasionally" ~ 4,
+    "Hardly Ever" ~ 5,
+    "Never" ~ 6
   )))
 head(rdas)
 ```
@@ -195,13 +195,13 @@ According to the table of items, the ones which need to be reverse scored are:
 reversed <- c(2,3,4,5,7,8,9,10,13,14,16,18,20,22)
 ```
 
-For these items, we want 5s to become 0s, 4s become 1s, and so on. 
+For these items, we want 6s to become 1s, 5s become 2s, and so on. 
 
 The tidyverse solution shown in the readings and solutions to previous labs will work just fine, but if you're curious, here's a different way to accomplish the same thing using functions from base R:
 
 ```{r}
 rdas[, reversed] <- apply(
-  rdas[, reversed], MARGIN = 2, function(x) 5-x)
+  rdas[, reversed], MARGIN = 2, function(x) 7-x)
 ```
 
 __Note:__ The above code works nicely because our dataset is currently ordered such that the first column is item 1, 2nd column is item 2, and so on. This means we can use _numbers_ to index the appropriate variables, rather than _names_. It would need adjusting if, for instance, our first column contained "participant ID", and our items only began later.  
@@ -678,9 +678,18 @@ __Beware:__ there's a slightly blurred line here that we're about to step over, 
 
 Look carefully at the item wordings,do any of the suggested modifications make theoretical sense? Add them to the model and re-fit it. Does this new model fit well?  
 
+As a general heuristics:  
 
+Less contentious use of modification indices:  
 
-In this case, the likely reason for the poor fit of the "DOOM" scale, is that the person who made the items (ahem, me) doesn't really know anything about the construct they are talking about, and didn't put much care into constructing the items!  
+  - residual covariances for items within a factor (essentially asserts that the two observed variables share some of their specific variance) 
+  
+More contentious uses of modification indices:  
+
+- adding cross-loadings (could argue that an item loading on two factors is not a clean indicator, and so should be removed)  
+- residual covariances for items on different factors - often harder to defend  
+- changing paths between the latent variables - very definitely changing your theory!  
+
 
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
@@ -688,22 +697,23 @@ In this case, the likely reason for the poor fit of the "DOOM" scale, is that th
 There are three main proposed adjustments from our initial model:  
 
 1. `item_1 ~~ item_3`. These questions are both about animals. It would make sense that these are related over and above the underlying "emotional internet usage" factor. 
-2. `item_7 ~~ item_8`. These are both about viewing negative content online, so it makes sense here that they would be related beyond the 'emotional' factor. 
-
+2. `item_7 ~~ item_8`. These are both about viewing negative content online, so it makes sense here that they would be related beyond the 'emotional' factor.  
 3. `emot =~ item_10`. This item is about communicating with others. It currently loads highly on the `pract` factor too. It maybe makes sense here that "communicating with others" will capture both a practical element of internet useage _and_ an emotional one. 
 
 
 Putting them all in at once could be a mistake - if we added in `emot =~ item_10`, then we change slightly the underlying construct of the `emot` factor, meaning it might make other suggested modifications (`item_7 ~~ item_8`) less important. It's a bit like [Whac-A-Mole](https://en.wikipedia.org/wiki/Whac-A-Mole){target="_blank"} - you make one modification and then a whole new area of misfits appears!  
 
-Let's adjust our model:  
+Let's adjust our model, putting in the covariance between `item_1` and `item_3` in.
 ```{r}
 moddoom2 <- "
 # emotional domain
-emot =~ item_1 + item_2 + item_3 + item_4 + item_5 + item_6 + item_7 + item_8 + item_9 + item_10
+emot =~ item_1 + item_2 + item_3 + item_4 + item_5 + item_6 + item_7 + item_8 + item_9
 # practical domain
 pract =~ item_10 + item_11 + item_13 + item_14 + item_15
 # correlated domains (will be estimated by default)
 emot ~~ pract
+# residual covariances
+item_1 ~~ item_3
 "
 ```
 Then fit it to the data:  
@@ -713,23 +723,24 @@ moddoom2.est <- cfa(moddoom2, data = doom)
 fitmeasures(moddoom2.est)[c("rmsea","srmr","cfi","tli")]
 ```
 
-The fit is still not great, and the same suggested correlations are present in modification indices:  
+The fit is close, but not great, and the same suggested correlations are present in modification indices:  
 ```{r}
 modindices(moddoom2.est, sort=TRUE) |>
   head()
 ```
 
-Let's go ahead and put the covariance between `item_1` and `item_3` in. I personally went for this first because they seem more similar to me than `item_7` and `item_8` do. 
-
+We could try to now put in the covariance between `item_7` and `item_8` too:  
 ```{r}
 moddoom3 <- "
 # emotional domain
-emot =~ item_1 + item_2 + item_3 + item_4 + item_5 + item_6 + item_7 + item_8 + item_9 + item_10
+emot =~ item_1 + item_2 + item_3 + item_4 + item_5 + item_6 + item_7 + item_8 + item_9
 # practical domain
 pract =~ item_10 + item_11 + item_13 + item_14 + item_15
 # correlated domains (will be estimated by default)
 emot ~~ pract
+# residual covariances
 item_1 ~~ item_3
+item_7 ~~ item_8
 "
 
 moddoom3.est <- cfa(moddoom3, data = doom)
@@ -737,23 +748,38 @@ moddoom3.est <- cfa(moddoom3, data = doom)
 fitmeasures(moddoom3.est)[c("rmsea","srmr","cfi","tli")]
 ```
 
-Whoop! It fits well! It may well be that if we inspect modification indices again, we still see that `item_7 ~~ item_8` would improve our model fit. The thing to remember however, is that we could simply keep adding parameters until we run out of degrees of freedom, and our model would "fit better". But such a model would not be useful. It would not generalise well, because it runs the risk of being overfitted to the nuances of this specific sample.
+Whoop! It fits well! It may well be that if we inspect modification indices again, we still see that `emot =~ item_10` would improve our model fit. The thing to remember however, is that we could simply keep adding parameters until we run out of degrees of freedom, and our model would "fit better". But such a model would not be useful. It would not generalise well, because it runs the risk of being overfitted to the nuances of this specific sample.
+
+```{r}
+modindices(moddoom3.est, sort=TRUE) |>
+  head()
+```
+
+
 
 `r solend()`
 
 `r qbegin(qcounter())`
 
-mcq style
+Based on our analysis of the DOOM measure, which of the following statements accurately reflect our current position? (you can choose multiple!)
 
-which do you think reflects where we're at now with our analysis
+- **A** The theoretical measurement model is now confirmed. Because our final fit indices (CFI/RMSEA) meet the thresholds, the initial theory of DOOM scrolling is validated.
+- **B** We have confirmed our theoretical measurement model, but with some caveats
+- **C** Our analysis has shifted from confirmatory to exploratory; while the model now fits the data, it requires validation on an independent sample.
+- **D** The measure of doom scrolling is fundamentally flawed and should be discarded/updated due to the initial lack of fit.
+- **E** The measure of doom scrolling is likely suffers from poor content validity. The need for correlated errors suggests item wordings are redundant or overlapping, meaning the scale likely needs redesigning. 
 
-- we have confirmed our theoretical measurement model of DOOM scrolling
-- we have confirmed our theoretical measurement model, but with some caveats
-- the measure of doom scrolling is crap
-- 
 
 `r qend()`
 `r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+I would probably opt for **C** and **E** here. The suggested factor loading of `emot =~ item_10` to me is a bit of a red flag. Ideally we don't want to have measures that have cross-loadings (items loading on to multiple factors), because it blurs the meaning of the factors.  
+
+Similarly, just looking at the wordings of the items - some of them (item_3) don't actually ask anything specific to being online!  
+
+In this case, the likely reason for the initial poor fit of the "DOOM" scale, is that the person who made the items (ahem, me) doesn't really know anything about the construct they are talking about, and didn't put much care into constructing the items!  
+
+
 
 `r solend()`
 
