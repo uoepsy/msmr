@@ -1,0 +1,42 @@
+project:
+  type: website
+  render: 
+    - "*.qmd"
+    - "!working/*"
+    - "!working/archive/*"
+    - "!working/lmm/*"
+    - "!working/lv/*"
+  output-dir: ./wipdocs/
+
+website:  
+  title: "MSMR"
+  sidebar:
+    style: "floating"
+    search: true
+    collapse-level: 1
+    contents:
+      - section: "Mixed Effects Models"
+        contents:
+          - csstests.qmd
+      - section: "Latent Variable Modelling"
+        contents:
+          #- csstests.qmd
+      - section: "Additional Docs"
+        contents:
+          #- csstests.qmd
+
+
+format:
+  html:
+    toc: true
+    toc_float: true
+    link-citations: true
+    theme: 
+      - cosmo
+      - assets/style-readings.scss
+    include-in-header: 
+      - text: |
+          <link rel="stylesheet" href="https://uoepsy.github.io/assets/css/ccfooter.css" />
+    number-sections: false
+
+

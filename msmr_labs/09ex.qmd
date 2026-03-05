@@ -1,0 +1,579 @@
+---
+title: "Week 9 Exercises: Path Analysis & Mediation"
+params: 
+    SHOW_SOLS: FALSE
+    TOGGLE: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+source('assets/setup.R')
+library(xaringanExtra)
+library(tidyverse)
+library(patchwork)
+xaringanExtra::use_panelset()
+qcounter <- function(){
+  if(!exists("qcounter_i")){
+    qcounter_i <<- 1
+  }else{
+    qcounter_i <<- qcounter_i + 1
+  }
+  qcounter_i
+}
+library(psych)
+library(semPlot)
+library(lavaan)
+```
+
+
+# Education, Skills, and Salary
+
+
+:::frame
+
+```{r}
+#| include: false
+library(lavaan)
+set.seed(777)
+df = tibble::tibble(
+  Educ = round(rnorm(390, 15.5, 3)),
+  Skill = scale(.7*scale(Educ) + rnorm(390))[,1],
+  Salary = scale(.12*scale(Educ) + .3*Skill + rnorm(390,0,1))[,1]*12.3 + 39.533
+) |> mutate(
+  Skill = round(scale(Skill)[,1]*13.4 + 45),
+  Salary = round(Salary,1)
+)
+# write_csv(df,file="../../data/edskillsalary.csv")
+# m="
+# Salary ~ c*Educ + b*Skill
+# Skill ~ a*Educ
+# ind:=a*b
+# total:=a*b+c
+# "
+# sem(m, df) |> summary()
+# lm(Salary ~ Educ + Skill,df) |> summary()
+  
+
+```
+
+We sampled 500 people who were all 5 years out of their last year of education. All participants completed an extensive questionnaire to ascertain the number of skills of potential interest to employers each participant perceived themselves to have. This resulted in a "Skillset Metric".  
+5 years later, participants were followed up and asked to provide their current salaries. 110 participants failed to respond to follow-ups and thus the final sample included 390 people.  
+
+The data are available at [https://uoepsy.github.io/data/edskillsalary.csv](https://uoepsy.github.io/data/edskillsalary.csv){target="_blank"}.  
+
+```{r}
+#| echo: false
+tibble(
+  variable = names(df),
+  description = c(
+    "Number of years of education undertaken",
+    "Skillset metric (scores listed from a 100 item list of skills deemed relevant to employers)",
+    "Salary (in thousands of £)"
+  )
+) |> gt::gt()
+```
+
+:::
+
+
+`r qbegin(qcounter())`
+Read in the dataset.  
+Let's suppose that the only statistical machinery available to us is the good old regression models with `lm()`, and we are interested in the estimated effect of education on salary.    
+
+Which model are you going to fit?  
+```{r}
+#| eval: false
+lm(Salary ~ Educ, data = ... )
+lm(Salary ~ Skill + Educ, data = ... )
+```
+
+
+`r qend()`
+`r solbegin(show=TRUE, toggle=params$TOGGLE)`
+
+Here's the data: 
+```{r}
+edskill <- read_csv("https://uoepsy.github.io/data/edskillsalary.csv")
+```
+
+I'm going to fit both models so that we can discuss them below
+```{r}
+m1 <- lm(Salary ~ Educ, data = edskill)
+m2 <- lm(Salary ~ Skill + Educ, data = edskill)
+# model tables side by side
+sjPlot::tab_model(m1,m2)
+```
+
+<br>
+
+So we have got two quite different pictures. The first model says that for every additional year of education, the salary offered would be £1140 more. The second model says it would only be £480 more, and it looks like skills are also important for getting a good salary, right?  
+
+But this makes it sound like "Education" and "Skills" are things that we can compare the effects of independently. The implicit model we are referring to when using `lm(Salary ~ Skill + Educ)` is in the left hand diagram, Model A, of @fig-educ. But does it not make a lot more sense to think that education is a cause of peoples' levels of skills (especially as the skill level being measured 5 years after their last year of education precludes the opposite direction). In other words, does Model B in @fig-educ not make more sense?  
+
+```{r}
+#| echo: false
+#| out-width: "100%"
+#| label: fig-educ
+#| fig-cap: "Two theoretical models of process that gives rise to the data"
+knitr::include_graphics("images/path_educ.png")
+```
+
+::::{.columns}
+:::{.column width="80%"}
+What Model B suggests is that part of *how* education influences peoples' salaries is by giving them more skills. A perfect example is that you are all now on your way to becoming proficient R users! 
+:::
+:::{.column width="5%"}
+:::
+:::{.column width="15%"}
+![](images/new-skill-unlocked.gif)
+:::
+::::
+
+This is a great example that illustrates instances we might **not** want to include a variable in our model. If you are interested in "what does having an extra year of education do for peoples' salaries?", then controlling for skill in our model actually _removes_ that part of the mechanism by which education influences salary.  
+
+
+::: {.callout-note collapse="true"}
+#### another example
+
+To make this point super clear, suppose we were testing some drug that reduces blood pressure in order to lower the risk of cardiac arrest. 
+We do an experiment where we gave some people the drug, and some people a placebo, then after a year we measured their blood pressure, and then we followed up 5 years later to see how many experienced cardiac arrests.  
+
+The diagram to show how these variable relate is clearly the one in @fig-pathdrugmed  
+```{r}
+#| label: fig-pathdrugmed
+#| fig-cap: "A drug aimed at reducing cardiac arrests by lowering blood pressure. The faint grey line indicates the path that would be estimated if we attempted to control for post-treatment blood-pressure"
+#| echo: false
+knitr::include_graphics("images/path_drug.png")
+```
+
+If we fitted the model `lm(cardiac_arrest ~ blood_pressure + drug)`, then the estimated coefficient we get for `drug` will be the effect of the drug on cardiac arrests that *isn't* due to how it changes blood pressure. But that is exactly the opposite of what we want, because we think the drug works specifically by lowering blood pressure!  
+
+Contrast this with another example, where we do not run an experiment and allocate people into "drug" or "placebo", we simply observe a whole load of people who either do or do not take the drug, and we follow them up to see how many have cardiac arrests. **But**, it is generally older people who take the drug, whereas younger people do not. In addition, older people have a higher risk of cardiac arrests. So our model is that seen in @fig-pathdrugcon.  
+```{r}
+#| label: fig-pathdrugcon
+#| fig-cap: "We are interested in a drug aimed at reducing cardiac arrests. Older people are more likely to take the drug, and are also more likely to experience cardiac arrest"
+#| echo: false
+knitr::include_graphics("images/path_drug_con.png")
+```
+
+In this case, controlling for the third variable `age` is the right thing to do.  
+If we do not control for age, and fit the model `lm(cardiac_arrest ~ drug)`, then the coefficient for `drug` will be biased because the group who take the drug are on average older, and thus will tend to experience more cardiac arrests. If the imbalance of age between the drug and no-drug groups is great enough, it could even look like the drug is making cardiac arrests _more_ likely!  
+
+:::
+
+`r solend()`
+
+
+`r qbegin(qcounter())`
+Instead, let's suppose we are actually interested in the mechanism of _how_ education influences salary. Do more educated people tend to have higher salaries in part because of the skills obtained during their education?  
+
+Fit a path model in which education has an effect on salary both directly and indirectly, via its influence on the skills obtained (i.e., model B in @fig-educ)
+
+::: {.callout-tip collapse="true"}
+#### Hints
+
+we have an outcome Y, a predictor X, and a mediator M:  
+
+```{r}
+#| eval: false
+mod <- "
+Y ~ X + M
+M ~ X
+"
+```
+
+:::
+
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+mod1 <- "
+Salary ~ Educ + Skill
+Skill ~ Educ
+"
+
+mod1.est <- sem(mod1, data = edskill)
+summary(mod1.est)
+```
+
+`r solend()`
+
+`r qbegin(qcounter())`
+While the model in the previous question better reflects our theoretical notions of how these variables are actually related, we would ideally get out an estimate of the indirect effect.  
+
+Edit your model formula from the previous question to also estimate both the total and the indirect effects.  
+
+Then re-fit the model, estimating the parameters using bootstrapping.  
+Is the association between education and salary mediated by skills? What proportion of the effect is mediated?  
+
+::: {.callout-tip collapse="true"}
+#### Hints
+
+You'll need to add some labels to the existing paths, and then define the indirect and total effects - see [Chapter 7#mediation-in-lavaan](https://uoepsy.github.io/lv/07_mediation.html#mediation-in-lavaan){target="_blank"}.  
+
+:::
+
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+mod1 <- "
+Salary ~ c*Educ + b*Skill
+Skill ~ a*Educ
+
+indirect := a*b
+total := a*b + c
+"
+```
+
+```{r}
+#| echo: false
+# save(mod.est,mod1.est,model1.est,model2.est,file="data/pathmods.rdata")
+load("data/pathmods.rdata")
+```
+
+```{r}
+#| eval: false
+mod1.est <- sem(mod1, data = edskill, se = "bootstrap")
+```
+<p style="color:red;font-size:0.8em">Warning message:<br>
+In lav_model_nvcov_bootstrap(lavmodel = lavmodel, lavsamplestats = lavsamplestats,  :<br>
+  lavaan WARNING: 8 bootstrap runs failed or did not converge.</p>
+
+Note that we get a warning here, but it's not too much to worry about. It tells us that 8 (out of 1000) of the bootstraps has failed to converge. This means our bootstrapped estimates are really based on 992 bootstrap draws (and so a write up would need to clearly report this).  
+If this number was bigger (e.g. 10% or 20% of the bootstraps failed) then we it would be more of a cause for concern.  
+
+```{r}
+summary(mod1.est, ci = TRUE)
+```
+
+```{r}
+#| include: false
+res = partable(mod1.est)$est[
+  partable(mod1.est)$lhs %in% c("indirect","total")] |>
+  round(2)
+
+res2 = summary(mod1.est, ci=TRUE)$pe
+res2 = round(res2[res2$lhs=="indirect",c("est","ci.lower","ci.upper")],2)
+```
+
+The relationship between education and salary **is** mediated by skill level! We have a significant indirect effect of `r res2[1]`, 95% CI [`r res2[2]`, `r res2[3]`].  
+
+The total effect of education on salary is `r res[2]`, and the indirect effect is `r res[1]`.  
+$\frac{`r res[1]`}{`r res[2]`} = `r round(res[1]/res[2],2)`$, so `r round(res[1]/res[2],2)*100`% of the effect is mediated by the influence that education has on skillset and skillset has on salary. 
+
+
+`r solend()`
+
+`r qbegin(qcounter())`
+Nothing to code here, just spend a little time to get to grips with what the different parts of the model represent:  
+
+if you can, write down for explanation of each of:  
+
+- a
+- b
+- the total effect
+- the direct effect
+- the indirect effect
+
+![](images/path_educparts.png)
+
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+- **a: ** this is the estimated number of skills you acquire for every additional year of education. So each year of education tends to lead to acquiring 2.48 new skills.  
+
+- **b: ** this is the estimated increase in salary for every additional skill you have, if you hold years of education constant. So if you just keep your years of education the same, but teach yourself an extra skill, we'd expect your salary to increase by £270  
+
+- **the direct effect: ** this is the estimated increase in salary for every additional year of education, holding number of skills constant. Imagine that you didn't show up to any classes for your masters degree (and so you didn't learn any new skills), but we still gave you the certificate at the end. Having that bit of paper means we expect you to earn £480 more (compared to someone who has the same skill set as you but doesn't have the extra year of education).  
+
+- **the total effect: ** this is the estimated increase in salary for every additional year of education. So by doing your masters degree, we'd expect your salary to be £1140 higher than someone without a masters degree. It will be higher partly because of the skills you acquire (the indirect effect) and partly because of just having the certificate (the direct effect)
+
+- **the indirect effect: ** this is the estimated increase in salary due to the skills you tend to acquire for every additional year of education. To put this another way, imagine that during your masters degree, you come to classes and obtain the various skills that tend to be gained from a masters, but then you never get round to finishing, so you never get your certificate. We would expect your salary to be £659 higher than someone who didn't do the masters degree.  
+
+
+`r solend()`
+
+
+
+`r qbegin(qcounter())`  
+
+In order for us to accurately estimate mediation effects, a few conditions have to be met. One of the biggest is that of **no confounding.**
+
+An unmeasured variable that is a common cause of both X and Y will bias the total and direct effects, and one that is a common cause of both X and M will bias the indirect effect (it will bias the X$\rightarrow$M path). Randomised experiments (i.e. randomly allocating people to different values of X) will avoid this, because nothing but the random allocation would cause X. However, confounding of the indirect effect can also happen if some variable is a common cause of both M and Y, and it is hard to randomly allocate to a mediator^[there _are_ methods that attempt to "block" a mediator, or to manipulate X in multiple ways in order to increase or decrease the mediators' effect. If you're interested see [*Design approaches to experimental mediation*, Pirlott & MacKinnon 2016](https://doi.org/10.1016/j.jesp.2015.09.012){target="_blank"}].  
+
+Can you think of two unmeasured variables that could be in the place of the variables indicated by `?` in @fig-blanks and may be confounding our estimates.  
+
+```{r}
+#| echo: false
+#| label: fig-blanks
+#| fig-cap: "fill in the blanks!"  
+knitr::include_graphics("images/path_educ_conf_blank.png")
+```
+
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+Here are my suggestions. Even if we don't believe that it _should_, something like "socioeconomic status" can likely influence both peoples' levels of education (people from wealthier backgrounds have more access to more years of education) and their eventual salary (social connections might lead to better paying jobs, etc.).  
+
+Similarly, aspects of peoples' employment post-education will influence the skills they have _and_ their salary. For instance, some people might leave education and go into private industry jobs with lots of options for on-the-job training and 'upskilling'. This will lead to more skills, but could also lead to being promoted and therefore having a higher salary! 
+
+![](images/path_educ_conf_example.png)
+
+`r solend()`
+
+`r qbegin(qcounter())`  
+Another assumption of our model here is that there is no "X-M interaction". By this, I mean that we are assuming that the effect of the mediator M on the outcome Y does not depend on the level of the predictor X.  
+
+Think: what would an X-M interaction mean in this example?  
+
+`r qend()`
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`  
+
+
+In our example of Educ$\rightarrow$Skill$\rightarrow$Salary, the "X-M interaction" would refer to the idea that the number of skills has a different effect on salaries depending on the level of education.  
+
+Intuitively to me this actually seems like a pretty important possibility!  
+Skills may well have a bigger bearing on salaries for people with lower levels of education. It's probably easier to think about this if we split Education into a binary thing. It's quite likely that in reality, there is an interaction like the picture below, where the number of skills tends to 'matter more' (i.e. lead to more of a difference in salaries) for people with less education.  
+
+```{r}
+#| echo: false
+df |> mutate(
+  Educ = cut(Educ,2,labels=c("Low","High")),
+  Salary = scale(10*(Educ=="High") + .25*Skill + 
+                   -.13*(Educ=="High")*Skill +
+                   rnorm(390,0,1))[,1]*12.3 + 49.533
+) |>
+  ggplot(aes(x=Skill,y=Salary,col=Educ))+
+  #geom_point()+
+  stat_smooth(method="lm",se=F)
+```
+`r solend()`
+<br>
+
+# More Conduct Problems  
+
+:::frame
+__Dataset: cprobteach.csv__  
+
+Thus far, we have explored the underlying structure of a scale of adolescent 'conduct problems' [(PCA & EFA exercises)](07ex.html#conduct-problems){target="_blank"} and we then tested this measurement model when the scale was administered to a further sample [(CFA exericses)](08ex.html#conduct-problems){target="_blank"}.  
+
+This week, we are looking at whether there are associations between conduct problems (both aggressive and non-aggressive) and academic performance and whether the relations are mediated by the quality of relationships with teachers. We collected data on 557 adolescents as they entered school. Their responses to the conduct problem scale were summed to create a scale score. Two years later, we followed up these students, and obtained measures of Academic performance and of their relationship quality with their teachers. Standardised scale scores were created for both of these measures.  
+
+The data are available at [https://uoepsy.github.io/data/conductprobteach.csv](https://uoepsy.github.io/data/conductprobteach.csv){target="_blank"}  
+
+```{r}
+#| echo: false
+# cp_teach<-read_csv("https://uoepsy.github.io/data/cprobteach.csv")
+# cp_teach2 <- 
+#   cp_teach |>
+#   mutate(
+#     Acad = round(56.4 + scale(Acad)[,1]*13.64,1),
+#     Teach_r = cut(Teach_r, 5*6, labels=F)+7,
+#     Non_agg = cut(Non_agg, 5*4, labels=F)+5,
+#     Agg = cut(Agg, 5*4, labels=F)+5
+#   )
+# write_csv(cp_teach2,file="../../data/conductprobteach.csv")
+cp_teach<-read_csv("https://uoepsy.github.io/data/conductprobteach.csv")
+tibble(
+  variable = names(cp_teach),
+  description = c(
+    "participant ID",
+    "Academic performance (average grade (0-100) based on all available assessments)",
+    "Teacher relationship quality (sum score based on the Teacher-Child-Relationship (TCR) scale - 7 items on a 5-point likert)",
+    "Non-Aggressive conduct problems (sum score based on items 1-5 of the 10 item conduct problems scale - 5 items on a 5-point likert)",
+    "Aggressive conduct problems (sum score based on items 6-10 of the 10 item conduct problems scale - 5 items on a 5-point likert)"
+  )
+) |> gt::gt()
+```
+
+
+:::
+
+
+
+`r qbegin(qcounter())`
+As a little exercise before we get started, let's just show ourselves that we can use __lavaan__ to estimate all sorts of models, including a multiple regression model. 
+
+Let's first just explore the total effects of the two types of conduct problems on academic achievement.  
+
+The code below fits the same model using `sem()` and using `lm()`. Examine the `summary()` output for both models, and spot the similarities.  
+```{r}
+# read in data
+cp_teach<-read_csv("https://uoepsy.github.io/data/conductprobteach.csv")
+
+# a straightforward multiple regression model
+m1_lm <- lm(Acad ~ Non_agg + Agg, data = cp_teach)
+
+# the same model fitted in lavaan
+m1_lav <- 'Acad ~ Non_agg + Agg'
+m1_lav.est <- sem(m1_lav, data = cp_teach)
+```
+
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+``` {r }
+summary(m1_lm)
+summary(m1_lav.est)
+```
+
+We can see that both non-aggressive and aggressive conduct problems significantly predict academic performance. The coefficients from the `lm()` are exactly the same as the estimates under the "Regressions" section of the model fitted with `sem()`.^[Note that the model fitted with `sem()` provides $Z$ values instead of the $t$-values in regression models. This is because `sem()` fits models with maximum likelihood thereby assuming a reasonably large sample size.] 
+
+`r solend()`
+
+
+
+`r qbegin(qcounter())`
+Make a sketch for a model in which **both** aggressive and non-aggressive conduct problems have indirect (via teacher relationships) and direct effects on academic performance.  
+
+Sketch the path diagram on a piece of paper, or use a website like [https://semdiag.psychstat.org/](https://semdiag.psychstat.org/){target="_blank"} or [https://www.diagrams.net/](https://www.diagrams.net/){target="_blank"}.  
+
+
+
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+There are many ways in which you could position the variables in your diagram, so the two path diagrams below are equivalent:
+
+::::{.panelset}
+:::{.panel}
+### Option A
+```{r}
+#| echo: false
+#| out-width: "85%"
+knitr::include_graphics("images/msmr-w8-b1.png")
+```
+:::
+:::{.panel}
+### Option B
+
+```{r}
+#| echo: false
+#| out-width: "85%"
+knitr::include_graphics("images/msmr-w8-b2.png")
+```
+:::
+::::
+
+
+
+`r solend()`
+
+`r qbegin(qcounter())`
+Now specify the model in R, taking care to also define the parameters for the indirect and total effects.  
+
+Make sure to define the indirect effects and total effects. Then estimate the model by bootstrapping.  
+
+::: {.callout-tip collapse="true"}
+#### Hints
+
+you'll need more labels than just a, b, and c!  
+
+:::
+
+`r qend()` 
+
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+We now have two predictors, one mediator and one outcome (and two indirect effects, one for each predictor). We can represent this in two lines: one where we specify academic performance as the outcome variable and one where we specify teacher relationships (the mediator) as the outcome variable. 
+
+```{r two predictors}
+mod2 <- '
+    Acad ~ c_A*Agg + c_NA*Non_agg + b*Teach_r
+    Teach_r ~ a_A*Agg + a_NA*Non_agg
+    
+    #indirect effect for aggressive conduct problems
+    ind_agg := a_A*b 
+    #indirect effect for non-aggressive conduct problems
+    ind_nonagg := a_NA*b 
+    
+    # total effects
+    tot_agg := a_A*b + c_A
+    tot_nonagg := a_NA*b + c_NA
+'
+```
+```{r}
+#| eval: false
+mod2.est<-sem(mod2,  data=cp_teach, se='bootstrap')
+```
+`r solend()`
+
+`r qbegin(qcounter())`
+Given that the measures we are using here all have fairly uninterpretable scales (i.e., what does being 1 higher on `Agg` really represent?), we might prefer standardised coefficients instead.  
+
+You can get these using `standardizedSolution(model)`.  
+
+
+`r qend()` 
+
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+standardizedSolution(mod2.est)
+```
+
+We can see that the 95% confidence intervals for both indirect effects do not include zero, therefore, we can conclude that they are significant at the $\alpha = .05$ level. 
+
+::: red
+__Note__
+
+The confidence intervals computed using bootstrapping may be slightly different for you. This is normal, as bootstrap is based on random sampling!
+:::
+
+`r solend()`
+
+`r qbegin(qcounter())`
+Now visualise the estimated model and its parameters using the `semPaths()` function from the **semPlot** package.  
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+```{r}
+# to include the parameter estimates we set what='est' or what='std'
+library(semPlot)
+semPaths(mod2.est, whatLabels = "std")
+```
+
+`r solend()`
+
+`r qbegin(qcounter())`
+Write a brief paragraph reporting on the results of the model estimates. Include a Figure or Table to display the parameter estimates.  
+`r qend()` 
+`r solbegin(show=params$SHOW_SOLS, toggle=params$TOGGLE)`
+
+```{r}
+#| echo: false
+resc <- standardizedSolution(mod2.est)[,c(1:5,9,10)]
+resc[,5:7] <- apply(resc[,5:7],2,\(x) round(x,3))
+```
+
+
+:::int 
+
+A path mediation model was used to test the direct and indirect effects (via teacher relationship quality) of aggressive and non-aggressive conduct problems on academic performance. In the model, academic performance was regressed on teacher relationship quality, non-aggressive conduct problems and aggressive conduct problems while teacher relationship quality (the mediator) was regressed on aggressive and non-aggressive conduct problems. The indirect effects were tested using the product of the coefficient for the regression of outcome on mediator and the coefficient for the regression of mediator on predictor. The statistical significance of the indirect effects were evaluated using bootstrapped 95% confidence intervals with 1000 bootstrap samples.
+
+Standardised parameter estimates are provided in @fig-pathcp. Solid lines indicate that a parameter is significant at the 5% significance level, while dashed lines represent non-significant paths. Total effects of both non-aggressive and aggressive conduct problems on academic performance were significant and negative, indicating that both conduct problem domains were associated with poorer academic outcomes. 
+
+The indirect effects of both conduct problem domains on academic performance via teacher-relationship quality were statistically significant ($\beta = `r resc[12,5]`,\, 95\%\, CI\, [`r resc[12,6]`, `r resc[12,7]`]$ and $\beta = `r resc[11,5]`\, [`r resc[11,6]`, `r resc[11,7]`]$ for non-aggressive and aggressive conduct problems respectively). The direct effect of non-aggressive conduct problems was not significant ($\beta = `r resc[2,5]`\,[`r resc[2,6]`, `r resc[2,7]`]$), suggesting that teacher-relationship quality fully mediated the relationship between non-aggressive conduct problems and academic performance. In contrast, teacher-relationship quality only partially mediated the effect of aggressive conduct problems (proportion mediated = `r round(resc[11,5]/resc[13,5]*100)`%), as a significant direct effect on academic performance remained ($\beta = `r resc[1,5]`\, [`r resc[1,6]`, `r resc[1,7]`]$). These results suggest that while both types of conduct problems impact academics through the teacher-student bond, aggressive behaviors may also carry additional, direct risks to academic success that are independent of the teacher-student relationship.  
+```{r}
+#| label: fig-pathcp
+#| echo: false
+#| out-width: "1200px"
+#| fig-cap: "Effect of conduct problems on academic performance mediated by quality of teacher relationship. Standardised estimates presented"
+knitr::include_graphics("images/path_analy_revstd.png")
+```
+:::
+
+`r solend()`
+
+
+
+
+
+
+

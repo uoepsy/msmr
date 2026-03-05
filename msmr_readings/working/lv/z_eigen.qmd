@@ -1,0 +1,272 @@
+---
+title: "Optional: Eigen Decomposition"
+params: 
+    SHOW_SOLS: TRUE
+    TOGGLE: TRUE
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+#| label: setup
+#| include: false
+source('assets/setup.R')
+library(xaringanExtra)
+library(tidyverse)
+library(patchwork)
+xaringanExtra::use_panelset()
+
+```
+
+A correlation matrix is a square matrix (i.e. same number of columns as rows), and it is symmetric on the diagonals. Furthermore, the diagonal values themselves are all 1 (the correlation of a variable with itself is 1). 
+
+So we might see a correlation matrix (lets call it $\mathbf{R}$) that looks like this:  
+
+$$
+\begin{equation*}
+\mathbf{R} = 
+\begin{bmatrix}
+1.00, 0.72, 0.63, 0.54, 0.45, 0.36 \\
+0.72, 1.00, 0.56, 0.48, 0.40, 0.32 \\
+0.63, 0.56, 1.00, 0.42, 0.35, 0.28 \\
+0.54, 0.48, 0.42, 1.00, 0.30, 0.24 \\
+0.45, 0.40, 0.35, 0.30, 1.00, 0.20 \\
+0.36, 0.32, 0.28, 0.24, 0.20, 1.00 \\
+\end{bmatrix} 
+\end{equation*} 
+$$
+
+One way in which we can create a symmetric square matrix is to take the product of some vector $\mathbf{f}$ with $\mathbf{f'}$ ($\mathbf{f}$ "transposed"). This is just how you might "square" a vector. To multiply two vectors you take each entry of the first and multiply it with each entry of the second.  
+
+For instance:  
+$$
+\begin{equation*}
+\mathbf{f} = 
+\begin{bmatrix}
+0.88 \\
+0.83 \\
+0.77 \\
+0.69 \\
+0.60 \\
+0.50 \\
+\end{bmatrix} 
+\qquad 
+\mathbf{f} \mathbf{f'} = 
+\begin{bmatrix}
+0.88 \\
+0.83 \\
+0.77 \\
+0.69 \\
+0.60 \\
+0.50 \\
+\end{bmatrix} 
+\begin{bmatrix}
+0.88, 0.83, 0.77, 0.69, 0.60, 0.50 \\
+\end{bmatrix} 
+\qquad = \qquad
+\begin{bmatrix}
+0.78, 0.74, 0.68, 0.61, 0.53, 0.44 \\
+0.74, 0.69, 0.64, 0.58, 0.50, 0.42 \\
+0.68, 0.64, 0.59, 0.53, 0.47, 0.39 \\
+0.61, 0.58, 0.53, 0.48, 0.42, 0.35 \\
+0.53, 0.50, 0.47, 0.42, 0.37, 0.30 \\
+0.44, 0.42, 0.39, 0.35, 0.30, 0.25 \\
+\end{bmatrix} 
+\end{equation*}
+$$
+
+
+Note that I've chosen values for $\mathbf{f}$ that get pretty close to re-creating $\mathbf{R}$ (clever me!). I can get even closer if I take this and add to it the product of __another__ vector:  
+
+
+$$
+\begin{align}
+\begin{bmatrix}
+0.78, 0.74, 0.68, 0.61, 0.53, 0.44 \\
+0.74, 0.69, 0.64, 0.58, 0.50, 0.42 \\
+0.68, 0.64, 0.59, 0.53, 0.47, 0.39 \\
+0.61, 0.58, 0.53, 0.48, 0.42, 0.35 \\
+0.53, 0.50, 0.47, 0.42, 0.37, 0.30 \\
+0.44, 0.42, 0.39, 0.35, 0.30, 0.25 \\
+\end{bmatrix} 
+&+
+\begin{bmatrix}
+0.06 \\
+0.07 \\
+0.09 \\
+0.13 \\
+0.27 \\
+-0.85 \\
+\end{bmatrix} 
+\begin{bmatrix}
+0.06, 0.07, 0.09, 0.13, 0.27, -0.85 \\
+\end{bmatrix} 
+\qquad = \qquad \\
+\quad \\
+\quad \\
+\begin{bmatrix}
+0.78, 0.74, 0.68, 0.61, 0.53, 0.44 \\
+0.74, 0.69, 0.64, 0.58, 0.50, 0.42 \\
+0.68, 0.64, 0.59, 0.53, 0.47, 0.39 \\
+0.61, 0.58, 0.53, 0.48, 0.42, 0.35 \\
+0.53, 0.50, 0.47, 0.42, 0.37, 0.30 \\
+0.44, 0.42, 0.39, 0.35, 0.30, 0.25 \\
+\end{bmatrix} 
+&+
+\begin{bmatrix}
+0.00, 0.00, 0.00, 0.01, 0.02, 0.05 \\
+0.00, 0.00, 0.01, 0.01, 0.02, 0.06 \\
+0.00, 0.01, 0.01, 0.01, 0.02, 0.07 \\
+0.01, 0.01, 0.01, 0.02, 0.03, 0.11 \\
+0.02, 0.02, 0.02, 0.03, 0.07, 0.23 \\
+0.05, 0.06, 0.07, 0.11, 0.23, 0.72 \\
+\end{bmatrix} 
+\qquad = \qquad
+\begin{bmatrix}
+0.78, 0.74, 0.68, 0.62, 0.55, 0.40 \\
+0.74, 0.70, 0.65, 0.59, 0.52, 0.36 \\
+0.68, 0.65, 0.60, 0.55, 0.49, 0.31 \\
+0.62, 0.59, 0.55, 0.50, 0.45, 0.24 \\
+0.55, 0.52, 0.49, 0.45, 0.44, 0.07 \\
+0.40, 0.36, 0.31, 0.24, 0.07, 0.97 \\
+\end{bmatrix} 
+\end{align}
+$$
+
+
+I haven't just chosen a random additional vector here, I've chosen one that is "orthogonal" to the first vector (this gets a little complicated and trigonometry-related, but [click here](https://textbooks.math.gatech.edu/ila/dot-product.html){target="_blank"} for an explanation of why the dot product of orthogonal vectors is equal to zero).  
+
+
+$$
+\begin{align}
+\begin{bmatrix}
+0.88 \\
+0.83 \\
+0.77 \\
+0.69 \\
+0.60 \\
+0.50 \\
+\end{bmatrix} 
+\cdot
+\begin{bmatrix}
+0.06 \\
+0.07 \\
+0.09 \\
+0.13 \\
+0.27 \\
+-0.85 \\
+\end{bmatrix} =
+0
+\end{align}
+$$
+
+In essence eigen decomposition is about finding a set of vectors that can, together, express our correlation matrix $\mathbf{R}$.  
+
+For an $n \times n$ correlation matrix $\mathbf{R}$, there is a set of $n$ **eigenvectors** $x_i$ that solve the equation 
+$$
+\mathbf{x_i R} = \lambda_i \mathbf{x_i}
+$$
+Where the vector multiplied by the correlation matrix is equal to some **eigenvalue** $\lambda_i$ multiplied by that vector.  
+We can write this without subscript $i$ as: 
+$$
+\begin{align}
+& \mathbf{R X} = \mathbf{X \lambda} \\
+& \text{where:} \\
+& \mathbf{R} = \text{correlation matrix} \\
+& \mathbf{X} = \text{matrix of eigenvectors} \\
+& \mathbf{\lambda} = \text{vector of eigenvalues}
+\end{align}
+$$
+these vectors that make up $\mathbf{X}$ are orthogonal [($\mathbf{XX' = I}$)](https://miro.medium.com/max/700/1*kyg5XbrY1AOB946IE5nWWg.png), which means that $\mathbf{R = X \lambda X'}$
+
+
+For some demonstration in R, let's create a correlation matrix
+```{r}
+# lets create a correlation matrix, as f f'
+f <- seq(.9,.4,-.1)
+R <- f %*% t(f)
+#give rownames and colnames
+rownames(R)<-colnames(R)<-paste0("V",seq(1:6))
+#constrain diagonals to equal 1
+diag(R)<-1
+# here's our correlation matrix!
+R
+```
+
+The actual solving of the eigen decomposition is too much for me, but luckily the function `eigen()` does it for us!  
+```{r}
+# do eigen decomposition
+e <- eigen(R)
+print(e, digits=2)
+```
+
+It returns eigenvalues and corresponding eigenvectors.   
+The eigenvectors are orthogonal ($\mathbf{XX' = I}$):
+```{r}
+round(e$vectors %*% t(e$vectors),2)
+```
+
+The eigenvectors represent the _direction_ of the vectors, and the eigenvalues represent *magnitude* (i.e., how much variance of $\mathbf{R}$ they capture).  
+
+Our Principal Components $\mathbf{P}$ are the eigenvectors scaled by the square root of the eigenvalues:
+```{r}
+# eigenvectors
+# e$vectors
+# scaled by sqrt of eigenvalues
+# diag(sqrt(e$values))
+
+P <- e$vectors %*% diag(sqrt(e$values))
+P
+```
+
+$$
+R = PP'
+
+\lambda X
+
+
+$$
+
+And with all of them, we can perfectly reproduce our correlation matrix: $\mathbf{R = PP'}$. 
+```{r}
+P %*% t(P)
+```
+
+
+But we don't want to keep all of them, because then we are not reducing anything. So we might choose to keep, e.g., just one.  
+ 
+When "doing PCA" with the `principal()` function, we retain only one component with `nfactors = 1`:
+```{r}
+library(psych)
+pc1<-principal(R, nfactors = 1, covar = FALSE, rotate = 'none')
+pc1
+```
+
+Look familiar? It looks like the first component we computed manually. The first column of $\mathbf{P}$. The direction is flipped, but that is somewhat irrelevant because it's the same dimension (i.e., South is just "negative North"!)  
+```{r}
+cbind(pc1$loadings, P=P[,1])
+```
+We can now ask "how well does this component (on its own) recreate our correlation matrix?" 
+```{r}
+P[,1] %*% t(P[,1])
+```
+It looks close, but not quite. How much not quite? Measurably so!
+```{r}
+R - (P[,1] %*% t(P[,1]))
+```
+
+Notice the values on the diagonals of $\mathbf{p_1}\mathbf{p_1}'$.
+```{r}
+diag(P[,1] %*% t(P[,1]))
+```
+These aren't 1, like they are in $R$.  
+But they are proportional: this is the amount of variance in each observed variable that is explained by this first component.  
+The `principal()` function calls this 'communalities', which is really more of a term we see in factor analysis.  
+```{r}
+pc1$communality
+```
+1 minus these values is the unexplained variance, or 'uniqueness':  
+```{r}
+1 - diag(P[,1] %*% t(P[,1]))
+pc1$uniquenesses
+```

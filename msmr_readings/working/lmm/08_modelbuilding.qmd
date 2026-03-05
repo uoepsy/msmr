@@ -1,0 +1,684 @@
+---
+title: "8: Model Building"
+params: 
+    SHOW_SOLS: FALSE
+    TOGGLE: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+source('assets/setup.R')
+library(xaringanExtra)
+library(tidyverse)
+library(patchwork)
+xaringanExtra::use_panelset()
+library(lme4)
+library(broom.mixed)
+```
+
+
+:::lo
+This reading:  
+
+- Model building and convergence issues
+    - The 'maximal' model
+    - Non-convergence and overfitted models
+    - Strategies for simplifying models
+
+:::
+
+# Model Building Strategies
+
+Random effect structures can get pretty complicated quite quickly. In confirmatory analyses, very often the random effects part is not of specific interest to us, but we wish to estimate random effects in order to more accurately partition up the variance in our outcome variable and provide better estimates of fixed effects (the bit we _are_ interested in).  
+
+This process becomes a fine balancing act between choosing a random effect structure that most accurately reflects the underlying process we believe generated the data, and one that we are actually able to fit to our data without too much simplification. 
+
+One common approach to fitting multilevel models is to first fit the maximal model (the most complex model _that the study design allows_, in which we include random effects for everything that makes _theoretical_ sense as varying by our groupings). Because this "maximal model" will often not converge or be too complext to be supported by our data, we then progress to simplifying our random effect structure until we obtain a converging model.  
+
+:::sticky
+__Fully Maximal Model__  
+
+The "maximal model" is the model with all possible^[this doesn't mean simply including _every_ predictor in the fixed effects also in the random effects part. 'possible' refers to 'possible given the study design'] random effects included. 
+
+:::
+
+## Maximal Model
+
+Typically for many research designs, the following steps will keep you mostly on track to finding the maximal model.  
+
+Start by thinking of the model structure in terms of these components:  
+```{r}
+#| eval: false
+#| echo: true
+lmer(outcome ~ fixed effects + 
+       (random effects | grouping structure), 
+     data = ...)
+```
+
+1. Specify the `outcome ~ fixed effects` bit first. 
+    - The outcome variable should be clear: it is the variable we are wishing to explain/predict. 
+    - The fixed effects are the things we want to use to explain/predict variation in the outcome variable. These will often be the things that are of specific inferential interest along with potential confounders and other covariates. Just like the simple linear model.  
+    
+2. If there is a grouping structure to your data, and those groups (preferably n>7 or 8) are perceived as a random sample of a wider population (the specific groups aren't interesting to you), then consider including random intercepts (and possibly random slopes of predictors) for those groups `(1 + ... | grouping)`.  
+
+3. If there are multiple different grouping structures, is one nested within another? If so, we can specify this as `(1 | higher_grouping ) + (1 |  lower_grouping:higher_grouping)`.^[the order doesn't matter with the colon, so `(1 | higher_grouping ) + (1 |  higher_grouping:lower_grouping)` is just the same]  
+If the grouping structures are **not** nested, we can specify them as crossed: `(1 | grouping1) + (1 | grouping2)`.  
+
+
+4. If any of the predictors in the fixed effects vary **within** the groups, it may be possible to also include them as random effects. For predictors that instead vary **between** groups, it rarely makes sense to include these as by-group random effects. For example, if we had a model with `lmer(score ~ genetic_status + (1 + genetic_status | patient))` then we would be trying to model a process where "the effect of genetic_status on scores is different for each patient". But if you consider an individual patient, their genetic status never changes. For patient $i$, what is "the effect of genetic status on score"? It's undefined. This is because genetic status only varies _between_ patients.
+    - as a general rule, don't specify random effects that are not also specified as fixed effects (an exception could be specifically for model comparison, to isolate the contribution of the fixed effect).  
+    - Sometimes, things can vary within one grouping, but not within another. E.g., for a design in which patients are nested within hospitals `(1 | hospital) + (1 | patient:hospital)`, genetic_status varies _between_ patients, but _within_ hospitals. Therefore we could theoretically fit a random effect of `(1 + genetic_status | hospital)`, but __not__ one for `(1 + genetic_status | patient:hospital)`.
+
+    
+## Non-Convergence
+
+Oftentimes, models with more complex random effect structures will not converge because there are so many parameters, and not enough variability in the data, meaning that there are more places for the model estimation to go wrong. Remember that we fit these models with maximum likelihood estimation (MLE), a process that involves taking a guess at the model parameters that result in the greatest probability of the observed data, and step-by-step improving those guesses until we think we're at the most likely set of parameters - until the model 'converges'. Sometimes, however, MLE can sometimes get stuck, resulting in 'non-convergence'.  
+
+There are many possible reasons for non-convergence, and it does *not necessarily* mean the fit is incorrect. However it is **is cause for concern**, and should be addressed before using the model, else you may end up reporting inferences which do not hold. There are lots of different things which we can try which *might* help our model to converge. A select few are detailed below:  
+
+::: {.callout-tip collapse="true"}
+#### Things we can try
+
+:::imp
+**most likely solutions:**  
+
+- double-check the model specification and the data  
+
+- Consider simplifying your model (more on this below)
+:::
+
+- Center and scale continuous predictor variables (e.g. with `scale`)  
+
+- Change the optimization method (for example, here we change it to `bobyqa`):  
+    `lmer(..., control = lmerControl(optimizer="bobyqa"))`  
+    `glmer(..., control = glmerControl(optimizer="bobyqa"))`  
+
+- Use `allFit()` to try the fit with all available optimizers. This will of course be slow, but is considered 'the gold standard'; *"if all optimizers converge to values that are practically equivalent, then we would consider the convergence warnings to be false positives."*  
+    `allopts <- allFit(model)`  
+    `summary(allopts)`
+
+::::{.columns}
+:::{.column width="50%"}
+
+- Fine-tune an optimizer. Using the optCtrl argument to [g]lmerControl (see `?convergence` for details), we can have a lot of control over the optimizer. Recall that the optimizer is a method of iteratively assessing a set of parameters to maximise the probability of seeing the observed data^[instead of maximising the likelihood, more often (for practical reasons) our algorithms try to minimise $-2 \times$ the log-likelihood]. We can change things such as the number of steps the algorithm keeps trying for, and the thresholds at which the algorithm stops (@fig-tolerance).  
+    
+:::
+
+:::{.column width="50%"}
+```{r}
+#| label: fig-tolerance 
+#| echo: false
+#| fig-cap: "An optimizer will stop after a certain number of iterations, or when it meets a tolerance threshold"
+knitr::include_graphics("images/tolerance.png")
+```
+:::
+::::
+
+:::
+
+## Singular Fits
+
+As well as convergence warnings, you may have noticed that some of our models over the last few weeks have been giving a warning message:  
+
+<p style="color:red">boundary (singular) fit: see ?isSingular</p>
+
+Up to now, we've been largely ignoring these messages, but we should really have been addressing them in some way. 'Singular fit' warnings indicate that our model is likely to be 'overfitted' - that is, the random effects structure which we have specified is **too complex to be supported by the data**.  
+
+For simple random effect structures (i.e. a random intercept + a random slope), we can often see this issue reflected in the variance components of the random effect, when variances get estimated at (or very close to) zero, and/or when correlations get estimated at (or very close to) 1 or -1 (@fig-singular). With more complex structures it is not always so easily visible, but we can do a double check for this issue using the handy `isSingular(model)` function - if it returns `TRUE` then it indicates our model might be overfitted.  
+
+```{r}
+#| echo: false
+#| eval: false
+#| out-width: "550px"
+knitr::include_graphics("images/singular.png")
+```
+
+
+```{r}
+#| echo: false
+#| label: fig-singular
+#| out-width: "550px"
+#| out-height: "300px"
+#| fig-cap: "In simple random effect structures we can often easily see issues of overfitting as they are reflected in variances being estimated as 0 and/or correlations being estimated as perfect correlations of 1 or -1"
+knitr::include_graphics("images/varcorrsingular.png")
+```
+
+What do we do in these cases? Simplify, simplify, simplify!
+
+
+::: {.callout-tip collapse="true"}
+#### Scales can matter!
+
+<!-- Suppose that people tend to be between 140cm and 190cm tall and (for some reason) we decide to measure their height in kilometers. In these units, people tend to be between 0.00140km and 0.00190km tall. If we calculate the variance of height-in-km, we're going to get a very small number.  -->
+
+The scale of our predictors can sometimes play a part here. If we were fitting a model of `shoe_size ~ height`, then the estimated coefficient is going to depend on how we measure height. If we measure it in millimeters, then we'll probably have a very small coefficient (people's shoe size will only change by a tiny amount for every 1mm height they gain), but if we measure height in kilometers, then we'll have a very big coefficient ("grow an extra kilometer in height, and your shoe size will increase 10000 sizes"!!).  
+
+In the multilevel model, we're estimating the variances in these relationships across a set of groups (or 'clusters'). If the coefficient is in millimeters, then the variance is in millimeters too, and so the number will be quite small. If it's in kilometers, the coefficient is in units 100,000 times bigger, and so is the variance.  
+
+Scaling predictors doesn't change the relationship being studied, but it does change the numeric values we are asking our relationship to be presented in. As the estimation of multilevel models can get into difficulty when variances are too close to zero, you may occasionally receive messages such as those below.  
+
+Pay attention to them, and check your variables. If some are on very different scales, then consider trying to rescale them to something that is still meaningful for you.  
+
+<p style="color:red">Warning messages:<br>
+1: Some predictor variables are on very different scales:<br> consider rescaling</p>
+
+<p style="color:red">Warning messages:<br>
+1: In checkConv(attr(opt, "derivs"), opt\$par, ctrl = control\$checkConv,  :<br>Model is nearly unidentifiable: large eigenvalue ratio<br>  - Rescale variables?</p>
+
+:::
+
+
+# Simplifying Random Effect Structures
+
+There is no _right_ way to simplify random effect structures - it's about what kind of simplifications we are willing to make (which is a subjective decision). Key to the process of simplifying your random effects is to **think about how the data are generated**, and to **keep in mind your research question**. Asking yourself things such as "do we have good reason to assume subjects might vary over time, or to assume that they will have different starting points (i.e., different intercepts)?" can help you in reasoning through the problem.  
+
+Examining the variance components of a non-converging model can also help to point towards problematic terms. Be on the look out for random effects with little variance, or with near perfect correlation. 
+When variance estimates are very low for a specific random effect term, this indicates that the model is not estimating this parameter to differ much between the levels of your grouping variable. It might, given the study design, be perfectly acceptable to remove this or simply include it as a fixed effect.
+
+Below are various considerations to keep in mind, along with some practical strategies
+
+
+::: {.callout-tip collapse="true"}
+#### Reasons to Include Random Slopes
+
+_random slopes of predictors of interest_  
+If we want to make inferences about a fixed effect `x` that is measured **within** groups, then failing to include a corresponding random slope of `x` will increase the chance of making a type I error (we'll be more likely to conclude there _is_ an effect even if in reality there is no effect). Intuitively - if we let each group be different, then our estimate of 'the average group' becomes less certain.  
+
+_random slopes of covariates_  
+If a fixed effect `c` that is measured within groups is not of inferential interest but is instead included in the model as a covariate, then it is less crucial to include a corresponding random slope of `c`, because the fixed effect is sufficient. However, including random slopes of `c` can improve the precision of the effects that we _are_ interested in, depending on the level of multicollinearity of those variables with `c`.  
+
+:::
+
+::: {.callout-tip collapse="true"}
+#### 'More Complex' Random Effect Terms
+
+Complex terms like interactions (e.g. `(1 + x1 * x2 | group)` are often causes of non-convergence or overfitting as they require more data to estimate group-level variability, and the interaction terms is often highly correlated with the individual effects. Prior to removing one of the terms completely, this can be simplified to `(1 + x1 + x2 | group)`.  
+
+:::
+
+::: {.callout-tip collapse="true"}
+#### Random Effect Correlations
+
+The 'random effects' part of multilevel models includes not just variances of group-level effects, but also the correlations between different terms. The part of the output of the `VarCorr()` function that comes under "Corr" is a correlation matrix (i.e., a square symmetric matrix with the same columns as rows, and 1s on the diagonal, see @fig-varcorr).  
+
+```{r}
+#| echo: false
+#| label: fig-varcorr
+#| out-width: "519px"
+#| out-height: "188x"
+#| fig-cap: "The VarCorr() function shows the same information as in the top part of the summary() output - the variances/std.deviations of each random effect term, and the lower half of the correlation matrix of these terms (the upper half filled in here for illustration)"
+knitr::include_graphics("images/varcorr.png")
+```
+
+So what exactly do these correlations represent? Recall that the 'random effects' parts of our models is the estimation of how groups deviate around the fixed effects. 
+
+In estimating a random effect structure with intercepts and slopes, we are estimating these random effects as _jointly_ distibuted as a 'multivariate normal distribution'. 
+
+$$
+\begin{bmatrix} \zeta_{0i} \\ \zeta_{1i} \end{bmatrix}
+\sim N
+\left(
+    \begin{bmatrix} 0 \\ 0 \end{bmatrix},
+    \begin{bmatrix}
+        \sigma_0 & \rho_{01} \\
+        \rho_{01} & \sigma_1
+    \end{bmatrix}
+\right)
+$$
+
+In essence, this means we are estimating means, variances (or standard deviations), and covariances (or correlations). The means of random effects are by definition 0, and we have already seen plenty about the variances thus far when talking about random effects. The correlations are the estimated relationship between different terms - e.g., do groups with higher intercepts tend to have higher/lower slopes?  
+
+It often helps to think about what these would be like when the correlations are perfect (i.e. 1 or -1). In @fig-perfcor, we can see that in the Left hand panel, the higher a group starts, the more upwards the slope (and vice versa). In the Right hand panel the reverse is true - groups with higher intercepts have more downwards slopes. In the middle panel, where the correlation is 0, there's no systematic pattern between where the lines start and their angle across x.  
+
+We can see a visualisation of the distributions below each plot, with each point representing a group in the model. For perfect correlations, plots of group-intercepts against group-slopes will fall along a perfectly straight line. When there is no correlation these are scattered randomly, and as the estimated correlation gets stronger, the circular density in the bottom-middle plot of @fig-perfcor becomes more elliptical.  
+
+
+```{r}
+#| echo: false
+#| label: fig-perfcor
+#| out-width: "100%"
+#| fig-cap: "Group specific lines when intercepts and slopes are perfectly positively (Left) and negatively (Right) correlated"
+library(ggforce)
+library(ggfx)
+set.seed(665)
+N = 100
+n_groups = 10
+g = rep(1:n_groups, e = N/n_groups)
+x = rep(0:9,n_groups)
+re0 = rnorm(n_groups, sd = 1)
+re = re0[g]
+rex = re0/2
+re_x = rex[g]
+lp = (0 + re) + (1 + re_x) * x
+y = rnorm(N, mean = lp, sd = .1)
+
+d1=data.frame(x, g = factor(g), y)
+
+rex = -1*re0/2
+re_x = rex[g]
+lp = (0 + re) + (.1 + re_x) * x
+y = rnorm(N, mean = lp, sd = .1)
+d2=data.frame(x, g = factor(g), y)
+
+while(TRUE){
+  rex <<- rnorm(n_groups, sd = 1)
+  if(abs(cor(re0,rex))<.01){break}
+}
+re_x = rex[g]
+lp = (0 + re) + (.1 + re_x) * x
+y = rnorm(N, mean = lp, sd = .1)
+d3=data.frame(x, g = factor(g), y)
+
+
+
+ggplot(d1)+
+  stat_smooth(aes(x=x,y=y,group=g,col=factor(g,levels=1:10)),method=lm,se=F,size=1)+
+  guides(col="none")+
+  labs(x="x1",y=".fitted",subtitle="cor(ints,slopes) = 1") +
+  scale_y_continuous(breaks=NULL) -> pp1
+
+ggplot(d2)+
+  stat_smooth(aes(x=x,y=y,group=g,col=factor(g,levels=1:10)),method=lm,se=F,size=1)+
+  guides(col="none")+
+  labs(x="x1",y=".fitted",subtitle="cor(ints,slopes) = -1")+
+  scale_y_continuous(breaks=NULL) -> pp2
+
+ggplot(d3)+
+  stat_smooth(aes(x=x,y=y,group=g,col=factor(g,levels=1:10)),method=lm,se=F,size=1)+
+  guides(col="none")+
+  labs(x="x1",y=".fitted",subtitle="cor(ints,slopes) = 0")+
+  scale_y_continuous(breaks=NULL) -> pp3
+
+# 
+m1 = lmer(y~1+x+(1+x|g),d1)
+#VarCorr(m1)
+m2 = lmer(y~1+x+(1+x|g),d2)
+#VarCorr(m2)
+m3 = lmer(y~1+x+(1+x|g),d3)
+#VarCorr(m3)
+
+library(ggside)
+pdist = MASS::mvrnorm(1e5, mu=c(0,0),Sigma=VarCorr(m1)[[1]]) |>
+  as_tibble() |>
+  mutate(int=`(Intercept)`)
+as.data.frame(ranef(m1)$g) |>
+  rownames_to_column() |>
+  mutate(int=`(Intercept)`,rowname=factor(rowname,levels=1:10)) |>
+  ggplot(aes(x=int,y=x)) +
+  guides(col="none")+
+  stat_smooth(se=F,fullrange=T,col="black",size=.5)+
+  with_blur(geom_point(aes(col=rowname),size=3,alpha=.8),sigma=1) + 
+  #geom_density2d(data=pdist[1:1e4,]) +
+  scale_x_continuous("intercepts")+
+  scale_y_continuous("slopes")+
+  geom_xsidedensity(data=pdist,fill="#a41ae4", alpha=.4,col=NA)+
+  geom_ysidedensity(data=pdist,fill="#a41ae4", alpha=.4, col=NA)+
+  theme_ggside_void() -> pp4
+
+pdist = MASS::mvrnorm(1e5, mu=c(0,0),Sigma=VarCorr(m2)[[1]]) |>
+  as_tibble() |>
+  mutate(int=`(Intercept)`)
+as.data.frame(ranef(m2)$g) |>
+  rownames_to_column() |>
+  mutate(int=`(Intercept)`,rowname=factor(rowname,levels=1:10)) |>
+  ggplot(aes(x=int,y=x)) +
+  guides(col="none")+
+  stat_smooth(se=F,fullrange=T,col="black",size=.5)+
+  with_blur(geom_point(aes(col=rowname),size=3,alpha=.8),sigma=1) + 
+  #geom_density2d(data=pdist[1:1e4,]) +
+  scale_x_continuous("intercepts")+
+  scale_y_continuous("slopes")+
+  geom_xsidedensity(data=pdist,fill="#a41ae4", alpha=.4,col=NA)+
+  geom_ysidedensity(data=pdist,fill="#a41ae4", alpha=.4, col=NA)+
+  theme_ggside_void() -> pp5
+
+pdist = MASS::mvrnorm(1e5, mu=c(0,0),Sigma=VarCorr(m3)[[1]]) |>
+  as_tibble() |>
+  mutate(int=`(Intercept)`)
+as.data.frame(ranef(m3)$g) |>
+  rownames_to_column() |>
+  mutate(int=`(Intercept)`,rowname=factor(rowname,levels=1:10)) |>
+  ggplot(aes(x=int,y=x)) +
+  guides(col="none")+
+  #stat_smooth(se=F,fullrange=T,col="black",size=.5)+
+  with_blur(geom_point(aes(col=rowname),size=3,alpha=.8),sigma=1) + 
+  geom_density2d(data=pdist[1:1e4,],col="black") +
+  scale_x_continuous("intercepts")+
+  scale_y_continuous("slopes")+
+  geom_xsidedensity(data=pdist,fill="#a41ae4", alpha=.4,col=NA)+
+  geom_ysidedensity(data=pdist,fill="#a41ae4", alpha=.4, col=NA)+
+  theme_ggside_void() -> pp6
+
+
+
+(pp1 + pp3 + pp2)/(pp4 + pp6 + pp5)
+
+
+```
+
+We can choose (if we so wish) to __not__ estimate the correlations between random effects. This choice equates to fixing this correlation in our model be 0. We do this by using two vertical lines `||` instead of one. By removing correlations between random effects we are reducing the number of parameters than are being estimated - our model becomes simpler! However, it is worth noting that this decision should be thought about carefully - does it make sense to constrain a given correlation to be zero? One benefit of fitting models with correlations removed is that it can help to highlight terms which are the cause of singular fits.  
+ 
+
+
+| lme4 syntax | description | equation |
+| ----------- | ----------- | -------- |
+| `... + (1 | g)`       | random intercepts only | $$\zeta_{0i} \sim N (0, \sigma_0)$$ |
+| `... + (0 + x | g)`   | random slopes only | $$\zeta_{1i} \sim N (0, \sigma_1)$$ |
+| `... + (1 + x || g)` | random intercepts and slopes, zero covariance | $$\begin{bmatrix} \zeta_{0i}\\ \zeta_{1i} \end{bmatrix} \sim N \left( \begin{bmatrix} 0 \\ 0 \end{bmatrix}, \begin{bmatrix} \sigma_0 & 0 \\ 0 & \sigma_1 \end{bmatrix} \right)$$ |
+| `... + (1 + x | g)`   | random intercepts and slopes | $$\begin{bmatrix} \zeta_{0i}\\ \zeta_{1i} \end{bmatrix} \sim N \left( \begin{bmatrix} 0 \\ 0 \end{bmatrix}, \begin{bmatrix} \sigma_0 & \rho_{01} \\ \rho_{01} & \sigma_1 \end{bmatrix} \right)$$ |
+
+
+
+:::
+
+::: {.callout-tip collapse="true"}
+#### Categorical Random Effects on the RHS
+
+When we have a categorical random effect (i.e. where the `x` in `(1 + x | g)` is a categorical variable), then model estimation can often get tricky, because "the effect of x" for a categorical variable with $k$ levels is identified via $k-1$ parameters, meaning we have a lot of variances and covariances to estimate when we include `x|g`.  
+
+:::: {.columns}
+:::{.column width="45%"}
+
+When `x` is numeric:  
+
+```
+Groups   Name        Std.Dev. Corr  
+g        (Intercept) ...        
+         x           ...      ...
+Residual             ...     
+```
+
+:::
+:::{.column width="10%"}
+
+:::
+:::{.column width="45%"}
+
+When `x` is categorical with $k$ levels:  
+
+```
+Groups   Name        Std.Dev. Corr  
+g        (Intercept) ...        
+         xlevel2     ...      ...
+         xlevel3     ...      ...     ...
+         ...         ...      ...     ...     ...
+         xlevelk     ...      ...     ...     ...   ...
+Residual             ...     
+```
+
+:::
+::::
+
+
+One neat trick is to consider moving the categorical predictor the right hand side, nesting it within the groups:  
+`(1 + x | g)`  
+becomes   
+`(1 | g) + (1 | g:x)`  
+
+
+
+Remember that the symbol `:` in `g:x` is used to refer to the combination of `g` and `x`, and is just the same as how we specify nested random effects.  
+
+```{r}
+#| echo: false
+gx = tibble(
+  g = c("p1","p1","p1","...","p2","p2","..."),
+  x = c("a","a","b","...","a","b","..."),
+  `g:x` = as.character(interaction(g,x))
+)
+gx[c(4,7),3] <- "..."
+gx$g = paste0("  ",gx$g,"   ")
+gx$x = paste0("  ",gx$x,"   ")
+names(gx)<-c("  g   ","  x   ","g:x")
+as.data.frame(gx)
+```
+
+It's a bit weird to think about it, but these two formulations of the random effects can kind of represent the same idea:  
+
+- **A:** `(1 + x | g)`:  each group of `g` can have a different intercept and a different effect of `x`  
+- **B:** `(1 | g) + (1 | g:x)`: each group of `g` can have a different intercept, and each level of `x` within each `g` can have a different intercept.  
+
+Both of these allow the outcome `y` to be different across `x`, and these differences be different for each `g` (i.e. both of them result in `y` being different for each `g:x` value). Formulation **A** above does this explicitly by estimating the group level variance of the `y~x` effect ("the effect of `x` on `y` is different for each `g`").  The second formulation **B** estimates the variance of `y` between groups `g`, and *also* the variance of `y` between 'levels of `x` within groups `g`'. So we're saying that "`y` is different for each `g`, and `y` is different for each `x`-within-`g`. 
+
+So both of these achieve more or less the same thing, but in the second formulation by capturing this as intercept variation between levels of `g:x`, we don't have to worry about lots of covariances:  
+
+
+:::: {.columns}
+:::{.column width="45%"}
+`(1 + x | g)`  
+
+```
+Groups   Name        Std.Dev. Corr  
+g        (Intercept) ...        
+         xlevel2     ...      ...
+         xlevel3     ...      ...     ...
+         ...         ...      ...     ...     ...
+         xlevelk     ...      ...     ...     ...   ...
+Residual             ...     
+```
+
+:::
+:::{.column width="10%"}
+
+:::
+:::{.column width="45%"}
+`(1 | g) + (1 | g:x)`  
+
+
+```
+Groups   Name        Std.Dev. 
+g        (Intercept) ...        
+g.x      (Intercept) ...        
+Residual             ...     
+```
+
+:::
+::::
+
+
+::: {.callout-caution collapse="true"}
+#### optional: attempted visual explanation
+
+I typically think of formulation **A** as a panel of `y~x` plots for each group, where the slopes can be different for each panel.  
+
+```{r}
+#| echo: false
+#| out-height: "200px"
+set.seed(678)
+df = tibble(
+  g = rep(1:3,e=9),
+  x = rep(1:3,9),
+  s = rep(c(-1,.5,1),e=9),
+  y = scale(g) + s*scale(x) + rnorm(27)
+) |> mutate(x=map_chr(x,~letters[.]))
+
+df |> mutate(g=paste0("group = ",g)) |>
+ggplot(aes(x=x,y=y,fill=factor(g)))+
+  geom_boxplot()+
+  stat_summary(geom="label",aes(label=x),fill="white")+
+  facet_wrap(~g)+
+  guides(fill="none")
+```
+
+
+For the second formulation **B**, I think of this in terms of nested random intercepts - there is a distribution of group averages (the grey distribution below), and within groups there is a distribution of x-level averages (the coloured distributions below).  
+```{r}
+#| echo: false
+#| out-height: "200px"
+library(ggdist)
+library(distributional)
+
+g12s = aggregate(df$y,list(df$g,df$x),mean) |>
+  as_tibble() |>
+  mutate(g=Group.1,x=Group.2)
+
+g1s = aggregate(df$y,list(df$g,df$x),mean) |>
+  as_tibble() |>
+  group_by(g=Group.1) |>
+  summarise(m = mean(V1),s=1.03)
+
+
+ggplot(df,aes(x=0,y=y,fill=factor(g)))+
+  geom_boxplot(aes(group=interaction(x,g)),
+               width=1,
+               position=position_dodge(width = .3))+
+  stat_summary(geom="label",aes(label=x,group=interaction(x,g)),fill="white",position=position_dodge(width=.3))+
+
+  geom_point(data=g1s,aes(x=-1.2,y=m,col=factor(g)),size=2)+
+  geom_point(data=g12s,aes(x=-.3,y=V1,col=factor(g)),size=2)+
+  stat_eye(inherit.aes=FALSE,side="left",
+           data=tibble(x=1,y=1),
+           aes(x=-1.2,
+               ydist=dist_normal(mean(df$y),sd(aggregate(df$y,list(df$g),mean)$V1))), 
+           alpha=.2)+ 
+  stat_eye(inherit.aes=FALSE,side="left",
+           data=g1s,
+           aes(x=-.3,
+               ydist=dist_normal(m,s),fill=factor(g)), 
+           alpha=.2)+
+  
+  scale_x_continuous(NULL,breaks=NULL)+
+  scale_y_continuous("y",breaks=NULL)+
+  guides(fill="none",col="none")+
+  
+  theme_minimal()
+```
+
+:::
+
+:::
+
+
+
+::: {.callout-caution collapse="true"}
+#### optional: PCA on the random effect variance-covariance matrix 
+
+We're probably yet to hear about "PCA" (principal component analysis), but the very high-level view is that it aims to simplify a set of variables by identifying the most important patterns or "components" (allowing us drop less important ways in which people vary). For instance, if a survey asked 10 questions, 5 of which were about physical health, and 5 which were about mental health, then the 5 physical health questions would likely be correlated with one another more than with other questions, and similarly the 5 mental health questions would likely be correlated with one another. PCA might tell us something like "given this set of correlations, 2 'dimensions' can explain most of the variability that we see". 
+
+The benefit for us in this context is that we have a correlation matrix in our random effects from a maximal model, and we can use PCA to ask "how many 'dimensions' capture most of this variation?"  
+
+In the **lme4** package the `rePCA()` function can do this when we give it an `lmer()` model.  
+
+```{r}
+#| echo: false
+#| eval: false
+set.seed(132)
+n_groups = 20
+xgrid = expand_grid(x1=0:1,x2=0:1)
+g = rep(1:n_groups, e = nrow(xgrid)*5)
+x1 = rnorm(length(g))
+x2 = rnorm(length(g))
+x3 = rnorm(length(g))
+re = MASS::mvrnorm(n=n_groups, mu=rep(0,3),Sigma = diag(3)*c(3,2,1))
+summary(re)
+re0 = re[,1][g]
+rex1 = re[,2][g]
+rex2 = re[,3][g]
+lp = (0 + re0) + (2 + rex1) * x1 + (1 + rex2) * x2 + -1*x1*x2 
+y = rnorm(length(g), mean = lp, sd = 2)
+df = data.frame(x1,x2,x3,g = factor(g), y)
+write_csv(df,"../../data/lmmpcademo.csv")
+```
+
+Here our full model is singular:
+```{r}
+df <- read_csv("https://uoepsy.github.io/data/lmmpcademo.csv")
+```
+```{r}
+#| message: true
+fullmod <- lmer(y~x1*x2*x3+(1+x1*x2*x3|g), data = df)
+```
+
+The `rePCA()` function shows that 4 things explain 100% of the variance (the row of "cumulative proportion" reaches 1 by the 4th column):
+```{r}
+summary(rePCA(fullmod))
+```
+
+Removing the correlations is still overfitted, but indicates to us that many of the random effects associated with predictor `x3` have very small or zero variances, along with the `x1:x2` interaction
+```{r}
+modz <- lmer(y~x1*x2*x3+(1+x1*x2*x3||g),df)
+VarCorr(modz)
+```
+
+```{r}
+# remove x3
+mod1 <- lmer(y~x1*x2*x3+(1+x1*x2||g),df) # still singular
+
+# remove x1:x2 interaction
+mod2 <- lmer(y~x1*x2*x3+(1+x1+x2||g),df) # no longer singular! 
+
+# try reintroducing correlations
+mod3 <- lmer(y~x1*x2*x3+(1+x1+x2|g),df) # still fits!
+```
+
+:::
+
+
+::: {.callout-caution collapse="true"}
+#### optional: data-driven approaches 
+
+Some approaches to model building are more data-driven. The relatively new package **buildmer** will sequentially remove (or add, depending on direction) random effect terms to obtain the most complex model that can converge, and then can be used to sequentially remove predictors based on some criteria such as a likelihood ratio test.  
+
+Using buildmer and setting the direction to "order", we can give it the fully maximal model, and request that it assess the inclusion of each term in order of their contribution to a certain criterion (in this case, a likelihood ratio test).  
+It stops when adding in terms results in non-convergence:  
+
+```{r}
+df <- read_csv("https://uoepsy.github.io/data/lmmpcademo.csv")
+
+library(buildmer)
+bmod1 <- buildmer(y~x1*x2*x3+(1+x1*x2*x3|g), 
+                  data = df,
+                  buildmerControl = buildmerControl(direction="order", crit="LRT")
+          )
+```
+
+We can then see the resulting model formula here:  
+_(note these are a type of R object we've not encountered before, and we access the model using `@` rather than `$`)_
+```{r}
+newform <- formula(bmod1@model)
+newform
+```
+
+This can then be fed into buildmer *again*, and using that model as a starting point, we can request that it sequentially eliminate terms according to the same likelihood ratio criterion. It will also consider removing fixed effects here, which you might not want to do, in which case you can specify in the `include` argument all the relevant terms you want to forcibly keep. 
+In this case, no additional terms are removed: 
+```{r}
+#| eval: false
+bmod2 <- buildmer(newform, data = df,
+         buildmerControl=buildmerControl(
+           include=~x1*x2*x3,direction="backward", crit="LRT"))
+
+finalmod <- bmod2@model
+```
+```{r}
+#| include: false
+bmod2 <- buildmer(newform, data = df,
+         buildmerControl=buildmerControl(
+           include=~x1*x2*x3,direction="backward", crit="LRT"))
+finalmod <- bmod2@model
+```
+```{r}
+formula(finalmod)
+```
+
+
+:::imp
+Some things to note - as far as I can tell, **buildmer** does not consider removing random effect correlations. 
+
+As with anything attempt at automating something like this, there's a high risk that we use it as an _alternative_ to careful thought. Remember - the 'best fitting model' is not the same as the model that best represents our understanding of the world, or the one that best answers our research question. 
+
+:::
+
+:::
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,56 @@
+---
+title: "5B: Centering"
+params: 
+    SHOW_SOLS: FALSE
+    TOGGLE: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+source('assets/setup.R')
+library(xaringanExtra)
+library(tidyverse)
+library(patchwork)
+xaringanExtra::use_panelset()
+library(lme4)
+library(broom.mixed)
+```
+
+
+:::lo
+This reading:  
+
+
+:::
+
+
+# Centering predictors in `lm()`
+
+
+
+ 
+
+
+```{r}
+schoolmot <- read_csv("https://uoepsy.github.io/data/schoolmot.csv")
+
+smod3 <- lmer(grade ~ motiv + (1 + motiv | schoolid), 
+              data = schoolmot)
+
+schoolmot <-
+  schoolmot |> group_by(schoolid) |>
+  mutate(
+    mm = mean(motiv),
+    md = motiv-mean(motiv)
+  )
+
+smod4 <- lmer(grade ~ (mm + md) + (1 + md | schoolid), 
+              data = schoolmot)
+
+```
+
+
+

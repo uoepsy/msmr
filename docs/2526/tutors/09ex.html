@@ -1,0 +1,2474 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Week 9 Exercises: Path Analysis &amp; Mediation – MSMR</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-6512c70bdabba462eeecc3a642d5a48d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+
+function toggle_visibility(id1, id2) {
+
+var e = document.getElementById(id1);
+
+var f = document.getElementById(id2);
+
+e.style.display = ((e.style.display!='none') ? 'none' : 'block');
+
+if(f.classList.contains('jk-circle-right')) {
+
+    f.classList.add('jk-circle-down')
+
+    f.classList.remove('jk-circle-right')
+
+} else {
+
+    f.classList.add('jk-circle-right')
+
+    f.classList.remove('jk-circle-down')
+
+}
+
+}
+
+</script>
+
+
+
+<!---<script src="https://kit.fontawesome.com/120b08a6f5.js" crossorigin="anonymous"></script>-->
+
+<link href="site_libs/panelset-0.3.0/panelset.css" rel="stylesheet">
+
+<script src="site_libs/panelset-0.3.0/panelset.js"></script>
+
+<link rel="stylesheet" href="https://uoepsy.github.io/assets/css/ccfooter.css">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./09ex.html">Week 9 Exercises: Path Analysis &amp; Mediation</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MSMR</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Extra Exercises: Regression Refresher</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 1 Exercises: Intro to MLM</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 2 Exercises: Logistic and Longitudinal</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 3 Exercises: Non-Linear Change</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 4 Exercises: Nested and Crossed</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 5 Exercises: Assumptions, Diagnostics, Writing up</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 7 Exercises: PCA &amp; EFA</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 8 Exercises: CFA</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09ex.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Week 9 Exercises: Path Analysis &amp; Mediation</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#education-skills-and-salary" id="toc-education-skills-and-salary" class="nav-link active" data-scroll-target="#education-skills-and-salary">Education, Skills, and Salary</a></li>
+  <li><a href="#more-conduct-problems" id="toc-more-conduct-problems" class="nav-link" data-scroll-target="#more-conduct-problems">More Conduct Problems</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Week 9 Exercises: Path Analysis &amp; Mediation</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="education-skills-and-salary" class="level1">
+<h1>Education, Skills, and Salary</h1>
+<div class="frame">
+<p>We sampled 500 people who were all 5 years out of their last year of education. All participants completed an extensive questionnaire to ascertain the number of skills of potential interest to employers each participant perceived themselves to have. This resulted in a “Skillset Metric”.<br>
+5 years later, participants were followed up and asked to provide their current salaries. 110 participants failed to respond to follow-ups and thus the final sample included 390 people.</p>
+<p>The data are available at <a href="https://uoepsy.github.io/data/edskillsalary.csv" target="_blank">https://uoepsy.github.io/data/edskillsalary.csv</a>.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fgbjnpxgpo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#fgbjnpxgpo table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#fgbjnpxgpo thead, #fgbjnpxgpo tbody, #fgbjnpxgpo tfoot, #fgbjnpxgpo tr, #fgbjnpxgpo td, #fgbjnpxgpo th {
+  border-style: none;
+}
+
+#fgbjnpxgpo p {
+  margin: 0;
+  padding: 0;
+}
+
+#fgbjnpxgpo .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#fgbjnpxgpo .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#fgbjnpxgpo .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#fgbjnpxgpo .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#fgbjnpxgpo .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#fgbjnpxgpo .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#fgbjnpxgpo .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#fgbjnpxgpo .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#fgbjnpxgpo .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#fgbjnpxgpo .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#fgbjnpxgpo .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#fgbjnpxgpo .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#fgbjnpxgpo .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#fgbjnpxgpo .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#fgbjnpxgpo .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fgbjnpxgpo .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#fgbjnpxgpo .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#fgbjnpxgpo .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#fgbjnpxgpo .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fgbjnpxgpo .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#fgbjnpxgpo .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fgbjnpxgpo .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#fgbjnpxgpo .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fgbjnpxgpo .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#fgbjnpxgpo .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fgbjnpxgpo .gt_left {
+  text-align: left;
+}
+
+#fgbjnpxgpo .gt_center {
+  text-align: center;
+}
+
+#fgbjnpxgpo .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#fgbjnpxgpo .gt_font_normal {
+  font-weight: normal;
+}
+
+#fgbjnpxgpo .gt_font_bold {
+  font-weight: bold;
+}
+
+#fgbjnpxgpo .gt_font_italic {
+  font-style: italic;
+}
+
+#fgbjnpxgpo .gt_super {
+  font-size: 65%;
+}
+
+#fgbjnpxgpo .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#fgbjnpxgpo .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#fgbjnpxgpo .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#fgbjnpxgpo .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#fgbjnpxgpo .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#fgbjnpxgpo .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#fgbjnpxgpo .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#fgbjnpxgpo .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#fgbjnpxgpo div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="variable" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">variable</th>
+<th id="description" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">description</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="variable">Educ</td>
+<td class="gt_row gt_left" headers="description">Number of years of education undertaken</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="variable">Skill</td>
+<td class="gt_row gt_left" headers="description">Skillset metric (scores listed from a 100 item list of skills deemed relevant to employers)</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="variable">Salary</td>
+<td class="gt_row gt_left" headers="description">Salary (in thousands of £)</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<div class="question-begin">
+Question 1
+</div>
+<div class="question-body">
+<p>Read in the dataset.<br>
+Let’s suppose that the only statistical machinery available to us is the good old regression models with <code>lm()</code>, and we are interested in the estimated effect of education on salary.</p>
+<p>Which model are you going to fit?</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(Salary <span class="sc">~</span> Educ, <span class="at">data =</span> ... )</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(Salary <span class="sc">~</span> Skill <span class="sc">+</span> Educ, <span class="at">data =</span> ... )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-1" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-1', 'sol-start-1')">
+Solution
+</button>
+</div>
+<div id="sol-body-1" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 1</em>. </span>Here’s the data:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>edskill <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/edskillsalary.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>I’m going to fit both models so that we can discuss them below</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Salary <span class="sc">~</span> Educ, <span class="at">data =</span> edskill)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Salary <span class="sc">~</span> Skill <span class="sc">+</span> Educ, <span class="at">data =</span> edskill)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># model tables side by side</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>sjPlot<span class="sc">::</span><span class="fu">tab_model</span>(m1,m2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th" style="text-align: center; border-top: double; font-style: normal; font-weight: bold; padding: 0.2cm;">&nbsp;</td>
+<td colspan="3" data-quarto-table-cell-role="th" style="text-align: center; border-top: double; font-style: normal; font-weight: bold; padding: 0.2cm;">Salary</td>
+<td colspan="3" data-quarto-table-cell-role="th" style="text-align: center; border-top: double; font-style: normal; font-weight: bold; padding: 0.2cm;">Salary</td>
+</tr>
+<tr class="even">
+<td style="text-align: center; border-bottom: 1px solid; font-style: italic; font-weight: normal;">Predictors</td>
+<td style="text-align: center; border-bottom: 1px solid; font-style: italic; font-weight: normal;">Estimates</td>
+<td style="text-align: center; border-bottom: 1px solid; font-style: italic; font-weight: normal;">CI</td>
+<td style="text-align: center; border-bottom: 1px solid; font-style: italic; font-weight: normal;">p</td>
+<td style="text-align: center; border-bottom: 1px solid; font-style: italic; font-weight: normal;">Estimates</td>
+<td style="text-align: center; border-bottom: 1px solid; font-style: italic; font-weight: normal;">CI</td>
+<td style="text-align: center;">p</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">(Intercept)</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">21.88</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">15.98&nbsp;–&nbsp;27.77</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"><strong>&lt;0.001</strong></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">20.15</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">14.39&nbsp;–&nbsp;25.91</td>
+<td style="text-align: center;"><strong>&lt;0.001</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">Educ</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">1.14</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.77&nbsp;–&nbsp;1.51</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"><strong>&lt;0.001</strong></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.48</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.03&nbsp;–&nbsp;0.92</td>
+<td style="text-align: center;"><strong>0.035</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">Skill</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;"></td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.27</td>
+<td style="text-align: left; padding: 0.2cm; vertical-align: top;">0.16&nbsp;–&nbsp;0.37</td>
+<td style="text-align: center;"><strong>&lt;0.001</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm; border-top: 1px solid;">Observations</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm; border-top: 1px solid;">390</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm; border-top: 1px solid;">390</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm;">R<sup>2</sup> / R<sup>2</sup> adjusted</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm;">0.085 / 0.083</td>
+<td colspan="3" style="text-align: left; padding: 0.2cm; vertical-align: top; padding-top: 0.1cm; padding-bottom: 0.1cm;">0.141 / 0.136</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p><br></p>
+<p>So we have got two quite different pictures. The first model says that for every additional year of education, the salary offered would be £1140 more. The second model says it would only be £480 more, and it looks like skills are also important for getting a good salary, right?</p>
+<p>But this makes it sound like “Education” and “Skills” are things that we can compare the effects of independently. The implicit model we are referring to when using <code>lm(Salary ~ Skill + Educ)</code> is in the left hand diagram, Model A, of <a href="#fig-educ" class="quarto-xref">Figure&nbsp;1</a>. But does it not make a lot more sense to think that education is a cause of peoples’ levels of skills (especially as the skill level being measured 5 years after their last year of education precludes the opposite direction). In other words, does Model B in <a href="#fig-educ" class="quarto-xref">Figure&nbsp;1</a> not make more sense?</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-educ" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-educ-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/path_educ.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-educ-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Two theoretical models of process that gives rise to the data
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="columns">
+<div class="column" style="width:80%;">
+<p>What Model B suggests is that part of <em>how</em> education influences peoples’ salaries is by giving them more skills. A perfect example is that you are all now on your way to becoming proficient R users!</p>
+</div><div class="column" style="width:5%;">
+
+</div><div class="column" style="width:15%;">
+<p><img src="images/new-skill-unlocked.gif" class="img-fluid"></p>
+</div>
+</div>
+<p>This is a great example that illustrates instances we might <strong>not</strong> want to include a variable in our model. If you are interested in “what does having an extra year of education do for peoples’ salaries?”, then controlling for skill in our model actually <em>removes</em> that part of the mechanism by which education influences salary.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+another example
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>To make this point super clear, suppose we were testing some drug that reduces blood pressure in order to lower the risk of cardiac arrest. We do an experiment where we gave some people the drug, and some people a placebo, then after a year we measured their blood pressure, and then we followed up 5 years later to see how many experienced cardiac arrests.</p>
+<p>The diagram to show how these variable relate is clearly the one in <a href="#fig-pathdrugmed" class="quarto-xref">Figure&nbsp;2</a></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-pathdrugmed" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pathdrugmed-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/path_drug.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pathdrugmed-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: A drug aimed at reducing cardiac arrests by lowering blood pressure. The faint grey line indicates the path that would be estimated if we attempted to control for post-treatment blood-pressure
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>If we fitted the model <code>lm(cardiac_arrest ~ blood_pressure + drug)</code>, then the estimated coefficient we get for <code>drug</code> will be the effect of the drug on cardiac arrests that <em>isn’t</em> due to how it changes blood pressure. But that is exactly the opposite of what we want, because we think the drug works specifically by lowering blood pressure!</p>
+<p>Contrast this with another example, where we do not run an experiment and allocate people into “drug” or “placebo”, we simply observe a whole load of people who either do or do not take the drug, and we follow them up to see how many have cardiac arrests. <strong>But</strong>, it is generally older people who take the drug, whereas younger people do not. In addition, older people have a higher risk of cardiac arrests. So our model is that seen in <a href="#fig-pathdrugcon" class="quarto-xref">Figure&nbsp;3</a>.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-pathdrugcon" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pathdrugcon-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/path_drug_con.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pathdrugcon-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: We are interested in a drug aimed at reducing cardiac arrests. Older people are more likely to take the drug, and are also more likely to experience cardiac arrest
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>In this case, controlling for the third variable <code>age</code> is the right thing to do.<br>
+If we do not control for age, and fit the model <code>lm(cardiac_arrest ~ drug)</code>, then the coefficient for <code>drug</code> will be biased because the group who take the drug are on average older, and thus will tend to experience more cardiac arrests. If the imbalance of age between the drug and no-drug groups is great enough, it could even look like the drug is making cardiac arrests <em>more</em> likely!</p>
+</div>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 2
+</div>
+<div class="question-body">
+<p>Instead, let’s suppose we are actually interested in the mechanism of <em>how</em> education influences salary. Do more educated people tend to have higher salaries in part because of the skills obtained during their education?</p>
+<p>Fit a path model in which education has an effect on salary both directly and indirectly, via its influence on the skills obtained (i.e., model B in <a href="#fig-educ" class="quarto-xref">Figure&nbsp;1</a>)</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hints
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>we have an outcome Y, a predictor X, and a mediator M:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="st">Y ~ X + M</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="st">M ~ X</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-2" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-2', 'sol-start-2')">
+Solution
+</button>
+</div>
+<div id="sol-body-2" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 2</em>. </span></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="st">Salary ~ Educ + Skill</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="st">Skill ~ Educ</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>mod1.est <span class="ot">&lt;-</span> <span class="fu">sem</span>(mod1, <span class="at">data =</span> edskill)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod1.est)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>lavaan 0.6-20 ended normally after 1 iteration
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                         5
+
+  Number of observations                           390
+
+Model Test User Model:
+                                                      
+  Test statistic                                 0.000
+  Degrees of freedom                                 0
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Regressions:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  Salary ~                                            
+    Educ              0.479    0.225    2.127    0.033
+    Skill             0.266    0.053    5.017    0.000
+  Skill ~                                             
+    Educ              2.481    0.175   14.175    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .Salary          129.722    9.290   13.964    0.000
+   .Skill           118.754    8.504   13.964    0.000</code></pre>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 3
+</div>
+<div class="question-body">
+<p>While the model in the previous question better reflects our theoretical notions of how these variables are actually related, we would ideally get out an estimate of the indirect effect.</p>
+<p>Edit your model formula from the previous question to also estimate both the total and the indirect effects.</p>
+<p>Then re-fit the model, estimating the parameters using bootstrapping.<br>
+Is the association between education and salary mediated by skills? What proportion of the effect is mediated?</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hints
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>You’ll need to add some labels to the existing paths, and then define the indirect and total effects - see <a href="https://uoepsy.github.io/lv/07_mediation.html#mediation-in-lavaan" target="_blank">Chapter 7#mediation-in-lavaan</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-3" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-3', 'sol-start-3')">
+Solution
+</button>
+</div>
+<div id="sol-body-3" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 3</em>. </span></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="st">Salary ~ c*Educ + b*Skill</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="st">Skill ~ a*Educ</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="st">indirect := a*b</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="st">total := a*b + c</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mod1.est <span class="ot">&lt;-</span> <span class="fu">sem</span>(mod1, <span class="at">data =</span> edskill, <span class="at">se =</span> <span class="st">"bootstrap"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p style="color:red;font-size:0.8em">
+Warning message:<br> In lav_model_nvcov_bootstrap(lavmodel = lavmodel, lavsamplestats = lavsamplestats, :<br> lavaan WARNING: 8 bootstrap runs failed or did not converge.
+</p>
+<p>Note that we get a warning here, but it’s not too much to worry about. It tells us that 8 (out of 1000) of the bootstraps has failed to converge. This means our bootstrapped estimates are really based on 992 bootstrap draws (and so a write up would need to clearly report this).<br>
+If this number was bigger (e.g.&nbsp;10% or 20% of the bootstraps failed) then we it would be more of a cause for concern.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod1.est, <span class="at">ci =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>lavaan 0.6-20 ended normally after 1 iteration
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                         5
+
+  Number of observations                           390
+
+Model Test User Model:
+                                                      
+  Test statistic                                 0.000
+  Degrees of freedom                                 0
+
+Parameter Estimates:
+
+  Standard errors                            Bootstrap
+  Number of requested bootstrap draws             1000
+  Number of successful bootstrap draws             990
+
+Regressions:
+                   Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+  Salary ~                                                              
+    Educ       (c)    0.479    0.229    2.096    0.036    0.010    0.918
+    Skill      (b)    0.266    0.054    4.887    0.000    0.159    0.374
+  Skill ~                                                               
+    Educ       (a)    2.481    0.168   14.798    0.000    2.134    2.826
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+   .Salary          129.722   10.220   12.693    0.000  108.806  148.937
+   .Skill           118.754    8.139   14.591    0.000  103.382  135.392
+
+Defined Parameters:
+                   Estimate  Std.Err  z-value  P(&gt;|z|) ci.lower ci.upper
+    indirect          0.659    0.135    4.873    0.000    0.398    0.929
+    total             1.138    0.189    6.032    0.000    0.752    1.488</code></pre>
+</div>
+</div>
+<p>The relationship between education and salary <strong>is</strong> mediated by skill level! We have a significant indirect effect of 0.66, 95% CI [0.4, 0.93].</p>
+<p>The total effect of education on salary is 1.14, and the indirect effect is 0.66.<br>
+<span class="math inline">\(\frac{0.66}{1.14} = 0.58\)</span>, so 58% of the effect is mediated by the influence that education has on skillset and skillset has on salary.</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 4
+</div>
+<div class="question-body">
+<p>Nothing to code here, just spend a little time to get to grips with what the different parts of the model represent:</p>
+<p>if you can, write down for explanation of each of:</p>
+<ul>
+<li>a</li>
+<li>b</li>
+<li>the total effect</li>
+<li>the direct effect</li>
+<li>the indirect effect</li>
+</ul>
+<p><img src="images/path_educparts.png" class="img-fluid"></p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-4" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-4', 'sol-start-4')">
+Solution
+</button>
+</div>
+<div id="sol-body-4" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 4</em>. </span></p>
+<ul>
+<li><p><strong>a: </strong> this is the estimated number of skills you acquire for every additional year of education. So each year of education tends to lead to acquiring 2.48 new skills.</p></li>
+<li><p><strong>b: </strong> this is the estimated increase in salary for every additional skill you have, if you hold years of education constant. So if you just keep your years of education the same, but teach yourself an extra skill, we’d expect your salary to increase by £270</p></li>
+<li><p><strong>the direct effect: </strong> this is the estimated increase in salary for every additional year of education, holding number of skills constant. Imagine that you didn’t show up to any classes for your masters degree (and so you didn’t learn any new skills), but we still gave you the certificate at the end. Having that bit of paper means we expect you to earn £480 more (compared to someone who has the same skill set as you but doesn’t have the extra year of education).</p></li>
+<li><p><strong>the total effect: </strong> this is the estimated increase in salary for every additional year of education. So by doing your masters degree, we’d expect your salary to be £1140 higher than someone without a masters degree. It will be higher partly because of the skills you acquire (the indirect effect) and partly because of just having the certificate (the direct effect)</p></li>
+<li><p><strong>the indirect effect: </strong> this is the estimated increase in salary due to the skills you tend to acquire for every additional year of education. To put this another way, imagine that during your masters degree, you come to classes and obtain the various skills that tend to be gained from a masters, but then you never get round to finishing, so you never get your certificate. We would expect your salary to be £659 higher than someone who didn’t do the masters degree.</p></li>
+</ul>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 5
+</div>
+<div class="question-body">
+<p>In order for us to accurately estimate mediation effects, a few conditions have to be met. One of the biggest is that of <strong>no confounding.</strong></p>
+<p>An unmeasured variable that is a common cause of both X and Y will bias the total and direct effects, and one that is a common cause of both X and M will bias the indirect effect (it will bias the X<span class="math inline">\(\rightarrow\)</span>M path). Randomised experiments (i.e.&nbsp;randomly allocating people to different values of X) will avoid this, because nothing but the random allocation would cause X. However, confounding of the indirect effect can also happen if some variable is a common cause of both M and Y, and it is hard to randomly allocate to a mediator<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
+<p>Can you think of two unmeasured variables that could be in the place of the variables indicated by <code>?</code> in <a href="#fig-blanks" class="quarto-xref">Figure&nbsp;4</a> and may be confounding our estimates.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-blanks" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-blanks-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/path_educ_conf_blank.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-blanks-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: fill in the blanks!
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-5" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-5', 'sol-start-5')">
+Solution
+</button>
+</div>
+<div id="sol-body-5" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 5</em>. </span>Here are my suggestions. Even if we don’t believe that it <em>should</em>, something like “socioeconomic status” can likely influence both peoples’ levels of education (people from wealthier backgrounds have more access to more years of education) and their eventual salary (social connections might lead to better paying jobs, etc.).</p>
+<p>Similarly, aspects of peoples’ employment post-education will influence the skills they have <em>and</em> their salary. For instance, some people might leave education and go into private industry jobs with lots of options for on-the-job training and ‘upskilling’. This will lead to more skills, but could also lead to being promoted and therefore having a higher salary!</p>
+<p><img src="images/path_educ_conf_example.png" class="img-fluid"></p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 6
+</div>
+<div class="question-body">
+<p>Another assumption of our model here is that there is no “X-M interaction”. By this, I mean that we are assuming that the effect of the mediator M on the outcome Y does not depend on the level of the predictor X.</p>
+<p>Think: what would an X-M interaction mean in this example?</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-6" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-6', 'sol-start-6')">
+Solution
+</button>
+</div>
+<div id="sol-body-6" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 6</em>. </span>In our example of Educ<span class="math inline">\(\rightarrow\)</span>Skill<span class="math inline">\(\rightarrow\)</span>Salary, the “X-M interaction” would refer to the idea that the number of skills has a different effect on salaries depending on the level of education.</p>
+<p>Intuitively to me this actually seems like a pretty important possibility!<br>
+Skills may well have a bigger bearing on salaries for people with lower levels of education. It’s probably easier to think about this if we split Education into a binary thing. It’s quite likely that in reality, there is an interaction like the picture below, where the number of skills tends to ‘matter more’ (i.e.&nbsp;lead to more of a difference in salaries) for people with less education.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="09ex_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<p><br></p>
+</section>
+<section id="more-conduct-problems" class="level1">
+<h1>More Conduct Problems</h1>
+<div class="frame">
+<p><strong>Dataset: cprobteach.csv</strong></p>
+<p>Thus far, we have explored the underlying structure of a scale of adolescent ‘conduct problems’ <a href="07ex.html#conduct-problems" target="_blank">(PCA &amp; EFA exercises)</a> and we then tested this measurement model when the scale was administered to a further sample <a href="08ex.html#conduct-problems" target="_blank">(CFA exericses)</a>.</p>
+<p>This week, we are looking at whether there are associations between conduct problems (both aggressive and non-aggressive) and academic performance and whether the relations are mediated by the quality of relationships with teachers. We collected data on 557 adolescents as they entered school. Their responses to the conduct problem scale were summed to create a scale score. Two years later, we followed up these students, and obtained measures of Academic performance and of their relationship quality with their teachers. Standardised scale scores were created for both of these measures.</p>
+<p>The data are available at <a href="https://uoepsy.github.io/data/conductprobteach.csv" target="_blank">https://uoepsy.github.io/data/conductprobteach.csv</a></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="hciwcvsyam" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#hciwcvsyam table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#hciwcvsyam thead, #hciwcvsyam tbody, #hciwcvsyam tfoot, #hciwcvsyam tr, #hciwcvsyam td, #hciwcvsyam th {
+  border-style: none;
+}
+
+#hciwcvsyam p {
+  margin: 0;
+  padding: 0;
+}
+
+#hciwcvsyam .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#hciwcvsyam .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#hciwcvsyam .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#hciwcvsyam .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#hciwcvsyam .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#hciwcvsyam .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hciwcvsyam .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#hciwcvsyam .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#hciwcvsyam .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#hciwcvsyam .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#hciwcvsyam .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#hciwcvsyam .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#hciwcvsyam .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#hciwcvsyam .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#hciwcvsyam .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#hciwcvsyam .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#hciwcvsyam .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#hciwcvsyam .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#hciwcvsyam .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hciwcvsyam .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#hciwcvsyam .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#hciwcvsyam .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#hciwcvsyam .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hciwcvsyam .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#hciwcvsyam .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#hciwcvsyam .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hciwcvsyam .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hciwcvsyam .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#hciwcvsyam .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hciwcvsyam .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#hciwcvsyam .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#hciwcvsyam .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#hciwcvsyam .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hciwcvsyam .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#hciwcvsyam .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#hciwcvsyam .gt_left {
+  text-align: left;
+}
+
+#hciwcvsyam .gt_center {
+  text-align: center;
+}
+
+#hciwcvsyam .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#hciwcvsyam .gt_font_normal {
+  font-weight: normal;
+}
+
+#hciwcvsyam .gt_font_bold {
+  font-weight: bold;
+}
+
+#hciwcvsyam .gt_font_italic {
+  font-style: italic;
+}
+
+#hciwcvsyam .gt_super {
+  font-size: 65%;
+}
+
+#hciwcvsyam .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#hciwcvsyam .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#hciwcvsyam .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#hciwcvsyam .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#hciwcvsyam .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#hciwcvsyam .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#hciwcvsyam .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#hciwcvsyam .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#hciwcvsyam div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="variable" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">variable</th>
+<th id="description" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">description</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="variable">ID</td>
+<td class="gt_row gt_left" headers="description">participant ID</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="variable">Acad</td>
+<td class="gt_row gt_left" headers="description">Academic performance (average grade (0-100) based on all available assessments)</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="variable">Teach_r</td>
+<td class="gt_row gt_left" headers="description">Teacher relationship quality (sum score based on the Teacher-Child-Relationship (TCR) scale - 7 items on a 5-point likert)</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="variable">Non_agg</td>
+<td class="gt_row gt_left" headers="description">Non-Aggressive conduct problems (sum score based on items 1-5 of the 10 item conduct problems scale - 5 items on a 5-point likert)</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="variable">Agg</td>
+<td class="gt_row gt_left" headers="description">Aggressive conduct problems (sum score based on items 6-10 of the 10 item conduct problems scale - 5 items on a 5-point likert)</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<div class="question-begin">
+Question 7
+</div>
+<div class="question-body">
+<p>As a little exercise before we get started, let’s just show ourselves that we can use <strong>lavaan</strong> to estimate all sorts of models, including a multiple regression model.</p>
+<p>Let’s first just explore the total effects of the two types of conduct problems on academic achievement.</p>
+<p>The code below fits the same model using <code>sem()</code> and using <code>lm()</code>. Examine the <code>summary()</code> output for both models, and spot the similarities.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read in data</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>cp_teach<span class="ot">&lt;-</span><span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/conductprobteach.csv"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># a straightforward multiple regression model</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>m1_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(Acad <span class="sc">~</span> Non_agg <span class="sc">+</span> Agg, <span class="at">data =</span> cp_teach)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># the same model fitted in lavaan</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>m1_lav <span class="ot">&lt;-</span> <span class="st">'Acad ~ Non_agg + Agg'</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>m1_lav.est <span class="ot">&lt;-</span> <span class="fu">sem</span>(m1_lav, <span class="at">data =</span> cp_teach)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-7" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-7', 'sol-start-7')">
+Solution
+</button>
+</div>
+<div id="sol-body-7" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 7</em>. </span></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m1_lm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Acad ~ Non_agg + Agg, data = cp_teach)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-35.758  -7.511   0.254   7.796  38.735 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  89.0801     2.9339  30.362  &lt; 2e-16 ***
+Non_agg      -0.7641     0.2405  -3.177  0.00157 ** 
+Agg          -1.3123     0.2340  -5.607 3.24e-08 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 12.28 on 554 degrees of freedom
+Multiple R-squared:  0.1922,    Adjusted R-squared:  0.1893 
+F-statistic:  65.9 on 2 and 554 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m1_lav.est)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>lavaan 0.6-20 ended normally after 1 iteration
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                         3
+
+  Number of observations                           557
+
+Model Test User Model:
+                                                      
+  Test statistic                                 0.000
+  Degrees of freedom                                 0
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Regressions:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  Acad ~                                              
+    Non_agg          -0.764    0.240   -3.185    0.001
+    Agg              -1.312    0.233   -5.623    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .Acad            150.012    8.989   16.688    0.000</code></pre>
+</div>
+</div>
+<p>We can see that both non-aggressive and aggressive conduct problems significantly predict academic performance. The coefficients from the <code>lm()</code> are exactly the same as the estimates under the “Regressions” section of the model fitted with <code>sem()</code>.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 8
+</div>
+<div class="question-body">
+<p>Make a sketch for a model in which <strong>both</strong> aggressive and non-aggressive conduct problems have indirect (via teacher relationships) and direct effects on academic performance.</p>
+<p>Sketch the path diagram on a piece of paper, or use a website like <a href="https://semdiag.psychstat.org/" target="_blank">https://semdiag.psychstat.org/</a> or <a href="https://www.diagrams.net/" target="_blank">https://www.diagrams.net/</a>.</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-8" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-8', 'sol-start-8')">
+Solution
+</button>
+</div>
+<div id="sol-body-8" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 8</em>. </span>There are many ways in which you could position the variables in your diagram, so the two path diagrams below are equivalent:</p>
+<div class="panelset">
+<section id="option-a" class="level3 panel">
+<h3 class="anchored" data-anchor-id="option-a">Option A</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/msmr-w8-b1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:85.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="option-b" class="level3 panel">
+<h3 class="anchored" data-anchor-id="option-b">Option B</h3>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/msmr-w8-b2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:85.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 9
+</div>
+<div class="question-body">
+<p>Now specify the model in R, taking care to also define the parameters for the indirect and total effects.</p>
+<p>Make sure to define the indirect effects and total effects. Then estimate the model by bootstrapping.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hints
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>you’ll need more labels than just a, b, and c!</p>
+</div>
+</div>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-9" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-9', 'sol-start-9')">
+Solution
+</button>
+</div>
+<div id="sol-body-9" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 9</em>. </span>We now have two predictors, one mediator and one outcome (and two indirect effects, one for each predictor). We can represent this in two lines: one where we specify academic performance as the outcome variable and one where we specify teacher relationships (the mediator) as the outcome variable.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>mod2 <span class="ot">&lt;-</span> <span class="st">'</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="st">    Acad ~ c_A*Agg + c_NA*Non_agg + b*Teach_r</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="st">    Teach_r ~ a_A*Agg + a_NA*Non_agg</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="st">    #indirect effect for aggressive conduct problems</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="st">    ind_agg := a_A*b </span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="st">    #indirect effect for non-aggressive conduct problems</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="st">    ind_nonagg := a_NA*b </span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="st">    # total effects</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="st">    tot_agg := a_A*b + c_A</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="st">    tot_nonagg := a_NA*b + c_NA</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>mod2.est<span class="ot">&lt;-</span><span class="fu">sem</span>(mod2,  <span class="at">data=</span>cp_teach, <span class="at">se=</span><span class="st">'bootstrap'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 10
+</div>
+<div class="question-body">
+<p>Given that the measures we are using here all have fairly uninterpretable scales (i.e., what does being 1 higher on <code>Agg</code> really represent?), we might prefer standardised coefficients instead.</p>
+<p>You can get these using <code>standardizedSolution(model)</code>.</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-10" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-10', 'sol-start-10')">
+Solution
+</button>
+</div>
+<div id="sol-body-10" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 10</em>. </span></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">standardizedSolution</span>(mod2.est)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          lhs op         rhs      label est.std    se       z pvalue ci.lower
+1        Acad  ~         Agg        c_A  -0.166 0.060  -2.754  0.006   -0.284
+2        Acad  ~     Non_agg       c_NA  -0.083 0.059  -1.396  0.163   -0.198
+3        Acad  ~     Teach_r          b   0.270 0.060   4.473  0.000    0.152
+4     Teach_r  ~         Agg        a_A  -0.502 0.035 -14.338  0.000   -0.570
+5     Teach_r  ~     Non_agg       a_NA  -0.326 0.036  -9.036  0.000   -0.397
+6        Acad ~~        Acad              0.778 0.031  24.991  0.000    0.717
+7     Teach_r ~~     Teach_r              0.411 0.022  18.351  0.000    0.368
+8         Agg ~~         Agg              1.000 0.000      NA     NA    1.000
+9         Agg ~~     Non_agg              0.703 0.000      NA     NA    0.703
+10    Non_agg ~~     Non_agg              1.000 0.000      NA     NA    1.000
+11    ind_agg :=       a_A*b    ind_agg  -0.135 0.032  -4.299  0.000   -0.197
+12 ind_nonagg :=      a_NA*b ind_nonagg  -0.088 0.022  -3.993  0.000   -0.131
+13    tot_agg :=   a_A*b+c_A    tot_agg  -0.301 0.053  -5.728  0.000   -0.404
+14 tot_nonagg := a_NA*b+c_NA tot_nonagg  -0.171 0.057  -3.017  0.003   -0.282
+   ci.upper
+1    -0.048
+2     0.033
+3     0.388
+4    -0.433
+5    -0.256
+6     0.839
+7     0.455
+8     1.000
+9     0.703
+10    1.000
+11   -0.074
+12   -0.045
+13   -0.198
+14   -0.060</code></pre>
+</div>
+</div>
+<p>We can see that the 95% confidence intervals for both indirect effects do not include zero, therefore, we can conclude that they are significant at the <span class="math inline">\(\alpha = .05\)</span> level.</p>
+<div class="red">
+<p><strong>Note</strong></p>
+<p>The confidence intervals computed using bootstrapping may be slightly different for you. This is normal, as bootstrap is based on random sampling!</p>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 11
+</div>
+<div class="question-body">
+<p>Now visualise the estimated model and its parameters using the <code>semPaths()</code> function from the <strong>semPlot</strong> package.</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-11" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-11', 'sol-start-11')">
+Solution
+</button>
+</div>
+<div id="sol-body-11" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 11</em>. </span></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># to include the parameter estimates we set what='est' or what='std'</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(semPlot)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">semPaths</span>(mod2.est, <span class="at">whatLabels =</span> <span class="st">"std"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="09ex_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 12
+</div>
+<div class="question-body">
+<p>Write a brief paragraph reporting on the results of the model estimates. Include a Figure or Table to display the parameter estimates.</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-12" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-12', 'sol-start-12')">
+Solution
+</button>
+</div>
+<div id="sol-body-12" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 12</em>. </span></p>
+<div class="int">
+<p>A path mediation model was used to test the direct and indirect effects (via teacher relationship quality) of aggressive and non-aggressive conduct problems on academic performance. In the model, academic performance was regressed on teacher relationship quality, non-aggressive conduct problems and aggressive conduct problems while teacher relationship quality (the mediator) was regressed on aggressive and non-aggressive conduct problems. The indirect effects were tested using the product of the coefficient for the regression of outcome on mediator and the coefficient for the regression of mediator on predictor. The statistical significance of the indirect effects were evaluated using bootstrapped 95% confidence intervals with 1000 bootstrap samples.</p>
+<p>Standardised parameter estimates are provided in <a href="#fig-pathcp" class="quarto-xref">Figure&nbsp;5</a>. Solid lines indicate that a parameter is significant at the 5% significance level, while dashed lines represent non-significant paths. Total effects of both non-aggressive and aggressive conduct problems on academic performance were significant and negative, indicating that both conduct problem domains were associated with poorer academic outcomes.</p>
+<p>The indirect effects of both conduct problem domains on academic performance via teacher-relationship quality were statistically significant (<span class="math inline">\(\beta = -0.088,\, 95\%\, CI\, [-0.131, -0.045]\)</span> and <span class="math inline">\(\beta = -0.135\, [-0.197, -0.074]\)</span> for non-aggressive and aggressive conduct problems respectively). The direct effect of non-aggressive conduct problems was not significant (<span class="math inline">\(\beta = -0.083\,[-0.198, 0.033]\)</span>), suggesting that teacher-relationship quality fully mediated the relationship between non-aggressive conduct problems and academic performance. In contrast, teacher-relationship quality only partially mediated the effect of aggressive conduct problems (proportion mediated = 45%), as a significant direct effect on academic performance remained (<span class="math inline">\(\beta = -0.166\, [-0.284, -0.048]\)</span>). These results suggest that while both types of conduct problems impact academics through the teacher-student bond, aggressive behaviors may also carry additional, direct risks to academic success that are independent of the teacher-student relationship.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-pathcp" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pathcp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/path_analy_revstd.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="1200">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pathcp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Effect of conduct problems on academic performance mediated by quality of teacher relationship. Standardised estimates presented
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>there <em>are</em> methods that attempt to “block” a mediator, or to manipulate X in multiple ways in order to increase or decrease the mediators’ effect. If you’re interested see <a href="https://doi.org/10.1016/j.jesp.2015.09.012" target="_blank"><em>Design approaches to experimental mediation</em>, Pirlott &amp; MacKinnon 2016</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Note that the model fitted with <code>sem()</code> provides <span class="math inline">\(Z\)</span> values instead of the <span class="math inline">\(t\)</span>-values in regression models. This is because <code>sem()</code> fits models with maximum likelihood thereby assuming a reasonably large sample size.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

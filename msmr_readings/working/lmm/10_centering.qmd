@@ -1,0 +1,774 @@
+---
+title: "10: Centering"
+params: 
+    SHOW_SOLS: FALSE
+    TOGGLE: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+source('assets/setup.R')
+library(xaringanExtra)
+library(tidyverse)
+library(patchwork)
+xaringanExtra::use_panelset()
+library(lme4)
+library(broom.mixed)
+```
+
+
+:::lo
+This reading:  
+
+- Centering and scaling predictors in single level regression
+- Group-mean centering predictors in the multilevel model to separate out "within"-group effects from "between"-group effects
+- Optional: contextual effects and the Mundlak model
+
+:::
+
+
+
+## Centering predictors in `lm()`
+
+There are lots of ways we can transform a variable. For instance, we can transform something in millimeters to being in centimeters by dividing it by 10. We could transform a `height` variable into `height above/below 2 meters` variable by subtracting 2 meters from it.   
+
+A couple of common transformations we have seen already are 'centering' and 'standardising':  
+
+- When we "center" a variable, we subtracting some number (often the mean of the variable) from every value. So if we 'mean-center' a variable measuring height in cm, and the mean height of my sample is 175cm, then a value of 190 becomes +15, and a value of 150 becomes -25, and so on.  
+- When we 'standardise' a variable, we mean-center it and then divide the resulting values by the standard deviation. So if the standard deviation of heights in my sample is 15, then the value of 190 becomes $\frac{190-175}{15} = \frac{15}{15} = 1$, and the 150 becomes $\frac{150-175}{15} = \frac{-25}{15} = -1.67$.  
+
+How does this choice affect the linear models we might be fitting? The short answer is that it doesn't! The overall fit of `lm()` is not changed in any way when we apply these linear^[the fit of models _does_ change if we apply a non-linear transformation, such as $x^2$, $log(x)$, etc., and this can sometimes be useful for studying effects that are more likely to be non-linear!] transformations to predictors or outcomes. 
+
+However, transformations _do_ change what we get out of our model:  
+
+- If we re-center a predictor on some new value (such as the mean), then all this does is change what "zero" means in our variable. This means that if we re-center a predictor in our linear model, the only thing that changes is our intercept. This is because the intercept is "when all predictors are zero". And we are changing what "zero" represents! 
+- When we scale a predictor, this will change the slope. Why? Because it changes what "moving 1" represents. So if we standardise a variable, it changes both the intercept and the slope. However, note that the significance of the slope remains _exactly the same_, we are only changing the *units* that we are using to expressing that slope.
+
+The example below shows a model of heart rates (`HR`) predicted by hours slept (`hrs_sleep`). In @fig-scalexlm you can see our original model (top left), and then various transformations applied to our predictor. Note how these transformations don't affect the model itself - the regression line (and the uncertainty in the line) is the same in each plot. We can see that re-centering changes what the intercept represents:  
+
+- In the top left plot, "0" represents zero hours slept, so the intercept (big blue dot) is the estimated heart rate for someone who didn't sleep at all. 
+- Similarly, in the top right plot, "0" now represents the mean hours slept, so the intercept is the heart rate for someone who slept an average amount, and in the bottom right plot, "0" now represents 8 hours of sleep (the recommended amount).
+- In the bottom left plot (where hours slept is 'standardized'), not only have we changed what "0" represents, but we have changed what moving "1" represents. Rather being an increase of 1 hour of sleep, in this plot it represents an increase of 1 standard deviation hours sleep (whatever that is for our sample - it looks to be about `r round(sd(read_csv("https://uoepsy.github.io/data/usmr_hrsleep.csv")$hrs_sleep)*2)/2`). This means our estimated slope is the change in heart rate when having 1 SD more hours sleep (approx `r round(sd(read_csv("https://uoepsy.github.io/data/usmr_hrsleep.csv")$hrs_sleep)*2)/2`).
+
+```{r}
+#| label: fig-scalexlm
+#| fig-cap: "Centering and scaling predictors in linear regression models. Intercepts and their interpretation change when re-centered, and slope coefficients and their interpretation change when scaling, but the overall model stays the same."
+#| out-width: "100%"
+#| echo: false
+hrdat <- read_csv("https://uoepsy.github.io/data/usmr_hrsleep.csv")
+df = hrdat |> mutate(x=hrs_sleep,y=HR)
+mod = lm(y~x,df)
+p1 = ggplot(df, aes(x=x,y=y))+geom_point(alpha=.3)+
+  geom_smooth(method="lm")+
+  geom_smooth(method="lm",fullrange=T,lty="dashed",se=F)+
+  #ylim(0,max(df$y))+
+  geom_segment(x=0,xend=0,y=0,yend=100)+
+  geom_segment(x=0,xend=max(df$x),y=0,yend=0)+
+  geom_point(data=tibble(x=0,y=coef(mod)[1]),size=3,col="blue")+
+  labs(title="Original", x="Hours Slept",y="HR")+
+  scale_x_continuous(limits=c(0,14),breaks=0:14)
+
+mod = lm(y~scale(x,scale=F),df)
+p2 = ggplot(df, aes(x=x,y=y))+geom_point(alpha=.3)+
+  geom_smooth(method="lm")+
+  geom_smooth(method="lm",fullrange=T,lty="dashed",se=F)+
+  #ylim(0,max(df$y))+
+  geom_segment(x=mean(df$x),xend=mean(df$x),y=0,yend=100)+
+  geom_segment(x=0,xend=max(df$x),y=0,yend=0)+
+  geom_point(data=tibble(x=mean(df$x),y=coef(mod)[1]),size=3,col="blue")+
+  scale_x_continuous(limits=c(0,14),breaks=map_dbl(seq(7,-7), ~mean(df$x)-.),
+                     labels=seq(-7,7))+
+  labs(title="Mean Centered", x="Hours Slept\n(mean centered)",y="HR")
+  
+  
+mod = lm(y~scale(x),df)
+p3 = ggplot(df, aes(x=x,y=y))+geom_point(alpha=.3)+
+  geom_smooth(method="lm")+
+  geom_smooth(method="lm",fullrange=T,lty="dashed",se=F)+
+  #ylim(0,max(df$y))+
+  geom_segment(x=mean(df$x),xend=mean(df$x),y=0,yend=100)+
+  geom_segment(x=0,xend=30,y=0,yend=0)+
+  geom_point(data=tibble(x=mean(df$x),y=coef(mod)[1]),size=3,col="blue")+
+  scale_x_continuous(limits=c(0,14),
+                     breaks=c(mean(df$x)-(2*sd(df$x)), mean(df$x)-sd(df$x), 
+                              mean(df$x), 
+                              mean(df$x)+sd(df$x), mean(df$x)+(2*sd(df$x))),
+                     labels=c(-2,-1,0,1,2))+
+  labs(title="Standardised X", x="Hours Slept\n(standardised)",y="HR")
+
+mod = lm(y~x,df %>% mutate(x=x-8))
+p4 = ggplot(df, aes(x=x,y=y))+geom_point(alpha=.3)+
+  geom_smooth(method="lm")+
+  geom_smooth(method="lm",fullrange=T,lty="dashed",se=F)+
+  #ylim(0,max(df$y))+
+  geom_segment(x=8,xend=8,y=0,yend=100)+
+  geom_segment(x=0,xend=30,y=0,yend=0)+
+  geom_point(data=tibble(x=8,y=coef(mod)[1]),size=3,col="blue")+
+  scale_x_continuous(limits=c(0,14),breaks=0:14, labels=c(0:14)-8)+
+  labs(title="Centered on 8 hours", x="Hours Slept\n(relative to 8 hours)",y="HR")
+p1 + p2 + p3 + p4 
+```
+
+The thing to note is that the lines themselves are all the same, because the models are all exactly the same. We can prove this to ourselves by comparing the 4 models: 
+
+```{r}
+#| code-fold: true
+hrdat <- read_csv("https://uoepsy.github.io/data/usmr_hrsleep.csv")
+
+# original model:
+mod_orig <- lm(HR ~ hrs_sleep, data = hrdat)
+# model with hrs_sleep mean centered
+mod_mc <- lm(HR ~ scale(hrs_sleep, scale=FALSE), data = hrdat)
+# model with hrs_sleep standardised
+mod_z <- lm(HR ~ scale(hrs_sleep), data = hrdat)
+# model with hrs_sleep centered on 8 hours the I() function
+# is a handy function that is just needed because the symbols
+# + and - normally get interprted in lm() as adding 
+# and removing predictors. 
+mod_8 <- lm(HR ~ I(hrs_sleep-8), data = hrdat) 
+
+# all models are identical fit
+anova(mod_orig, mod_mc, mod_z, mod_8)
+```
+
+::: {.callout-tip collapse="true"}
+#### Centering when we have interactions
+
+When we have an interactions in a model such as `lm(y~x+z+x:z)`, the individual coefficients for `x` and `z` are specifically the associations "when the other variable included in the interaction is zero". Because re-centering a variable changes the meaning of "zero", this means that these two coefficients will change.  
+
+For instance, a model of heart rates (`HR`) that includes an interaction between `hrs_sleep` and whether someone smokes, our coefficient for `smoke` estimates the difference in HR between smokers vs non-smokers who get zero hours of sleep (red to blue point in the left-hand plot of @fig-intcent). If we mean-center the `hrs_sleep` variable in our model, then it becomes the estimated difference in HR between smokers vs non-smokers who get the average hours of sleep (red to blue point in the right-hand plot of @fig-intcent). 
+
+
+```{r}
+#| label: fig-intcent
+#| fig-cap: "mean-centering a variable that is involved in an interaction will change the point at which the marginal effect of other variable is estimated at" 
+#| out-width: "100%"
+#| echo: false
+hrdat <- hrdat %>% 
+  mutate(
+    smoke = ifelse(smoke %in% c("v","y"),"y","n"),
+    hrs_sleepC = hrs_sleep - mean(hrs_sleep)
+  )
+eg2mod <- lm(HR ~ hrs_sleep * smoke, data = hrdat)
+eg2mod_cent <- lm(HR ~ hrs_sleepC * smoke, data = hrdat)
+as.data.frame(effects::effect("hrs_sleep*smoke",eg2mod,
+              xlevels=list(hrs_sleep=0:15))) |>
+  ggplot(aes(x=hrs_sleep,col=smoke,fill=smoke,
+             y=fit,ymin=lower,ymax=upper))+
+  geom_ribbon(alpha=.1,col=NA)+
+  geom_smooth(method=lm,se=F,fullrange=T)+
+  geom_point(data=hrdat,inherit.aes=F,
+             aes(y=HR,x=hrs_sleep,col=smoke),
+             size=3,alpha=.2)+
+  geom_point(x=0,y=coef(eg2mod)[1], size=4, aes(col="n"))+
+  geom_point(x=0,y=sum(coef(eg2mod)[c(1,3)]), size=4, aes(col="y"))+
+  geom_segment(x=0,xend=0,y=coef(eg2mod)[1], yend=sum(coef(eg2mod)[c(1,3)]), lty="dotted", lwd=1,col="black") + labs(title="Original X") +
+  
+
+as.data.frame(effects::effect("hrs_sleepC*smoke",eg2mod_cent,
+              xlevels=list(hrs_sleepC=(0:15)-mean(hrdat$hrs_sleep)))) |>
+  ggplot(aes(x=hrs_sleepC,col=smoke,fill=smoke,
+             y=fit,ymin=lower,ymax=upper))+
+  geom_ribbon(alpha=.1,col=NA)+
+  geom_smooth(method=lm,se=F,fullrange=T)+
+  geom_point(data=hrdat,inherit.aes=F,
+             aes(y=HR,x=hrs_sleepC,col=smoke),
+             size=3,alpha=.2)+
+  geom_point(x=0,y=coef(eg2mod_cent)[1], size=4, aes(col="n"))+
+  geom_point(x=0,y=sum(coef(eg2mod_cent)[c(1,3)]), size=4, aes(col="y"))+
+  geom_segment(x=0,xend=0,y=coef(eg2mod_cent)[1], yend=sum(coef(eg2mod_cent)[c(1,3)]), lty="dotted", lwd=1,col="black") + labs(title="Mean Centered X") +
+  plot_layout(guides="collect")
+
+
+  
+```
+
+:::
+
+<div class="divider div-transparent div-dot"></div>
+
+## Centering predictors in multilevel models
+
+In multilevel models, things can be a little bit different. 
+
+::::{.columns}
+:::{.column width="65%"}
+
+For one thing, there can be practical benefits to centering and/or scaling predictors with respect to actually *fitting* these models. Because multilevel models involve estimating group-level variability in intercepts and slopes, if our intercept is very far away from our data (e.g., if all our data is from ages 60 to 80, and we are estimating variability at age 0), then slight changes in a slope can have huge influences on estimated intercepts, resulting in models that don't converge. We can see from the longitudinal example ([Chapter 5](05_long.html#modelling-change-over-time){target="_blank"}), with the idea represented in @fig-centconv - using raw `age` values the intercepts and slopes are highly correlated and the model won't converge, but when we recenter the `age` variable on 60 and the intercept variation would become the variability in peoples' cognition _at the start of the study period_, and the random intercepts are not so determined by the random slopes.  
+:::
+
+:::{.column width="35%"}
+
+```{r} 
+#| label: fig-centconv
+#| fig-cap: "lines indicate predicted values from the model with random intercepts and random slopes of age. Due to how age is coded, the 'intercept' is estimated back at age 0"  
+#| echo: false
+#| fig-height: 4
+mmd <- read_csv("https://uoepsy.github.io/data/msmr_mindfuldecline.csv")
+mod1 <- lmer(ACE ~ 1 + age + 
+               (1 +age| ppt), 
+             data = mmd)
+broom.mixed::augment(mod1) |>
+  ggplot(aes(x=age,group=ppt))+
+  geom_point(aes(y=ACE))+
+  stat_smooth(geom="line",method=lm,se=F,fullrange=T,
+              alpha=.4,
+              aes(y=.fitted))+
+  xlim(0,78)
+```
+:::
+::::
+
+However, in some cases (typically in observational, rather than experimental studies), having multi-level data may mean that we can actually transform a predictor in a couple of ways - we can center it on a constant number like the overall mean/min/max, but we can also consider transformations _within each group_. The key here is that we don't always have just have _one_ "overall" mean for a predictor, but often we have different means for each group.  
+
+### Group mean centering
+
+```{r}
+#| echo: false
+set.seed(345)
+N = 200
+  n_groups = 20
+  g = rep(1:n_groups, e = N/n_groups)
+  u = rnorm(n_groups,0,3)[g]
+  x = rnorm(N,u)
+
+  re = MASS::mvrnorm(n_groups, mu=c(0,0),Sigma=matrix(c(1,0,0,.5),ncol=2))
+  re1 = re[,1][g]
+  re_x = re[,2][g]
+  lp = (0 + re1) + (1 + re_x) * x -1.5*u
+  y = rnorm(N, mean = lp, sd = 1)
+  
+  df = data.frame(grade=(scale(x)[,1]*13.6+60.214)/10, class = factor(g), 
+                  self_concept=y)
+
+  # ggplot(df,aes(x=grade,y=self_concept,col=class))+
+  #   geom_point()+guides(col="none")+
+  #   geom_smooth(method=lm,se=F)
+  
+bfdat <- df |> mutate(child=1:n(),grade=round(grade,2),self_concept=round(self_concept,2))
+
+#write_csv(bfdat, "../../data/lmm_bflpe.csv")
+```
+
+
+:::frame
+__Dataset: lmm_bflpe.csv__
+
+These data are simulated based on the ["Big-fish-little-pond" effect](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6124391/){target="_blank"} in educational literature. 
+
+We are interested in better understanding the relationship between school children's grades and their academic self-concept (their self-perception of ability in specific and general academic disciplines).  
+
+We have data from `r n_distinct(bfdat$class)` classes of children, capturing information on their grades at school (range 0 to 10), and a measure of academic self-concept:  
+
+```{r}
+bfdat <- read_csv("https://uoepsy.github.io/data/lmm_bflpe.csv")
+head(bfdat)
+```
+
+:::
+
+In initial exploratory plots, we can see that there is plenty of variation in childrens' grades - we have children scoring 3-4, all the way up to scoring almost 9. Note also, however, that the class's average grades also vary substantially. For instance, classes 8,9,10 and 11 all have a very high average grade.  
+```{r}
+#| code-fold: true
+#| fig-height: 4
+library(patchwork)
+ggplot(bfdat, aes(x=grade,y=self_concept))+
+  geom_point(alpha=.2) +
+
+ggplot(bfdat,aes(x=class,y=grade))+
+  geom_jitter(height=0,width=.1,alpha=.2)+
+  stat_summary(geom="pointrange")+
+  coord_flip()
+```
+
+When we plot the individual childrens' score of 'self-concept' against grades, the picture becomes a bit clearer once we separate by the classes, where we can see that *within each class* there is a fairly positive trend.  
+
+```{r}
+#| code-fold: true
+#| fig-height: 4
+ggplot(bfdat,aes(x=grade,y=self_concept))+
+  geom_point(size=2,alpha=.4) +
+
+ggplot(bfdat,aes(x=grade,y=self_concept))+
+  geom_point(size=2,alpha=.4)+
+  facet_wrap(~class)
+```
+
+By contrast, the relationship between children's self-concept scores and the *average grade of their class* shows a different pattern:
+```{r}
+#| code-fold: true
+#| fig-height: 4
+bfdat <- 
+  bfdat |> 
+    group_by(class) |>
+    mutate(
+      grade_avg = mean(grade)
+    )
+ggplot(bfdat,aes(x=grade_avg,y=self_concept))+
+  stat_summary(geom="pointrange")+
+  labs(x="class average grade")
+```
+
+So there are clearly two different things going on here!  
+
+1. We have a positive association between a children's grades _relative to their peers' grades_ and their self-concept. This maybe makes sense - comparisons with other people around you will influence your feelings of self worth. 
+2. We almost see a *negative* association between the average grade of a child's class and the child's self-concept --- i.e., children from classes with high grades tend to have slightly _lower_ self-concept!
+
+In the typical multilevel model that we might fit for this study (below), we just get out one single effect estimate, which represents the expected change in self-concept when a child's grade increases by 1. But we have just seen how a child's grades are driven by two things - their class as a whole, and their relative standing in their class.  
+```{r}
+#| eval: false
+rsmod <- lmer(self_concept ~ grade + (1 + grade | class),
+              data = bfdat)
+summary(rsmod)
+```
+```{r}
+#| echo: false
+rsmod <- lmer(self_concept ~ grade + (1 + grade | class),
+              data = bfdat)
+.pp(summary(rsmod),l=list(c(18:22)))
+```
+
+What we want to do here is separate out effects that are "within" (i.e. having higher/lower grades *than your classmates*) from those that are "between" (i.e. being from a class with higher/lower grades than other classes). To get at these two effects, we are going to explicitly separate our predictor variable into two different parts: 
+
+1. the group average
+2. individual deviations from the group average. 
+
+We can calculate these by first using `group_by()` to make the calculations be applied separately for each class, and then calculating the `mean()` grade (for each class), and the deviations for each child from their class's average:  
+
+```{r}
+bfdat <- 
+  bfdat |> 
+  group_by(class) |>
+  mutate(
+    grade_avg = mean(grade),
+    grade_dev = grade - mean(grade)
+  )
+
+head(bfdat)
+```
+
+Note that the actual grade for each child can still be made from our two new columns, calculated as the `avg_grade + grade_dev`.  
+
+So let's plot the association between each of these new variables and the self-concept scores:
+```{r}
+#| code-fold: true
+#| fig-height: 4
+ggplot(bfdat, aes(x=grade_avg, y=self_concept))+
+  geom_point() +
+  geom_smooth(method="lm") +
+
+ggplot(bfdat, aes(x=grade_dev, y=self_concept))+
+  geom_point() +
+  geom_smooth(method="lm")
+```
+
+So we can see that there are two different things going on here - the effect on self-concept of being in a high-performing class, as well as the effect of performing higher _for your class_.  
+
+
+## The within-between model
+
+Now that we have split up the variable grade into two parts (group average, and deviations-from-group-averages), we can actually put these in as separate predictors into our model!  
+
+This type of model is sometimes referred to as a "within-between" model. You can see below both the standard model with random slopes, and the 'within-between' model, in both `lmer()` syntax and in equation form.  
+
+Note that we while we replace one predictor (`x`) with its two constituent parts (the group means of `x` and the deviations from those group means), it is only the within effect that we can have a random slope for. This will hopefully make sense when we think a little about it, because the group-means are "between groups" - having a random slope of `group_mean_x|group` is similar to the idea of `handedness|person`, because for a single group, we don't have "an effect on y of that group having a high average x", so we can't consider it to be an effect that varies by-group.  
+
+
+
+::::panelset
+:::panel
+#### random slopes model
+
+```{r}
+#| echo: true
+#| eval: false
+lmer(y ~ 1 + x + (1 + x | g), data)
+```
+
+$$
+\begin{align}
+\text{For observation }j&\text{ in cluster }i \\
+\text{Level 1:}& \\
+y_{ij} &= b_{0i} + b_{1i} \cdot x_{ij} + \varepsilon_{ij} \\
+\text{Level 2:}& \\
+b_{0i} &= \gamma_{00} + \zeta_{0i} \\
+b_{1i} &= \gamma_{10} + \zeta_{1i} \\
+& \qquad \\
+\text{Where:}& \\
+& \begin{bmatrix} \zeta_{0i} \\ \zeta_{1i} \end{bmatrix}
+\sim N
+\left(
+    \begin{bmatrix} 0 \\ 0 \end{bmatrix},
+    \begin{bmatrix}
+        \sigma_0 & \rho_{01} \\
+        \rho_{01} & \sigma_1
+    \end{bmatrix}
+\right) \\
+&\varepsilon_{ij} \sim N(0,\sigma_\varepsilon) \\
+\end{align}
+$$
+:::
+
+:::panel
+#### within-between model  
+
+```{r}
+#| echo: true
+#| eval: false
+data <- data |>
+  group_by(g) |>
+  mutate(
+    x_avg = mean(x),
+    x_dev = x - mean(x)
+  )
+
+lmer(y ~ 1 + x_dev + x_avg + (1 + x_dev | g), data)
+```
+
+$$
+\begin{align}
+\text{For observation }j&\text{ in cluster }i \\
+\text{Level 1:}& \\
+y_{ij} &= b_{0i} + b_{1i} \cdot (x_{ij} - \bar{x}_i) + b_{2} \cdot \bar{x}_i + \varepsilon_{ij} \\
+\text{Level 2:}& \\
+b_{0i} &= \gamma_{00} + \zeta_{0i} \\
+b_{1i} &= \gamma_{10} + \zeta_{1i} \\
+& \qquad \\
+\text{Where:}& \\
+& \begin{bmatrix} \zeta_{0i} \\ \zeta_{1i} \end{bmatrix}
+\sim N
+\left(
+    \begin{bmatrix} 0 \\ 0 \end{bmatrix},
+    \begin{bmatrix}
+        \sigma_0 & \rho_{01} \\
+        \rho_{01} & \sigma_1
+    \end{bmatrix}
+\right) \\
+&\varepsilon_{ij} \sim N(0,\sigma_\varepsilon) \\
+\end{align}
+$$
+:::
+::::
+
+<br>    
+In the context of our educational study of grades and self-concept in school children, we can fit a model that disaggregates within (grade relative to class) and between (class average grade) effects:    
+
+```{r}
+wbmod <- lmer(self_concept ~ grade_dev + grade_avg + 
+                (1 + grade_dev|class), 
+              data = bfdat)
+```
+
+The fixed effects from this model (below) now show two effects, as opposed to only one that we would get from our typical model:   
+
+::::{.columns}
+:::{.column width="50%"}
+__typical random slopes model__
+
+```{r}
+#| echo: false
+broom.mixed::tidy(rsmod) |>
+  filter(effect=="fixed") |>
+  transmute(term,est=round(estimate,2),
+         SE=round(std.error,2),
+         t = round(statistic,2)) |>
+  gt::gt()
+```
+:::
+
+:::{.column width="50%"}
+__within-between model__  
+
+```{r}
+#| echo: false
+broom.mixed::tidy(wbmod) |>
+  filter(effect=="fixed") |>
+  transmute(term,est=round(estimate,2),
+         SE=round(std.error,2),
+         t = round(statistic,2)) |>
+  gt::gt()
+```
+:::
+::::
+
+- the "within" effect: for every one grade higher a child is *relative to their classmates*, their self-concept is expected to increase by `r round(fixef(wbmod)[2],2)`.
+- the "between" effect: for every 1 grade higher a class average is (and when a child's relative standing in the class stays constant), a child's self-concept is expected to decrease by `r round(fixef(wbmod)[3],2)`.
+
+So what exactly does the effect (the estimate of `r round(fixef(rsmod)[2],2)`) from our more traditional model show here? Is it the within effect or the between effect? It's actually a smushing together of both parts - it is the estimated effect on self-concept when a child's grade increases by 1, but it is confounded by the fact that as childrens' grades increase then their class average increases a bit too, meaning that the between effect pulls this back down. In short - it's not actually a very useful estimate for us at all, because it conflates the two different effects. 
+
+
+
+
+```{r}
+#| eval: false
+#| echo: false
+gconf = function(){
+  N = 200
+  n_groups = 20
+  g = rep(1:n_groups, e = N/n_groups)
+  u = rnorm(n_groups,0,5)[g]
+  x = rnorm(N,u)
+
+  re = MASS::mvrnorm(n_groups, mu=c(0,0),Sigma=matrix(c(1,0,0,.5),ncol=2))
+  re1 = re[,1][g]
+  re_x = re[,2][g]
+  lp = (0 + re1) + (1 + re_x) * x + -3*u
+  y = rnorm(N, mean = lp, sd = 1)
+  
+  df = data.frame(x, g = factor(g), y, y)
+  # ggplot(df,aes(x=x,y=y,col=g))+
+  #   geom_point()+guides(col="none")+
+  #   geom_smooth(method=lm,se=F)
+  
+  c(
+    ri=fixef(lmer(y~1+x+(1|g),df))['x'],
+    rs=fixef(lmer(y~1+x+(1+x|g),df))['x'],
+    mui=fixef(lmer(y~1+x+xm+(1|g),df |> group_by(g) |>mutate(xm=mean(x))))['x'],
+    mu=fixef(lmer(y~1+x+xm+(1+x|g),df |> group_by(g) |>mutate(xm=mean(x))))['x'],
+    mwbi=fixef(lmer(y~1+xd+xm+(1|g),df |> group_by(g) |>mutate(xm=mean(x),xd=x-xm)))['xd'],
+    mwb=fixef(lmer(y~1+xd+xm+(1+xd|g),df |> group_by(g) |>mutate(xm=mean(x),xd=x-xm)))['xd']
+  )
+}
+
+res = t(replicate(100,gconf()))
+par(mfrow=c(3,2))
+hist(res[,1]);hist(res[,2]);hist(res[,3]);hist(res[,4]);hist(res[,5])
+par(mfrow=c(1,1))
+colMeans(res)
+apply(res,2,sd)
+```
+
+<div class="divider div-transparent div-dot"></div>
+
+## Optional: contextual effects and the mundlak model
+
+Along with the within-between model, we could also choose to adjust for the group averages while continuing to use the original raw predictor in the model. This is often called the "Mundlak model" in reference to [Yair Mundlak](https://doi.org/10.2307/1913646){target="_blank"} who wrote about it in the context of avoiding group-level confounding (see [Chapter 9 #optional-extra-group-confounding](09_assump.html#optional-extra-group-confounding-and-the-random-effects-assumption){target="_blank"}).
+
+The formulation is very similar to the within-between model, but we don't use the "deviations from group means", we simply use the original predictor along with the group means:  
+
+
+::::panelset
+:::panel
+#### within-between model  
+
+```{r}
+#| echo: true
+#| eval: false
+data <- data |>
+  group_by(g) |>
+  mutate(
+    x_avg = mean(x),
+    x_dev = x - mean(x)
+  )
+
+lmer(y ~ 1 + x_dev + x_avg + (1 + x_dev | g), data)
+```
+
+$$
+\begin{align}
+\text{For observation }j&\text{ in cluster }i \\
+\text{Level 1:}& \\
+y_{ij} &= b_{0i} + b_{1i} \cdot (x_{ij} - \bar{x}_i) + b_{2} \cdot \bar{x}_i + \varepsilon_{ij} \\
+\text{Level 2:}& \\
+b_{0i} &= \gamma_{00} + \zeta_{0i} \\
+b_{1i} &= \gamma_{10} + \zeta_{1i} \\
+& \qquad \\
+\text{Where:}& \\
+& \begin{bmatrix} \zeta_{0i} \\ \zeta_{1i} \end{bmatrix}
+\sim N
+\left(
+    \begin{bmatrix} 0 \\ 0 \end{bmatrix},
+    \begin{bmatrix}
+        \sigma_0 & \rho_{01} \\
+        \rho_{01} & \sigma_1
+    \end{bmatrix}
+\right) \\
+&\varepsilon_{ij} \sim N(0,\sigma_\varepsilon) \\
+\end{align}
+$$
+:::
+:::panel
+#### mundlak model
+
+```{r}
+#| echo: true
+#| eval: false
+data <- data |>
+  group_by(g) |>
+  mutate(
+    x_avg = mean(x)
+  )
+
+lmer(y ~ 1 + x + x_avg + (1 + x | g), data)
+```
+
+$$
+\begin{align}
+\text{For observation }j&\text{ in cluster }i \\
+\text{Level 1:}& \\
+y_{ij} &= b_{0i} + b_{1i} \cdot x_{ij} + b_{2} \cdot \bar{x}_i + \varepsilon_{ij} \\
+\text{Level 2:}& \\
+b_{0i} &= \gamma_{00} + \zeta_{0i} \\
+b_{1i} &= \gamma_{10} + \zeta_{1i} \\
+& \qquad \\
+\text{Where:}& \\
+& \begin{bmatrix} \zeta_{0i} \\ \zeta_{1i} \end{bmatrix}
+\sim N
+\left(
+    \begin{bmatrix} 0 \\ 0 \end{bmatrix},
+    \begin{bmatrix}
+        \sigma_0 & \rho_{01} \\
+        \rho_{01} & \sigma_1
+    \end{bmatrix}
+\right) \\
+&\varepsilon_{ij} \sim N(0,\sigma_\varepsilon) \\
+\end{align}
+$$
+:::
+::::
+
+<br>
+We can fit the Mundlak formulation to our grades & self-concept data as follows:  
+```{r}
+mlakmod <- lmer(self_concept ~ grade + grade_avg + 
+                  (1 + grade|class), 
+                data = bfdat)
+```
+
+There are two things to note here when comparing the Mundlak formulation to the 'within-between' model. Firstly, these two models provide the same 'within' effect (the fixed effects of `grade_dev` and `grade` in the tables below), because they both get the effect of a child's grade increasing by 1, while holding their class's average grade constant.^[when we exclude the random intercepts, the within-effects from both models are numerically identical, but there may be small differences due to the random slopes of `x|g` for the mundlak model and `x_dev|g` for the within-between model] Secondly, the estimated effects for the `grade_avg` predictor differ substantially between the two models: 
+
+::::{.columns}
+:::{.column width="50%"}
+__Within-between model__  
+```{r}
+#| echo: false
+broom.mixed::tidy(wbmod) |>
+  filter(effect=="fixed") |>
+  transmute(term,est=round(estimate,2),
+         SE=round(std.error,2),
+         t = round(statistic,2)) |>
+  gt::gt()
+```
+:::
+
+:::{.column width="50%"}
+__Mundlak model__  
+```{r}
+#| echo: false
+broom.mixed::tidy(mlakmod) |>
+  filter(effect=="fixed") |>
+  transmute(term,est=round(estimate,2),
+         SE=round(std.error,2),
+         t = round(statistic,2)) |>
+  gt::gt()
+```
+:::
+::::
+
+
+The difference here is that they are capturing two distinct effects. The within-between formulation captures a 'between effect' and the Mundlak formulation provides something that gets termed the "contextual effect".  
+
+The key thing to distinguish between these two is to think about what is being "held constant".
+In the within-between model, the effect of `avg_grade` is estimated while holding constant the child's _relative standing_ in the group. In the Mundlak model, the effect is estimated while holding constant a child's _actual_ grade.  
+
+It may help to think about this in terms of a single child. Suppose we have a child who has a grade of `r bfdat$grade[1]`, from a class with an average of `r bfdat$grade_avg[1]`. So that child is `r bfdat$grade_dev[1]` _above their class average._  
+```{r}
+#| echo: false
+bfdat[1, ] |> transmute(class="i", child="j", grade_avg, grade_dev, self_concept="y")
+```
+
+Both models are estimating "what would we expect to happen to the child's self-concept if their class had an average of `r bfdat$grade_avg[1]+1` instead?"  
+
+The within-between model estimates this but holds constant the child's deviation above the average, so we're comparing the scenario where the child is `r bfdat$grade_dev[1]` above a class average of `r bfdat$grade_avg[1]+1`, as opposed to being `r bfdat$grade_dev[1]` above a class average of `r bfdat$grade_avg[1]`.
+```{r}
+#| echo: false
+bind_rows(
+  bfdat[1, ] |> transmute(class="i", child="j", 
+                        grade_avg, grade_dev, grade, self_concept="y"),
+  bfdat[1, ] |> transmute(class="i", child="j", 
+                        grade_avg=grade_avg+1, grade_dev, grade=grade+1,
+                        self_concept=paste0("y", round(fixef(wbmod)[3],2)))
+)
+```
+
+By contrast, the Mundlak model holds constant the child's _actual_ grade, meaning that we're comparing the scenario where the child has a grade of `r bfdat$grade[1]` and is in a class with an average of `r bfdat$grade_avg[1]+1`, as opposed to having that same grade of `r bfdat$grade[1]` but being in a class with an average of `r bfdat$grade_avg[1]`:  
+```{r}
+#| echo: false
+bind_rows(
+  bfdat[1, ] |> transmute(class="i", child="j", 
+                        grade_avg, grade, self_concept="y"),
+  bfdat[1, ] |> transmute(class="i", child="j", 
+                        grade_avg=grade_avg+1, grade, 
+                        self_concept=paste0("y", round(fixef(mlakmod)[3],2)))
+)
+```
+
+We can think of this visually. Take a given child from a given class, and think about what would happen if their whole class average grade increased by 1. In @fig-mlak, the red line is "class 1" in our data, and the blue line is a counterfactual world of "class 1 if its average grade increased by 1". The large red dot represents the expected self-concept for "child 1".  
+
+In the within-between model, we're estimating the self-concept difference for a child between the red (actual) and blue (counterfactual class with a higher average), but where the child stays the same amount "above average" in this counterfactual class. In the Mundlak model, we're estimating the self-concept difference when a child stays at the same grade but is in a different context (is placed in a class where the average is 1 higher).  
+
+```{r}
+#| label: fig-mlak
+#| echo: false
+#| out-width: "100%"
+#| fig-cap: "These plots show an actual class (red) and the counterfactual scenario (blue) where the class average is 1 higher. The large dots show comparisons between a given child in these scenarios - the left-hand plot shows the child's relative standing in the group staying the same (the within-between model estimates this), and the right-hand plot shows the child's raw value staying the same (this is what the Mundlak model estimates)"
+ccc = bfdat[1,] |> mutate(
+  fit = predict(wbmod,newdata=bfdat[1,]),
+  wbfit = fit + fixef(wbmod)[3],
+  mufit = fit + fixef(mlakmod)[3],
+)
+
+cfact = 
+  bind_rows(
+    bfdat |> filter(class==1) |> mutate(c="actual"),
+    bfdat |> filter(class==1) |> 
+      mutate(grade=grade+1,grade_avg=grade_avg+1,c="counterfactual")
+  )
+cfact$.fitted = predict(wbmod,newdata=cfact)
+cfact$.fitted[11:20]-cfact$.fitted[1:10]
+
+plotwb = broom.mixed::augment(wbmod) |>
+  mutate(grade=grade_avg+grade_dev) |>
+  ggplot(aes(x=grade,y=.fitted,group=class))+
+  geom_line(alpha=.3)+
+  geom_point(aes(y=self_concept),alpha=.1) +
+  geom_line(data=cfact,aes(col=c,group=interaction(c,class)),lwd=1) +
+  geom_point(data=cfact,aes(y=self_concept,col=c), alpha=.6) +
+  geom_point(data=ccc, aes(y=fit),col="red",size=3)+
+  geom_point(data=ccc, aes(x=grade+1,y=wbfit),col="blue",size=3)+
+  theme(legend.position = "bottom")
+
+cfact2 = 
+  bind_rows(
+    bfdat |> filter(class==1) |> mutate(c="actual"),
+    bfdat |> filter(class==1) |> 
+      mutate(grade=grade+1,grade_avg=grade_avg+1,c="counterfactual")
+  )
+cfact2$.fitted = predict(mlakmod,newdata=cfact2)
+cfact2$.fitted[11:20]-cfact2$.fitted[1:10]
+
+plotmu = broom.mixed::augment(mlakmod) |>
+  ggplot(aes(x=grade,y=.fitted,group=class))+
+  geom_line(alpha=.3)+
+  geom_point(aes(y=self_concept),alpha=.1) +
+  geom_line(data=cfact2,aes(col=c,group=interaction(c,class)),lwd=1) +
+    geom_point(data=cfact2,aes(y=self_concept,col=c), alpha=.6) +
+  geom_point(data=ccc, aes(y=fit),col="red",size=3)+
+  geom_point(data=ccc, aes(y=mufit),col="blue",size=3)+
+  guides(col="none")
+
+
+plotwb + plotmu
+
+
+
+
+
+```
+
+
+
+
