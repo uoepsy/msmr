@@ -1,7 +1,7 @@
 ---
 title: "Week 9 Exercises: Path Analysis & Mediation"
 params: 
-    SHOW_SOLS: FALSE
+    SHOW_SOLS: TRUE
     TOGGLE: TRUE
 editor_options: 
   chunk_output_type: console
@@ -33,6 +33,7 @@ library(lavaan)
 
 
 :::frame
+__Dataset: edskillsalary.csv__  
 
 ```{r}
 #| include: false
@@ -362,7 +363,7 @@ df |> mutate(
 # More Conduct Problems  
 
 :::frame
-__Dataset: cprobteach.csv__  
+__Dataset: conductprobteach.csv__  
 
 Thus far, we have explored the underlying structure of a scale of adolescent 'conduct problems' [(PCA & EFA exercises)](07ex.html#conduct-problems){target="_blank"} and we then tested this measurement model when the scale was administered to a further sample [(CFA exericses)](08ex.html#conduct-problems){target="_blank"}.  
 
@@ -408,7 +409,7 @@ Let's first just explore the total effects of the two types of conduct problems 
 The code below fits the same model using `sem()` and using `lm()`. Examine the `summary()` output for both models, and spot the similarities.  
 ```{r}
 # read in data
-cp_teach<-read_csv("https://uoepsy.github.io/data/conductprobteach.csv")
+cp_teach <- read_csv("https://uoepsy.github.io/data/conductprobteach.csv")
 
 # a straightforward multiple regression model
 m1_lm <- lm(Acad ~ Non_agg + Agg, data = cp_teach)
@@ -502,7 +503,7 @@ mod2 <- '
 ```
 ```{r}
 #| eval: false
-mod2.est<-sem(mod2,  data=cp_teach, se='bootstrap')
+mod2.est <- sem(mod2,  data=cp_teach, se='bootstrap')
 ```
 `r solend()`
 

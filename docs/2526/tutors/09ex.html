@@ -258,6 +258,12 @@ window.Quarto = {
  <span class="menu-text">Week 9 Exercises: Path Analysis &amp; Mediation</span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 10 Exercises: Structural Equation Modelling (SEM)</span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -298,6 +304,7 @@ window.Quarto = {
 <section id="education-skills-and-salary" class="level1">
 <h1>Education, Skills, and Salary</h1>
 <div class="frame">
+<p><strong>Dataset: edskillsalary.csv</strong></p>
 <p>We sampled 500 people who were all 5 years out of their last year of education. All participants completed an extensive questionnaire to ascertain the number of skills of potential interest to employers each participant perceived themselves to have. This resulted in a “Skillset Metric”.<br>
 5 years later, participants were followed up and asked to provide their current salaries. 110 participants failed to respond to follow-ups and thus the final sample included 390 people.</p>
 <p>The data are available at <a href="https://uoepsy.github.io/data/edskillsalary.csv" target="_blank">https://uoepsy.github.io/data/edskillsalary.csv</a>.</p>
@@ -1235,7 +1242,7 @@ Skills may well have a bigger bearing on salaries for people with lower levels o
 <section id="more-conduct-problems" class="level1">
 <h1>More Conduct Problems</h1>
 <div class="frame">
-<p><strong>Dataset: cprobteach.csv</strong></p>
+<p><strong>Dataset: conductprobteach.csv</strong></p>
 <p>Thus far, we have explored the underlying structure of a scale of adolescent ‘conduct problems’ <a href="07ex.html#conduct-problems" target="_blank">(PCA &amp; EFA exercises)</a> and we then tested this measurement model when the scale was administered to a further sample <a href="08ex.html#conduct-problems" target="_blank">(CFA exericses)</a>.</p>
 <p>This week, we are looking at whether there are associations between conduct problems (both aggressive and non-aggressive) and academic performance and whether the relations are mediated by the quality of relationships with teachers. We collected data on 557 adolescents as they entered school. Their responses to the conduct problem scale were summed to create a scale score. Two years later, we followed up these students, and obtained measures of Academic performance and of their relationship quality with their teachers. Standardised scale scores were created for both of these measures.</p>
 <p>The data are available at <a href="https://uoepsy.github.io/data/conductprobteach.csv" target="_blank">https://uoepsy.github.io/data/conductprobteach.csv</a></p>
@@ -1735,7 +1742,7 @@ Question 7
 <p>The code below fits the same model using <code>sem()</code> and using <code>lm()</code>. Examine the <code>summary()</code> output for both models, and spot the similarities.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read in data</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>cp_teach<span class="ot">&lt;-</span><span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/conductprobteach.csv"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>cp_teach <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/conductprobteach.csv"</span>)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># a straightforward multiple regression model</span></span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>m1_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(Acad <span class="sc">~</span> Non_agg <span class="sc">+</span> Agg, <span class="at">data =</span> cp_teach)</span>
@@ -1906,7 +1913,7 @@ Solution
 <span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>mod2.est<span class="ot">&lt;-</span><span class="fu">sem</span>(mod2,  <span class="at">data=</span>cp_teach, <span class="at">se=</span><span class="st">'bootstrap'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>mod2.est <span class="ot">&lt;-</span> <span class="fu">sem</span>(mod2,  <span class="at">data=</span>cp_teach, <span class="at">se=</span><span class="st">'bootstrap'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <p class="solution-end">
