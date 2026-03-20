@@ -264,6 +264,12 @@ window.Quarto = {
  <span class="menu-text">Week 10 Exercises: Structural Equation Modelling (SEM)</span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 11 Exercises: More SEM!</span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -306,7 +312,7 @@ window.Quarto = {
 <div class="frame">
 <p><strong>Dataset: tpb2</strong></p>
 <p>The “Theory of Planned Behaviour” is a theory about why people engage in certain behaviours. It has been applied in many contexts, and here we are testing the theory as a model of why people exercise.</p>
-<p>The theory is represented in the diagram in <a href="#fig-tpb" class="quarto-xref">Figure&nbsp;1</a> (only the latent variables and not the measured items are shown). <strong>Attitudes</strong> refer to the extent to which a person has a favourable view of exercising; <strong>subjective norms</strong> refer to whether they believe others whose opinions they care about believe exercise to be a good thing; and <strong>perceived behavioural control</strong> refers to the extent to which they believe exercising is under their control. <strong>Intentions</strong> refer to whether a person intends to exercise and <strong>behaviour</strong> is a measure of the extent to which they exercised. Each construct is measured using four items.</p>
+<p>The theory is represented in the diagram in <a href="#fig-tpb" class="quarto-xref">Figure&nbsp;1</a> (only the latent variables and not the measured items are shown). <strong>Attitudes</strong> refer to the extent to which a person has a favourable view of exercising; <strong>subjective norms</strong> refer to whether they believe others whose opinions they care about believe exercise to be a good thing; and <strong>perceived behavioural control</strong> refers to the extent to which they believe exercising is under their control. <strong>Intentions</strong> refer to whether a person intends to exercise and <strong>behaviour</strong> is a measure of the extent to which they exercised. Each construct is measured using four items apart from intentions which has five.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div id="fig-tpb" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
@@ -895,8 +901,13 @@ Question 1
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>Either one or the other of:</p>
+<div class="solution-begin">
+<button id="sol-start-1" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-1', 'sol-start-1')">
+Solution
+</button>
+</div>
+<div id="sol-body-1" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 1</em>. </span>Either one or the other of:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lavaan)</span>
@@ -933,8 +944,13 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>Here we specify our one factor CFA model for attitudes:</p>
+<div class="solution-begin">
+<button id="sol-start-2" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-2', 'sol-start-2')">
+Attitudes
+</button>
+</div>
+<div id="sol-body-2" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 2</em>. </span>Here we specify our one factor CFA model for attitudes:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>att_mod <span class="ot">&lt;-</span> <span class="st">"</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="st">  att =~ attitude1 + attitude2 + attitude3 + attitude4</span></span>
@@ -974,8 +990,13 @@ To save space I am going to not show the entire summary output here, but just pu
 </div>
 <p class="solution-end">
 </p>
-<div style="display:none;">
-<p>Following the same logic as for the Attitudes, let’s fit the CFA for Subjective norms. Again, all fit measures are very good, and loadings are all significant at greater than 0.3.</p>
+<div class="solution-begin">
+<button id="sol-start-3" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-3', 'sol-start-3')">
+Subjective Norms
+</button>
+</div>
+<div id="sol-body-3" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 3</em>. </span>Following the same logic as for the Attitudes, let’s fit the CFA for Subjective norms. Again, all fit measures are very good, and loadings are all significant at greater than 0.3.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sn_mod <span class="ot">&lt;-</span> <span class="st">"</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="st">  SubjN =~ SN1 + SN2 + SN3 + SN4</span></span>
@@ -1005,8 +1026,13 @@ To save space I am going to not show the entire summary output here, but just pu
 </div>
 <p class="solution-end">
 </p>
-<div style="display:none;">
-<p>All good with Perceived Behavioural Control!<br>
+<div class="solution-begin">
+<button id="sol-start-4" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-4', 'sol-start-4')">
+Perceived Behavioural Control
+</button>
+</div>
+<div id="sol-body-4" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 4</em>. </span>All good with Perceived Behavioural Control!<br>
 Almost <em>too</em> good (TLI&gt;1, and RMSEA is coming out at exactly 0!), but this is most probably because of this being fake data.<br>
 When data is simulated based on a specific model, then fitting that same model structure to the data will obviously fit extremely well! s</p>
 <div class="cell" data-layout-align="center">
@@ -1038,8 +1064,13 @@ When data is simulated based on a specific model, then fitting that same model s
 </div>
 <p class="solution-end">
 </p>
-<div style="display:none;">
-<p>Uh-oh, it’s looking less good with Intentions.<br>
+<div class="solution-begin">
+<button id="sol-start-5" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-5', 'sol-start-5')">
+Intentions
+</button>
+</div>
+<div id="sol-body-5" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 5</em>. </span>Uh-oh, it’s looking less good with Intentions.<br>
 The loadings all look okay, but the fit indices aren’t great</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>int_mod <span class="ot">&lt;-</span> <span class="st">"</span></span>
@@ -1122,8 +1153,13 @@ The loadings all look okay, but the fit indices aren’t great</p>
 </div>
 <p class="solution-end">
 </p>
-<div style="display:none;">
-<p>Finally, the behaviour model looks absolutely fine.<br>
+<div class="solution-begin">
+<button id="sol-start-6" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-6', 'sol-start-6')">
+Behaviour
+</button>
+</div>
+<div id="sol-body-6" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 6</em>. </span>Finally, the behaviour model looks absolutely fine.<br>
 Note that <code>bey4</code> has a negative loading, which is perfectly okay. In fact, if you look at the items, you’ll notice that this is the only item that is reversed (higher scores on the item reflect <em>less</em> exercising)</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>beh_mod <span class="ot">&lt;-</span> <span class="st">"</span></span>
@@ -1184,7 +1220,13 @@ Hints
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
+<div class="solution-begin">
+<button id="sol-start-7" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-7', 'sol-start-7')">
+Solution
+</button>
+</div>
+<div id="sol-body-7" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 7</em>. </span></p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>TPB_model<span class="ot">&lt;-</span><span class="st">'</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="st">  # measurement models  </span></span>
@@ -1333,8 +1375,13 @@ Question 4
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>Making adjustments our theoretical model in order to better represent <em>this</em> sample, we are risking a) over-fitting to the specifics of this sample, and b) testing a theory that we didn’t really have <em>a priori</em> (i.e.&nbsp;we didn’t have this theoretical model before seeing this data).</p>
+<div class="solution-begin">
+<button id="sol-start-8" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-8', 'sol-start-8')">
+Solution
+</button>
+</div>
+<div id="sol-body-8" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 8</em>. </span>Making adjustments our theoretical model in order to better represent <em>this</em> sample, we are risking a) over-fitting to the specifics of this sample, and b) testing a theory that we didn’t really have <em>a priori</em> (i.e.&nbsp;we didn’t have this theoretical model before seeing this data).</p>
 <p>However, it can still be worth looking at modindices in order to assess any places of local misfit in the model. These can provide useful discussion points and make us pause for thought, even if we are happy with our current model fit.</p>
 <p>In this case, none of the expected parameter changes are very large.</p>
 <div class="cell" data-layout-align="center">
@@ -1361,8 +1408,13 @@ Question 5
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p>First, let’s name the paths in the structural equation model:</p>
+<div class="solution-begin">
+<button id="sol-start-9" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-9', 'sol-start-9')">
+Solution
+</button>
+</div>
+<div id="sol-body-9" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 9</em>. </span>First, let’s name the paths in the structural equation model:</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -1525,8 +1577,13 @@ Question 6
 </div>
 <p class="question-end">
 </p>
-<div style="display:none;">
-<p><strong>Method</strong></p>
+<div class="solution-begin">
+<button id="sol-start-10" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-10', 'sol-start-10')">
+Solution
+</button>
+</div>
+<div id="sol-body-10" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 10</em>. </span><strong>Method</strong></p>
 <p>We tested a theory of planned behaviour model of physical activity by fitting a structural equation model in which attitudes, subjective norms, perceived behavioural control, intentions and behaviour were latent variables defined by four items. We first tested the measurement models for each construct by fitting a one-factor CFA model. Latent variable scaling was by fixing the loading of the first item for each construct to 1.</p>
 <p>Within the SEM, behaviour was regressed on intentions and perceived behavioural control and intentions were regressed on attitudes, subjective norms, and perceived behavioiural control. In addition, attitudes, subjective norms, and perceived behavioural control were allowed to covary. The indirect effects of attitudes, subjective norms and perceived behavioural control on behaviour were calculated as the product of the effect of the relevant predictor on the mediator (intentions) and the effect of the mediator on the outcome. The statistical significance of the indirect effects were evaluated using bootstrapped 95% confidence intervals with 1000 resamples.</p>
 <p>In all cases models were fit using maximum likelihood estimation and model fit was judged to be good if CFI and TLI were <span class="math inline">\(&gt;.95\)</span> and RMSEA and SRMR were <span class="math inline">\(&lt;.05\)</span>. Modification indices and expected parameter changes were inspected to identify any areas of local mis-fit but model modifications were only made if they could be justified on substantive grounds.</p>
@@ -3067,12 +3124,12 @@ Hints
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-1" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-1', 'sol-start-1')">
+<button id="sol-start-11" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-11', 'sol-start-11')">
 Solution
 </button>
 </div>
-<div id="sol-body-1" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 1</em>. </span></p>
+<div id="sol-body-11" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 11</em>. </span></p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>condat <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/consvmodels.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -3088,7 +3145,7 @@ Solution
 </div>
 </div>
 </div>
-<p>And we’re not seeing any probles with skew or kurtosis</p>
+<p>And we’re not seeing any problems with skew or kurtosis</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(condat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -3140,9 +3197,7 @@ cb4     44 200 2.98 0.88      3    3.00 1.48   1   5     4 -0.10    -0.44 0.06
 cb5     45 200 3.13 0.92      3    3.12 1.48   1   5     4 -0.03    -0.24 0.07
 cb6     46 200 2.58 0.94      2    2.58 1.48   1   5     4  0.29    -0.57 0.07
 cb7     47 200 3.35 0.92      3    3.32 1.48   1   5     4 -0.03    -0.60 0.06
-cb8     48 200 3.37 0.86      3    3.36 1.48   1   5     4 -0.01    -0.06 0.06
-ewv2    49 200 3.23 0.97      3    3.24 1.48   1   5     4 -0.21    -0.37 0.07
-ewv5    50 200 3.16 0.93      3    3.19 1.48   1   5     4 -0.22    -0.67 0.07</code></pre>
+cb8     48 200 3.37 0.86      3    3.36 1.48   1   5     4 -0.01    -0.06 0.06</code></pre>
 </div>
 </div>
 </div>
@@ -3192,12 +3247,12 @@ Conserv_Beh =~ cb1 + cb2 + cb3 + cb4 + cb5 + cb6 + cb7 + cb8</code></pre>
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-2" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-2', 'sol-start-2')">
+<button id="sol-start-12" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-12', 'sol-start-12')">
 Solution
 </button>
 </div>
-<div id="sol-body-2" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 2</em>. </span>Here’s the various fit metrics we get, along with the suggested modifications for the three models that don’t fit great.</p>
+<div id="sol-body-12" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 12</em>. </span>Here’s the various fit metrics we get, along with the suggested modifications for the three models that don’t fit great.</p>
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div id="suyblcxxmy" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
@@ -4273,12 +4328,12 @@ Question 9
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-3" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-3', 'sol-start-3')">
+<button id="sol-start-13" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-13', 'sol-start-13')">
 Solution
 </button>
 </div>
-<div id="sol-body-3" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 3</em>. </span>Here are the two models:</p>
+<div id="sol-body-13" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 13</em>. </span>Here are the two models:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>mod_tpb <span class="ot">&lt;-</span> <span class="st">"</span></span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="st">  # measurement models</span></span>
@@ -4358,12 +4413,12 @@ Question 10
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-4" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-4', 'sol-start-4')">
+<button id="sol-start-14" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-14', 'sol-start-14')">
 1 - Variance explained in conservationist behaviours?
 </button>
 </div>
-<div id="sol-body-4" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 4</em>. </span></p>
+<div id="sol-body-14" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 14</em>. </span></p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(tpb.est, <span class="at">what =</span> <span class="st">"rsquare"</span>)[<span class="st">'Conserv_Beh'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -4381,12 +4436,12 @@ Question 10
 <p class="solution-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-5" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-5', 'sol-start-5')">
+<button id="sol-start-15" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-15', 'sol-start-15')">
 2 - Variance explained in intentions?
 </button>
 </div>
-<div id="sol-body-5" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 5</em>. </span>Because both models have <strong>Intentions</strong> as the direct proximal (nearest) cause of <strong>Conservationist Behaviours</strong>, of course they’re going to explain similar amounts..</p>
+<div id="sol-body-15" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 15</em>. </span>Because both models have <strong>Intentions</strong> as the direct proximal (nearest) cause of <strong>Conservationist Behaviours</strong>, of course they’re going to explain similar amounts..</p>
 <p>What may be a better thing to look at is how well we are predicting <strong>Intentions</strong>?</p>
 <p>Here we see a slightly different picture - in explaining intentions, the TPB is doing a much better job - explaining almost 5 times as much variability in how much people <em>intend</em> to act in pro-environmental ways.</p>
 <div class="cell" data-layout-align="center">
@@ -4417,12 +4472,12 @@ Question 11
 <p class="question-end">
 </p>
 <div class="solution-begin">
-<button id="sol-start-6" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-6', 'sol-start-6')">
+<button id="sol-start-16" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-16', 'sol-start-16')">
 Solution
 </button>
 </div>
-<div id="sol-body-6" class="solution-body proof solution" style="display: none;">
-<p><span class="proof-title"><em>Solution 6</em>. </span>All we need to do is add in the Personal Norms to our TPB model:</p>
+<div id="sol-body-16" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 16</em>. </span>All we need to do is add in the Personal Norms to our TPB model:</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>mod_tpb2 <span class="ot">&lt;-</span> <span class="st">"</span></span>
 <span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a><span class="st">  # measurement models</span></span>

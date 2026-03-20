@@ -1,0 +1,2826 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Week 11 Exercises: More SEM! – MSMR</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-6512c70bdabba462eeecc3a642d5a48d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+
+function toggle_visibility(id1, id2) {
+
+var e = document.getElementById(id1);
+
+var f = document.getElementById(id2);
+
+e.style.display = ((e.style.display!='none') ? 'none' : 'block');
+
+if(f.classList.contains('jk-circle-right')) {
+
+    f.classList.add('jk-circle-down')
+
+    f.classList.remove('jk-circle-right')
+
+} else {
+
+    f.classList.add('jk-circle-right')
+
+    f.classList.remove('jk-circle-down')
+
+}
+
+}
+
+</script>
+
+
+
+<!---<script src="https://kit.fontawesome.com/120b08a6f5.js" crossorigin="anonymous"></script>-->
+
+<link href="site_libs/panelset-0.3.0/panelset.css" rel="stylesheet">
+
+<script src="site_libs/panelset-0.3.0/panelset.js"></script>
+
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+<link rel="stylesheet" href="https://uoepsy.github.io/assets/css/ccfooter.css">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./11ex.html">Week 11 Exercises: More SEM!</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MSMR</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Extra Exercises: Regression Refresher</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 1 Exercises: Intro to MLM</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 2 Exercises: Logistic and Longitudinal</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 3 Exercises: Non-Linear Change</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 4 Exercises: Nested and Crossed</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 5 Exercises: Assumptions, Diagnostics, Writing up</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 7 Exercises: PCA &amp; EFA</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 8 Exercises: CFA</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 9 Exercises: Path Analysis &amp; Mediation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./10ex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Week 10 Exercises: Structural Equation Modelling (SEM)</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11ex.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Week 11 Exercises: More SEM!</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#pss-iq" id="toc-pss-iq" class="nav-link active" data-scroll-target="#pss-iq">PSS &amp; IQ</a></li>
+  <li><a href="#a-replication" id="toc-a-replication" class="nav-link" data-scroll-target="#a-replication">A Replication</a></li>
+  <li><a href="#opportunities-for-growth" id="toc-opportunities-for-growth" class="nav-link" data-scroll-target="#opportunities-for-growth">Opportunities for growth?</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Week 11 Exercises: More SEM!</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="pss-iq" class="level2">
+<h2 class="anchored" data-anchor-id="pss-iq">PSS &amp; IQ</h2>
+<div class="frame">
+<p><strong>Prenatal Stress &amp; IQ data</strong></p>
+<p>A researcher is interested in the effects of prenatal stress on child cognitive outcomes. She has a 5-item measure of prenatal stress and a 5 subtest measure of child cognitive ability, collected for 500 mother-infant dyads.</p>
+<ul>
+<li>The data is available as a .csv file here: <a href="https://uoepsy.github.io/data/stressIQ.csv">https://uoepsy.github.io/data/stressIQ.csv</a></li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="ankdhsgxqz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ankdhsgxqz table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#ankdhsgxqz thead, #ankdhsgxqz tbody, #ankdhsgxqz tfoot, #ankdhsgxqz tr, #ankdhsgxqz td, #ankdhsgxqz th {
+  border-style: none;
+}
+
+#ankdhsgxqz p {
+  margin: 0;
+  padding: 0;
+}
+
+#ankdhsgxqz .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#ankdhsgxqz .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#ankdhsgxqz .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#ankdhsgxqz .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#ankdhsgxqz .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ankdhsgxqz .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ankdhsgxqz .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ankdhsgxqz .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#ankdhsgxqz .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#ankdhsgxqz .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#ankdhsgxqz .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#ankdhsgxqz .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#ankdhsgxqz .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#ankdhsgxqz .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#ankdhsgxqz .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ankdhsgxqz .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#ankdhsgxqz .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#ankdhsgxqz .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#ankdhsgxqz .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ankdhsgxqz .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#ankdhsgxqz .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#ankdhsgxqz .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#ankdhsgxqz .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ankdhsgxqz .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#ankdhsgxqz .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#ankdhsgxqz .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ankdhsgxqz .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ankdhsgxqz .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#ankdhsgxqz .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ankdhsgxqz .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#ankdhsgxqz .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ankdhsgxqz .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ankdhsgxqz .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ankdhsgxqz .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ankdhsgxqz .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ankdhsgxqz .gt_left {
+  text-align: left;
+}
+
+#ankdhsgxqz .gt_center {
+  text-align: center;
+}
+
+#ankdhsgxqz .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#ankdhsgxqz .gt_font_normal {
+  font-weight: normal;
+}
+
+#ankdhsgxqz .gt_font_bold {
+  font-weight: bold;
+}
+
+#ankdhsgxqz .gt_font_italic {
+  font-style: italic;
+}
+
+#ankdhsgxqz .gt_super {
+  font-size: 65%;
+}
+
+#ankdhsgxqz .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#ankdhsgxqz .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#ankdhsgxqz .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#ankdhsgxqz .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#ankdhsgxqz .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#ankdhsgxqz .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#ankdhsgxqz .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#ankdhsgxqz .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#ankdhsgxqz div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="variable" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">variable</th>
+<th id="description" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">description</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="variable">ID</td>
+<td class="gt_row gt_left" headers="description">Participant ID</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="variable">stress1</td>
+<td class="gt_row gt_left" headers="description">acute stress</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="variable">stress2</td>
+<td class="gt_row gt_left" headers="description">chronic stress</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="variable">stress3</td>
+<td class="gt_row gt_left" headers="description">environmental stress</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="variable">stress4</td>
+<td class="gt_row gt_left" headers="description">psychological stress</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="variable">stress5</td>
+<td class="gt_row gt_left" headers="description">physiological stress</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="variable">IQ1</td>
+<td class="gt_row gt_left" headers="description">verbal ability</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="variable">IQ2</td>
+<td class="gt_row gt_left" headers="description">verbal memory</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="variable">IQ3</td>
+<td class="gt_row gt_left" headers="description">inductive reasoning</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="variable">IQ4</td>
+<td class="gt_row gt_left" headers="description">spatial orientiation</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="variable">IQ5</td>
+<td class="gt_row gt_left" headers="description">perceptual speed</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<div class="question-begin">
+Question 1
+</div>
+<div class="question-body">
+<p>Before we do anything with the data, grab some paper and sketch out the full model that you plan to fit to address the researcher’s question.</p>
+<p>Tip: everything you need is in the description! Start by drawing the specific path(s) of interest. Are these between latent variables? If so, add in the paths to the indicators for each latent variable.</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-1" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-1', 'sol-start-1')">
+Solution
+</button>
+</div>
+<div id="sol-body-1" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 1</em>. </span>The main parameter of interest here is “the effects of prenatal stress on child cognitive outcomes”. So we have an arrow going from Stress to IQ.</p>
+<p>Each of these are latent variables, for which we have observed 5 indicator variables, so we have an arrow going from “IQ” to each of the 5 IQ items, and from “Stress” to the 5 stress items.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="11ex_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 2
+</div>
+<div class="question-body">
+<p>Read in the data and explore it. Look at the individual distributions of each variable to get a sense of univariate normality, as well as the number of response options each item has.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hints
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The <strong>psych</strong> package has the useful functionality here. Specifically things like <code>multi.hist()</code> and <code>describe()</code> will be handy.</p>
+<p>If necessary, you can set <code>multi.hist(data, global = FALSE)</code> to let each histogram’s x-axis be on a different scale.</p>
+</div>
+</div>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-2" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-2', 'sol-start-2')">
+Solution
+</button>
+</div>
+<div id="sol-body-2" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 2</em>. </span></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>stress_IQ_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/stressIQ.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This gives us a whole load of descriptives, means, standard deviations, and other things like skew and kurtosis.</p>
+<p>We can see that a lot of the IQ variables are quite highly skewed (values &gt;1). It also looks like the min and max for the stress items are all 1-3.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(stress_IQ_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        vars   n   mean     sd median trimmed    mad min max range  skew
+ID         1 500 250.50 144.48  250.5  250.50 185.32   1 500   499  0.00
+stress1    2 500   1.59   0.56    2.0    1.57   0.00   1   3     2  0.22
+stress2    3 500   1.90   0.51    2.0    1.90   0.00   1   3     2 -0.16
+stress3    4 500   1.24   0.43    1.0    1.18   0.00   1   3     2  1.26
+stress4    5 500   2.03   0.33    2.0    2.00   0.00   1   3     2  0.57
+stress5    6 500   1.63   0.55    2.0    1.61   0.00   1   3     2  0.10
+IQ1        7 500  23.11  10.58   21.0   21.96   8.90   0  83    83  1.29
+IQ2        8 500  18.16   9.32   17.0   17.34   8.90   0  54    54  0.93
+IQ3        9 500  10.10   9.29    8.0    8.79   8.90   0  51    51  1.33
+IQ4       10 500  11.05  10.44    8.0    9.52   8.90   0  56    56  1.39
+IQ5       11 500  21.38   9.85   20.0   20.57   8.90   0  65    65  0.95
+        kurtosis   se
+ID         -1.21 6.46
+stress1    -0.90 0.02
+stress2     0.65 0.02
+stress3    -0.19 0.02
+stress4     5.78 0.01
+stress5    -0.87 0.02
+IQ1         2.75 0.47
+IQ2         1.11 0.42
+IQ3         1.92 0.42
+IQ4         2.15 0.47
+IQ5         1.39 0.44</code></pre>
+</div>
+</div>
+<p>Let’s plot! Here we can see the distribution of each variable. As already noted, the IQ items are quite positively skewed (we can see this matches with the skew metrics above). And the stress items are only measured on 3 response options..</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">multi.hist</span>(stress_IQ_data, <span class="at">global =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="11ex_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 3
+</div>
+<div class="question-body">
+<p>As always, we want to assess the measurement models of each construct.</p>
+<p>Let’s start with IQ. Fit a one factor CFA for the IQ items, and examine the fit. If it doesn’t fit very well, consider checking for areas of local misfit (i.e., check your <code>modindices()</code>), and adjust your model accordingly.</p>
+<p>Be sure to use an appropriate estimation method, given the distributions of the indicator variables!</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hints
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>See the section on non-normality in <a href="https://uoepsy.github.io/lv/08_sem.html#non-normality" target="_blank">Chapter 8#SEM-non-normality</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-3" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-3', 'sol-start-3')">
+Solution
+</button>
+</div>
+<div id="sol-body-3" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 3</em>. </span>Because our variables seem to be non-normal, therefore, we should use a robust estimator such as MLR for our CFA</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>model_IQ <span class="ot">&lt;-</span> <span class="st">'IQ =~ IQ1 + IQ2 + IQ3 + IQ4 + IQ5'</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>model_IQ.est <span class="ot">&lt;-</span> <span class="fu">cfa</span>(model_IQ, <span class="at">data=</span>stress_IQ_data, <span class="at">estimator=</span><span class="st">'MLR'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We also get out robust fit measures, so we should ask for them:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fitmeasures</span>(model_IQ.est)[<span class="fu">c</span>(<span class="st">"rmsea.robust"</span>,<span class="st">"srmr"</span>,<span class="st">"cfi.robust"</span>,<span class="st">"tli.robust"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>rmsea.robust         srmr   cfi.robust   tli.robust 
+  0.18374167   0.05679702   0.90855073   0.81710146 </code></pre>
+</div>
+</div>
+<p>The model doesn’t fit very well so we could check the modification indices for local mis-specifications</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">modindices</span>(model_IQ.est, <span class="at">sort=</span>T) <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   lhs op rhs     mi     epc sepc.lv sepc.all sepc.nox
+12 IQ1 ~~ IQ2 82.419  30.034  30.034    0.750    0.750
+21 IQ4 ~~ IQ5 47.248  22.040  22.040    0.393    0.393
+17 IQ2 ~~ IQ4 30.285 -16.713 -16.713   -0.352   -0.352
+19 IQ3 ~~ IQ4 16.277  12.365  12.365    0.221    0.221
+14 IQ1 ~~ IQ4 15.715 -13.750 -13.750   -0.266   -0.266
+15 IQ1 ~~ IQ5 15.368 -12.954 -12.954   -0.273   -0.273</code></pre>
+</div>
+</div>
+<p>It looks like we might need to include residual covariances between the items IQ1 and IQ2 and maybe also between items IQ4 and IQ5. As always, we need to double check this makes substantive sense. Items IQ1 and IQ2 measure verbal comprehension and verbal memory - people might be likely to score low/high on both of these due to their verbal ability. IQ4 and IQ5 might be both related due to both being tests requiring visual perception, but it’s less obvious. We’d probably want to know more about the specific tests undertaken.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>model2_IQ <span class="ot">&lt;-</span> <span class="st">'</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="st">    IQ=~IQ1+IQ2+IQ3+IQ4+IQ5</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="st">    IQ1~~IQ2</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>model2_IQ.est <span class="ot">&lt;-</span> <span class="fu">cfa</span>(model2_IQ, <span class="at">data=</span>stress_IQ_data, <span class="at">estimator=</span><span class="st">'MLR'</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="fu">fitmeasures</span>(model2_IQ.est)[<span class="fu">c</span>(<span class="st">"rmsea.robust"</span>,<span class="st">"srmr"</span>,<span class="st">"cfi.robust"</span>,<span class="st">"tli.robust"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>rmsea.robust         srmr   cfi.robust   tli.robust 
+  0.07492424   0.02554867   0.98783535   0.96958837 </code></pre>
+</div>
+</div>
+<p>The fit of the model is now much improved! The RMSEA is still in that grey area between 0.05 and 0.08, so we would probably want to flag this when writing up. We could keep trying to add stuff in order to get it below 0.05, but that means a high risk of overfitting.<br>
+Note also, that our loadings are all significant and <span class="math inline">\(&gt;|0.3|\)</span>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">standardizedsolution</span>(model2_IQ.est)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   lhs op rhs est.std    se      z pvalue ci.lower ci.upper
+1   IQ =~ IQ1   0.649 0.037 17.470      0    0.576    0.722
+2   IQ =~ IQ2   0.622 0.040 15.421      0    0.543    0.701
+3   IQ =~ IQ3   0.660 0.037 17.764      0    0.587    0.733
+4   IQ =~ IQ4   0.750 0.030 25.351      0    0.692    0.808
+5   IQ =~ IQ5   0.747 0.030 25.108      0    0.688    0.805
+6  IQ1 ~~ IQ2   0.467 0.045 10.287      0    0.378    0.556
+7  IQ1 ~~ IQ1   0.579 0.048 11.994      0    0.484    0.673
+8  IQ2 ~~ IQ2   0.613 0.050 12.196      0    0.514    0.711
+9  IQ3 ~~ IQ3   0.564 0.049 11.496      0    0.468    0.660
+10 IQ4 ~~ IQ4   0.437 0.044  9.839      0    0.350    0.524
+11 IQ5 ~~ IQ5   0.442 0.044  9.960      0    0.355    0.529
+12  IQ ~~  IQ   1.000 0.000     NA     NA    1.000    1.000</code></pre>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 4
+</div>
+<div class="question-body">
+<p>Now do the same for a one-factor confirmatory factor analysis for the latent factor of Stress. Note that the items are measured on a 3-point scale!</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hints
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>See the section on categorical variables in the reading: <a href="https://uoepsy.github.io/lv/08_sem.html#endogenous-categorical-variables" target="_blank">Chapter 8#SEM-endogenous-categorical</a>.</p>
+<p>When you inspect your summary model output, notice that we have a couple of additional things - we have ‘scaled’ and ‘robust’ values for the fit statistics (we have a second column for all the fit indices but using a scaled version of the <span class="math inline">\(\chi^2\)</span> statistic, and then we also have some extra rows of ‘robust’ measures), and we have the estimated ‘thresholds’ in our output (there are two thresholds per item in this example because we have a three-point response scale). The estimates themselves are not of great interest to us.</p>
+</div>
+</div>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-4" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-4', 'sol-start-4')">
+Solution
+</button>
+</div>
+<div id="sol-body-4" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 4</em>. </span></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># specify the model</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>model_stress <span class="ot">&lt;-</span> <span class="st">'Stress =~ stress1 + stress2 + stress3 + stress4 + stress5'</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate the model - cfa will automatically switch to a categorical estimator if we mention that our five variables are ordered-categorical, using the 'ordered' function</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>model_stress.est <span class="ot">&lt;-</span> </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cfa</span>(model_stress, <span class="at">data=</span>stress_IQ_data, <span class="at">ordered=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># inspect the output</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">fitmeasures</span>(model_stress.est)[<span class="fu">c</span>(<span class="st">"rmsea.robust"</span>,<span class="st">"srmr"</span>,<span class="st">"cfi.robust"</span>,<span class="st">"tli.robust"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>rmsea.robust         srmr   cfi.robust   tli.robust 
+  0.00000000   0.01234819   1.00000000   1.06512057 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_stress.est, <span class="at">standardized=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>lavaan 0.6-20 ended normally after 18 iterations
+
+  Estimator                                       DWLS
+  Optimization method                           NLMINB
+  Number of model parameters                        15
+
+  Number of observations                           500
+
+Model Test User Model:
+                                              Standard      Scaled
+  Test Statistic                                 0.520       0.773
+  Degrees of freedom                                 5           5
+  P-value (Chi-square)                           0.991       0.979
+  Scaling correction factor                                  0.740
+  Shift parameter                                            0.070
+    simple second-order correction                                
+
+Parameter Estimates:
+
+  Parameterization                               Delta
+  Standard errors                           Robust.sem
+  Information                                 Expected
+  Information saturated (h1) model        Unstructured
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+  Stress =~                                                             
+    stress1           1.000                               0.619    0.619
+    stress2           1.111    0.121    9.214    0.000    0.688    0.688
+    stress3           1.182    0.137    8.614    0.000    0.732    0.732
+    stress4           1.049    0.130    8.089    0.000    0.649    0.649
+    stress5           1.134    0.129    8.790    0.000    0.702    0.702
+
+Thresholds:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+    stress1|t1       -0.151    0.056   -2.680    0.007   -0.151   -0.151
+    stress1|t2        1.825    0.108   16.973    0.000    1.825    1.825
+    stress2|t1       -0.900    0.065  -13.806    0.000   -0.900   -0.900
+    stress2|t2        1.379    0.081   17.124    0.000    1.379    1.379
+    stress3|t1        0.700    0.061   11.399    0.000    0.700    0.700
+    stress3|t2        2.878    0.315    9.124    0.000    2.878    2.878
+    stress4|t1       -1.751    0.102  -17.198    0.000   -1.751   -1.751
+    stress4|t2        1.461    0.084   17.324    0.000    1.461    1.461
+    stress5|t1       -0.233    0.057   -4.107    0.000   -0.233   -0.233
+    stress5|t2        1.825    0.108   16.973    0.000    1.825    1.825
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+   .stress1           0.616                               0.616    0.616
+   .stress2           0.526                               0.526    0.526
+   .stress3           0.464                               0.464    0.464
+   .stress4           0.578                               0.578    0.578
+   .stress5           0.507                               0.507    0.507
+    Stress            0.384    0.064    6.011    0.000    1.000    1.000</code></pre>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 5
+</div>
+<div class="question-body">
+<p>Now its time to build the full SEM.<br>
+Estimate the effect of prenatal stress on IQ.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hints
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Remember:</strong> We know that IQ indicators are non-normal, so we would like to use a robust estimator (e.g.&nbsp;MLR). And the Stress indicators are only on a 3-point scale, so we want to make sure we specify that too. However, as lavaan will tell you if you try using <code>estimator="MLR"</code> at the same time as <code>ordered = c(....)</code>, the MLR estimator is not supported for ordered data. It suggests instead using the WLSMV (weighted least square mean and variance adjusted) estimator.</p>
+<p>As it happens, the WLSMV estimator is just the “DWLS” one we use for categorical variables, but with a correction to return robust standard errors. If you specify <code>estimator="WLSMV"</code> then your standard errors <em>will</em> be corrected, but don’t be misled by the fact that the summary here will still say that the estimator is DWLS.</p>
+</div>
+</div>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-5" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-5', 'sol-start-5')">
+Solution
+</button>
+</div>
+<div id="sol-body-5" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 5</em>. </span></p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>SEM_model <span class="ot">&lt;-</span> <span class="st">'</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="st">    #IQ measurement model</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="st">    IQ =~ IQ1 + IQ2 + IQ3 + IQ4 + IQ5 </span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="st">    IQ1 ~~ IQ2</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="st">    #stress measurement model </span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="st">    Stress =~ stress1 + stress2 + stress3 + stress4 + stress5 </span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="st">    #structural part of model</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="st">    IQ ~ Stress</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>SEM_model.est <span class="ot">&lt;-</span> <span class="fu">sem</span>(SEM_model, <span class="at">data=</span>stress_IQ_data,</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">ordered=</span><span class="fu">c</span>(<span class="st">'stress1'</span>,<span class="st">'stress2'</span>,<span class="st">'stress3'</span>,<span class="st">'stress4'</span>,<span class="st">'stress5'</span>),</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">estimator=</span><span class="st">"WLSMV"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s print out the full summary.<br>
+Note that when we have a mix of ordered categoricals <em>and</em> continuous variables, then we can’t get the robust estimates of the fit indices. These are now NA. We do still get the scaled versions though, and everything seems to fit fairly well.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(SEM_model.est, <span class="at">fit.measures=</span>T, <span class="at">standardized=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>lavaan 0.6-20 ended normally after 126 iterations
+
+  Estimator                                       DWLS
+  Optimization method                           NLMINB
+  Number of model parameters                        32
+
+  Number of observations                           500
+
+Model Test User Model:
+                                              Standard      Scaled
+  Test Statistic                                18.118      30.244
+  Degrees of freedom                                33          33
+  P-value (Chi-square)                           0.983       0.605
+  Scaling correction factor                                  0.802
+  Shift parameter                                            7.657
+    simple second-order correction                                
+
+Model Test Baseline Model:
+
+  Test statistic                              2153.655    1244.795
+  Degrees of freedom                                45          45
+  P-value                                        0.000       0.000
+  Scaling correction factor                                  1.758
+
+User Model versus Baseline Model:
+
+  Comparative Fit Index (CFI)                    1.000       1.000
+  Tucker-Lewis Index (TLI)                       1.010       1.003
+                                                                  
+  Robust Comparative Fit Index (CFI)                            NA
+  Robust Tucker-Lewis Index (TLI)                               NA
+
+Root Mean Square Error of Approximation:
+
+  RMSEA                                          0.000       0.000
+  90 Percent confidence interval - lower         0.000       0.000
+  90 Percent confidence interval - upper         0.000       0.029
+  P-value H_0: RMSEA &lt;= 0.050                    1.000       1.000
+  P-value H_0: RMSEA &gt;= 0.080                    0.000       0.000
+                                                                  
+  Robust RMSEA                                                  NA
+  90 Percent confidence interval - lower                        NA
+  90 Percent confidence interval - upper                        NA
+  P-value H_0: Robust RMSEA &lt;= 0.050                            NA
+  P-value H_0: Robust RMSEA &gt;= 0.080                            NA
+
+Standardized Root Mean Square Residual:
+
+  SRMR                                           0.031       0.031
+
+Parameter Estimates:
+
+  Parameterization                               Delta
+  Standard errors                           Robust.sem
+  Information                                 Expected
+  Information saturated (h1) model        Unstructured
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+  IQ =~                                                                 
+    IQ1               1.000                               6.954    0.658
+    IQ2               0.844    0.046   18.428    0.000    5.869    0.630
+    IQ3               0.902    0.070   12.908    0.000    6.272    0.676
+    IQ4               1.105    0.080   13.768    0.000    7.681    0.736
+    IQ5               1.033    0.071   14.601    0.000    7.187    0.730
+  Stress =~                                                             
+    stress1           1.000                               0.611    0.611
+    stress2           1.099    0.125    8.820    0.000    0.672    0.672
+    stress3           1.256    0.151    8.336    0.000    0.768    0.768
+    stress4           1.066    0.152    7.008    0.000    0.652    0.652
+    stress5           1.134    0.126    8.974    0.000    0.693    0.693
+
+Regressions:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+  IQ ~                                                                  
+    Stress            4.431    0.792    5.596    0.000    0.390    0.390
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+ .IQ1 ~~                                                                
+   .IQ2              26.333    2.861    9.203    0.000   26.333    0.458
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+   .IQ1              23.108    0.587   39.391    0.000   23.108    2.187
+   .IQ2              18.158    0.492   36.916    0.000   18.158    1.949
+   .IQ3              10.100    0.563   17.945    0.000   10.100    1.088
+   .IQ4              11.050    0.640   17.255    0.000   11.050    1.059
+   .IQ5              21.376    0.514   41.601    0.000   21.376    2.171
+
+Thresholds:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+    stress1|t1       -0.151    0.056   -2.680    0.007   -0.151   -0.151
+    stress1|t2        1.825    0.108   16.973    0.000    1.825    1.825
+    stress2|t1       -0.900    0.065  -13.806    0.000   -0.900   -0.900
+    stress2|t2        1.379    0.081   17.124    0.000    1.379    1.379
+    stress3|t1        0.700    0.061   11.399    0.000    0.700    0.700
+    stress3|t2        2.878    0.315    9.124    0.000    2.878    2.878
+    stress4|t1       -1.751    0.102  -17.198    0.000   -1.751   -1.751
+    stress4|t2        1.461    0.084   17.324    0.000    1.461    1.461
+    stress5|t1       -0.233    0.057   -4.107    0.000   -0.233   -0.233
+    stress5|t2        1.825    0.108   16.973    0.000    1.825    1.825
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+   .IQ1              63.305    4.235   14.948    0.000   63.305    0.567
+   .IQ2              52.315    3.532   14.814    0.000   52.315    0.603
+   .IQ3              46.783    3.610   12.960    0.000   46.783    0.543
+   .IQ4              49.830    3.627   13.739    0.000   49.830    0.458
+   .IQ5              45.268    3.566   12.696    0.000   45.268    0.467
+   .stress1           0.626                               0.626    0.626
+   .stress2           0.548                               0.548    0.548
+   .stress3           0.411                               0.411    0.411
+   .stress4           0.575                               0.575    0.575
+   .stress5           0.519                               0.519    0.519
+   .IQ               41.026    4.832    8.491    0.000    0.848    0.848
+    Stress            0.374    0.065    5.774    0.000    1.000    1.000</code></pre>
+</div>
+</div>
+<p>We can see that the effect of prenatal stress on offspring IQ is <span class="math inline">\(\beta\)</span> = 0.39 and is statistically significant (<span class="math inline">\(p&lt;.05\)</span>).</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question Extra 6
+</div>
+<div class="question-body">
+<p>Returning to our full SEM, adjust your model so that instead of <code>IQ ~ Stress</code> we are fitting <code>Stress ~ IQ</code> (i.e.&nbsp;child cognitive ability <span class="math inline">\(\rightarrow\)</span> prenatal stress).</p>
+<p>Take a guess: will this model fit better or worse than our first one?</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-6" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-6', 'sol-start-6')">
+Solution
+</button>
+</div>
+<div id="sol-body-6" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 6</em>. </span>Here’s our first model:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fitmeasures</span>(SEM_model.est)[<span class="fu">c</span>(<span class="st">"rmsea.scaled"</span>,<span class="st">"srmr"</span>,<span class="st">"tli.scaled"</span>,<span class="st">"cfi.scaled"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>rmsea.scaled         srmr   tli.scaled   cfi.scaled 
+  0.00000000   0.03113318   1.00313248   1.00000000 </code></pre>
+</div>
+</div>
+<p>And here’s the model with the direction reversed:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>SEM_model2 <span class="ot">&lt;-</span> <span class="st">'</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="st">    #IQ measurement model</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="st">    IQ =~ IQ1 + IQ2 + IQ3 + IQ4 + IQ5 </span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="st">    IQ1 ~~ IQ2</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="st">    #stress measurement model </span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="st">    Stress =~ stress1 + stress2 + stress3 + stress4 + stress5 </span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="st">    #structural part of model</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="st">    Stress ~ IQ</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>SEM_model.est2 <span class="ot">&lt;-</span> <span class="fu">sem</span>(SEM_model2, <span class="at">data=</span>stress_IQ_data,</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ordered =</span> <span class="fu">c</span>(<span class="st">'stress1'</span>, <span class="st">'stress2'</span>, <span class="st">'stress3'</span>, <span class="st">'stress4'</span>, <span class="st">'stress5'</span>),</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>                    <span class="at">estimator=</span><span class="st">"WLSMV"</span>)</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="fu">fitmeasures</span>(SEM_model.est2)[<span class="fu">c</span>(<span class="st">"rmsea.scaled"</span>,<span class="st">"srmr"</span>,<span class="st">"tli.scaled"</span>,<span class="st">"cfi.scaled"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>rmsea.scaled         srmr   tli.scaled   cfi.scaled 
+  0.00000000   0.03113318   1.00313248   1.00000000 </code></pre>
+</div>
+</div>
+<p>The fit is exactly the same!!</p>
+<p>One of the strengths of SEM is that we are fitting quantitative models that very closely correspond to theoretical models. In fact, researchers may often start with two slightly different theoretical models, and SEM will allow them to make a formal comparison of the two, because they will lead to differences in model fit.</p>
+<p>However, it is important to be aware that for every structural equation model, there are always equivalent representations of the model structure that leads to <em>precisely</em> the same model fit. These are essentially re-parameterisations of our model - they contain the same information, and lead to the exact same model-implied covariance matrix, but they involve different theoretical assumptions. Many of these we can rule out on conceptual grounds (i.e.&nbsp;a child’s cognitive ability cannot influence their mothers’ pre-natal stress levels), but others we cannot.</p>
+</div>
+<p class="solution-end">
+</p>
+</section>
+<section id="a-replication" class="level2">
+<h2 class="anchored" data-anchor-id="a-replication">A Replication</h2>
+<div class="question-begin">
+Question 7
+</div>
+<div class="question-body">
+<p>In order to try and replicate the IQ CFA, our researcher collects a <strong>new</strong> sample of size <span class="math inline">\(n=500\)</span>. However, she has some missing data (specifically, those who scored poorly on the first few tests tended to feel discouraged and chose not to complete further tests).</p>
+<p>Read in the new dataset, plot and numerically summarise the univariate distributions of the measured variables, and then conduct a CFA using the new data, taking account of the missingness (don’t forget to also use an appropriate estimator to account for any non-normality). Does the model fit well?</p>
+<ul>
+<li>The data can be found at <a href="https://uoepsy.github.io/data/IQdatam.csv">https://uoepsy.github.io/data/IQdatam.csv</a></li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hints
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We can fit the model setting <code>missing='FIML'</code>. If data are missing at random (MAR) - i.e., missingness is related to the measured variables but not the unobserved missing values - then this gives us unbiased parameter estimates. Unfortunately we can never know whether data are MAR for sure as this would require knowledge of the missing values. See <a href="https://uoepsy.github.io/lv/08_sem.html#missing-data" target="_blank">Chapter 8#SEM-missing-data</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-7" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-7', 'sol-start-7')">
+Solution
+</button>
+</div>
+<div id="sol-body-7" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 7</em>. </span>Here’s the data. As before, the distributions of items look quite skewed.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>IQ_data_new <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://uoepsy.github.io/data/IQdatam.csv"</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">multi.hist</span>(IQ_data_new, <span class="at">global =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="11ex_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>IQ_data_new <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="fu">contains</span>(<span class="st">"IQ"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">describe</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rownames_to_column</span>(<span class="at">var =</span> <span class="st">"variable"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(variable,mean,sd,skew,kurtosis) <span class="sc">|&gt;</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>) <span class="sc">|&gt;</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">variable</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">mean</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">sd</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">skew</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">kurtosis</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">IQ1</td>
+<td style="text-align: right;">17.49</td>
+<td style="text-align: right;">9.75</td>
+<td style="text-align: right;">1.28</td>
+<td style="text-align: right;">2.29</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IQ2</td>
+<td style="text-align: right;">17.52</td>
+<td style="text-align: right;">9.71</td>
+<td style="text-align: right;">1.25</td>
+<td style="text-align: right;">2.32</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">IQ3</td>
+<td style="text-align: right;">10.53</td>
+<td style="text-align: right;">9.93</td>
+<td style="text-align: right;">1.39</td>
+<td style="text-align: right;">2.39</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IQ4</td>
+<td style="text-align: right;">10.30</td>
+<td style="text-align: right;">9.65</td>
+<td style="text-align: right;">1.29</td>
+<td style="text-align: right;">2.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">IQ5</td>
+<td style="text-align: right;">19.62</td>
+<td style="text-align: right;">9.41</td>
+<td style="text-align: right;">1.76</td>
+<td style="text-align: right;">5.63</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>IQ_model_missing <span class="ot">&lt;-</span> <span class="st">'</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="st">  IQ=~IQ1+IQ2+IQ3+IQ4+IQ5</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="st">  IQ1~~IQ2</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="st">'</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>IQ_model_missing.est <span class="ot">&lt;-</span> <span class="fu">cfa</span>(IQ_model_missing, </span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>                            <span class="at">data=</span>IQ_data_new, </span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>                            <span class="at">missing=</span><span class="st">'FIML'</span>, <span class="at">estimator=</span><span class="st">"MLR"</span>)</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(IQ_model_missing.est, <span class="at">fit.measures=</span>T, <span class="at">standardized=</span>T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>lavaan 0.6-20 ended normally after 65 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        16
+
+  Number of observations                           500
+  Number of missing patterns                         3
+
+Model Test User Model:
+                                              Standard      Scaled
+  Test Statistic                                 8.070       6.273
+  Degrees of freedom                                 4           4
+  P-value (Chi-square)                           0.089       0.180
+  Scaling correction factor                                  1.286
+    Yuan-Bentler correction (Mplus variant)                       
+
+Model Test Baseline Model:
+
+  Test statistic                               910.224     654.153
+  Degrees of freedom                                10          10
+  P-value                                        0.000       0.000
+  Scaling correction factor                                  1.391
+
+User Model versus Baseline Model:
+
+  Comparative Fit Index (CFI)                    0.995       0.996
+  Tucker-Lewis Index (TLI)                       0.989       0.991
+                                                                  
+  Robust Comparative Fit Index (CFI)                         0.997
+  Robust Tucker-Lewis Index (TLI)                            0.992
+
+Loglikelihood and Information Criteria:
+
+  Loglikelihood user model (H0)              -8693.803   -8693.803
+  Scaling correction factor                                  1.634
+      for the MLR correction                                      
+  Loglikelihood unrestricted model (H1)      -8689.768   -8689.768
+  Scaling correction factor                                  1.565
+      for the MLR correction                                      
+                                                                  
+  Akaike (AIC)                               17419.605   17419.605
+  Bayesian (BIC)                             17487.039   17487.039
+  Sample-size adjusted Bayesian (SABIC)      17436.254   17436.254
+
+Root Mean Square Error of Approximation:
+
+  RMSEA                                          0.045       0.034
+  90 Percent confidence interval - lower         0.000       0.000
+  90 Percent confidence interval - upper         0.090       0.076
+  P-value H_0: RMSEA &lt;= 0.050                    0.501       0.685
+  P-value H_0: RMSEA &gt;= 0.080                    0.112       0.033
+                                                                  
+  Robust RMSEA                                               0.037
+  90 Percent confidence interval - lower                     0.000
+  90 Percent confidence interval - upper                     0.093
+  P-value H_0: Robust RMSEA &lt;= 0.050                         0.568
+  P-value H_0: Robust RMSEA &gt;= 0.080                         0.119
+
+Standardized Root Mean Square Residual:
+
+  SRMR                                           0.015       0.015
+
+Parameter Estimates:
+
+  Standard errors                             Sandwich
+  Information bread                           Observed
+  Observed information based on                Hessian
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+  IQ =~                                                                 
+    IQ1               1.000                               6.346    0.651
+    IQ2               0.997    0.073   13.673    0.000    6.325    0.652
+    IQ3               1.045    0.102   10.226    0.000    6.629    0.668
+    IQ4               1.084    0.127    8.514    0.000    6.877    0.713
+    IQ5               1.053    0.130    8.083    0.000    6.682    0.711
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+ .IQ1 ~~                                                                
+   .IQ2              27.397    4.687    5.845    0.000   27.397    0.504
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+   .IQ1              17.494    0.436   40.159    0.000   17.494    1.796
+   .IQ2              17.522    0.434   40.409    0.000   17.522    1.807
+   .IQ3              10.488    0.444   23.615    0.000   10.488    1.056
+   .IQ4              10.251    0.431   23.772    0.000   10.251    1.063
+   .IQ5              19.467    0.419   46.416    0.000   19.467    2.070
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv  Std.all
+   .IQ1              54.613    6.042    9.039    0.000   54.613    0.576
+   .IQ2              54.004    6.203    8.706    0.000   54.004    0.574
+   .IQ3              54.654    6.320    8.648    0.000   54.654    0.554
+   .IQ4              45.771    5.128    8.926    0.000   45.771    0.492
+   .IQ5              43.779    5.887    7.436    0.000   43.779    0.495
+    IQ               40.269    6.905    5.832    0.000    1.000    1.000</code></pre>
+</div>
+</div>
+<p>Our fit indices all look very good!</p>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Extra - Question 8
+</div>
+<div class="question-body">
+<p>Note that the summary of the model output when we used FIML also told us that there are 3 patterns of missingness.</p>
+<p>Can you find out a) what the patterns are, and b) how many people are in each pattern?</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Hints
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><code>is.na()</code> will help a lot here, as will <code>distinct()</code> and <code>count()</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-8" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-8', 'sol-start-8')">
+Solution
+</button>
+</div>
+<div id="sol-body-8" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 8</em>. </span>This will turn all the NAs into TRUE, and everything else into FALSE:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">is.na</span>(IQ_data_new)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>If we turn this back to a dataframe, and then pass it to <code>distinct()</code>, we get out the different patterns!</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">is.na</span>(IQ_data_new) <span class="sc">|&gt;</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     ID   IQ1   IQ2   IQ3   IQ4   IQ5
+1 FALSE FALSE FALSE  TRUE  TRUE  TRUE
+2 FALSE FALSE FALSE FALSE FALSE FALSE
+3 FALSE FALSE FALSE FALSE FALSE  TRUE</code></pre>
+</div>
+</div>
+<p>Getting the counts is more difficult, but one way would be to do it with <code>count()</code>, but we have to give it all of the variables, to get all the different combinations:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">is.na</span>(IQ_data_new) <span class="sc">|&gt;</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(ID,IQ1,IQ2,IQ3,IQ4,IQ5)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     ID   IQ1   IQ2   IQ3   IQ4   IQ5   n
+1 FALSE FALSE FALSE FALSE FALSE FALSE 485
+2 FALSE FALSE FALSE FALSE FALSE  TRUE  12
+3 FALSE FALSE FALSE  TRUE  TRUE  TRUE   3</code></pre>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+</section>
+<section id="opportunities-for-growth" class="level1">
+<h1>Opportunities for growth?</h1>
+<div class="frame">
+<p><strong>development of pro-social behaviours in children: psb_traj.csv</strong></p>
+<p>We are interested in the development of pro-social behaviours over childhood. We recruited 50 children at age 4, and they completed a battery of assessments that aimed to measure how much they displayed sharing, cooperation, perspective-taking etc. These tasks altogether resulted in a score of pro-social behaviour — <code>PSB</code> in our data.<br>
+The data are available at <a href="https://uoepsy.github.io/data/PSBtraj.csv" target="_blank">https://uoepsy.github.io/data/PSBtraj.csv</a></p>
+</div>
+<div class="question-begin">
+Question 9
+</div>
+<div class="question-body">
+<p>Forget about SEM and latent variables for a minute. We want to study the development of pro-social behaviours over childhood, and we have captured a measure of this (<code>PSB</code>) in ~50 children over 5 years.</p>
+<p>We’re going back to <code>lmer()</code>!!</p>
+<p>Fit a multi-level/mixed effects model to estimate the trajectory of PSB over childhood.<br>
+For now, please set <code>REML = FALSE</code> (this is just because we’re going to compare this model with something else fitted with standard ML).</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-9" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-9', 'sol-start-9')">
+Solution
+</button>
+</div>
+<div id="sol-body-9" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 9</em>. </span>We’ll want something like this</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>psbtraj <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"https://uoepsy.github.io/data/PSBtraj.csv"</span>)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>lmm1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(PSB <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> timepoint <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> timepoint <span class="sc">|</span> child), </span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> psbtraj, </span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">REML =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lmm1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: PSB ~ 1 + timepoint + (1 + timepoint | child)
+   Data: psbtraj
+
+      AIC       BIC    logLik -2*log(L)  df.resid 
+   1294.3    1315.4    -641.1    1282.3       244 
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-2.36997 -0.47820 -0.01544  0.48687  1.94570 
+
+Random effects:
+ Groups   Name        Variance Std.Dev. Corr 
+ child    (Intercept) 12.563   3.544         
+          timepoint    8.864   2.977    -0.49
+ Residual              2.687   1.639         
+Number of obs: 250, groups:  child, 50
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept)  14.7760     0.5325   27.75
+timepoint     1.5940     0.4274    3.73
+
+Correlation of Fixed Effects:
+          (Intr)
+timepoint -0.498</code></pre>
+</div>
+</div>
+</div>
+<p class="solution-end">
+</p>
+<div class="question-begin">
+Question 10
+</div>
+<div class="question-body">
+<p>The model that we just fitted contains “random intercepts” and “random slopes”. We’ve talked about these as the group-level variability around the fixed intercept and fixed slope.</p>
+<p>Think carefully about the following explanation of our random effects:</p>
+<blockquote class="blockquote">
+<p>our random intercepts and random slopes are <strong>normally distributed variables that are not directly observed</strong>, that reflect “where childrens’ PSB starts” and “how childrens’ PSB changes”.</p>
+</blockquote>
+<p>The quite subtle link that I am trying to make here is that we can think of those random effects in a similar way to how we think about latent variables!</p>
+<p><img src="images/lvranef.gif" class="img-fluid"></p>
+<p>And we can actually fit the exact same model in the latent variable modelling framework of <strong>lavaan</strong>!!</p>
+<p>We have 5 time points, so let’s pivot things wider and consider our data in this format:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>psbwide <span class="ot">&lt;-</span> </span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  psbtraj <span class="sc">|&gt;</span> </span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> timepoint, <span class="at">values_from =</span> PSB,</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">names_prefix =</span> <span class="st">"t"</span>)</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(psbwide)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  child    t0    t1    t2    t3    t4
+  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+1     1    11    14    10    13    17
+2     2    20    25    30    34    40
+3     3    16    13    11    10     9
+4     4    11    16    18    22    29
+5     5    18    19    19    23    23
+6     6    16    14    10    14    15</code></pre>
+</div>
+</div>
+<p>In this setup, we can start to think of each column containing scores as an indicator of a child’s underlying latent level of PSB (i.e., a child who scores high on all those observed variables (<code>t0</code> to <code>t4</code>) is high on the unobserved latent construct of ‘pro-social behaviour’ and one who scores lower is estimated to be lower). With a little bit of trickery, we can encode the time-ordered structure of these indicators and split this up into an latent ‘intercept’ and a latent ‘slope’. To do so, we specify a model like the diagram below.</p>
+<p><img src="images/lgc.png" class="img-fluid"></p>
+<p>Note that we are fixing all the factor loadings to specific values. The “Intercepts” latent variable loads equally onto all timepoints scores, and the “Slopes” latent variable loads 0 on the first time point, 1 on the second, and so on..<br>
+So a child who is higher on latent PSB will score 1 higher at all time points. But additional to this, if a child has more of the latent “Slope of PSB” factor, will score 1 bit higher at time 2, 2 bits higher at time 3, 3 bits higher at time 4, and so on (where “bits” is yet to be estimated).<br>
+Think about what this implies for a child who has a latent intercept value of 10, and a latent slope value of 2:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="ckiydngong" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ckiydngong table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#ckiydngong thead, #ckiydngong tbody, #ckiydngong tfoot, #ckiydngong tr, #ckiydngong td, #ckiydngong th {
+  border-style: none;
+}
+
+#ckiydngong p {
+  margin: 0;
+  padding: 0;
+}
+
+#ckiydngong .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#ckiydngong .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#ckiydngong .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#ckiydngong .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#ckiydngong .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ckiydngong .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ckiydngong .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ckiydngong .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#ckiydngong .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#ckiydngong .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#ckiydngong .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#ckiydngong .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#ckiydngong .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#ckiydngong .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#ckiydngong .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ckiydngong .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#ckiydngong .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#ckiydngong .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#ckiydngong .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ckiydngong .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#ckiydngong .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#ckiydngong .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#ckiydngong .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ckiydngong .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#ckiydngong .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#ckiydngong .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ckiydngong .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ckiydngong .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#ckiydngong .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ckiydngong .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#ckiydngong .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ckiydngong .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ckiydngong .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ckiydngong .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ckiydngong .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ckiydngong .gt_left {
+  text-align: left;
+}
+
+#ckiydngong .gt_center {
+  text-align: center;
+}
+
+#ckiydngong .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#ckiydngong .gt_font_normal {
+  font-weight: normal;
+}
+
+#ckiydngong .gt_font_bold {
+  font-weight: bold;
+}
+
+#ckiydngong .gt_font_italic {
+  font-style: italic;
+}
+
+#ckiydngong .gt_super {
+  font-size: 65%;
+}
+
+#ckiydngong .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#ckiydngong .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#ckiydngong .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#ckiydngong .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#ckiydngong .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#ckiydngong .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#ckiydngong .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#ckiydngong .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#ckiydngong div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="timepoint" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">timepoint</th>
+<th id="estimate" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">estimate</th>
+<th id="expectation" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">expectation</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_right" headers="timepoint">0</td>
+<td class="gt_row gt_left" headers="estimate">(1 x intercept) +(0 x slope)</td>
+<td class="gt_row gt_left" headers="expectation">(1 x 10) + (0 x 2) = 10</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="timepoint">1</td>
+<td class="gt_row gt_left" headers="estimate">(1 x intercept) +(1 x slope)</td>
+<td class="gt_row gt_left" headers="expectation">(1 x 10) + (1 x 2) = 12</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="timepoint">2</td>
+<td class="gt_row gt_left" headers="estimate">(1 x intercept) +(2 x slope)</td>
+<td class="gt_row gt_left" headers="expectation">(1 x 10) + (2 x 2) = 14</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="timepoint">3</td>
+<td class="gt_row gt_left" headers="estimate">(1 x intercept) +(3 x slope)</td>
+<td class="gt_row gt_left" headers="expectation">(1 x 10) + (3 x 2) = 16</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="timepoint">4</td>
+<td class="gt_row gt_left" headers="estimate">(1 x intercept) +(4 x slope)</td>
+<td class="gt_row gt_left" headers="expectation">(1 x 10) + (4 x 2) = 18</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>What we are then interested in estimating is the variances and the means of the two latent variables (Intercepts and Slopes). In previous models we’ve been mostly concerned with modelling <em>covariance</em> (i.e., how variables change with one another), but we can also include the estimation of means (the average of each variable). In a diagram, these sometimes get drawn as the paths from a triangles with a 1 in it (this is just like an intercept in regression <span class="math inline">\(y = b_1\cdot1 + b2\cdot x\)</span> - it is the <span class="math inline">\(b_1\)</span> we are estimating, and the 1 in the triangle is just to indicate that it is a constant).</p>
+<p>Try fitting the model below.</p>
+<p>Note, for the demonstration here I have had to add some extra constraints. This is because our <code>lmer</code> model assumes that the residual variance is the same across time. Our version in <strong>lavaan</strong> does not, so here we’ve used the label “rvar” to indicate that the residual variance is equal at each indicator <code>t0</code> to <code>t4</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>lgc1 <span class="ot">&lt;-</span> <span class="st">"</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="st">  ints =~ 1*t0 + 1*t1 + 1*t2 + 1*t3 + 1*t4</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="st">  slopes  =~ 0*t0 + 1*t1 + 2*t2 + 3*t3 + 4*t4</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="st">  t0 ~~ r*t0</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="st">  t1 ~~ r*t1</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="st">  t2 ~~ r*t2</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a><span class="st">  t3 ~~ r*t3</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="st">  t4 ~~ r*t4</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a><span class="st">"</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>lgc.est1 <span class="ot">&lt;-</span> <span class="fu">growth</span>(lgc1, <span class="at">data =</span> psbwide)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Examining the <code>parameterestimates()</code> for the <strong>lavaan</strong> model, and the <code>summary()</code> output for the <strong>lme4</strong> model, compare and contrast.. What things are the same, what things are different?</p>
+</div>
+<p class="question-end">
+</p>
+<div class="solution-begin">
+<button id="sol-start-10" class="jk-circle-right solution-icon clickable" onclick="toggle_visibility('sol-body-10', 'sol-start-10')">
+Solution
+</button>
+</div>
+<div id="sol-body-10" class="solution-body proof solution" style="display: none;">
+<p><span class="proof-title"><em>Solution 10</em>. </span>For our <strong>lme4</strong> model, here are the fixed effects and the variance in our random effects:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fixed effects</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">fixef</span>(lmm1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(Intercept)   timepoint 
+     14.776       1.594 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># random effect variances</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.frame</span>( <span class="fu">VarCorr</span>(lmm1) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       grp        var1      var2      vcov      sdcor
+1    child (Intercept)      &lt;NA&gt; 12.562986  3.5444302
+2    child   timepoint      &lt;NA&gt;  8.864222  2.9772843
+3    child (Intercept) timepoint -5.126645 -0.4858101
+4 Residual        &lt;NA&gt;      &lt;NA&gt;  2.687334  1.6393091</code></pre>
+</div>
+</div>
+<p>And for our <strong>lavaan</strong> model, here are our parameter estimates:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">parameterestimates</span>(lgc.est1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      lhs op    rhs label    est    se      z pvalue ci.lower ci.upper
+1    ints =~     t0        1.000 0.000     NA     NA    1.000    1.000
+2    ints =~     t1        1.000 0.000     NA     NA    1.000    1.000
+3    ints =~     t2        1.000 0.000     NA     NA    1.000    1.000
+4    ints =~     t3        1.000 0.000     NA     NA    1.000    1.000
+5    ints =~     t4        1.000 0.000     NA     NA    1.000    1.000
+6  slopes =~     t0        0.000 0.000     NA     NA    0.000    0.000
+7  slopes =~     t1        1.000 0.000     NA     NA    1.000    1.000
+8  slopes =~     t2        2.000 0.000     NA     NA    2.000    2.000
+9  slopes =~     t3        3.000 0.000     NA     NA    3.000    3.000
+10 slopes =~     t4        4.000 0.000     NA     NA    4.000    4.000
+11     t0 ~~     t0     r  2.687 0.310  8.660  0.000    2.079    3.296
+12     t1 ~~     t1     r  2.687 0.310  8.660  0.000    2.079    3.296
+13     t2 ~~     t2     r  2.687 0.310  8.660  0.000    2.079    3.296
+14     t3 ~~     t3     r  2.687 0.310  8.660  0.000    2.079    3.296
+15     t4 ~~     t4     r  2.687 0.310  8.660  0.000    2.079    3.296
+16   ints ~~   ints       12.563 2.841  4.422  0.000    6.994   18.132
+17 slopes ~~ slopes        8.864 1.827  4.852  0.000    5.284   12.445
+18   ints ~~ slopes       -5.127 1.799 -2.850  0.004   -8.652   -1.602
+19     t0 ~1               0.000 0.000     NA     NA    0.000    0.000
+20     t1 ~1               0.000 0.000     NA     NA    0.000    0.000
+21     t2 ~1               0.000 0.000     NA     NA    0.000    0.000
+22     t3 ~1               0.000 0.000     NA     NA    0.000    0.000
+23     t4 ~1               0.000 0.000     NA     NA    0.000    0.000
+24   ints ~1              14.776 0.532 27.751  0.000   13.732   15.820
+25 slopes ~1               1.594 0.427  3.730  0.000    0.756    2.432</code></pre>
+</div>
+</div>
+<p>We can see that these parts of the model are all identical!</p>
+<ol type="1">
+<li>the fixed intercept in the lmer is the same as the <code>ints ~ 1</code> estimate in lavaan. If you look at <code>summary(lcg.est1)</code>, this comes under a section headed “Intercepts” which we haven’t seen before, but is essentially capturing the mean of the latent variable.<br>
+</li>
+<li>The fixed slope in the lmer is the same as the <code>slopes ~ 1</code> part of the lavaan model.<br>
+</li>
+<li>The random intercept variability in lmer is capturing “how much do children vary in their intercepts?”. In the lavaan model, this is captured by the variance of the latent “ints” variable (in <code>parameterestimates(lgc.est1)</code> this is the <code>ints ~~ ints</code> bit)</li>
+<li>The random slope variability in lmer is “how much do children vary in the slopes of PSB~time?”. In our lavaan model, this is the variance of the latent “slopes” variable (<code>slopes ~~ slopes</code>).<br>
+</li>
+<li>The correlation between random intercepts and random slopes in lmer is equivalent to the correlation between the two latent variables (<code>ints ~~ slopes</code>). In lavaan this is shown as the covariance, whereas in lmer we also see it standardised as a correlation.</li>
+<li>The residual variability in the lmer is equivalent to the residual variance in lavaan for every observed variable <code>t0</code> to <code>t4</code> (remember we fixed these to all be the same as each other)</li>
+</ol>
+<p>Here’s the quick plot with the estimates:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(semPlot)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">semPaths</span>(lgc.est1, <span class="at">whatLabels =</span> <span class="st">"est"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="11ex_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Bonus! Remember in <strong>lme4</strong> we could extract the model predictions for each specific group in our sample, with functions like <code>ranef()</code> and <code>coef()</code>?<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
+<p>The equivalent in the <strong>lavaan</strong> model is to ask where each person falls on the latent variables of “ints” and “slopes”.</p>
+<p>And these are identical!</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># each child's predicted intercept and slope from the lmer:</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>lmer_pred <span class="ot">&lt;-</span> <span class="fu">coef</span>(lmm1)<span class="sc">$</span>child</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="co"># each child's predicted standing on the latent variables from lavaan:</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>lav_pred <span class="ot">&lt;-</span> <span class="fu">lavPredict</span>(lgc.est1)</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a><span class="co"># bind them together and plot: </span></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(lmer_pred, lav_pred) <span class="sc">|&gt;</span> <span class="fu">plot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="11ex_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>These kind of models are known as “Latent Growth Curve” models, and are really just the same thing as the mixed effects model we have already seen, but from the SEM perspective. We can even start playing with non-linear trajectories by changing the slope parameters to e.g., 1,2,4,9,16.<br>
+The downside is that the timepoints are need to be consistent – time is not treated continuously meaning that it becomes difficult if we have child 1 measured at “48 months, 64 months, 74 months” and child 2 at “50 months, 62 months, 76 months” - we end up collapsing them into “time1”, “time2” and “time3”, and therefore lose information. In addition, it’s harder to include more complex grouping structures in the SEM approach. The benefits, however, is that it can be extended to more complex sorts models that the mixed model might struggle with (like modelling trajectories of two outcomes simultaneously, or using the slope factor as a predictor of some other outcome).</p>
+</div>
+<p class="solution-end">
+</p>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>whereas the variance of random effects was “how do groups <em>in general</em> vary?”, these are “where does [specific group X in our data] fall?”<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

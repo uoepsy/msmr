@@ -1,7 +1,7 @@
 ---
 title: "Week 10 Exercises: Structural Equation Modelling (SEM)"
 params: 
-    SHOW_SOLS: FALSE
+    SHOW_SOLS: TRUE
     TOGGLE: TRUE
 editor_options: 
   chunk_output_type: console
@@ -68,7 +68,7 @@ __Dataset: tpb2__
 
 The "Theory of Planned Behaviour" is a theory about why people engage in certain behaviours. It has been applied in many contexts, and here we are testing the theory as a model of why people exercise.  
 
-The theory is represented in the diagram in @fig-tpb (only the latent variables and not the measured items are shown). **Attitudes** refer to the extent to which a person has a favourable view of exercising; **subjective norms** refer to whether they believe others whose opinions they care about believe exercise to be a good thing; and **perceived behavioural control** refers to the extent to which they believe exercising is under their control. **Intentions** refer to whether a person intends to exercise and **behaviour** is a measure of the extent to which they exercised. Each construct is measured using four items. 
+The theory is represented in the diagram in @fig-tpb (only the latent variables and not the measured items are shown). **Attitudes** refer to the extent to which a person has a favourable view of exercising; **subjective norms** refer to whether they believe others whose opinions they care about believe exercise to be a good thing; and **perceived behavioural control** refers to the extent to which they believe exercising is under their control. **Intentions** refer to whether a person intends to exercise and **behaviour** is a measure of the extent to which they exercised. Each construct is measured using four items apart from intentions which has five. 
 
 ```{r}
 #| label: fig-tpb
@@ -551,7 +551,8 @@ dgp <- paste0(
 df <- simulateData(dgp, sample.nobs = 200) |> apply(2,\(x) cut(x,5,labels=FALSE)) |> as.data.frame()
 df$sn5 <- cut(rnorm(200,df$sn5,.7),5,labels=F)
 
-# write_csv(df, file = "../../data/consvmodels.csv")
+
+write_csv(df |> select(-ewv2,-ewv5), file = "../../data/consvmodels.csv")
 ```
 
 
@@ -718,7 +719,7 @@ Here are all the distributions of the variables. They look pretty good --- fairl
 library(psych)
 multi.hist(condat)
 ```
-And we're not seeing any probles with skew or kurtosis
+And we're not seeing any problems with skew or kurtosis
 ```{r}
 describe(condat)
 ```
