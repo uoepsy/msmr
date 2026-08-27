@@ -47,8 +47,9 @@ $$
 & \varepsilon \sim N(0, \sigma) \text{ independently}
 \end{align}
 $$
-where the $b$'s (sometimes written $\beta$) are the partial associations between each predictor and the outcome. For instance, $b_1$ represents the expected change in $y$ associated with a 1 unit change in $x_1$, while _holding constant_ other independent variables $x_2,\ ...\ ,\ x_p$.  
-In this way, we can use the regression model to isolate the association between each predictor and the outcome from the other predictors in the model. 
+where the $b$'s (sometimes written $\beta$) are the partial associations between each predictor and the outcome. 
+For instance, $b_1$ represents the expected change in $y$ associated with a 1 unit change in $x_1$, while _holding constant_ other independent variables $x_2,\ ...\ ,\ x_p$. 
+In this way, we can use the regression model to isolate the unique association between each predictor and the outcome from the other predictors in the model. 
 
 In R, we fit these models using:
 ```{r eval=F}
@@ -84,12 +85,12 @@ When we fit linear regression models, we are fitting a line (or a regression sur
 
 $$
 \begin{align}
-\color{red}{y} &= \color{blue}{b_0 + b_1x_1 \ + \ ... \ + \ b_px_p} \color{black}{+ \varepsilon}\\ 
+\color{red}{y} &= \color{blue}{b_0 + b_1x_1 \ + \ ... \ + \ b_px_p}\, \color{black}{+ \varepsilon}\\ 
 \color{red}{\text{observed }y} &= \color{blue}{\text{fitted }\hat y} \,\, \color{black}{+ \text{ residual }\hat \varepsilon}\\ 
 \end{align}
 $$
 
-We are theorising that our model contains all the systematic relationships with our outcome variable, we assume that the residuals - the leftovers - are essentially random error. This is the $\varepsilon \sim N(0, \sigma)$ bit, which is a way of specifying our assumption that the errors are normally distributed with a mean of zero, and the variance doesn't change across the model (see @fig-slr2).   
+We are theorising that our model contains all the systematic relationships with our outcome variable, we assume that the residuals (the leftovers) are essentially random error. This is the $\varepsilon \sim N(0, \sigma)$ bit, which is a way of specifying this assumption formally, by stating that the errors are normally distributed with a mean of zero, and the variance doesn't change across the model (see @fig-slr2).   
 
 ```{r}
 #| label: fig-slr2
@@ -127,9 +128,13 @@ ggplot(aes(x = x, y = y)) +
   geom_segment(aes(x=x, xend=x, y=y, yend=.fitted), col="red",lty="dotted", linewidth=0.7)
 ```
 
-We typically want to check our model residuals (by plotting or performing statistical tests) to determine if we have reason to believe our assumptions are violated. The easiest way to do this in R is with `plot(model)`, which provides us with a series of visuals to examine for unusual patterns and conspicuous observations.  
+The assumptions of the linear model underpins our ability to generalise from our specific sample to make statements about the broader population. 
+So before we use our model to draw conclusions, we typically want to check our model residuals (by plotting or performing statistical tests) to determine if we have reason to believe our assumptions are violated. 
+The easiest way to do this in R is with `plot(model)`, which provides us with a series of visuals to examine for unusual patterns and conspicuous observations. 
 
-When model assumptions appear problematic, then our inferential tools go out the window. Although the specific point estimates for our regression coefficients are our best linear estimates for the sample that we have, our standard errors rely on the distributional assumptions of the residuals^[Why is this? It's because the formula to calculate the standard error involves $\sigma^2$ - the variance of the residuals. If this standard deviation is not accurate (because the residuals are non-normally distributed, or because it changes across the fitted model), then this in turn affects the accuracy of the standard error of the coefficient]. It is our standard errors that allow us to construct test statistics and compute p-values (@fig-inf1) and construct confidence intervals. Our assumptions underpin our ability to generalise from our specific sample to make statements about the broader population.  
+
+In the event that our model assumptions appear problematic, then our inferential tools go out the window. 
+Although the specific point estimates for our regression coefficients are our best linear estimates for the sample that we have, our standard errors rely on the distributional assumptions of the residuals^[Why is this? It's because the formula to calculate the standard error involves $\sigma^2$ - the variance of the residuals. If this standard deviation is not accurate (because the residuals are non-normally distributed, or because it changes across the fitted model), then this in turn affects the accuracy of the standard error of the coefficient]. It is our standard errors that allow us to construct test statistics and compute p-values (@fig-inf1) and construct confidence intervals. 
 
 
 ::: {.callout-note collapse="true"}
@@ -211,10 +216,11 @@ We use the standard error to quantify the uncertainty around our sample statisti
 ::::panelset
 :::panel
 ### p-values
+
 ```{r}
 #| echo: false
 #| label: fig-se_p
-#| fig-cap: "The standard error goes into computing a p-value. It defines sample estimates we would expect *if* some null hypothesis were true. We then ask how likely our observed sample estimate would be if that null hypothesis were true."
+#| fig-cap: "The standard error goes into computing a p-value. Together with the null hypothesis, it defines the distribution of sample estimates we would expect *if* the null hypothesis were true. We then ask how likely our observed sample estimate would be under that assumption (that the null hypothesis is true)"
 set.seed(7864)
 samplemeans <- replicate(2000, mean(rnorm(10,0,11)))
 g <- ggplot(data=tibble(samplemeans),aes(x=samplemeans))+
@@ -232,11 +238,9 @@ g + geom_area(data=ld,aes(x=x,y=y),fill="grey30",alpha=.3) +
   geom_area(data=ld4,aes(x=x,y=y),fill="red",alpha=.3) +
   geom_vline(xintercept = 0, col="grey30",lty="dashed", lwd=1) +
   annotate("text",
-           x=-3, y=.12, 
-           label="value in population\naccording to the null hypothesis", col="grey30",
-           hjust=1)+
-  geom_curve(aes(x=-4, xend=0, y=.12, yend=.12), col="grey30", size=0.5, 
-             curvature = 0, arrow = arrow(length = unit(0.03, "npc")))+
+           x=0, y=.135, 
+           label="population value\naccording to\nnull hypothesis", col="grey30",vjust=0.7,
+           hjust=0.5, angle = 90)+
   geom_segment(x=0,xend=(-10.5/sqrt(10)),y=.06,yend=.06) +
   
   
@@ -263,7 +267,7 @@ g + geom_area(data=ld,aes(x=x,y=y),fill="grey30",alpha=.3) +
   annotate("text",x=-8.5, y=.07, label="standard error\n(standard deviation of\nsampling distribution)", col="grey30")+
   geom_curve(aes(x=-7, xend=-1.5, y=.06, yend=.06), col="grey30", size=0.5, curvature = 0.8, arrow = arrow(length = unit(0.03, "npc")))+
 
-  scale_y_continuous(NULL, limits=c(0,.135),breaks=NULL)+
+  scale_y_continuous(NULL, limits=c(0,.15),breaks=NULL)+
   scale_x_continuous("Sample estimate",limits=c(-15,23),labels=NULL) + 
   theme_minimal()+
   theme(axis.line.x = element_line(), 
@@ -278,14 +282,14 @@ g + geom_area(data=ld,aes(x=x,y=y),fill="grey30",alpha=.3) +
 ```{r}
 #| echo: false
 #| label: fig-se_ci
-#| fig-cap: "The standard error goes into computing a confidence interval (CI) - a plausible range of the true population value. People often use these also for performing a null hypothesis test and asking 'is [null hypothesis value] inside the CI?'."
+#| fig-cap: "The standard error goes into computing a confidence interval (CI) - a plausible range for the true population value. People often use these also for performing a null hypothesis test and asking 'is [null hypothesis value] inside the CI?'. If it is, then a two-sided test against that value will lead to a non-rejection of the null hypothesis."
 g + geom_area(data=ld,aes(x=x,y=y),fill="grey30",alpha=.3) + 
   geom_area(data=ld2,aes(x=x,y=y),fill="grey30",alpha=.1) +
   geom_vline(xintercept = -8, col="grey30",lty="dashed", lwd=1) +
   annotate("text",
-           x=-8.1, y=.07, 
-           label="value in population\naccording to the null hypothesis", col="grey30",
-           hjust=0, angle = 90)+
+           x=-8.1, y=.135, 
+           label="population value\naccording to\nnull hypothesis", col="grey30",vjust=0.7,
+           hjust=0.5, angle = 90)+
   
   geom_vline(xintercept = 0, col="blue",lty="dashed", lwd=1) +
   annotate("text",
@@ -309,7 +313,7 @@ g + geom_area(data=ld,aes(x=x,y=y),fill="grey30",alpha=.3) +
   annotate("text",x=-16, y=.06, hjust=0.5,label="confidence interval\n(plausible range for \npopulation value)", col="darkgreen")+
   
   
-  scale_y_continuous(NULL, limits=c(0,.135),breaks=NULL)+
+  scale_y_continuous(NULL, limits=c(0,.155),breaks=NULL)+
   scale_x_continuous("Sample estimate",limits=c(-21,16),labels=NULL)+
   theme_minimal()+
   theme(axis.line.x = element_line(), 
@@ -319,22 +323,23 @@ g + geom_area(data=ld,aes(x=x,y=y),fill="grey30",alpha=.3) +
 :::
 ::::
 
-:::
-
+When we move to the linear regression model, we have standard errors for our coefficients. In @fig-inf1, the estimate (blue) is the best guess for the coefficient, and the standard error (green) represents the uncertainty in our estimate due to random sampling. If we imagine a 'null' universe where the true population coefficient is zero, then the big green distribution represents the range of coefficients we might see from random samples of this size. We then compare our observed coefficient to that 'null distribution'. This can be quantified as a t-statistic (orange), which measures how many standard errors our estimate sits away from zero. The p-value (pink) provides the probability of seeing a t-statistic this extreme (or more so) *if the null universe were actually real.*  
 
 ```{r}
 #| label: fig-inf1
 #| echo: false
-#| fig-cap: "Inference for regression coefficients. The estimate (blue) is the best guess for the coefficient, and the standard error (green) represents the uncertainty in our estimate due to random sampling. If we imagine a 'null' universe where the true population coefficient is zero, then the big green distribution represents the range of coefficients we might see from random samples of this size. We then compare our observed coefficient to that 'null distribution'. This can be quantified as a t-statistic (orange), which measures how many standard errors our estimate sits away from zero. The p-value (pink) provides the probability of seeing a t-statistic this extreme (or more so) *if the null universe were actually real.*" 
+#| fig-cap: "Inference for regression coefficients" 
 knitr::include_graphics("images_lmm/sum4.png")
 ```
 
-
-
+:::
 
 In the face of plots (or tests) that appear to show violations of the distributional assumptions (i.e. our residuals appear non-normal, or their variance changes across the range of the fitted model), we should always take care to ensure our model is correctly specified (interactions or other non-linear effects, if present in the data but omitted from our model, can result in assumption violations, as can omitted variables). Following this, if we continue to have problems satisfying our assumptions, there are various options that give us more flexibility in what assumptions we have to make. If you're interested, you can read brief explanations about some of these methods [here](00_lm_assumpt.html){target="_blank"}.  
 
-However, there is one assumption that we are unable to identify through examining diagnostic plots for patterns, and that is the assumption of __"independence"__ in "$\varepsilon \sim N(0, \sigma) \text{ independently}$". Very broadly, if our residuals are not independent from one another, this means that there are systematic differences in our outcome variable that our model is not capturing. This is not something that is easily 'corrected'^[With the exception of Generalized Least Squares (an extension of Weighted Least Squares), for which we _can_ actually specify a correlational structure of the residuals. As this course focuses on multilevel models, we will not cover GLS here. However, it can often be a useful method if our the nature of the dependency in our residuals is simply a nuisance thing (i.e. not something that has any properties which are of interest to us).] - it is something that we want to incorporate into our model structure. 
+However, there is one assumption that we are unable to identify through examining diagnostic plots for patterns, and that is the assumption of __"independence"__. 
+Very broadly, if our residuals are not independent from one another, this means that there are systematic differences in our outcome variable that our model is not capturing.  
+Note that in our model equation this assumption is not formalised as a distributional property, it is simply the "independently" in "$\varepsilon \sim N(0, \sigma) \text{ independently}$".  
+This is not something that is easily 'corrected'^[With the exception of Generalized Least Squares (an extension of Weighted Least Squares), for which we _can_ actually specify a correlational structure of the residuals. As this course focuses on multilevel models, we will not cover GLS here. However, it can often be a useful method if our the nature of the dependency in our residuals is simply a nuisance thing (i.e. not something that has any properties which are of interest to us).] - it is something that we want to incorporate into our model structure.  
 
 :::sticky
 __Independence of errors__  
@@ -343,7 +348,7 @@ Model residuals (estimated errors) are not dependent upon one another in any way
 
 :::
 
-One common way in which observations are dependent on one another can come when the data has a _hierarchical_ structure - some form of grouping or __'clustering'__ of observations into different groups. These groups (or 'clusters') could be simply something we observe (e.g., we collect data where each observation is a child, but we have 10 children from School A, 13 from School B, 5 from School C, and so on), or they could be the result of how we have designed our study (e.g., we have collect data where each observation is a reaction time on a task, but we get each participant in our study to do it 10 times, so we have 10 observations from participant 1, 10 from participant 2, 10 from participant 3, and so on). If we fail to capture these sort of groupings in our modelling somehow, then our residuals are no longer independent.  
+One common way in which observations are dependent on one another can come when the data has a _hierarchical_ structure - some form of __grouping__ or "clustering" of observations into different groups. These groups (or "clusters") could be simply something we observe (e.g., we collect data where each observation is a child, but we have 10 children from School A, 13 from School B, 5 from School C, and so on), or they could be the result of how we have designed our study (e.g., we have collect data where each observation is a reaction time on a task, but we get each participant in our study to do it 10 times, so we have 10 observations from participant 1, 10 from participant 2, 10 from participant 3, and so on). If we fail to capture these sort of groupings in our modelling somehow, then our residuals are no longer independent.  
 
 
 <div class="divider div-transparent div-dot"></div>
@@ -430,14 +435,15 @@ write_csv(schoolmood,"../../data/moodphysed.csv")
 
 ```
 ```{r}
-schoolmood <- read_csv("../../data/moodphysed.csv")
+#| include: false
+schoolmood <- read_csv("../../data/moodphysed.csv") |>
+  mutate(schoolid=factor(schoolid))
 ```
-
 
 
 A common way to start thinking about group-structured data is to consider how we might go about conducting a study on school children. Suppose each observation in our sample is a different child, and they come from a set of various schools (i.e. we might get 10 children from "`r levels(schoolmood$schoolid)[10]`", 15 from "`r levels(schoolmood$schoolid)[11]`", and so on). And let's suppose we are interested in the association between the amount of time children spend outside and their general mood/positive affect.
 
-If we ignore the fact that children 'belong to' their respective schools, we can end up reaching completely different conclusions. This can be seen in @fig-egschool. In these plots, each datapoint is a single child. If we consider them to be independent of one another (Left-Hand plot), then we might think there is a strong positive relationship between mood and time in the outdoors. Once we show (via colour) which school they belong to, we can see that the observations in the top right of the plots are all high for some other reason - because they come from the green school.  
+If we ignore the fact that children belong to their respective schools, we can end up reaching completely different conclusions. This can be seen in @fig-egschool. In these plots, each datapoint is a single child. If we consider them to be independent of one another (Left-Hand plot), then we might think there is a strong positive relationship between mood and time in the outdoors. Once we show (via colour) which school they belong to, we can see that the observations in the top right of the plots are all high for some other reason - because they come from the green school.  
 
 ```{r}
 #| label: fig-egschool
@@ -512,7 +518,6 @@ p4 = df |> mutate(f=fitted(lm(y~x,df))) |>
 The issue here is that the schools have (on average) different levels of outdoor-time, meaning that when we look for differences in mood at different levels of outdoor-time, we might actually just be seeing school differences in moods. Ignoring the `school` variable can completely change our estimate of interest.  
 
 Even in situations where we don't have this sort of issue, having groupings in our data can still cause issues with our inferences --- our standard errors, $t$ and $F$ statistics, $p$-values etc., will all be wrong. 
-
 For example, instead of having an observed variable like "hours per week of outdoor time" as our predictor, lets suppose we were interested in the effect of holding physical education (PE) classes outdoors as opposed to having them indoors. Let's conceptualise this as a little randomised trial in which 30 children from 5 schools (6 from each), were either given 'outdoor' or 'indoor' PE classes, with mood being recorded at the end of the school year. This is plotted in @fig-egschoolhw
 Although our simple linear model of `lm(mood ~ PEtype)` will correctly get at the estimate the difference in the average mood between the two groups ("outdoor" vs "indoor"), all the associated standard errors will be overly confident.  
 
@@ -638,13 +643,11 @@ $$
 
 ## Groups, groups, everywhere!  
 
-The idea of collecting data where each observation is a child, and they are grouped into the different schools from which they come, is just one such example of a grouping that we might come across. Similar _hierarchical data structures_ to "children within schools" can be found in other settings, such as patients within medical practices, employees within departments, people within towns etc. These sort of groupings are higher level units of observation, for which we ideally have a random sample of (i.e. I randomly sample 20 schools, and then from each school randomly sample 30 children).  
+The idea of collecting data where each observation is a child, and they are grouped into the different schools from which they come, is just one such example of a grouping that we might come across. Similar _hierarchical data structures_ to "children within schools" can be found in other settings, such as patients within medical practices, employees within departments, people within towns etc. These sort of groupings are higher level units of observation, for which we ideally have a random sample of (i.e. I randomly sample 20 schools, and then from each school randomly sample ~30 children).  
 
 There are also lots of cases where these sort of data structures might arise as the result of our study design. For instance, in a __Repeated Measures__ study we might collect multiple observations from each participant --- we have a random sample of participants, and for each one we have a random sample of their reaction time scores. __Longitudinal__ studies exhibit the same idea (multiple datapoints per person) but have a chronological ordering to the observations.  
 
 In addition, we can extend this logic to think about having "groups of groups", and "groups of groups of groups"^[It's ["turtles all the way down"](https://en.wikipedia.org/wiki/Turtles_all_the_way_down){target="_blank"}]. @tbl-design shows just a few examples of different levels of observation that may arise from different types of study.  
-
-The common thread throughout all these designs is a hierarchy. At the lowest level of our hierarchy is the individual observed thing. For some designs, individual people might be the lowest observation level, for others, people might be the clusters (i.e. we have multiple data points per person). We might also have multiple groupings at the same level of the hierarchy! For instance, if we have 50 participants each completing an experiment in which they respond to 30 items, then the individual observations (each one is "a score for a given item, from a given participant") can be grouped in two ways: we have 30 item-groups (each group containing 50 scores, one from each participant), but we also have 50 participant-groups (each group containing 30 scores, one for each item).  
 
 ```{r}
 #| echo: false
@@ -660,10 +663,13 @@ tribble(
 ) |> gt::gt()
 ```
 
+The common thread throughout all these designs is a hierarchy. At the lowest level of our hierarchy is the individual observed thing. For some designs, individual people might be the lowest observation level, for others, people might be the groups (i.e. we have multiple data points per person). We might also have multiple groupings at the same level of the hierarchy! For instance, if we have 50 participants each completing an experiment in which they respond to 30 items, then the individual observations (each one is "a score for a given item, from a given participant") can be grouped in two ways: we have 30 item-groups (each group containing 50 scores, one from each participant), but we also have 50 participant-groups (each group containing 30 scores, one for each item).  
+
 
 ## A subtle distinction about groupings
 
-At the fundamental level, we are using the term 'group' here to refer to __a grouping of observations.__ We'll often use the terms "clusters" and "groups" interchangeably in this context, so it's worth taking a bit of time to try and understand the _kind_ of groupings that we're talking about (and how we think about them).  
+At the fundamental level, we are using the term 'group' here to refer to __a grouping of observations.__ 
+However, it is worth worth taking a bit of time to try and understand the _kind_ of groupings that we are talking about (and how we think about them).  
 
 Specifically, we need to make a distinction between groups in the data for which... 
 
@@ -676,7 +682,9 @@ To make this clearer, consider two contexts below:
 :::panel
 #### group differences as reproducible properties  
 
-A study that looks at "how does heart rate differ between people taking placebo vs aspirin vs beta-blockers?" (@fig-clgroup). We can group observations into which drug they have received. But these groupings are the very groups of interest to us, and we are interested in comparing placebo with aspirin with beta-blockers. If we were to run the study again, we'll use the same drugs (they're not just a random sample of drugs - the x-axis of @fig-clgroup would need to be the same). 
+A study that looks at "how does heart rate differ between people taking placebo vs aspirin vs beta-blockers?" (@fig-clgroup). We can group observations into which drug they have received. But these groupings are the very groups of interest to us, and we are interested in comparing placebo with aspirin with beta-blockers.  
+
+If we were to run another version of the study (aiming to answer the same question), then we would use the same drugs (they're not just a random sample of drugs - the x-axis of @fig-clgroup would need to be the same). 
 
 
 ```{r}
@@ -709,7 +717,11 @@ ggplot(bp,aes(x=drug,y=hr))+
 :::panel
 #### group variability due to random sampling  
 
-A study that wants to estimate "what is the average grade at GCSE?". We observe lots of children, who can be grouped into different schools (@fig-clgroup2). We are not interested in all the specific differences between grades in `r levels(schoolmot$schoolid)[6]` vs `r levels(schoolmot$schoolid)[13]` etc. If we were to run our study again, we don't collect data from the same set of schools. We can view these schools as just a sample of schools. If we were to run the study again, we wouldn't need to collect data from these same specific schools (the x-axis of @fig-clgroup2 could be different). In this view, schools are a source of random variation (i.e. not systematic variation such as the effect of a drug, but variation we see just because schools are different from one another and we happen to have a random sample of schools).  
+A study that wants to estimate "what is the average grade at GCSE?". We observe lots of children, who can be grouped into different schools (@fig-clgroup2). We are not interested in all the specific differences between grades in `r levels(schoolmot$schoolid)[6]` vs `r levels(schoolmot$schoolid)[13]` etc. 
+We can view these schools as just a sample of schools.  
+
+If we were to run another version of the study (aiming to answer the same question), we wouldn't need to collect data from these same specific schools (the x-axis of @fig-clgroup2 could be different).
+Viewing them this way is to view schools as a source of random variation (i.e. not systematic variation such as the effect of a drug, but variation we see just because schools are different from one another and we happen to have a random sample of schools).  
 
 ```{r}
 #| label: fig-clgroup2
@@ -727,22 +739,24 @@ ggplot(pltd,aes(x=schoolid,y=grade))+
 ::::
 <br>
 
-When we have groups of data that we view as a random sample of groups, although the specific groups themselves might not be of interest to us, we may have research questions that are about features of those groups, and how they relate to things at other levels. For example, we might be interested in if the type of school funding (a school-level variable) influences the individual children's grades (a child-level variable). The focus of this course is multilevel modelling (also known as "mixed effects modelling"), which is a regression modelling technique that allows us to explore questions such as these (and many more).^[While multilevel models are great for multilevel questions, sometimes we may be interested in *only* things that occur at "level 1" (the lowest observation level). While not the focus of this course, there are also many other methods (survey weighting tools, cluster robust standard errors, or generalised estimating equations) that we may use to simply "account for the nuisance clustering".]  
+When we have groups of data that we view as a random sample of groups, although the specific groups themselves might not be of interest to us, we may have research questions that are about features of those groups, and how they relate to things at other levels. 
+For example, we might be interested in if the type of school funding (a school-level variable) influences the individual children's grades (a child-level variable). 
+The focus of this course is mixed effects modelling (also known as "multilevel modelling"), which is a regression modelling technique that allows us to explore questions such as these (and many more).^[While mixed effects models are great for questions that span across levels of observation, sometimes we may be interested in *only* things that occur at "level 1" (the lowest observation level). While not the focus of this course, there are also many other methods (survey weighting tools, cluster robust standard errors, or generalised estimating equations) that we may use to simply "account for the nuisance grouping".]  
 
 :::sticky
 
 - When we talk about "hierarchical"/"clustered"/"group-structured" data, the groups we are discussing are typically those that can be thought of as a _random sample of groups_.  
 - Often the differences between specific groups are not of interest.  
-- This contrasts with groups that we _are_ interested in (e.g., "I want to know if Y is different between A vs B")
+- This contrasts with groups that we _are_ interested in (e.g., "I want to know if Y is different between group A vs group B")
 
 :::
 
 ::: {.callout-caution collapse="true"}
-#### Rabbit Hole: Why "univariate"and "multivariate"?
+#### Rabbit Hole: "univariate" vs "multivariate"
 
 In "univariate" statistics there is just one source of variation we are looking at explaining, which is that "observations vary". In psychology, one unit of observation is typically "people", and we are interested in explaining the variation that occurs because people are different from one another.  
 
-In "multivariate" statistics, there are more sources of variation. For the "children in schools" example: individual children are different from another, and schools are also different from one another. In an experiment where we repeated test each participant, then we have variation within each person (i.e., I score high the first time, less high the second, high the third, etc), and then variation between people (i.e., Elizabeth scores on average a lot higher than me). 
+In "multivariate" statistics, there are more sources of variation. For the "children in schools" example: individual children are different from another, and schools are also different from one another. In an experiment where we repeated test each participant, then we have variation within each person (i.e., I score high the first time, less high the second, high the third, etc), and then variation between people (i.e., Elizabeth's scores are on average a lot higher than mine). 
 
 We also have multiple sources of variation from questionnaire scales (e.g. 9 survey questions about anxiety), because both there is variation in scores due to both a) people varying from one another and b) the 9 questions tending to elicit different responses from one another. 
 
@@ -775,10 +789,9 @@ We also have multiple sources of variation from questionnaire scales (e.g. 9 sur
 :::frame
 __moodphysed.csv Data__  
 
-This dataset contains information on 240 children from 20 different primary schools across Scotland. The data was collected as part of a week long study looking at whether the amount of outdoor time per week is associated with psychological wellbeing.  
-
+This dataset contains information on 240 children from 20 different primary schools across Scotland. 
+The data was collected as part of a week long study looking at whether the amount of outdoor time per week is associated with psychological wellbeing. 
 All children had physical education (PE) classes every day, and children were allocated to have either 0, 1, 2, 3, 4, or all 5 of those classes outdoors. 
-
 At the end of the week, all children completed a measure of positive mood (PANAS-C).      
 
 The data are available at [https://uoepsy.github.io/data/moodphysed.csv](https://uoepsy.github.io/data/moodphysed.csv).  
@@ -799,8 +812,10 @@ tibble(variable=names(schoolmood),
 
 :::
 
-In terms of the dataframes we are going to be working with, our groupings are simply included in another column that contains a unique identifier for each group:^[Note, there's a set analytical methods called "cluster analysis", which attempts to identify clusters that **haven't** been measured/observed (or may not even 'exist' in any real sense of the word).]  
-Data shaped in this way is referred to as being in **long format** - we have one row for every individual lowest observation. In this example each individual observation is a different child, and they belong to different groups (the different schools). In long format, our data has one row per child, and a variable to identify which school they go to.  
+In terms of the dataframes we are going to be working with, our groupings are simply included in another column that contains a unique identifier for each group.^[Note, there's a set analytical methods called "cluster analysis", which attempts to identify clusters that **haven't** been measured/observed (or may not even 'exist' in any real sense of the word).]
+Data shaped in this way is referred to as being in **long format** - we have one row for every individual lowest observation. 
+In this example each individual observation is a different child, and they belong to different groups (the different schools). 
+In long format, our data has one row per child, and a variable to identify which school they go to.  
 
 ```{r}
 #| echo: false
@@ -809,7 +824,7 @@ schoolmot |> slice(1,505:507,400,2) |>
                                          as.character(schoolid))) |> as.data.frame()
 ```
 
-We can, if we want, store this same information in a **wide format**, but more often than not it is preferable (for plotting, summarising, and modelling) to have it in long format. 
+We could, if we wanted, store this same information in a **wide format**, but more often than not it is preferable (for plotting, summarising, and modelling) to have it in long format. 
 
 ::: {.callout-note collapse="true"}
 #### Refresher: Long and Wide Data
@@ -878,20 +893,22 @@ The animation takes a shortcut in the code it displays above, but you could also
 
 ## Determining Sample Sizes
 
-When working with hierarchical data structures, one thing we are going to want to know is our sample size. Only we now have a few more questions to keep on top of. We need to know the different sample sizes at different _levels._  
+When working with hierarchical data structures, one thing we are going to want to know is our sample size. 
+However, we now have a few more questions to keep on top of: we want to know the different sample sizes at the different _levels._
 In the description of the __moodphysed.csv__ data above we are told the relevant numbers:  
 
 ```{r}
 #| echo: false
 tribble(
   ~` `,~`Unit`,~`Sample Size`,
-  "Level 2 (Groups)","School",30,
-  "Level 1 (Individual observations)","Children",900,
+  "Level 2 (Groups)","School",20,
+  "Level 1 (Individual observations)","Children",240,
 ) |> gt::gt()
 ```
 
 We can check this in our data: 
 ```{r}
+#TODO
 schoolmood <- read_csv("../../data/moodphysed.csv")
 
 # how many children? (how many rows in the data?)
@@ -900,10 +917,28 @@ nrow(schoolmood)
 n_distinct(schoolmood$schoolid)
 ```
 
-Another important thing to examine when you first get hierarchical data is the number of observations that belong to each group - i.e., do we have 100 children from `r unique(schoolmood$schoolid)[5]` and only 10 from `r unique(schoolmood$schoolid)[10]`, or do we have the same number in each?  
+Another useful thing to examine when you first get hierarchical data is the numbers of observations that belong to each group - i.e., do we have 100 children from `r unique(schoolmood$schoolid)[5]` and only 10 from `r unique(schoolmood$schoolid)[10]`, or do we have the same number in each?  
 
-We can easily count how many children are in each school by counting the number of rows for each distinct value in the school identifier column. We could then pass this to the `summary()` function to see the minimum, median, mean, maximum etc. As we can see below, in this dataset every school has data from exactly 30 children (min is the same as max):  
-
+We can easily find out how many children are in each school by counting the number of rows for each different value in the school identifier column:    
+```{r}
+#| eval: false
+schoolmood |>
+  count(schoolid)
+```
+```
+# A tibble: 20 × 2
+   schoolid                        n
+   <chr>                       <int>
+ 1 Bankhead Primary School        12
+ 2 Channelkirk Primary School     12
+ 3 Chirnsyde Primary School       12
+ 4 Creetown School                12
+ 5 Dalry Primary School           12
+ . ...                            ..
+ . ...                            ..
+```
+With lots of groups, we could then pass this to the `summary()` function to see the minimum, median, mean, maximum etc. 
+As we can see below, in this dataset every school has data from exactly 12 children (min is the same as max):  
 ```{r}
 schoolmood |>
   count(schoolid) |>
@@ -958,7 +993,7 @@ ggplot(schoolmood, aes(x=schoolid, y=mood))+
 ```
 
 
-There are various packages that allow us to calculate the ICC, and when we get to fitting multilevel models we will see how we can extract it from a fitted model.  
+There are various packages that allow us to calculate the ICC, and when we get to fitting mixed effects models we will see how we can extract it from a fitted model.  
 
 In the data on children's moods (visualised above), it's estimated that `r round(suppressWarnings(ICC::ICCbare(schoolid, mood, data = schoolmood)),2)*100`% of the variance in mood scores is due to school-related differences:  
 ```{r}
@@ -970,7 +1005,7 @@ ICCbare(x = schoolid, y = mood, data = schoolmood)
 ::: {.callout-caution collapse="true"}
 ### Rabbit Hole: calculating ICC manually  
 
-We have equal group sizes here (there are 30 schools, each with 30 observations), which makes calculating ICC by hand a lot easier, but it's still a bit tricky.  
+We have equal group sizes here (there are 20 schools, each with 12 observations), which makes calculating ICC by hand a lot easier, but it's still a bit tricky.  
 
 Let's take a look at the formula for ICC: 
 
@@ -1030,20 +1065,20 @@ sswithin = sum(schoolmood$within)
 ```
 
 Finally, we divide them by the degrees of freedom. 
-Our degrees of freedom for our between group variance $30 \text{ groups} - 1 \text{ grand mean}=29$  
-Our degrees of freedom for our within group variance is $900 \text{ observations} - 30 \text{ groups}=870$
+Our degrees of freedom for our between group variance $20 \text{ groups} - 1 \text{ grand mean}=19$  
+Our degrees of freedom for our within group variance is $240 \text{ observations} - 20 \text{ groups}=220$
 ```{r}
 # Mean Squares between
-msb = ssbetween / (30-1)
+msb = ssbetween / (20-1)
 # Mean Squares within 
-mse = sswithin / (900-30)
+mse = sswithin / (240-20)
 ```
 
 And calculate the ICC!!!  
-The 29 here is the $k-1$ in the formula above, where $k$ is the number of observations within each group.  
+The 11 here is the $k-1$ in the formula above, where $k$ is the number of observations within each group.  
 ```{r}
 # ICC
-(msb-mse) /(msb + (29*mse))
+(msb-mse) /(msb + (11*mse))
 ```
 
 :::
@@ -1175,18 +1210,17 @@ __Why ICC?__
 
 The ICC tells us the proportion of the total variability in an outcome variable that is attributable to the differences between groups/clusters. It ranges from 0 to 1.  
 
-If the ICC is high, it suggests that a large amount of the variability in the outcome is groups varying from one another (justifying the use of multilevel modeling to account for this structure).  
+If the ICC is high, it suggests that a large amount of the variability in the outcome is groups varying from one another (evidencing the importance of our modelling strategy needing to account for this structure somehow).  
 
 __There are no cut-offs__ - the interpretation of ICC values is inherently field-specific, as what constitutes a high or low ICC depends on the nature of the outcome variable, and the hierarchical structure within a particular research context.  
 
-Ultimately, if we believe that groups _could_ vary then we should probably try to model it!  
+Ultimately, if we believe that the groups are an important part of the data generating process (i.e., "what has leads to variability in the outcome"), then we should probably try to model them accordingly!  
 
 :::
 
-
 ## Visualisations
 
-When we're visualising data that has a hierarchical structure such as this (i.e. observations grouped into clusters), we need to be careful to think about what exactly we want to show. 
+When we're visualising data that has a hierarchical structure such as this (i.e. observations in groups), we need to be careful to think about what exactly we want to show. 
 For instance, as we are interested in how the amount of outdoor PE (vs indoor) is associated with end-of-week mood, we might make a little plot of the two variables, but this could hide the association that happens _within_ a given school (see e.g. @fig-egschool from earlier).  
 
 Some useful __ggplot__ tools here are:  
@@ -1218,7 +1252,9 @@ ggplot(schoolmood, aes(x = outdoordays, y = mood, group = schoolid))+
 
 # Information, pooled
 
-With our current toolset (linear regression), there are two avenues for us with respect to how we analyse grouped/clustered data. We can either ignore the groupings completely (and violate our assumptions), we can add the group-level differences in as another predictor. These reflect different ways in which we can "pool" information from across the different groups.  
+With our current toolset (linear regression), there are two avenues for us with respect to how we analyse grouped/clustered data. 
+We can either ignore the groupings completely (and violate our assumptions), or we can add the group-level differences in as another predictor. 
+These reflect different ways in which we can "pool" information from across the different groups.  
 
 :::sticky
 __Complete Pooling__  
@@ -1238,7 +1274,7 @@ __No Pooling__
 
 Information from each group contributes **only** to an estimate for that specific group.  
 
-To do this, we can add in the grouping variable as a predictor to our linear model. In doing so, we estimate a whole bunch of differences between each group.  
+To do this, we can add in the grouping variable as a predictor to our linear model. In doing so, we estimate a whole bunch of differences between the groups.  
 
 We can consider two possible models here, one with and one without an interaction with the grouping: 
 ```{r}
@@ -1251,16 +1287,23 @@ lm(mood ~ schoolid * outdoordays, data = schoolmood)
 
 
 The first model (additive) simply estimates the `mood ~ outdoordays` association after removing any school-specific differences.  
-The second model (interaction) allows the `mood ~ outdoordays` slope to be different for each school (also estimating all the differences in between schools in these slopes).  
+The second model (interaction) allows the `mood ~ outdoordays` slope to be different for each school (also estimating all the differences between schools in these slopes).  
 
-Key to this approach is that we are estimating a whole bunch of coefficients that represent differences between specific schools (e.g., "School A is higher than School B"). Typically these aren't really coefficients we are interested in. In addition, we are treating the schools as if they are completely _independent_ entities, rather than just a sample of a bigger population of schools. So this approach provides us with estimates that we can generalise to the specific collection of schools that we observed, but not to 'schools in general'.  
+Key to this approach is that we are estimating a whole bunch of coefficients that represent differences between specific schools (e.g., "School A is higher than School B"). 
+Typically these aren't really coefficients we are interested in. 
+In addition, we are treating the schools as if they are completely _independent_ entities, rather than just a sample of a bigger population of schools. 
+So this approach provides us with estimates that we can generalise to the specific collection of schools that we observed, but not to 'schools in general'.  
 
 :::
 
 
-Compared to the simply ignoring the groupings ('complete pooling'), including the grouping as a predictor is clearly a step in the right direction. Our assumptions are no longer violated, and we will likely be doing a better job of explaining variability in the outcome.   
+Compared to simply ignoring the groupings ('complete pooling'), including the grouping variable as a predictor is clearly a step in the right direction. Our assumptions are no longer violated, and we will likely be doing a better job of explaining variability in the outcome.   
 
-A place where this approach can run in to issues is if we are interested in also estimating effects of predictors that vary **between** the groups. For example, what if we wanted to know if children's positive mood differed between schools in urban locations vs rural schools? The variable of `location` (urban v rural) varies **between** schools (i.e. School A = urban, School B = rural, etc.). When we include the `schoolid` variable as a predictor in our model, the differences between schools are completely explained by the set of coefficients for the `schoolid` predictor (coefficients tell us that the mood in School B is XX higher than in School A, School C is YY higher than School A, and so on). This means that there is no variation nothing left for the `location` predictor to explain, and so this effect cannot be estimated.^[another way to think of this is that we could figure out the the estimated `mood ~ location` difference exactly from the set of `mood ~ schoolid` coefficients.]  
+A place where this approach can run in to issues is if we are interested in also estimating effects of predictors that vary **between** the groups. 
+For example, what if we wanted to know if children's positive mood differed between schools in urban locations vs rural schools? 
+The variable of `location` (urban v rural) varies **between** schools (i.e. School A = urban, School B = rural, etc.). 
+When we include the `schoolid` variable as a predictor in our model, the differences between schools are completely explained by the set of coefficients for the `schoolid` predictor (coefficients tell us that the mood in School B is XX higher than in School A, School C is XXX higher than School A, and so on). 
+This means that there is no variation nothing left for the `location` predictor to explain, and so this effect cannot be estimated.^[another way to think of this is that we could figure out the the estimated `mood ~ location` difference exactly from the set of `mood ~ schoolid` coefficients.]  
 If we try to estimate it, it comes out as `NA`, because it doesn't explain anything additional to what the `schoolid` variable explains:  
 
 ```{r}
@@ -1287,10 +1330,15 @@ locationUrban                             NA         NA      NA       NA
 ---
 ```
 
-A slightly more abstract issue with the "no pooling" approach is that because of how it treats schools as completely independent groups. This is something we might disagree with. Suppose we had another school - School X - for which we had only _three_ children's data, as opposed to the 30 from each of the other schools (@fig-borrowstrength). Intuitively, we don't want to trust the line for School X as much as we trust the lines from the other schools. In the no-pooling approach, it is only those three children from School X that contribute to the School X line.  Take this further, and imagine we have only one child's data from some School Y. Treating schools completely separately means that the model doesn't care about _anything_ from the other schools and cannot estimate a line for School Y.
+A slightly more abstract issue with the "no pooling" approach is that because of how it treats schools as completely independent groups. 
+This is something we might disagree with. 
+Suppose we had another school - School X - for which we had only _three_ children's data, as opposed to the 12 from each of the other schools (@fig-borrowstrength). 
+Intuitively, we don't want to trust the line for School X as much as we trust the lines from the other schools. 
+In the no-pooling approach, it is only those three children from School X that contribute to the School X line.  
 
-What would be great is if we could _somehow_ use the information from the other schools to inform our estimation of what is going on in Schools X and Y, and also enable us to consider questions that exist across different levels (e.g., how do features of schools affect things for the children in them?). This is what multilevel modelling achieves, _partially_ pooling information across the groups, and this is where we'll turn to next.  
-It does so by treating the groups (here schools) as if they are a random sample from a bigger population of schools, meaning that we can make guesses for schools X and Y that are based on what happens in an "average school".  
+Take this further, and imagine we have only one child's data from some School Y. 
+Treating schools completely separately means that the model doesn't consider _anything_ about the other schools and cannot estimate a line for School Y.
+
 
 ```{r}
 #| echo: false
@@ -1305,7 +1353,7 @@ bind_rows(
     mood = round(90-16*outdoordays + rnorm(3,0,5))
   )
 ) |> bind_rows(x=_, 
-               tibble(schoolid="Hypothetical School Y",outdoordays = 3, mood = 40)
+               tibble(schoolid="Hypothetical School Y",outdoordays = 3, mood = 60)
                ) -> tdf 
 
 txt = tibble(
@@ -1324,6 +1372,11 @@ tdf |>
   ylim(0,100)
  
 ```
+
+
+What would be great is if we could somehow use the information from the other schools to inform our estimation of what is going on in Schools X and Y, and also enable us to consider questions that exist across different levels (e.g., how do features of schools affect things for the children in them?). 
+This is what "mixed effects"/"multilevel" modelling achieves, _partially_ pooling information across the groups, and this is where we'll turn to in the next reading.  
+It does so by treating the groups (here schools) as if they are a random sample from a bigger population of schools, meaning that we can make guesses for schools X and Y that are based on what happens in an "average school".  
 
 
 
