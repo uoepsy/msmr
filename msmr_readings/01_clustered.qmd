@@ -31,13 +31,13 @@ This reading:
 
 # Our Starting Point
 
-We're going to start this course with our good old friend the linear regression model. The content we're going to cover in this block can be seen as an extension of these methods, so keep in mind that the materials from previous courses you have taken will likely be very a useful resource. 
+We're going to start this course with our good old friend the linear regression model. The content we're going to cover in this block can be seen as an extension of these methods, so keep in mind that the materials from any previous course covering linear regression you have taken will likely be very a useful resource. 
 
 
 :::sticky
 __Linear Regression__
 
-The linear regression model is a way of expressing an outcome (or "dependent") variable $y$ as the linear combination of various predictors $x_1,\ ...\ ,\ x_p$ (or "independent variables").   
+The linear regression model is a way of expressing an outcome (or "dependent") variable $y$ as a function^[specifically, as a linear combinationTODO] of various predictors $x_1,\ ...\ ,\ x_p$ (or "independent variables").   
 
 We can write the linear regression model as:  
 $$
@@ -81,16 +81,16 @@ $$
 :::
 
 
-When we fit linear regression models, we are fitting a line (or a regression surface, when we add in more predictors), to a cloud of datapoints. The discrepancy between the fitted model and the observed data is taken up by the residuals. 
+When we fit linear regression models, we are fitting a line (or, when we add in more predictors, a 'plane' or 'surface'), to a cloud of datapoints. The discrepancy between the fitted model and the observed data is taken up by the residuals. 
 
 $$
 \begin{align}
-\color{red}{y} &= \color{blue}{b_0 + b_1x_1 \ + \ ... \ + \ b_px_p}\, \color{black}{+ \varepsilon}\\ 
+\color{red}{y} &= \color{blue}{b_0 + b_1x_1 \ + \ ... \ + \ b_px_p}\, &\color{black}{+ \varepsilon}\\ 
 \color{red}{\text{observed }y} &= \color{blue}{\text{fitted }\hat y} \,\, \color{black}{+ \text{ residual }\hat \varepsilon}\\ 
 \end{align}
 $$
 
-We are theorising that our model contains all the systematic relationships with our outcome variable, we assume that the residuals (the leftovers) are essentially random error. This is the $\varepsilon \sim N(0, \sigma)$ bit, which is a way of specifying this assumption formally, by stating that the errors are normally distributed with a mean of zero, and the variance doesn't change across the model (see @fig-slr2).   
+We are theorising that our model contains all the systematic relationships with our outcome variable, we assume that the residuals (the leftovers) are essentially *random* error. This is the $\varepsilon \sim N(0, \sigma)$ bit, which is a way of specifying this assumption formally, by stating that the errors are normally distributed with a mean of zero, and the variance doesn't change across the model (see @fig-slr2).   
 
 ```{r}
 #| label: fig-slr2
@@ -129,12 +129,11 @@ ggplot(aes(x = x, y = y)) +
 ```
 
 The assumptions of the linear model underpins our ability to generalise from our specific sample to make statements about the broader population. 
-So before we use our model to draw conclusions, we typically want to check our model residuals (by plotting or performing statistical tests) to determine if we have reason to believe our assumptions are violated. 
+So before we use our model to draw conclusions, we typically want to check our model residuals (by plotting or performing statistical tests) to determine if we have reason to feel comfortable in making such assumptions. 
 The easiest way to do this in R is with `plot(model)`, which provides us with a series of visuals to examine for unusual patterns and conspicuous observations. 
 
-
-In the event that our model assumptions appear problematic, then our inferential tools go out the window. 
-Although the specific point estimates for our regression coefficients are our best linear estimates for the sample that we have, our standard errors rely on the distributional assumptions of the residuals^[Why is this? It's because the formula to calculate the standard error involves $\sigma^2$ - the variance of the residuals. If this standard deviation is not accurate (because the residuals are non-normally distributed, or because it changes across the fitted model), then this in turn affects the accuracy of the standard error of the coefficient]. It is our standard errors that allow us to construct test statistics and compute p-values (@fig-inf1) and construct confidence intervals. 
+If our assumptions are not valid, then our inferential tools go out the window. 
+Although the specific point estimates for our regression coefficients will still be our best linear unbiased estimates for the sample that we have, their standard errors rely on the assumptions about the distribution of the residuals^[Why is this? It's because the formula to calculate the standard error involves $\sigma^2$ - the variance of the residuals. If this standard deviation is not accurate (because the residuals are non-normally distributed, or because it changes across the fitted model), then this in turn affects the accuracy of the standard error of the coefficient]. It is the standard errors that allow us to construct test statistics and compute p-values (@fig-inf1) and construct confidence intervals, to ultimately generalise beyond our specific sample.  
 
 
 ::: {.callout-note collapse="true"}
@@ -334,12 +333,12 @@ knitr::include_graphics("images_lmm/sum4.png")
 
 :::
 
-In the face of plots (or tests) that appear to show violations of the distributional assumptions (i.e. our residuals appear non-normal, or their variance changes across the range of the fitted model), we should always take care to ensure our model is correctly specified (interactions or other non-linear effects, if present in the data but omitted from our model, can result in assumption violations, as can omitted variables). Following this, if we continue to have problems satisfying our assumptions, there are various options that give us more flexibility in what assumptions we have to make. If you're interested, you can read brief explanations about some of these methods [here](00_lm_assumpt.html){target="_blank"}.  
+In the face of plots (or tests) that appear to show violations of the distributional assumptions (i.e. our residuals appear non-normal, or their variance changes across the range of the fitted model), we should always take care to ensure our model is correctly specified (interactions or other non-linear effects, if present in the data but omitted from our model, can result in assumption violations, as can omitted variables). Following this, if we continue to have problems satisfying our assumptions, there are various options that give us more flexibility in what assumptions we have to make (if you're interested, you can read brief explanations about some of these methods [here](00_lm_assumpt.html){target="_blank"}).  
 
-However, there is one assumption that we are unable to identify through examining diagnostic plots for patterns, and that is the assumption of __"independence"__. 
+However, one assumption that we are unable to identify through examining diagnostic plots for patterns, and that is the assumption of __"independence"__. 
 Very broadly, if our residuals are not independent from one another, this means that there are systematic differences in our outcome variable that our model is not capturing.  
-Note that in our model equation this assumption is not formalised as a distributional property, it is simply the "independently" in "$\varepsilon \sim N(0, \sigma) \text{ independently}$".  
-This is not something that is easily 'corrected'^[With the exception of Generalized Least Squares (an extension of Weighted Least Squares), for which we _can_ actually specify a correlational structure of the residuals. As this course focuses on multilevel models, we will not cover GLS here. However, it can often be a useful method if our the nature of the dependency in our residuals is simply a nuisance thing (i.e. not something that has any properties which are of interest to us).] - it is something that we want to incorporate into our model structure.  
+Note that in our model equation this assumption is not formalised as a distributional property, it is simply the "independently" in "$\varepsilon \sim N(0, \sigma) \text{ independently}$". 
+This is not something that is easily 'corrected'^[With the exception of Generalized Least Squares (an extension of Weighted Least Squares), for which we _can_ actually specify a correlational structure of the residuals. As this course focuses on multilevel models, we will not cover GLS here. However, it can often be a useful method if our the nature of the dependency in our residuals is simply a nuisance thing (i.e. not something that has any properties which are of interest to us).] --- it is something that we want to incorporate into our model structure.  
 
 :::sticky
 __Independence of errors__  
@@ -443,7 +442,7 @@ schoolmood <- read_csv("../../data/moodphysed.csv") |>
 
 A common way to start thinking about group-structured data is to consider how we might go about conducting a study on school children. Suppose each observation in our sample is a different child, and they come from a set of various schools (i.e. we might get 10 children from "`r levels(schoolmood$schoolid)[10]`", 15 from "`r levels(schoolmood$schoolid)[11]`", and so on). And let's suppose we are interested in the association between the amount of time children spend outside and their general mood/positive affect.
 
-If we ignore the fact that children belong to their respective schools, we can end up reaching completely different conclusions. This can be seen in @fig-egschool. In these plots, each datapoint is a single child. If we consider them to be independent of one another (Left-Hand plot), then we might think there is a strong positive relationship between mood and time in the outdoors. Once we show (via colour) which school they belong to, we can see that the observations in the top right of the plots are all high for some other reason - because they come from the green school.  
+If we ignore the fact that children belong to different schools, we can end up reaching completely different conclusions. This can be seen in @fig-egschool. In these plots, each datapoint is a single child. If we consider all the children to be independent of one another (Left-Hand plot), then we might think there is a strong positive relationship between mood and time in the outdoors. Once we show (via colour in the Right-Hand plot) which school they belong to, we can see that the observations with higher positive mood could be high for some reason other than outdoor-time - they could be high simply because they come from the green school.  
 
 ```{r}
 #| label: fig-egschool
@@ -518,7 +517,7 @@ p4 = df |> mutate(f=fitted(lm(y~x,df))) |>
 The issue here is that the schools have (on average) different levels of outdoor-time, meaning that when we look for differences in mood at different levels of outdoor-time, we might actually just be seeing school differences in moods. Ignoring the `school` variable can completely change our estimate of interest.  
 
 Even in situations where we don't have this sort of issue, having groupings in our data can still cause issues with our inferences --- our standard errors, $t$ and $F$ statistics, $p$-values etc., will all be wrong. 
-For example, instead of having an observed variable like "hours per week of outdoor time" as our predictor, lets suppose we were interested in the effect of holding physical education (PE) classes outdoors as opposed to having them indoors. Let's conceptualise this as a little randomised trial in which 30 children from 5 schools (6 from each), were either given 'outdoor' or 'indoor' PE classes, with mood being recorded at the end of the school year. This is plotted in @fig-egschoolhw
+For example, instead of having an observed variable like "hours per week of outdoor time" as our predictor, lets suppose we were interested in the effect of holding physical education (PE) classes outdoors as opposed to having them indoors. Let's conceptualise this as a little randomised trial in which 30 children from 5 schools (6 from each), were either given 'outdoor' or 'indoor' PE classes, with mood being recorded at the end of the school year. These data are plotted in @fig-egschoolhw. 
 Although our simple linear model of `lm(mood ~ PEtype)` will correctly get at the estimate the difference in the average mood between the two groups ("outdoor" vs "indoor"), all the associated standard errors will be overly confident.  
 
 ```{r}
@@ -571,7 +570,7 @@ p1
 
 
 
-The reason behind this is that our inferences rely on estimating how much the residuals vary (this goes into calculating standard errors). Using `lm(mood ~ PEtype)`, we are treating all the children as completely independent of one another. When we recognise the fact that children are grouped into schools, we can see that our linear model assumption of $\varepsilon \sim N(0,\sigma)$  $\text{ independently}$ is violated, because the residuals *are* related to one another. We can see this in @fig-egschoolhw: children from the green school are all higher than predicted (positive residuals) because they are from the green school (which has higher levels of mood on average), and children from the pink school tend to be lower than predicted (negative residuals).  
+The reason that our inferences would be wrong is that they rely on estimating how much the residuals vary (this goes into calculating standard errors). Using `lm(mood ~ PEtype)`, we are treating all the children as completely independent of one another. When we recognise the fact that children are grouped into schools, we can see that our linear model assumption of $\varepsilon \sim N(0,\sigma)$  $\text{ independently}$ is violated, because the residuals *are* related to one another. We can actually see this in @fig-egschoolhw: children from the green school are all higher than predicted (positive residuals) because they are from the green school (which has higher levels of mood on average), and children from the pink school tend to be lower than predicted (negative residuals).  
 
 
 
@@ -625,7 +624,7 @@ p1 / p2
 ```
 
 
-If we assume these children are all independent, because of how the mean squared error is calculated, our old friend `lm()` would estimate the residual variability to be smaller than it really is.^[with 30 observations and 1 predictor, this would be 30-1-1 = 28 on the bottom part of the equation for mean squared error, meaning we are dividing by a bigger number than, say, 5-1-1 = 3 if we thought we had only 5 independent groups of residuals (the schools)] This means that on average our standard errors will be too narrow, any confidence intervals too narrow, our F statistics will be too large, and our p-values too small. In essence - our inferences will all be wrong!!  
+If we assume these children are all independent, because of how the mean squared error is calculated, our old friend `lm()` would estimate the residual variability to be smaller than it really is.^[with 30 observations and 1 predictor, this would be 30-1-1 = 28 on the bottom part of the equation for mean squared error, meaning we are dividing by a bigger number than, say, 5-1-1 = 3 if we thought we had only 5 independent groups (the schools)] This means that on average our standard errors will be too narrow, any confidence intervals too narrow, our F statistics will be too large, and our p-values too small. In essence - our inferences will all be wrong!!  
 
 The mean squared error (MSE) goes into our $F$-statistics as they are the ratio of the mean squares associated with the model and the mean squared error 
 $$
@@ -675,6 +674,19 @@ Specifically, we need to make a distinction between groups in the data for which
 
 - **A.** we are interested in the specific groups that we observe. We consider the differences in the outcome between groups to be reproducible properties of the world that we would like to estimate.  
 - **B.** we are not interested in the specific groups that we observe. We consider the groups to be a sample from a broader population of groups. Differences between observed groups can be viewed as variability due to random sampling.  
+
+One heuristic which may help here is to consider "what if this study were conducted again - would I need to see the same groups?".  
+
+| | **reproducible** | **random** |
+| --- | ---- | ------ |
+| **in a replication of this study...** | the same groups are used | different groups could be used (even if we still label them "1", "2", "3", etc.) |
+| **our conclusions generalise to...** | the specific groups used | the bigger population of groups | 
+
+TODO
+
+
+
+In psychology, things like the people and experimental stimuli used in our study are often viewed as random samples from the larger population. Things like 
 
 To make this clearer, consider two contexts below:    
 
