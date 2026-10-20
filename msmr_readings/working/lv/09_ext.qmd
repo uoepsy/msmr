@@ -1,0 +1,108 @@
+---
+title: "9: Further SEM"
+params: 
+    SHOW_SOLS: FALSE
+    TOGGLE: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+source('assets/setup.R')
+library(xaringanExtra)
+library(tidyverse)
+library(patchwork)
+library(ggdist)
+xaringanExtra::use_panelset()
+qcounter <- function(){
+  if(!exists("qcounter_i")){
+    qcounter_i <<- 1
+  }else{
+    qcounter_i <<- qcounter_i + 1
+  }
+  qcounter_i
+}
+library(lme4)
+```
+
+:::lo
+This reading:
+
+- more uses of SEM!   
+
+:::
+
+# Introduction 
+
+There is a ~50 year history of structural equation modelling in behavioural and social sciences, with its component parts having originated over 100 years ago (factor analysis from Charles Spearman in 1904, and path analysis from Sewall Wright in 1918). 
+
+One key benefit of SEM is that it can force us as researchers to face the theoretical assumptions that underpin our analysis. This may be, for instance, having to explicitly define how our observed measurements relate to the underlying concepts we believe they represent. Similarly, representing our models as diagrams forces transparency of our theorised relationships, the variables we have chosen to include, and, perhaps more importantly, those we have omitted.
+
+Despite this, there has been a tendency to view certain structures as a bit like a set of 'plug-and-play' models that can be applied to data without us having to think too deeply of the underlying theory. If there is one bit of advice for any work you do in statistics, it would be to _always think carefully and deliberately_ and to always ask _"how might i be misleading myself here?"_  
+
+Below are various examples of some of the more common structures of models that you will see in the literature, that they may serve as examples of "what can be done" in the SEM framework. 
+
+```{r}
+df <- tibble(
+  id = 1:100,
+  pos = rnorm(100),
+  ex = rnorm(100,.5*pos),
+  mood = rnorm(100,.3*pos),
+  ex2 = rnorm(100,ex+mood),
+  mood2 = rnorm(100,ex+mood),
+  ex3 = rnorm(100,ex2+mood2),
+  mood3 = rnorm(100,ex2+mood2),
+  ex4 = rnorm(100,ex3+mood3),
+  mood4 = rnorm(100,ex3+mood3)
+)
+
+mod <- "
+
+
+"
+
+
+
+
+```
+
+
+
+
+    - measurement invariance
+    - other types of indicators (CCC)
+    - mnlfa
+    - multi-trait multi-method models
+    - multi-group analysis
+    - multi-level SEM
+    - cross-lagged panel models
+      - RI-CLPM
+    - latent class mixture models
+    - growth curves
+        - random effects as latent variables?
+        
+
+```{r}
+df <- junk::sim_basicrs() |> filter(x<=5) |> mutate(x=x-1)
+library(lme4)
+m1 <- lmer(y ~ 1 + x + (1 + x | g), df, REML=FALSE)
+
+dfw <- 
+  df |> select(x,g,y) |>
+  pivot_wider(names_from=x,values_from=y,names_prefix = "t")
+
+mod <- "
+int =~ 1*t0 + 1*t1 + 1*t2 + 1*t3 + 1*t4
+slope =~ 0*t0 + 1*t1 + 2*t2 + 3*t3 + 4*t4
+"
+library(lavaan)
+m2 <- growth(mod, data = dfw)
+
+summary(m2)
+fixef(m1)
+VarCorr(m1)
+```
+
+

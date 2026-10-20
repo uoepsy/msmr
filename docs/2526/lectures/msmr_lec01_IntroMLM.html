@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Week 1: Introduction to Multilevel Modeling</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Dan Mirman" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <script src="libs/clipboard/clipboard.min.js"></script>
+    <link href="libs/shareon/shareon.min.css" rel="stylesheet" />
+    <script src="libs/shareon/shareon.min.js"></script>
+    <link href="libs/xaringanExtra-shareagain/shareagain.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-shareagain/shareagain.js"></script>
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/animate.css/animate.xaringan.css" rel="stylesheet" />
+    <link href="libs/tachyons/tachyons.min.css" rel="stylesheet" />
+    <link href="libs/xaringanExtra-extra-styles/xaringanExtra-extra-styles.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# <b>Week 1: Introduction to Multilevel Modeling</b>
+]
+.subtitle[
+## Multivariate Statistics and Methodology using R (MSMR)<br><br>
+]
+.author[
+### Dan Mirman
+]
+.institute[
+### Department of Psychology<br>The University of Edinburgh
+]
+
+---
+
+
+
+
+
+# Today's Lecture: LM --&gt; LMER
+
+* Linear regression refresher
+* Extension to linear *mixed effects* regression (multilevel modeling)
+* "Nested" data, why use mixed effects / multilevel models
+* Your first MLM
+
+---
+# Statistical models
+
+.br3.pa2.f2[
+$$
+`\begin{align}
+\color{red}{\textrm{outcome}} &amp; = \color{blue}{(\textrm{model})} + \textrm{error} 
+\end{align}`
+$$
+]
+
+- handspan = height + randomness  
+
+- cognitive test score = age + premorbid IQ + ... + randomness
+
+---
+# The Linear Model
+
+.br3.pa2.f2[
+$$
+`\begin{align}
+\color{red}{\textrm{outcome}} &amp; = \color{blue}{(\textrm{model})} + \textrm{error} \\
+\color{red}{y_i} &amp; = \color{blue}{\beta_0 \cdot{} 1 + \beta_1 \cdot{} x_i} + \varepsilon_i \\
+\text{where } \\
+\varepsilon_i &amp; \sim N(0, \sigma) \text{ independently} \\
+\end{align}`
+$$
+]
+
+**OUTCOME** Y = linear combination of set of **PREDICTORS** X plus some error
+
+`\(\beta_{1}\)`: coefficient or weight of predictor `\(x\)`
+
+---
+# The Linear Model
+
+.pull-left[
+Our proposed model of the world:
+
+`\(\color{red}{y_i} = \color{blue}{\beta_0 \cdot{} 1 + \beta_1 \cdot{} x_i} + \varepsilon_i\)`  
+
+Our model _fitted_ to some data (note the `\(\widehat{\textrm{hats}}\)`):  
+
+`\(\hat{y}_i = \color{blue}{\hat \beta_0 \cdot{} 1 + \hat \beta_1 \cdot{} x_i}\)`  
+
+For the `\(i^{th}\)` observation:
+  - `\(\color{red}{y_i}\)` is the value we observe for `\(x_i\)`   
+  - `\(\hat{y}_i\)` is the value the model _predicts_ for `\(x_i\)`   
+  - `\(\color{red}{y_i} = \hat{y}_i + \hat\varepsilon_i\)` 
+]
+  
+.pull-right[
+![](msmr_lec01_IntroMLM_files/figure-html/bb-1.svg)&lt;!-- --&gt;
+]
+
+---
+# An Example
+
+
+.pull-left[
+
+`\(\color{red}{y_i} = \color{blue}{5 \cdot{} 1 + 2 \cdot{} x_i} + \hat\varepsilon_i\)`  
+  
+__e.g.__   
+for the observation `\(x_i = 1.2, \; y_i = 9.9\)`:  
+
+$$
+`\begin{align}
+\color{red}{9.9} &amp; = \color{blue}{5 \cdot{}} 1 + \color{blue}{2 \cdot{}} 1.2 + \hat\varepsilon_i \\
+&amp; = 7.4 + \hat\varepsilon_i \\
+&amp; = 7.4 + 2.5 \\
+\end{align}`
+$$
+]
+
+.pull-right[
+![](msmr_lec01_IntroMLM_files/figure-html/errplot-1.svg)&lt;!-- --&gt;
+]
+
+---
+# A "Real" Example
+
+### Effect of caffeine consumption on processing speed
+
+--
+
+.pull-left[
+![](msmr_lec01_IntroMLM_files/figure-html/caff_lm_plot-1.svg)&lt;!-- --&gt;
+]
+
+--
+
+.pull-right[
+&lt;table style="border-collapse:collapse; border:none;"&gt;
+&lt;tr&gt;
+&lt;th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; "&gt;&amp;nbsp;&lt;/th&gt;
+&lt;th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; "&gt;RT&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; "&gt;Predictors&lt;/td&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;Estimates&lt;/td&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;CI&lt;/td&gt;
+&lt;td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  "&gt;p&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;(Intercept)&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;551.55&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;546.79&amp;nbsp;&amp;ndash;&amp;nbsp;556.30&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;&amp;lt;0.001&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; "&gt;CaffeineTRUE&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&amp;#45;8.63&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&amp;#45;15.36&amp;nbsp;&amp;ndash;&amp;nbsp;-1.91&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  "&gt;&lt;strong&gt;0.013&lt;/strong&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;"&gt;Observations&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3"&gt;60&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;"&gt;R&lt;sup&gt;2&lt;/sup&gt; / R&lt;sup&gt;2&lt;/sup&gt; adjusted&lt;/td&gt;
+&lt;td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3"&gt;0.102 / 0.087&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;/table&gt;
+
+.footnote[These data are simulated, but are inspired by real data from the UK Biobank]
+
+]
+
+---
+# Assumptions
+
+.br3.pa2.f2[
+**L**inearity&lt;br&gt;
+**I**ndependence&lt;br&gt;
+**N**ormality&lt;br&gt;
+**E**qual variance&lt;br&gt;
+]
+
+---
+# Assumptions
+
+.br3.pa2.f2[
+**L**inearity&lt;br&gt;
+**Independence**&lt;br&gt;
+**N**ormality&lt;br&gt;
+**E**qual variance&lt;br&gt;
+]
+
+---
+# Clustering (aka Nested Data)
+.pull-left[
+- children within schools  
+
+- patients within clinics  
+
+- **observations within individuals**
+]
+
+.pull-right[
+![](figs/h2.png)&lt;!-- --&gt;
+]
+
+---
+# Clusters of Clustered Data
+
+.pull-left[
+- children within classrooms within schools within districts etc...  
+
+- patients within doctors within hospitals... 
+
+- time-periods within trials within individuals
+]
+
+.pull-right[
+![](figs/h3.png)&lt;!-- --&gt;
+]
+
+.footnote[
+Other relevant terms you will tend to see: "grouping structure", "levels", "hierarchies". 
+]
+
+---
+# Why do we care about nested/clustered data?
+
+.pull-left[
+- Observations within clusters are *__not independent__*: violating independence assumption
+
+- Observations within clusters tend to be more similar to each other than to those in other clusters
+    - Academic performance of children in the same classroom will tend to be more similar to one another (because of classrom-specific things such as the teacher) than to children in other classrooms.
+    - Participants with faster processing speed will tend to be faster than other participants both with and without caffeine
+]
+
+.pull-right[
+
+**Effect of caffeine consumption on processing speed**: Observations within individuals
+
+![](msmr_lec01_IntroMLM_files/figure-html/caff_mlm_plot-1.svg)&lt;!-- --&gt;
+
+]
+
+---
+# Quantifying Clustering
+
+"Observations within clusters tend to be more similar to each other than to those in other clusters"
+
+--
+
+**Intra-Class Correlation coefficient (ICC)**: ratio of *variance between groups* to *total variance* (There are different formulations of ICC, but they all share this core principle)
+
+&lt;br&gt;
+`\(\rho = \frac{\sigma^2_{b}}{\sigma^2_{b} + \sigma^2_e} \\ \qquad \\\textrm{Where:} \\ \sigma^2_{b} = \textrm{variance between clusters} \\ \sigma^2_e = \textrm{variance within clusters (residual variance)} \\\)`
+
+--
+
+- A **larger ICC** means that more variability between clusters and (relatively) lower variability within the clusters. That is, observations within a cluster are highly consistent (correlated), but observations from different clusters are highly variable.
+
+- A **smaller ICC** means less variability between clusters relative to variability within clusters, so observations within clusters are *not* particularly similar relative to observations from different clusters
+
+--
+
+Clustering is something **systematic** that our model should (arguably) take into account.
+
+---
+# Modeling clusters
+
+.pull-left[
+Our proposed model of the world (no clusters):
+
+`\(\color{red}{y_i} = \color{blue}{\beta_0 + \beta_1} \cdot{} x_i + \varepsilon_i\)`  
+
+__Fixed effects__: &lt;span style="color:blue"&gt; `\(\beta_{0}\)` &lt;/span&gt; (Intercept), &lt;span style="color:blue"&gt; `\(\beta_{1}\)` &lt;/span&gt; (Slope)
+
+* Fixed effects are the same (fixed) for all observations in the data set
+
+__Random effects__: `\(\varepsilon_i\)` (Residual error)
+
+* Random effects are different (drawn randomly from a distribution) for each observation
+]
+
+--
+
+.pull-right[
+Our proposed model of the world (participant clusters):
+
+`\(\color{red}{y_{ij}} = \color{blue}{\beta_0 + \beta_1} \cdot{} x_{ij} + \color{green}{\zeta_{0i} + \zeta_{1i}}  \cdot{} x_{ij} + \varepsilon_{ij}\)` 
+
+__Fixed effects__: &lt;span style="color:blue"&gt; `\(\beta_{0}\)` &lt;/span&gt; (Intercept), &lt;span style="color:blue"&gt; `\(\beta_{1}\)` &lt;/span&gt; (Slope)
+
+* Fixed effects are the same (fixed) for all observations in the data set
+
+__Random effects__
+
+* `\(\color{green}{\zeta_{0i}}\)`: participant `\(i\)`'s deviation from group mean **intercept**, drawn randomly from a distribution *for each participant*
+* `\(\color{green}{\zeta_{1i}}\)` participant `\(i\)`'s deviation from group mean **slope**, drawn randomly from a distribution *for each participant*
+* `\(\varepsilon_{ij}\)`: drawn randomly from a distribution *for each observation* `\((ij)\)`
+]
+
+---
+# Modeling clusters
+
+.pull-left[
+![](msmr_lec01_IntroMLM_files/figure-html/caff_mlm_plot2-1.svg)&lt;!-- --&gt;
+]
+
+.pull-right[
+Our proposed model of the world (participant clusters):
+
+`\(\color{red}{y_{ij}} = \color{blue}{\beta_0 + \beta_1} \cdot{} x_{ij} + \color{green}{\zeta_{0i} + \zeta_{1i}}  \cdot{} x_{ij} + \varepsilon_{ij}\)` 
+
+__Fixed effects__: &lt;span style="color:blue"&gt; `\(\beta_{0}\)` &lt;/span&gt; (Intercept), &lt;span style="color:blue"&gt; `\(\beta_{1}\)` &lt;/span&gt; (Slope)
+
+* Fixed effects are the same (fixed) for all observations in the data set
+
+__Random effects__
+
+* `\(\color{green}{\zeta_{0i}}\)`: participant `\(i\)`'s deviation from group mean **intercept**, drawn randomly from a distribution *for each participant*
+* `\(\color{green}{\zeta_{1i}}\)` participant `\(i\)`'s deviation from group mean **slope**, drawn randomly from a distribution *for each participant*
+* `\(\varepsilon_{ij}\)`: drawn randomly from a distribution *for each observation* `\((ij)\)`
+]
+
+---
+# Fixed vs. Random effects
+
+**Fixed effects**
+
+* Interesting in themselves
+* Reproducible fixed properties of the world (caffeine consumption, nouns vs. verbs, WM load, age, etc.)
+* &lt;span style="color:blue"&gt; *Unique, unconstrained parameter estimate for each condition* &lt;/span&gt;
+
+--
+
+**Random effects**
+
+* Randomly sampled observational units over which you intend to generalise (individual participants, particular nouns/verbs, etc.)
+* Can be used to quantify individual differences
+* &lt;span style="color:green"&gt; *Drawn from normal distribution with mean 0* &lt;/span&gt;
+
+---
+# Maximum Likelihood Estimation
+* Find an estimate of parameters that maximizes the likelihood of observing the actual data
+* Simple regression: OLS produces MLE parameters by solving an equation
+* Multilevel models: use iterative algorithm to gradually converge to MLE estimates
+
+--
+
+Goodness of fit measure: log likelihood (LL)
+
+* Not inherently meaningful (unlike `\(R^2\)`)
+* Change in LL indicates improvement of the fit of the model
+* Changes in `\(-2\Delta LL\)` (aka "Likelihood Ratio") are distributed as `\(\chi^2\)`
+* Requires models be nested (parameters added or removed)
+* DF = number of parameters added
+
+---
+# MLM: The core steps
+
+1. Load the pacakge: `library(lme4)`
+2. Fit the model(s): `lmer(formula, data, options)`
+3. Evaluate the model(s): compare models, examine parameter estimates, plot model fit(s), etc.
+4. Improve/adjust model(s), rinse, repeat
+
+---
+# Our first MLM
+
+### Effect of caffeine consumption on processing speed
+
+.pull-left[
+
+``` r
+head(caff_mlm)
+```
+
+```
+## # A tibble: 6 × 3
+##   Participant Condition     RT
+##         &lt;int&gt; &lt;chr&gt;      &lt;dbl&gt;
+## 1           1 Caffeine    533.
+## 2           1 NoCaffeine  551.
+## 3           2 Caffeine    532.
+## 4           2 NoCaffeine  521.
+## 5           3 Caffeine    558.
+## 6           3 NoCaffeine  577.
+```
+
+``` r
+library(lme4)
+mod_caff &lt;- lmer(RT ~ 1 + Condition +
+                   (1 | Participant), 
+                 data=caff_mlm, REML=FALSE)
+```
+]
+
+.pull-right[
+![](msmr_lec01_IntroMLM_files/figure-html/caff_mlm_plot3-1.svg)&lt;!-- --&gt;
+]
+
+---
+# Inspect the model
+
+.scroll-output[
+
+``` r
+summary(mod_caff)
+```
+
+```
+## Linear mixed model fit by maximum likelihood  ['lmerMod']
+## Formula: RT ~ 1 + Condition + (1 | Participant)
+##    Data: caff_mlm
+## 
+##      AIC      BIC   logLik deviance df.resid 
+##    532.4    540.8   -262.2    524.4       56 
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -2.4508 -0.5840  0.0385  0.4845  2.2538 
+## 
+## Random effects:
+##  Groups      Name        Variance Std.Dev.
+##  Participant (Intercept) 200      14.1    
+##  Residual                217      14.7    
+## Number of obs: 60, groups:  Participant, 30
+## 
+## Fixed effects:
+##                     Estimate Std. Error t value
+## (Intercept)           535.63       3.73  143.71
+## ConditionNoCaffeine    13.72       3.80    3.61
+## 
+## Correlation of Fixed Effects:
+##             (Intr)
+## CondtnNCffn -0.510
+```
+]
+
+---
+# Parameter p-values
+Oh no! `summary()` for models fit by `lme4::lmer` (`lmerMod` objects) does not include p-values.
+
+```
+##                     Estimate Std. Error t value
+## (Intercept)           535.63      3.727 143.711
+## ConditionNoCaffeine    13.72      3.804   3.607
+```
+
+--
+What *are* those p-values?
+
+--
+One-sample t-tests of whether `\(Est \neq 0\)` with `\(t = Est/SE\)`
+
+--
+
+The `df` for these t-tests are not simple to determine because random effects are not free parameters (estimated under constraints). 
+
+But `df` can be estimated, and the two most common estimations are "Kenward-Roger" and "Satterthwaite". These approximations are implemented in a few different packages (`afex`, `lmerTest`, `pbkrtest`).
+
+---
+# Parameter p-values
+
+One of the easiest to use is the `lmerTest` package: you can fit the model the same way (it just passes your call to `lmer`) and it will calculate the Satterthwaite approximation and add those `df` and p-values to the model summary
+
+--
+
+.scroll-output[
+
+``` r
+library(lmerTest)
+mod_caff &lt;- lmer(RT ~ 1 + Condition +
+                   (1 | Participant), 
+                 data=caff_mlm, REML=FALSE)
+summary(mod_caff)
+```
+
+```
+## Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite's
+##   method [lmerModLmerTest]
+## Formula: RT ~ 1 + Condition + (1 | Participant)
+##    Data: caff_mlm
+## 
+##      AIC      BIC   logLik deviance df.resid 
+##    532.4    540.8   -262.2    524.4       56 
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -2.4508 -0.5840  0.0385  0.4845  2.2538 
+## 
+## Random effects:
+##  Groups      Name        Variance Std.Dev.
+##  Participant (Intercept) 200      14.1    
+##  Residual                217      14.7    
+## Number of obs: 60, groups:  Participant, 30
+## 
+## Fixed effects:
+##                     Estimate Std. Error     df t value Pr(&gt;|t|)    
+## (Intercept)           535.63       3.73  48.80  143.71   &lt;2e-16 ***
+## ConditionNoCaffeine    13.72       3.80  30.00    3.61   0.0011 ** 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Correlation of Fixed Effects:
+##             (Intr)
+## CondtnNCffn -0.510
+```
+]
+
+---
+# Remember: MLM is just an extension of LM
+
+**Our first MLM**
+
+```
+##                     Estimate Std. Error   df t value  Pr(&gt;|t|)
+## (Intercept)           535.63      3.727 48.8 143.711 8.809e-66
+## ConditionNoCaffeine    13.72      3.804 30.0   3.607 1.109e-03
+```
+
+**A paired-samples t-test**
+
+``` r
+t.test(RT ~ Condition, data=caff_mlm, paired=TRUE)
+```
+
+```
+## 
+## 	Paired t-test
+## 
+## data:  RT by Condition
+## t = -3.5, df = 29, p-value = 0.001
+## alternative hypothesis: true mean difference is not equal to 0
+## 95 percent confidence interval:
+##  -21.64  -5.81
+## sample estimates:
+## mean difference 
+##          -13.72
+```
+
+--
+
+**Key difference**: MLM offers more flexible specification of fixed and random effects
+
+---
+# Some general advice
+
+This semester you will be learning statistical methods that don't have "cookbook" recipes. You'll need to actively engage with the data and research question in order to come up with a good model for answering the question, then to defend/explain that model.
+
+--
+
+**Practice is absolutely critical** to learning how to do this. You can't learn it just from the lectures; you have to try it with real data. You will make mistakes, run into problems, etc. Identifying the mistakes and solving those problems is how you'll master this material. *We have made all of the example data sets and code available to you for exactly this reason.*
+
+--
+
+Do the lab exercises! If you're not sure, **try something** then try to figure out whether it worked or not. Ask questions when you're stuck -- we're here to help you learn, but it will only work if you engage in **active, hands-on learning**.
+
+![gym](figs/stockvault-fitness-center106595.jpg)
+---
+# Live R
+
+Questions?
+
+--
+
+### Use MLM to run a 2x2 repeated-measures ANOVA
+
+--
+
+Recall: 
+
+1. ANOVA is a particular kind of GLM (linear regression with categorical predictors).
+2. Repeated-measures ANOVA is used for within-participant manipulations; aka, clustered or nested observations.
+
+--
+
+MLM is an extension of GLM with random effects to capture within-participant nesting, so we should be able to implement a 2x2 rm-ANOVA using MLM.
+
+--
+
+### Example: Effect of caffeine consumption on processing speed **in younger vs older adults**
+
+
+``` r
+load("./data/caff_age.rda")
+```
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

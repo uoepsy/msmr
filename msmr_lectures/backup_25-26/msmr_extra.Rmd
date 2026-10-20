@@ -1,0 +1,384 @@
+---
+title: "<b>Multilevel Model Checklist (sort of)</b>"
+subtitle: "Multivariate Statistics and Methodology using R<br><br> "
+author: "MSMR TEAM"
+institute: "Department of Psychology<br/>The University of Edinburgh"
+date: ""
+output:
+  xaringan::moon_reader:
+    lib_dir: jk_libs/libs
+    css: 
+      - xaringan-themer.css
+    nature:
+      ratio: '16:9'
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+editor_options:
+  chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+options(digits=4,scipen=2)
+options(knitr.table.format="html")
+library(xaringanthemer)
+style_mono_accent(
+  # base_color = "#0F4C81", # DAPR1
+  # base_color = "#BF1932", # DAPR2
+  # base_color = "#88B04B", # DAPR3 
+  # base_color = "#FCBB06", # USMR
+  base_color = "#a41ae4", # MSMR
+  header_color = "#000000",
+  header_font_google = google_font("Source Sans Pro"),
+  header_font_weight = 400,
+  text_font_google = google_font("Source Sans Pro", "400", "400i", "600", "600i"),
+  code_font_google = google_font("Source Code Pro"),
+  extra_css = list(".scroll-output" = list("height"="90%","overflow-y"="scroll"))
+) 
+knitr::opts_chunk$set(
+  dev = "png",
+  warning = FALSE,
+  message = FALSE,
+  cache = FALSE
+)
+themedapr3 = function(){
+  theme_minimal() + 
+    theme(text = element_text(size=20))
+}
+```
+
+```{r echo=FALSE}
+library(tidyverse)
+library(lme4)
+library(lmeresampler)
+library(HLMdiag)
+library(broom.mixed)
+```
+
+
+---
+class: inverse, center, middle
+
+<h2>Part 1: Model Specification</h2>
+<h2 style="text-align: left;opacity:0.3;">Part 2: Analysis</h2>
+<h2 style="text-align: left;opacity:0.3;">Part 3: Reporting</h2>
+
+---
+# Outcome and Fixed Effects  
+
+.br2.f4.gray.bg-white[
+(g)lmer(**outcome** ~ fixed effects + (random effects | grouping structure), family = error distribution)
+]
+
+.pull-left[
+- __What are we interested in explaining/predicting?__  
+
+]
+
+---
+count:false
+# Outcome and Fixed Effects  
+
+.br2.f4.gray.bg-white[
+**(g)lmer**(outcome ~ fixed effects + (random effects | grouping structure), **family = error distribution**)
+]
+
+.pull-left[
+
+- What are we interested in explaining/predicting?  
+
+  - __How is this measured?__
+
+]
+
+---
+count:false
+# Outcome and Fixed Effects  
+
+.br2.f4.gray.bg-white[
+(g)lmer(outcome ~ **fixed effects** + (random effects | grouping structure), family = error distribution)
+]
+
+.pull-left[
+
+- What are we interested in explaining/predicting?  
+
+  - How is this measured?
+
+- __What variables are we interested in explaining this by?__  
+
+]
+
+---
+# The Grouping Structure  
+
+.br2.f4.gray.bg-white[
+(g)lmer(outcome ~ fixed effects + (random effects | grouping structure), family = error distribution)
+]
+
+.pull-left[
+- In what different ways can we group our data?   
+
+]
+
+---
+count:false
+# The Grouping Structure  
+
+.br2.f4.gray.bg-white[
+(g)lmer(outcome ~ **fixed effects** + (random effects | grouping structure), family = error distribution)
+]
+
+.pull-left[
+- In what different ways can we group our data?   
+
+- **Of the different ways we can group our data, which groupings are of specific inferential interest?**  
+
+- Of the different ways we can group our data, which groupings do we think of as a random sample from a general population of groups? 
+
+]
+
+---
+count:false
+# The Grouping Structure  
+
+.br2.f4.gray.bg-white[
+(g)lmer(outcome ~ fixed effects + (random effects | **grouping structure**), family = error distribution)
+]
+
+.pull-left[
+- In what different ways can we group our data?   
+
+- Of the different ways we can group our data, which groupings are of specific inferential interest?  
+
+- **Of the different ways we can group our data, which groupings do we think of as a random sample from a general population of groups?** 
+
+]
+
+
+---
+# The Grouping Structure  
+
+.br2.f4.gray.bg-white[
+(g)lmer(outcome ~ fixed effects + (random effects | **grouping1 / grouping2**), family = error distribution)
+]
+
+.pull-left[
+- In what different ways can we group our data?   
+
+- Of the different ways we can group our data, which groupings are of specific inferential interest?  
+
+- Of the different ways we can group our data, which groupings do we think of as a random sample from a general population of groups? 
+
+  - Is there more than one grouping of this sort?
+      - __are these groupings nested? (and are the labels unique?)__  
+]
+
+---
+# The Grouping Structure  
+
+.br2.f4.gray.bg-white[
+(g)lmer(outcome ~ fixed effects + (random effects | **grouping1**) + (random effects | **grouping2**), family = error distribution)
+]
+
+.pull-left[
+- In what different ways can we group our data?   
+
+- Of the different ways we can group our data, which groupings are of specific inferential interest?  
+
+- Of the different ways we can group our data, which groupings do we think of as a random sample from a general population of groups? 
+
+  - Is there more than one grouping of this sort?  
+      - are these groupings nested? (and are the labels unique?)  
+      - __are the groupings crossed?__  
+  
+]
+
+---
+# The Grouping Structure  
+
+.br2.f4.gray.bg-white[
+(g)lmer(outcome ~ fixed effects + (random effects | **grouping structure**), family = error distribution)
+]
+
+.pull-left[
+- In what different ways can we group our data?   
+
+- Of the different ways we can group our data, which groupings are of specific inferential interest?  
+
+- Of the different ways we can group our data, which groupings do we think of as a random sample from a general population of groups? 
+
+  - Is there more than one grouping of this sort?  
+      - are these groupings nested? (and are the labels unique?)   
+      - are the groupings crossed?  
+  - For each level, how many groups have we sampled? (If small number, consider including it as a fixed effect instead). 
+]
+
+
+---
+# Random Intercepts and Slopes
+
+.br2.f4.gray.bg-white[
+(g)lmer(outcome ~ fixed effects + (**random effects** | grouping structure), family = error distribution)
+]
+
+.pull-left[
+
+- Which of our fixed effects can vary for our random groups?  
+
+  - "does a single group have multiple values for $x$?"  
+  
+  - "for the data from only one of our groups, can we estimate $y \sim x$?"
+
+]
+
+
+---
+class: inverse, center, middle
+
+<h2 style="text-align: left;opacity:0.3;">Part 1: Model Specification</h2>
+<h2>Part 2: Analysis</h2>
+<h2 style="text-align: left;opacity:0.3;">Part 3: Reporting</h2>
+
+
+---
+# Model issues
+
+- Keep an eye out for convergence issues & singular fits  
+
+
+
+  - Adjust optimisers, try all available optimisers (the `allFit()` function).  
+  - Consider simplifying your random effect structure.
+  - Look out for:  
+      - random effects with very small variance estimates (scale of outcome variable is relevant here)
+      - very strong correlations between random effects 
+
+
+
+- Always plot your residuals and your random effects.
+
+
+---
+# Inference
+
+.pull-left[
+## Tests
+
+- Model comparison
+  - Remember to be aware when you are fitting models with `REML=FALSE`
+
+- Parameter estimates
+
+
+]
+.pull-right[
+## Methods
+
+- df approximations
+  - load `library(lmerTest)`
+  - `pbkrtest::KRmodcomp()`
+  
+- Likelihood Ratio Tests  
+  `anova(model1, model2, ...)`
+- Bootstrap
+  - parametric bootstrap
+    `pbkrtest::PBmodcomp()` and `confint(method="boot")`
+  - case bootstrap
+    `lmeresampler::bootstrap(model, type = "case", resample = c(....))`
+]
+
+
+---
+class: inverse, center, middle
+
+<h2 style="text-align: left;opacity:0.3;">Part 1: Model Specification</h2>
+<h2 style="text-align: left;opacity:0.3;">Part 2: Analysis</h2>
+<h2>Part 3: Reporting</h2>
+
+---
+# Reporting the analysis process
+
+- Data cleaning outlier/data removal, transformations _prior to_ analysis.  
+
+- Unplanned transformations and data removal which are carried out in order to meet assumptions.  
+
+--
+
+- Specify all fixed effects (explanatory variables & covariates).  
+Link them to explicitly stated research questions/hypotheses. 
+
+- Explicitly state the hierarchical structure of the data and of the model.  
+Specify random effects according to the sampling units (schools/children etc) with which they interact. 
+
+--
+
+- State the software packages and versions used to fit the model(s), along with the estimation method (ML/REML) and optimiser used.   
+
+- If a proposed model fails to converge, clearly specify the procedure used to obtain converging model.  
+
+--
+
+- State clearly the relevant test/comparison/parameter estimate of interest.  
+Link to explicitly stated research questions/hypotheses.  
+  - Any model comparisons should be clearly stated so that the reader understands the structure of _both_ models being compared.  
+- Specify the method you plan to use to conduct inference (e.g. LRT, bootstrap)
+
+---
+# Reporting results from the model(s)
+
+Information to include:
+
+- all parameter estimates for fixed effects.  
+
+    - coefficients
+    - standard errors and/or confidence intervals
+    - associated test statistics and p-values (if used)  
+    
+- random effects  
+
+  - standard deviation and/or variance for each random effect
+  - correlations/covariances if modelled   
+  - residual variance/standard deviation
+  
+- some measure of model fit (marginal/conditional $R^2$)?  
+
+<br>
+`sjPlot::tab_model()` gets you a lot of the way there! 
+
+---
+# Visualising the model(s)  
+
+- Think about your questions  
+
+.pull-left[
+```{r echo=FALSE, fig.asp=.8}
+ggplot()+
+  geom_text(label="?",aes(x=1,y=1), size=40)+
+  scale_x_continuous("Some explanatory variable of interest",labels=NULL)+
+  scale_y_continuous("Outcome",labels=NULL)+
+  theme_classic()
+```
+]
+
+--
+
+.pull-right[
+
+- `sjPlot::plot_model()` for quick easy plotting (less control)  
+
+- `as.data.frame(effects::effect(term = ??, mod = model))` for a dataframe of linear predictions you can use to plot.  
+
+- `broom.mixed::augment(model)` for the model fitted values (good for plotting group-level lines etc). 
+
+- `lme4::dotplot.ranef.mer(model)` for caterpillar plots of random effects
+
+]
+
+---
+class: inverse, center, middle, animated, rotateInDownLeft
+
+# End
+

@@ -1,0 +1,89 @@
+---
+title: "Centering regression predictors"
+author: "jk"
+date: "`r Sys.Date()`"
+output:
+  rmdformats::downcute:
+    code_folding: show
+    self_contained: true
+    thumbnails: false
+    lightbox: true
+pkgdown:
+  as_is: true
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(patchwork)
+set.seed(987)
+tibble(
+  id = letters[1:10],
+  start = seq(5,20,length.out=10),
+  end = seq(15,30,length.out=10),
+  coef = rnorm(10,-2)
+) %>% mutate(
+  x = map2(start,end, ~runif(10,.x,.y)),
+  y = map2(x, coef,~.x*.y)
+) %>% unnest %>%
+  mutate(y=y+10*start+rnorm(n(),0,3)) -> df
+
+# ggplot(df,aes(x=x,y=y,col=id))+geom_point(
+```
+
+
+
+# centering in LM
+
+```{r echo=FALSE}
+mod = lm(y~x,df)
+p1 = ggplot(df, aes(x=x,y=y))+geom_point()+
+  geom_smooth(method="lm",se=F)+
+  geom_smooth(method="lm",se=F,fullrange=T,lty="dotted")+
+  xlim(0,30)+ylim(0,max(df$y))+
+  geom_segment(x=0,xend=0,y=0,yend=max(df$y))+
+  geom_segment(x=0,xend=30,y=0,yend=0)+
+  geom_point(data=tibble(x=0,y=coef(mod)[1]),size=4)
+
+  
+  
+mod = lm(y~scale(x),df)
+p2 = ggplot(df, aes(x=x,y=y))+geom_point()+
+  geom_smooth(method="lm",se=F)+
+  geom_smooth(method="lm",se=F,fullrange=T,lty="dotted")+
+  ylim(0,max(df$y))+
+  geom_segment(x=mean(df$x),xend=mean(df$x),y=0,yend=max(df$y))+
+  geom_segment(x=0,xend=30,y=0,yend=0)+
+  geom_point(data=tibble(x=mean(df$x),y=coef(mod)[1]),size=4)+
+  scale_x_continuous(limits=c(0,30),
+                     breaks=c(mean(df$x)-(2*sd(df$x)), mean(df$x)-sd(df$x), 
+                              mean(df$x), 
+                              mean(df$x)+sd(df$x), mean(df$x)+(2*sd(df$x))),
+                     labels=c(-2,-1,0,1,2))
+
+p1 + p2
+```
+
+# Centering predictors in MLM
+
+```{r}
+ggplot(df,aes(x=x,y=y))+
+  geom_smooth(method="lm",se=F)+
+  geom_point(aes(col=id))+
+  geom_smooth(method="lm",se=F, aes(col=id))
+  
+```
+
+- grand mean centering in MLM
+- group mean centering in MLM "for a .."
+- adding in group means as an L2 predictor
+- what is a "context effect" ludtke?
+- latent variable mlms? croon
+
+
+Lüdtke, O., Marsh, H. W., Robitzsch, A., Trautwein, U., Asparouhov, T., & Muthén, B. (2008). The multilevel latent covariate model: A new, more reliable approach to group-level effects in contextual studies. Psychological Methods, 13, 203–229.
+
+Croon, M. A., & van Veldhoven, M. J. P. M. (2007). Predicting group-level outcome variables from variables measured at the individual level: A latent variable multilevel model. Psychological Methods, 12, 45–57.
+
+
+
+

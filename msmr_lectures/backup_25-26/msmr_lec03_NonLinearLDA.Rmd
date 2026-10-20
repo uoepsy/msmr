@@ -1,0 +1,439 @@
+---
+title: "<b>Week 3: Longitudinal Data Analysis using Multilevel Modeling - Nonlinear Change</b>"
+subtitle: "Multivariate Statistics and Methodology using R (MSMR)<br><br> "
+author: "Dan Mirman"
+institute: "Department of Psychology<br>The University of Edinburgh"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      ratio: '16:9'
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+
+```{r setup, include=FALSE, message=FALSE}
+options(htmltools.dir.version = FALSE)
+options(digits = 4)
+library(knitr)
+library(patchwork)
+
+library(tidyverse)
+library(broom)
+library(lme4)
+library(lmerTest)
+library(broom.mixed)
+```
+
+```{r xaringan-themer, include = FALSE}
+library(xaringanthemer)
+style_mono_accent(
+  # base_color = "#0F4C81", # DAPR1
+  # base_color = "#BF1932", # DAPR2
+  # base_color = "#88B04B", # DAPR3 
+  # base_color = "#FCBB06", # USMR
+  base_color = "#a41ae4", # MSMR
+  header_color = "#000000",
+  header_font_google = google_font("Source Sans Pro"),
+  header_font_weight = 400,
+  text_font_google = google_font("Source Sans Pro", "400", "400i", "600", "600i"),
+  code_font_google = google_font("Source Code Pro"),
+  extra_css = list(".scroll-output" = list("height"="90%","overflow-y"="scroll"))
+) 
+```
+
+# Longitudinal data are a natural application domain for MLM
+
+* Longitudinal measurements are *nested* within subjects (by definition)
+* Longitudinal measurements are related by a continuous variable, spacing can be uneven across participants, and data can be missing
+    + These are problems rmANOVA
+* **Trajectories of longitudinal change can be nonlinear** 
+
+--
+
+This application of MLM is sometimes called "Growth Curve Analysis" (GCA)
+
+---
+# Example: Word Learning
+
+Effect of working memory (high vs low) on L2 vocabulary acquisition (word learing)
+
+```{r fig.height=4.5, fig.width=6}
+load("./data/WordLearnEx.rda")
+ggplot(WordLearnEx, aes(Session, Accuracy, color=WM)) +
+  stat_summary(fun.data = mean_se, geom="pointrange") +
+  stat_summary(fun = mean, geom="line") +
+  theme_bw() + expand_limits(y=c(0.5,1))
+```
+
+---
+# Linear model
+
+```{r warning=FALSE}
+m1 <- lmer(Accuracy ~ Session*WM + (Session | Subject),
+           data = WordLearnEx, REML=F)
+sjPlot::tab_model(m1, show.re.var=F, show.icc=F, show.r2=F)
+```
+
+--
+Groups started and ended at the same level, linear model can't detect the subtle difference in learning rate. Need to model the curvature...
+
+---
+# Quadratic model
+
+```{r message=FALSE}
+WordLearnEx$Session2 <- WordLearnEx$Session^2
+m2 <- lmer(Accuracy ~ (Session+Session2)*WM + (Session+Session2 | Subject),
+           data = WordLearnEx, REML=F)
+sjPlot::tab_model(m2, show.re.var = F, show.r2=F)
+```
+---
+# Quadratic model
+
+Linear term became significant after we added quadratic term?
+
+--
+
+```{r}
+performance::check_collinearity(m2)
+```
+
+---
+# Polynomial collinearity
+
+<img src="./figs/orth-poly.png" width="40%" />
+
+.pull-left[
+### Natural Polynomials
+
+* Correlated time terms
+* Very different scales
+]
+
+.pull-right[
+### Orthogonal Polynomials
+
+* Uncorrelated time terms
+    * A version on variable centering
+* Same scale
+* Need to specify range and order
+]
+
+---
+# Interpreting orthogonal polynomial terms
+
+Intercept ( $\beta_0$ ): Overall average
+
+<img src="./figs/VisSearchOrth.png" width="30%" />
+
+---
+# Interpreting orthogonal polynomial terms
+
+.pull-left[
+* Intercept ( $\beta_0$ ): Overall average
+* Linear ( $\beta_1$ ): Overall slope
+* Quadratic ( $\beta_2$ ): Centered rise and fall rate
+* Cubic, Quartic, ... ( $\beta_3, \beta_4, ...$ ): Inflection steepness
+]
+
+.pull-right[
+<img src="./figs/polys-scale.png" width="100%" />
+]
+
+---
+# Back to the example
+
+Need to create an orthogonal polynomial version of `Session`
+
+Helper function `code_poly` does this
+
+```{r fig.width=6, fig.height=4}
+source("code_poly.R")
+# or from online version: source("https://uoepsy.github.io/msmr/functions/code_poly.R")
+WordLearnEx.gca <- code_poly(WordLearnEx, predictor="Session", poly.order=2)
+```
+
+---
+# New orth poly variables added to data frame
+
+```{r}
+summary(WordLearnEx.gca)
+```
+
+---
+# Fit model with orthogonal predictors
+
+```{r message=FALSE}
+m2.orth <- lmer(Accuracy ~ (poly1+poly2)*WM + 
+             (poly1+poly2 | Subject),
+           data = WordLearnEx.gca, REML=F)
+```
+```{r echo=FALSE}
+sjPlot::tab_model(m2.orth, show.re.var = F, show.r2=F)
+```
+
+---
+# Plot model fit
+
+```{r fig.height=5, fig.width=7}
+ggplot(augment(m2.orth), aes(poly1, Accuracy, color=WM)) +
+  stat_summary(fun.data = mean_se, geom="pointrange") +
+  stat_summary(aes(y=.fitted), fun = mean, geom="line") +
+  theme_bw(base_size=12) + expand_limits(y=c(0.5,1))
+```
+
+---
+# What about more complex curve shapes?
+
+### Function must be adequate to data
+```{r echo=FALSE, message=FALSE, fig.width=7, fig.height=4}
+dat <- data.frame(Time = seq(-2, 1.5, length.out=25), 
+                  Y = dnorm(seq(-2, 1.5, length.out=25)) + runif(25, -0.02, 0.02))
+# left panel: example fits
+f2 <- ggplot(dat, aes(Time, Y)) + geom_point() + 
+  stat_smooth(method=lm, se=F, color="black") + 
+  stat_smooth(method=lm, formula = y ~ poly(x,2), se=F, color="blue") +
+  stat_smooth(method=lm, formula = y ~ dnorm(x), se=F, color="red") + 
+  theme_bw(base_size=10) + scale_y_continuous(breaks=NULL) +
+  scale_x_continuous(breaks=NULL)
+# fitted-resid plot
+m.1 <- lm(Y ~ Time, data=dat)
+dat$Time2 <- dat$Time^2
+m.2 <- lm(Y ~ Time + Time2, data=dat)
+m.3 <- lm(Y ~ dnorm(Time), data=dat)
+g <- ggplot(fortify(m.1, dat), aes(.fitted, .resid)) +
+  geom_point() + geom_point(aes(y=m.3$resid), color="red") + 
+  labs(x="Fitted value", y="Residual error") + 
+  geom_hline(yintercept=0) + theme_bw() + 
+  scale_y_continuous(breaks=0) + scale_x_continuous(breaks=NULL)
+#grid.arrange(f2, g, nrow=1)
+f2 + g
+```
+
+--
+
+Use `broom.mixed::augment()` to make a quick plot of residuals vs. fitted: 
+
+```{r eval=FALSE}
+ggplot(augment(m), aes(.fitted, .resid)) + geom_point()
+```
+
+---
+# Using higher-order polynomials
+
+* <span style="color:blue">Can model any curve shape</span>
+    * But not practical for very complex curves: Use GAMMs or another modeling framework
+* <span style="color:blue">Easy to implement in MLM framework (dynamically consistent, aka "collapsible")</span>
+* <span style="color:red">Bad at capturing asymptotic behaviour</span>
+    * Try to avoid long flat sections
+    * Don't extrapolate
+
+--
+
+**How to choose polynomial order?**
+
+* Curve shape
+* Statistical: include only terms that statistically improve model fit
+* Theoretical: include only terms that are predicted to matter
+
+---
+# Example: Target fixation during spoken word-to-picture matching (VWP)
+
+.pull-left[
+```{r}
+load("./data/TargetFix.rda")
+```
+* More complex curve shape
+* Within-subject `Condition`
+]
+
+.pull-right[
+```{r fig.height=5, fig.width=6, echo=FALSE}
+ggplot(TargetFix, aes(Time, meanFix, color=Condition, fill=Condition)) +
+  stat_summary(fun=mean, geom="line") +
+  stat_summary(fun.data=mean_se, geom="ribbon", color=NA, alpha=0.3) +
+  theme_bw() + expand_limits(y=c(0,1)) +
+  labs(y="Fixation Proportion", x="Time since word onset (ms)")
+```
+]
+
+---
+# Random effects
+<img src="./figs/RandomEffectsLinDemo.png" width="75%" />
+
+--
+
+Extend to polynomial terms: individual differences in "slope" (curvature) of quadratic, cubic, etc. components.
+
+--
+
+**Keep it maximal**: Incomplete random effects can inflate false alarms, but full random effects can produce convergence problems.
+
+If/when need to simplify random effects: consider which random effects are most expendable; that is, which individual differences are least important to your research questions or inferences.
+
+---
+# Target fixation during spoken word-to-picure matching (VWP)
+
+```{r fig.height=4, fig.width=5, echo=FALSE}
+ggplot(TargetFix, aes(Time, meanFix, color=Condition, fill=Condition)) +
+  stat_summary(fun=mean, geom="line") +
+  stat_summary(fun.data=mean_se, geom="ribbon", color=NA, alpha=0.3) +
+  theme_bw() + expand_limits(y=c(0,1)) +
+  labs(y="Fixation Proportion", x="Time since word onset (ms)")
+summary(TargetFix)
+```
+
+---
+# Prep for analysis
+
+Create a 3rd-order orthogonal polynomial
+
+```{r message=FALSE, fig.height=5.5, fig.width=7}
+TargetFix.gca <- code_poly(TargetFix, predictor="Time", poly.order=3)
+```
+---
+# Prep for analysis
+
+Create a 3rd-order orthogonal polynomial
+
+```{r}
+str(TargetFix.gca)
+```
+
+---
+# Fit full GCA model
+```{r}
+m.full <- lmer(meanFix ~ (poly1+poly2+poly3)*Condition + #fixed effects
+                 (poly1+poly2+poly3 | Subject) + #random effects of Subject
+                 (poly1+poly2+poly3 | Subject:Condition), #random effects of Subj by Cond
+               data=TargetFix.gca, REML=F)
+#summary(m.full)
+coef(summary(m.full))
+```
+
+---
+# Plot model fit
+```{r fig.height=5, fig.width=6}
+ggplot(TargetFix.gca, aes(Time, meanFix, color=Condition)) +
+  stat_summary(fun.data=mean_se, geom="pointrange") +
+  stat_summary(aes(y=fitted(m.full)), fun=mean, geom="line") +
+  theme_bw(base_size=12) + expand_limits(y=c(0,1)) +
+  labs(y="Fixation Proportion", x="Time since word onset (ms)")
+```
+
+---
+# The random effects
+.pull-left[
+```{r}
+head(ranef(m.full)$"Subject")
+```
+]
+
+.pull-right[
+```{r}
+head(ranef(m.full)$"Subject:Condition")
+```
+]
+
+---
+# The random effects
+```{r}
+VarCorr(m.full)
+```
+
+What is being estimated?
+
+* Random variance and covariance
+* Unit-level random effects (but constrained to have mean = 0)
+
+--
+
+**This is why df for parameter estimates are poorly defined in MLM**
+
+---
+# Alternative random effects structure
+```{r}
+m.left <- lmer(meanFix ~ (poly1+poly2+poly3)*Condition + #fixed effects
+                ((poly1+poly2+poly3)*Condition | Subject), #random effects
+              data=TargetFix.gca, REML=F)
+coef(summary(m.left))
+```
+
+---
+# Alternative random effects structure
+```{r echo=FALSE}
+width.ori <- getOption("width")
+options(width=150)
+```
+```{r}
+# str(ranef(m.left))
+# head(ranef(m.left)$"Subject")
+VarCorr(m.left)
+```
+```{r echo=FALSE}
+options(width=width.ori)
+```
+
+This random effect structure makes fewer assumptions: 
+
+* Allows unequal variances across conditions
+* Allows more flexible covariance structure between random effect terms
+
+---
+# Alternative random effects structure requires more parameters
+
+<img src="./figs/RandomParams.png" width="50%" />
+
+---
+# Convergence problems
+<span style="color:red">`Model failed to converge with max|grad| = 0.00280522 (tol = 0.002, component 1)`</span>
+
+--
+
+## Consider simplifying random effects
+
+**Remove random effects of higher-order terms**
+```{r eval=FALSE}
+Outcome ~ (poly1+poly2+poly3)*Condition + (poly1+poly2+poly3 | Subject)
+Outcome ~ (poly1+poly2+poly3)*Condition + (poly1+poly2 | Subject)
+```
+
+--
+
+**Remove correlation between random effects**
+```{r eval=FALSE}
+Outcome ~ (poly1+poly2+poly3)*Condition + (1 | Subject) + 
+  (0+poly1 | Subject) + (0+poly2 | Subject) + (0+poly3 | Subject)
+```
+
+Alternatively: double-pipe
+```{r eval=FALSE}
+Outcome ~ (poly1+poly2+poly3)*Condition + (poly1+poly2+poly3 || Subject)
+```
+
+---
+# Key points
+
+.pull-left[
+**Modeling non-linear change over time**
+
+* Choose an adequate functional form
+    + Polynomials are mathematically nice, but not practical for very complex curve shapes and be careful with extrapolation
+* Random effect structure
+    + Keep it maximal, but be ready to deal with convergence problems
+    + For within-subject variables: "left" side of pipe (random slopes) is more flexible, but requires more data to estimate; "right" side of pipe (nested) is a good alternative
+]
+
+.pull-right[
+<img src="./figs/max_grad_tombstone.jpg" />
+]
+
+---
+# Brief break
+
+## Next up: Live R
+
+Fixations are binary - a participant is either looking at the target object or they are not - so let's revisit the target fixation example, this time using logistic MLM to analyse the data.

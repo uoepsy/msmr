@@ -1,0 +1,278 @@
+---
+title: "10: Centering"
+params: 
+    SHOW_SOLS: FALSE
+    TOGGLE: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+source('assets/setup.R')
+library(xaringanExtra)
+library(tidyverse)
+library(patchwork)
+xaringanExtra::use_panelset()
+library(lme4)
+library(broom.mixed)
+```
+
+
+:::lo
+This reading:  
+
+**FORTHCOMING**
+
+:::
+
+
+
+## Centering predictors in `lm()`
+
+There are lots of ways we can transform a variable. For instance, we can transform something in millimeters to being in centimeters by dividing it by 10. We could transform a `height` variable into `height above/below 2 meters` variable by subtracting 2 meters from it.   
+
+A couple of common transformations we have seen already are 'centering' and 'standardising'. 
+When we "center" a variable, we subtracting some number (often the mean of the variable) from every value. So if we 'mean-center' a variable measuring height in cm, and the mean height of my sample is 175cm, then a value of 190 becomes +15, and a value of 150 becomes -25, and so on.  
+When we 'standardise' a variable, we mean-center it and then divide the resulting values by the standard deviation. So if the standard deviation of heights in my sample is 15, then the value of 190 becomes $\frac{190-175}{15} = \frac{15}{15} = 1$, and the 150 becomes $\frac{150-175}{15} = \frac{-25}{15} = -1.67$.  
+
+How does this choice affect the linear models we might be fitting? The short answer is that it doesn't! The overall fit of `lm()` is not changed in any way when we apply these linear transformations to predictors or outcomes.^[the fit of models _does_ change if we apply a non-linear transformation, such as $x^2$, $log(x)$, etc., and this can sometimes be useful for studying effects that are more likely to be non-linear!]. However, transformations _do_ change what we get out of our model. 
+
+If we re-center a predictor on some new value (such as the mean), then all this does is change what "zero" means in our variable. This means that if we re-center a predictor in our linear model, the only thing that changes is our intercept. This is because the intercept is "when all predictors are zero". And we are changing what "zero" represents! When we scale a predictor, this will change the slope. Why? Because it changes what "moving 1" represents. So if we standardise a variable, it changes both the intercept and the slope. However, note that the significance of the slope remains _exactly the same_, we are only changing the *units* that we are using to expressing that slope.
+
+The example below shows a model of heart rates (`HR`) predicted by hours slept (`hrs_sleep`). In @fig-scalexlm you can see our original model (top left), and then various transformations applied to our predictor. Note how these transformations don't affect the model itself - the regression line (and the uncertainty in the line) is the same in each plot. We can see that re-centering changes what the intercept represents. In the top left plot, "0" represents zero hours slept, so the intercept is the estimated heart rate for someone who didn't sleep at all. Similarly, in the top right plot, "0" now represents the mean hours slept, so the intercept is the heart rate for someone who slept an average amount. In the bottom left plot (where hours slept is 'standardized'), not only have we changed what "0" represents, but we have changed what moving "1" represents. Rather being an increase of 1 hour of sleep, in this plot it represents an increase of 1 standard deviation hours sleep (whatever that is for our sample - it looks to be about `r round(sd(read_csv("https://uoepsy.github.io/data/usmr_hrsleep.csv")$hrs_sleep)*2)/2`). This means our estimated slope is the change in heart rate when having 1 SD more hours sleep (approx `r round(sd(read_csv("https://uoepsy.github.io/data/usmr_hrsleep.csv")$hrs_sleep)*2)/2`).
+
+```{r}
+#| label: fig-scalexlm
+#| fig-cap: "Centering and scaling predictors in linear regression models. Intercepts and their interpretation change when re-centered, and slope coefficients and their interpretation change when scaling, but the overall model stays the same."
+#| out-width: "100%"
+#| echo: false
+hrdat <- read_csv("https://uoepsy.github.io/data/usmr_hrsleep.csv")
+df = hrdat |> mutate(x=hrs_sleep,y=HR)
+mod = lm(y~x,df)
+p1 = ggplot(df, aes(x=x,y=y))+geom_point(alpha=.3)+
+  geom_smooth(method="lm")+
+  geom_smooth(method="lm",fullrange=T,lty="dashed",se=F)+
+  #ylim(0,max(df$y))+
+  geom_segment(x=0,xend=0,y=0,yend=100)+
+  geom_segment(x=0,xend=max(df$x),y=0,yend=0)+
+  geom_point(data=tibble(x=0,y=coef(mod)[1]),size=3,col="blue")+
+  labs(title="Original", x="Hours Slept",y="HR")+
+  scale_x_continuous(limits=c(0,14),breaks=0:14)
+
+mod = lm(y~scale(x,scale=F),df)
+p2 = ggplot(df, aes(x=x,y=y))+geom_point(alpha=.3)+
+  geom_smooth(method="lm")+
+  geom_smooth(method="lm",fullrange=T,lty="dashed",se=F)+
+  #ylim(0,max(df$y))+
+  geom_segment(x=mean(df$x),xend=mean(df$x),y=0,yend=100)+
+  geom_segment(x=0,xend=max(df$x),y=0,yend=0)+
+  geom_point(data=tibble(x=mean(df$x),y=coef(mod)[1]),size=3,col="blue")+
+  scale_x_continuous(limits=c(0,14),breaks=map_dbl(seq(7,-7), ~mean(df$x)-.),
+                     labels=seq(-7,7))+
+  labs(title="Mean Centered", x="Hours Slept\n(mean centered)",y="HR")
+  
+  
+mod = lm(y~scale(x),df)
+p3 = ggplot(df, aes(x=x,y=y))+geom_point(alpha=.3)+
+  geom_smooth(method="lm")+
+  geom_smooth(method="lm",fullrange=T,lty="dashed",se=F)+
+  #ylim(0,max(df$y))+
+  geom_segment(x=mean(df$x),xend=mean(df$x),y=0,yend=100)+
+  geom_segment(x=0,xend=30,y=0,yend=0)+
+  geom_point(data=tibble(x=mean(df$x),y=coef(mod)[1]),size=3,col="blue")+
+  scale_x_continuous(limits=c(0,14),
+                     breaks=c(mean(df$x)-(2*sd(df$x)), mean(df$x)-sd(df$x), 
+                              mean(df$x), 
+                              mean(df$x)+sd(df$x), mean(df$x)+(2*sd(df$x))),
+                     labels=c(-2,-1,0,1,2))+
+  labs(title="Standardised X", x="Hours Slept\n(standardised)",y="HR")
+
+mod = lm(y~x,df %>% mutate(x=x-8))
+p4 = ggplot(df, aes(x=x,y=y))+geom_point(alpha=.3)+
+  geom_smooth(method="lm")+
+  geom_smooth(method="lm",fullrange=T,lty="dashed",se=F)+
+  #ylim(0,max(df$y))+
+  geom_segment(x=8,xend=8,y=0,yend=100)+
+  geom_segment(x=0,xend=30,y=0,yend=0)+
+  geom_point(data=tibble(x=8,y=coef(mod)[1]),size=3,col="blue")+
+  scale_x_continuous(limits=c(0,14),breaks=0:14, labels=c(0:14)-8)+
+  labs(title="Centered on 8 hours", x="Hours Slept\n(relative to 8 hours)",y="HR")
+p1 + p2 + p3 + p4 
+```
+
+The thing to note is that the lines themselves are all the same, because the models are all exactly the same. We can prove this to ourselves by comparing the 4 models: 
+
+```{r}
+#| code-fold: true
+hrdat <- read_csv("https://uoepsy.github.io/data/usmr_hrsleep.csv")
+
+# original model:
+mod_orig <- lm(HR ~ hrs_sleep, data = hrdat)
+# model with hrs_sleep mean centered
+mod_mc <- lm(HR ~ scale(hrs_sleep, scale=FALSE), data = hrdat)
+# model with hrs_sleep standardised
+mod_z <- lm(HR ~ scale(hrs_sleep), data = hrdat)
+# model with hrs_sleep centered on 8 hours the I() function is a handy function that is just needed because the + and - symbols normally get interprted in lm() as adding and removing predictors. 
+mod_8 <- lm(HR ~ I(hrs_sleep-8), data = hrdat) 
+
+# all models are identical fit
+anova(mod_orig, mod_mc, mod_z, mod_8)
+```
+
+::: {.callout-note collapse="true"}
+#### Centering when we have interactions
+
+When we have an interactions in a model such as `lm(y~x+z+x:z)`, the individual coefficients for `x` and `z` are specifically the associations "when the other variable included in the interaction is zero". Because re-centering a variable changes the meaning of "zero", this means that these two coefficients will change.  
+
+For instance, a model of heart rates (`HR`) that includes an interaction between `hrs_sleep` and whether someone smokes, our coefficient for `smoke` estimates the difference in HR between smokers vs non-smokers who get zero hours of sleep (red to blue point in the left-hand plot of @fig-intcent). If we mean-center the `hrs_sleep` variable in our model, then it becomes the estimated difference in HR between smokers vs non-smokers who get the average hours of sleep (red to blue point in the right-hand plot of @fig-intcent). 
+
+
+```{r}
+#| label: fig-intcent
+#| fig-cap: "mean-centering a variable that is involved in an interaction will change the point at which the marginal effect of other variable is estimated at" 
+#| out-width: "100%"
+#| echo: false
+hrdat <- hrdat %>% 
+  mutate(
+    smoke = ifelse(smoke %in% c("v","y"),"y","n"),
+    hrs_sleepC = hrs_sleep - mean(hrs_sleep)
+  )
+eg2mod <- lm(HR ~ hrs_sleep * smoke, data = hrdat)
+eg2mod_cent <- lm(HR ~ hrs_sleepC * smoke, data = hrdat)
+as.data.frame(effects::effect("hrs_sleep*smoke",eg2mod,
+              xlevels=list(hrs_sleep=0:15))) |>
+  ggplot(aes(x=hrs_sleep,col=smoke,fill=smoke,
+             y=fit,ymin=lower,ymax=upper))+
+  geom_ribbon(alpha=.1,col=NA)+
+  geom_smooth(method=lm,se=F,fullrange=T)+
+  geom_point(data=hrdat,inherit.aes=F,
+             aes(y=HR,x=hrs_sleep,col=smoke),
+             size=3,alpha=.2)+
+  geom_point(x=0,y=coef(eg2mod)[1], size=4, aes(col="n"))+
+  geom_point(x=0,y=sum(coef(eg2mod)[c(1,3)]), size=4, aes(col="y"))+
+  geom_segment(x=0,xend=0,y=coef(eg2mod)[1], yend=sum(coef(eg2mod)[c(1,3)]), lty="dotted", lwd=1,col="black") + labs(title="Original X") +
+  
+
+as.data.frame(effects::effect("hrs_sleepC*smoke",eg2mod_cent,
+              xlevels=list(hrs_sleepC=(0:15)-mean(hrdat$hrs_sleep)))) |>
+  ggplot(aes(x=hrs_sleepC,col=smoke,fill=smoke,
+             y=fit,ymin=lower,ymax=upper))+
+  geom_ribbon(alpha=.1,col=NA)+
+  geom_smooth(method=lm,se=F,fullrange=T)+
+  geom_point(data=hrdat,inherit.aes=F,
+             aes(y=HR,x=hrs_sleepC,col=smoke),
+             size=3,alpha=.2)+
+  geom_point(x=0,y=coef(eg2mod_cent)[1], size=4, aes(col="n"))+
+  geom_point(x=0,y=sum(coef(eg2mod_cent)[c(1,3)]), size=4, aes(col="y"))+
+  geom_segment(x=0,xend=0,y=coef(eg2mod_cent)[1], yend=sum(coef(eg2mod_cent)[c(1,3)]), lty="dotted", lwd=1,col="black") + labs(title="Mean Centered X") +
+  plot_layout(guides="collect")
+
+
+  
+```
+
+:::
+
+## Centering predictors in multilevel models
+
+In multilevel models, things can be a little bit different. We have already seen in the longitudinal example ([Chapter 5](05_long.html#modelling-change-over-time){target="_blank"}) that recentering a variable can have certain advantages in allowing us to fit multilevel models.  
+
+Because multilevel models involve estimating group-level variability in intercepts and slopes, if our intercept is very far away from our data (e.g., if all our data is from ages 60 to 80, and we are estimating variability at age 0), then slight changes in a slope can have huge influences on intercepts (@fig-centconv), resulting in models that don't converge.
+
+```{r} 
+#| label: fig-centconv
+#| fig-cap: "lines indicate predicted values from the model with random intercepts and random slopes of age. Due to how age is coded, the 'intercept' is estimated back at age 0"  
+#| echo: false
+mmd <- read_csv("https://uoepsy.github.io/data/msmr_mindfuldecline.csv")
+mod1 <- lmer(ACE ~ 1 + age + 
+               (1 +age| ppt), 
+             data = mmd)
+broom.mixed::augment(mod1) |>
+  ggplot(aes(x=age,group=ppt))+
+  geom_point(aes(y=ACE))+
+  stat_smooth(geom="line",method=lm,se=F,fullrange=T,
+              alpha=.4,
+              aes(y=.fitted))+
+  xlim(0,78)
+```
+
+So re-centering a predictor can help both to allow models to converge and to provide estimates of variability that are at more meaningful places (e.g., we could recenter the `age` variable on 60 and the intercept variation would become the variability in peoples' cognition _at the start of the study period_). Beyond that, re-centering on a constant number (such as the overall mean, min or max) doesn't change much in terms of our fixed effects. 
+
+However, in some cases (typically in observational, rather than experimental studies), having multi-level data may mean that we don't just have _one_ "overall" mean for a predictor, but also a separate mean for each group.  
+
+### group mean centering
+
+Let's suppose we are interested in studying school childrens' self-concept. 
+
+we have classes
+classes vary in the average grades
+plot x y
+plot x y and line for each class
+
+what if the association btw grade and selfconc is actually entirely down to your 'grade relative to peers'? 
+
+in order to study 'grade relative to peers' we need to consider each child's relative standing - i.e. is it high _for the class_ or low _for the class_?  
+
+we can look at 
+
+```{r}
+
+```
+
+
+### within and between effects
+
+
+
+
+### the within between model
+
+y ~ 1 + xbarj + (x-xbarj) + ( 1 + (x-xbarj) | g )
+
+
+```{r}
+#| eval: false
+gconf = function(){
+  N = 200
+  n_groups = 20
+  g = rep(1:n_groups, e = N/n_groups)
+  u = rnorm(n_groups,0,5)[g]
+  x = rnorm(N,u)
+
+  re = MASS::mvrnorm(n_groups, mu=c(0,0),Sigma=matrix(c(1,0,0,.5),ncol=2))
+  re1 = re[,1][g]
+  re_x = re[,2][g]
+  lp = (0 + re1) + (1 + re_x) * x + -3*u
+  y = rnorm(N, mean = lp, sd = 1)
+  
+  df = data.frame(x, g = factor(g), y, y)
+  # ggplot(df,aes(x=x,y=y,col=g))+
+  #   geom_point()+guides(col="none")+
+  #   geom_smooth(method=lm,se=F)
+  
+  c(
+    ri=fixef(lmer(y~1+x+(1|g),df))['x'],
+    rs=fixef(lmer(y~1+x+(1+x|g),df))['x'],
+    mui=fixef(lmer(y~1+x+xm+(1|g),df |> group_by(g) |>mutate(xm=mean(x))))['x'],
+    mu=fixef(lmer(y~1+x+xm+(1+x|g),df |> group_by(g) |>mutate(xm=mean(x))))['x'],
+    mwb=fixef(lmer(y~1+xd+xm+(1+xd|g),df |> group_by(g) |>mutate(xm=mean(x),xd=x-xm)))['xd']
+  )
+}
+
+res = t(replicate(100,gconf()))
+par(mfrow=c(3,2))
+hist(res[,1]);hist(res[,2]);hist(res[,3]);hist(res[,4]);hist(res[,5])
+par(mfrow=c(1,1))
+colMeans(res)
+apply(res,2,sd)
+```
+
+
+### optional: contextual effects and the mundlak model
+
+
+
+
+

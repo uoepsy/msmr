@@ -1,0 +1,121 @@
+---
+title: "MSMR Week 1 Live Coding Session"
+author: "Dan Mirman"
+date: "17/01/2021"
+output: 
+  html_document:
+    toc: true  
+    number_sections: true
+    theme: cosmo
+    highlight: pygments
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#  Revisit example from lecture: visual search
+
+```{r load_vs}
+load(url("https://uoepsy.github.io/msmr/data/VisualSearchEx.rda"))
+summary(VisualSearchEx)
+```
+
+## Plot the data
+
+```{r vs_plot}
+library(tidyverse)
+ggplot(VisualSearchEx, aes(Set.Size, RT, color=Dx)) +
+  geom_point() + stat_smooth(method = "lm")
+```
+
+## Fit the models
+```{r load_libs, echo=FALSE}
+# use the echo=FALSE option so this doesn't show up in the output
+library(lme4)
+library(lmerTest)
+```
+
+### Base model
+
+This model just has one fixed effect: the overall effect of set size (number of distractors). It also has the full random effects structure.
+
+```{r m}
+m <- lmer(RT ~ Set.Size + (Set.Size | Participant),
+          data = VisualSearchEx)
+summary(m)
+```
+
+### Add effects of group
+
+A "main" effect of group, aka, baseline difference between aphasic and control group. 
+```{r m0}
+m.0 <- lmer(RT ~ Set.Size + Dx + (Set.Size | Participant),
+            data = VisualSearchEx)
+summary(m.0)
+```
+
+Model with full fixed effect structure: effects of set size, group, and their interaction. Note that the random effects remained the same across models.
+```{r m1}
+m.1 <- lmer(RT ~ Set.Size * Dx + (Set.Size | Participant),
+            data = VisualSearchEx)
+summary(m.1)
+```
+
+### Compare models
+```{r mod_comp}
+anova(m, m.0, m.1)
+```
+
+### Plot model fit
+```{r fig.width=6, fig.height=4}
+# use chunk options fig.width=6, fig.height=4} to specify figure size in output
+ggplot(VisualSearchEx, aes(Set.Size, RT, color=Dx)) +
+  stat_summary(fun.data = mean_se, geom = "pointrange") +
+  stat_summary(aes(y=fitted(m.1)), fun=mean, geom="line") +
+  stat_summary(aes(y=fitted(m.0)), fun=mean, geom="line", linetype="dashed")
+```
+
+# Another example
+
+Fazio, L.K. (2020). Repetition Increases Perceived Truth Even for Known Falsehoods. *Collabra: Psychology 6*(1), 38. https://doi.org/10.1525/collabra.347. ([Project on OSF](https://osf.io/kt2p8/)). 
+
+Participants had to determine whether statements were true or false. The manipulations were whether the fact was known or unknown to the participant and whether the participant had been previously exposed to the statement or not. We know that prior exposure increases perceived truth of false statements, the key question in this study was whether prior knowledge is a protective factor. That is, does *knowning* that the statement is false protect people from the repetition effect?
+
+### Read the data and make an exploratory plot
+```{r read_dat}
+# it took me a few tries to get this data wrangling right
+falsehood <- read_csv(url("https://osf.io/skmw5/download")) %>% 
+  select(c(1, 12:19)) %>% 
+  pivot_longer(cols=2:9) %>% 
+  separate(name, into=c("known", "new", "truth"))
+
+ggplot(falsehood, aes(known, value, fill=new)) + 
+  facet_wrap(~ truth) +
+  geom_boxplot()
+```
+
+## Fit the model
+Skip to a full model
+
+```{r m_falsehood}
+m <- lmer(value ~ known * new + (known + new | Subject),
+          contrasts = list(known = "contr.sum", new = "contr.sum"),
+          data = subset(falsehood, truth == "false"), REML=FALSE)
+summary(m)
+```
+
+### Plot model fit
+Going to use `broom.mixed::augment()` to get data and model estimates
+
+```{r fig_falsehood}
+library(broom.mixed)
+ggplot(augment(m), aes(known, value, fill=new)) + 
+  geom_violin() +
+  stat_summary(aes(y=.fitted, shape=new), 
+               fun=mean, geom="point", size=3,
+               position=position_dodge(width=0.9)) +
+  labs(x="Prior knowledge", y="Rating", fill="Repetition", shape="Repetition",
+       caption="Truth ratings for false statements")
+```
+

@@ -1,0 +1,551 @@
+---
+title: "<b>Week 1: Introduction to Multilevel Modeling</b>"
+subtitle: "Multivariate Statistics and Methodology using R (MSMR)<br><br> "
+author: "Dan Mirman"
+institute: "Department of Psychology<br>The University of Edinburgh"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      ratio: '16:9'
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(knitr)
+library(tidyverse)
+library(ggplot2)
+library(kableExtra)
+library(patchwork)
+library(broom)
+
+xaringanExtra::use_share_again()
+xaringanExtra::use_xaringan_extra(c("tile_view","animate_css","tachyons"))
+xaringanExtra::use_extra_styles(
+  mute_unhighlighted_code = FALSE
+)
+knitr::opts_chunk$set(
+  dev = "svg",
+  warning = FALSE,
+  message = FALSE,
+  cache = FALSE,
+  fig.asp = .8
+)
+
+options(htmltools.dir.version = FALSE)
+options(digits=4,scipen=2)
+options(knitr.table.format="html")
+
+theme_set(
+    theme_minimal() + 
+    theme(text = element_text(size=20))
+)
+
+#source("jk_source/jk_presfuncs.R")
+
+library(xaringanthemer)
+style_mono_accent(
+ base_color = "#a41ae4", # MSMR
+  header_color = "#000000",
+  header_font_google = google_font("Source Sans Pro"),
+  header_font_weight = 400,
+  text_font_google = google_font("Source Sans Pro", "400", "400i", "600", "600i"),
+  code_font_google = google_font("Source Code Pro"),
+  extra_css = list(".scroll-output" = list("height"="70%","overflow-y"="scroll"))
+) 
+```
+
+# Today's Lecture: LM --> LMER
+
+* Linear regression refresher
+* Extension to linear *mixed effects* regression (multilevel modeling)
+* "Nested" data, why use mixed effects / multilevel models
+* Your first MLM
+
+---
+# Statistical models
+
+.br3.pa2.f2[
+$$
+\begin{align}
+\color{red}{\textrm{outcome}} & = \color{blue}{(\textrm{model})} + \textrm{error} 
+\end{align}
+$$
+]
+
+- handspan = height + randomness  
+
+- cognitive test score = age + premorbid IQ + ... + randomness
+
+---
+# The Linear Model
+
+.br3.pa2.f2[
+$$
+\begin{align}
+\color{red}{\textrm{outcome}} & = \color{blue}{(\textrm{model})} + \textrm{error} \\
+\color{red}{y_i} & = \color{blue}{\beta_0 \cdot{} 1 + \beta_1 \cdot{} x_i} + \varepsilon_i \\
+\text{where } \\
+\varepsilon_i & \sim N(0, \sigma) \text{ independently} \\
+\end{align}
+$$
+]
+
+**OUTCOME** Y = linear combination of set of **PREDICTORS** X plus some error
+
+$\beta_{1}$: coefficient or weight of predictor $x$
+
+---
+# The Linear Model
+
+.pull-left[
+Our proposed model of the world:
+
+$\color{red}{y_i} = \color{blue}{\beta_0 \cdot{} 1 + \beta_1 \cdot{} x_i} + \varepsilon_i$  
+
+Our model _fitted_ to some data (note the $\widehat{\textrm{hats}}$):  
+
+$\hat{y}_i = \color{blue}{\hat \beta_0 \cdot{} 1 + \hat \beta_1 \cdot{} x_i}$  
+
+For the $i^{th}$ observation:
+  - $\color{red}{y_i}$ is the value we observe for $x_i$   
+  - $\hat{y}_i$ is the value the model _predicts_ for $x_i$   
+  - $\color{red}{y_i} = \hat{y}_i + \hat\varepsilon_i$ 
+]
+  
+.pull-right[
+```{r bb, echo=F, fig.asp=.6, warning=FALSE, message=FALSE}
+x <- tibble(x=c(-1,4))
+f <- function(x) {5+2*x}
+p1 <- x %>% ggplot(aes(x=x)) +
+  stat_function(fun=f,size=1,colour="blue") +
+  geom_segment(aes(x=0,xend=0,y=0,yend=f(0)),colour="blue", lty="dotted") +
+  geom_segment(aes(x=0,xend=1,y=f(0),yend=f(0)),colour="blue",linetype="dotted") +
+  geom_segment(aes(x=1,y=f(0),xend=1,yend=f(1)),colour="blue",linetype="dotted") +
+  annotate("text",x=.5,y=2.5,label=expression(paste(beta[0], " (intercept)")),
+           size=5,parse=TRUE,colour="blue") +
+  annotate("text",x=1.4,y=6,label=expression(paste(beta[1], " (slope)")),
+           size=5,parse=TRUE,colour="blue") +
+    ggtitle(expression(paste(beta[0]," = 5, ",beta[1]," = 2")))+
+  scale_y_continuous(breaks=0:13)+
+  scale_x_continuous(limits = c(-0.3, 4), breaks=0:4)
+p1 +
+  ggtitle("")+
+  scale_y_continuous("y",labels=NULL)+
+  scale_x_continuous(limits=c(-0.3,4), breaks=c(0,1), labels=c("0","1"))
+  
+```
+]
+
+---
+# An Example
+
+
+.pull-left[
+
+$\color{red}{y_i} = \color{blue}{5 \cdot{} 1 + 2 \cdot{} x_i} + \hat\varepsilon_i$  
+  
+__e.g.__   
+for the observation $x_i = 1.2, \; y_i = 9.9$:  
+
+$$
+\begin{align}
+\color{red}{9.9} & = \color{blue}{5 \cdot{}} 1 + \color{blue}{2 \cdot{}} 1.2 + \hat\varepsilon_i \\
+& = 7.4 + \hat\varepsilon_i \\
+& = 7.4 + 2.5 \\
+\end{align}
+$$
+]
+
+.pull-right[
+```{r errplot,fig.asp=.6,echo=FALSE}
+xX <-1.2
+yY <- 9.9
+p1 + ylab(expression(paste(hat(y)," = ",5 %.% 1 + 2 %.% x))) +
+  geom_point(aes(x=xX,y=yY),size=3,colour="red") +
+  geom_segment(aes(x=xX,xend=xX,y=f(xX),yend=yY),linetype="dotted",colour="black") +
+  annotate("text",.8,8.6,label=expression(paste(epsilon[i]," (residual)")),colour="black",size=5)
+```
+]
+
+---
+# A "Real" Example
+
+### Effect of caffeine consumption on processing speed
+
+--
+
+.pull-left[
+```{r caff_lm_plot, echo=FALSE}
+# simulate data
+N <- 30
+set.seed(8675309)
+caff_lm <- data.frame(Participant = seq(1, N*2),
+                      Caffeine = rep(c(TRUE, FALSE), each=N),
+                      RT = c(540 + rnorm(N, sd=15), 553 + rnorm(N, sd=15)))
+# plot the data
+ggplot(caff_lm, aes(Caffeine, RT, fill=Caffeine)) + 
+  geom_boxplot(show.legend = FALSE) 
+```
+]
+
+--
+
+.pull-right[
+```{r caff_lm, echo=FALSE}
+sjPlot::tab_model(lm(RT ~ Caffeine, data=caff_lm))
+```
+
+.footnote[These data are simulated, but are inspired by real data from the UK Biobank]
+
+]
+
+---
+# Assumptions
+
+.br3.pa2.f2[
+**L**inearity<br>
+**I**ndependence<br>
+**N**ormality<br>
+**E**qual variance<br>
+]
+
+---
+# Assumptions
+
+.br3.pa2.f2[
+**L**inearity<br>
+**Independence**<br>
+**N**ormality<br>
+**E**qual variance<br>
+]
+
+---
+# Clustering (aka Nested Data)
+.pull-left[
+- children within schools  
+
+- patients within clinics  
+
+- **observations within individuals**
+]
+
+.pull-right[
+```{r echo=FALSE}
+knitr::include_graphics("figs/h2.png")
+```
+]
+
+---
+# Clusters of Clustered Data
+
+.pull-left[
+- children within classrooms within schools within districts etc...  
+
+- patients within doctors within hospitals... 
+
+- time-periods within trials within individuals
+]
+
+.pull-right[
+```{r echo=FALSE}
+knitr::include_graphics("figs/h3.png")
+```
+]
+
+.footnote[
+Other relevant terms you will tend to see: "grouping structure", "levels", "hierarchies". 
+]
+
+---
+# Why do we care about nested/clustered data?
+
+.pull-left[
+- Observations within clusters are *__not independent__*: violating independence assumption
+
+- Observations within clusters tend to be more similar to each other than to those in other clusters
+    - Academic performance of children in the same classroom will tend to be more similar to one another (because of classrom-specific things such as the teacher) than to children in other classrooms.
+    - Participants with faster processing speed will tend to be faster than other participants both with and without caffeine
+]
+
+.pull-right[
+
+**Effect of caffeine consumption on processing speed**: Observations within individuals
+
+```{r caff_mlm_plot, echo=FALSE}
+# generate data
+set.seed(90210)
+caff_mlm <- data.frame(Participant = seq(1, N),
+                       Caffeine = 540 + rnorm(N, sd=15)) %>% 
+  mutate(NoCaffeine = Caffeine + 13 + rnorm(N, sd=15)) %>% 
+  pivot_longer(2:3, names_to = "Condition", values_to = "RT")
+
+# make a plot
+ggplot(caff_mlm, aes(Condition, RT, fill=Condition)) + 
+  geom_violin(show.legend = FALSE) +
+  geom_point(show.legend = FALSE) + 
+  geom_line(aes(group=Participant), show.legend = FALSE)
+```
+
+]
+
+---
+# Quantifying Clustering
+
+"Observations within clusters tend to be more similar to each other than to those in other clusters"
+
+--
+
+**Intra-Class Correlation coefficient (ICC)**: ratio of *variance between groups* to *total variance* (There are different formulations of ICC, but they all share this core principle)
+
+<br>
+$\rho = \frac{\sigma^2_{b}}{\sigma^2_{b} + \sigma^2_e} \\ \qquad \\\textrm{Where:} \\ \sigma^2_{b} = \textrm{variance between clusters} \\ \sigma^2_e = \textrm{variance within clusters (residual variance)} \\$
+
+--
+
+- A **larger ICC** means that more variability between clusters and (relatively) lower variability within the clusters. That is, observations within a cluster are highly consistent (correlated), but observations from different clusters are highly variable.
+
+- A **smaller ICC** means less variability between clusters relative to variability within clusters, so observations within clusters are *not* particularly similar relative to observations from different clusters
+
+--
+
+Clustering is something **systematic** that our model should (arguably) take into account.
+
+---
+# Modeling clusters
+
+.pull-left[
+Our proposed model of the world (no clusters):
+
+$\color{red}{y_i} = \color{blue}{\beta_0 + \beta_1} \cdot{} x_i + \varepsilon_i$  
+
+__Fixed effects__: <span style="color:blue"> $\beta_{0}$ </span> (Intercept), <span style="color:blue"> $\beta_{1}$ </span> (Slope)
+
+* Fixed effects are the same (fixed) for all observations in the data set
+
+__Random effects__: $\varepsilon_i$ (Residual error)
+
+* Random effects are different (drawn randomly from a distribution) for each observation
+]
+
+--
+
+.pull-right[
+Our proposed model of the world (participant clusters):
+
+$\color{red}{y_{ij}} = \color{blue}{\beta_0 + \beta_1} \cdot{} x_{ij} + \color{green}{\zeta_{0i} + \zeta_{1i}}  \cdot{} x_{ij} + \varepsilon_{ij}$ 
+
+__Fixed effects__: <span style="color:blue"> $\beta_{0}$ </span> (Intercept), <span style="color:blue"> $\beta_{1}$ </span> (Slope)
+
+* Fixed effects are the same (fixed) for all observations in the data set
+
+__Random effects__
+
+* $\color{green}{\zeta_{0i}}$: participant $i$'s deviation from group mean **intercept**, drawn randomly from a distribution *for each participant*
+* $\color{green}{\zeta_{1i}}$ participant $i$'s deviation from group mean **slope**, drawn randomly from a distribution *for each participant*
+* $\varepsilon_{ij}$: drawn randomly from a distribution *for each observation* $(ij)$
+]
+
+---
+# Modeling clusters
+
+.pull-left[
+```{r caff_mlm_plot2, echo=FALSE}
+# re-make a plot
+ggplot(caff_mlm, aes(Condition, RT, fill=Condition)) + 
+  geom_violin(show.legend = FALSE) +
+  geom_point(show.legend = FALSE) + 
+  geom_line(aes(group=Participant), show.legend = FALSE)
+```
+]
+
+.pull-right[
+Our proposed model of the world (participant clusters):
+
+$\color{red}{y_{ij}} = \color{blue}{\beta_0 + \beta_1} \cdot{} x_{ij} + \color{green}{\zeta_{0i} + \zeta_{1i}}  \cdot{} x_{ij} + \varepsilon_{ij}$ 
+
+__Fixed effects__: <span style="color:blue"> $\beta_{0}$ </span> (Intercept), <span style="color:blue"> $\beta_{1}$ </span> (Slope)
+
+* Fixed effects are the same (fixed) for all observations in the data set
+
+__Random effects__
+
+* $\color{green}{\zeta_{0i}}$: participant $i$'s deviation from group mean **intercept**, drawn randomly from a distribution *for each participant*
+* $\color{green}{\zeta_{1i}}$ participant $i$'s deviation from group mean **slope**, drawn randomly from a distribution *for each participant*
+* $\varepsilon_{ij}$: drawn randomly from a distribution *for each observation* $(ij)$
+]
+
+---
+# Fixed vs. Random effects
+
+**Fixed effects**
+
+* Interesting in themselves
+* Reproducible fixed properties of the world (caffeine consumption, nouns vs. verbs, WM load, age, etc.)
+* <span style="color:blue"> *Unique, unconstrained parameter estimate for each condition* </span>
+
+--
+
+**Random effects**
+
+* Randomly sampled observational units over which you intend to generalise (individual participants, particular nouns/verbs, etc.)
+* Can be used to quantify individual differences
+* <span style="color:green"> *Drawn from normal distribution with mean 0* </span>
+
+---
+# Maximum Likelihood Estimation
+* Find an estimate of parameters that maximizes the likelihood of observing the actual data
+* Simple regression: OLS produces MLE parameters by solving an equation
+* Multilevel models: use iterative algorithm to gradually converge to MLE estimates
+
+--
+
+Goodness of fit measure: log likelihood (LL)
+
+* Not inherently meaningful (unlike $R^2$)
+* Change in LL indicates improvement of the fit of the model
+* Changes in $-2\Delta LL$ (aka "Likelihood Ratio") are distributed as $\chi^2$
+* Requires models be nested (parameters added or removed)
+* DF = number of parameters added
+
+---
+# MLM: The core steps
+
+1. Load the pacakge: `library(lme4)`
+2. Fit the model(s): `lmer(formula, data, options)`
+3. Evaluate the model(s): compare models, examine parameter estimates, plot model fit(s), etc.
+4. Improve/adjust model(s), rinse, repeat
+
+---
+# Our first MLM
+
+### Effect of caffeine consumption on processing speed
+
+.pull-left[
+```{r caff_mod}
+head(caff_mlm)
+library(lme4)
+mod_caff <- lmer(RT ~ 1 + Condition +
+                   (1 | Participant), 
+                 data=caff_mlm, REML=FALSE)
+```
+]
+
+.pull-right[
+```{r caff_mlm_plot3, echo=FALSE}
+ggplot(caff_mlm, aes(Condition, RT, fill=Condition)) + 
+  geom_violin(show.legend = FALSE) +
+  geom_point(show.legend = FALSE) + 
+  geom_line(aes(group=Participant), show.legend = FALSE)
+```
+]
+
+---
+# Inspect the model
+
+.scroll-output[
+```{r caff_insp}
+summary(mod_caff)
+```
+]
+
+---
+# Parameter p-values
+Oh no! `summary()` for models fit by `lme4::lmer` (`lmerMod` objects) does not include p-values.
+```{r echo=FALSE}
+coef(summary(mod_caff))
+```
+
+--
+What *are* those p-values?
+
+--
+One-sample t-tests of whether $Est \neq 0$ with $t = Est/SE$
+
+--
+
+The `df` for these t-tests are not simple to determine because random effects are not free parameters (estimated under constraints). 
+
+But `df` can be estimated, and the two most common estimations are "Kenward-Roger" and "Satterthwaite". These approximations are implemented in a few different packages (`afex`, `lmerTest`, `pbkrtest`).
+
+---
+# Parameter p-values
+
+One of the easiest to use is the `lmerTest` package: you can fit the model the same way (it just passes your call to `lmer`) and it will calculate the Satterthwaite approximation and add those `df` and p-values to the model summary
+
+--
+
+.scroll-output[
+```{r message=FALSE, warning=FALSE}
+library(lmerTest)
+mod_caff <- lmer(RT ~ 1 + Condition +
+                   (1 | Participant), 
+                 data=caff_mlm, REML=FALSE)
+summary(mod_caff)
+```
+]
+
+---
+# Remember: MLM is just an extension of LM
+
+**Our first MLM**
+```{r echo=FALSE}
+coef(summary(mod_caff))
+```
+
+**A paired-samples t-test**
+```{r}
+t.test(RT ~ Condition, data=caff_mlm, paired=TRUE)
+```
+
+--
+
+**Key difference**: MLM offers more flexible specification of fixed and random effects
+
+---
+# Some general advice
+
+This semester you will be learning statistical methods that don't have "cookbook" recipes. You'll need to actively engage with the data and research question in order to come up with a good model for answering the question, then to defend/explain that model.
+
+--
+
+**Practice is absolutely critical** to learning how to do this. You can't learn it just from the lectures; you have to try it with real data. You will make mistakes, run into problems, etc. Identifying the mistakes and solving those problems is how you'll master this material. *We have made all of the example data sets and code available to you for exactly this reason.*
+
+--
+
+Do the lab exercises! If you're not sure, **try something** then try to figure out whether it worked or not. Ask questions when you're stuck -- we're here to help you learn, but it will only work if you engage in **active, hands-on learning**.
+
+![gym](figs/stockvault-fitness-center106595.jpg)
+---
+# Live R
+
+Questions?
+
+--
+
+### Use MLM to run a 2x2 repeated-measures ANOVA
+
+--
+
+Recall: 
+
+1. ANOVA is a particular kind of GLM (linear regression with categorical predictors).
+2. Repeated-measures ANOVA is used for within-participant manipulations; aka, clustered or nested observations.
+
+--
+
+MLM is an extension of GLM with random effects to capture within-participant nesting, so we should be able to implement a 2x2 rm-ANOVA using MLM.
+
+--
+
+### Example: Effect of caffeine consumption on processing speed **in younger vs older adults**
+
+```{r}
+load("./data/caff_age.rda")
+```
+

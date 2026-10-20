@@ -1,0 +1,102 @@
+---
+title: "Writing up, Logistic GCA Walkthrough"
+bibliography: references.bib
+biblio-style: apalike
+link-citations: yes
+params: 
+    SHOW_SOLS: TRUE
+    TOGGLE: TRUE
+---
+
+```{r echo=FALSE}
+source('assets/setup.R')
+```
+
+
+# Writing up
+
+We saw in [Lecture 3](https://uoepsy.github.io/msmr/lectures/msmr_lec03_NonLinearLDA.html#27) a walk-through of using GCA (growth curve analysis) to model the eye-tracking data from a spoken word-to-picture matching task.  
+  
+The model we saw in the lecture had the following structure and results:
+
+```
+> m.full <- lmer(meanFix ~ (poly1+poly2+poly3)*Condition + 
+                 (poly1+poly2+poly3 | Subject) + 
+                 (poly1+poly2 | Subject:Condition), 
+               control = lmerControl(optimizer="bobyqa"),
+               data=TargetFix, REML=F)
+
+> coef(summary(m.full))
+                      Estimate Std. Error      t value
+(Intercept)       0.4773227513 0.01385240 34.457775306
+poly1               0.6385603705 0.05993519 10.654181583
+poly2              -0.1095979256 0.03848819 -2.847573180
+poly3              -0.0932611870 0.02041640 -4.567955536
+ConditionLow     -0.0581122429 0.01901291 -3.056462582
+poly1:ConditionLow  0.0003188189 0.06330556  0.005036191
+poly2:ConditionLow  0.1635455113 0.05426498  3.013831365
+poly3:ConditionLow -0.0020869051 0.02014728 -0.103582452
+```
+
+There are two rules of thumb for reporting growth curve analysis results, but here are some guidelines:  
+
++ **Clearly describe each of the three key components of the model**: the functional form (third-order orthogonal polynomial), the fixed effects (effect of Condition on all time terms), and the random effects (effect of Subject on each of the time terms and nested effects of Subject-by-Condition on each of the time terms except the cubic). Depending on the circumstances and complexity of the model, you may want to include additional information about the factors and why they were included or not. It's also a good idea to report which method was used for computing p-values.  
++ **For key findings, report parameter estimates and standard errors along with significance tests**. In some cases the model comparison is going to be enough, but for key findings, the readers should want to see the parameter estimates. The parameter estimate standard errors are critical for interpreting the estimates, so those should be reported as well. The t-values are not critical to report (they are just Estimate divided by the Std Error, so they can always be computed from the reported estimates and standard errors). If there are many estimated parameters, it may be a good idea to focus the main text discussion on the most important ones and report the full set in a table or appendix.  
+  
+  
+Here is how we might report the results from the example above:  
+<small>[Note, we haven't included Table 1 here. If you want a nice way of creating tables, try the `tab_model()` function from the **sjPlot** package works for multi-level models too!.]</small>
+
+:::frame
+Growth curve analysis (Mirman, 2014) was used to analyze the target gaze data from 300ms to 1000ms after word onset. The overall time course of target fixations was modeled with a third-order (cubic) orthogonal polynomial and fixed effects of Condition (Low vs. High frequency; within-participants) on all time terms. The model also included participant random effects on all time terms and participant-by-condition random effects on all time terms except the cubic (estimating random effects is “expensive” in terms of the number of observation required, so this cubic term was excluded because it tends to capture less-relevant effects in the tails). There was a significant effect of Condition on the intercept term, indicating lower overall target fixation proportions for the Low condition relative to the High condition (Estimate = -0.058, SE = 0.019, p < 0.01). There was also a significant effect on the quadratic term, indicating shallower curvature - slower word recognition - in the Low condition relative to the High condition (Estimate = 0.16, SE = 0.054, p < 0.01). All other effects of Condition were not significant (see Table 1 for full results).
+
+:::
+
+# Logistic GCA
+
+Above, we analysed the proportion of fixations to the target picture in a given 50~ms time bin (the `meanFix` variable). We can express this differently, in terms of the number of samples in each 50~ms bin in which there were fixations to the target, and the total number of samples. This can lend itself to being modelled as a binomial (where success is fixation on the target). 
+<br>
+In the data, the `sumFix` variable contains the number of samples in which the target was fixated upon, and the `N` variable contains the total number of samples in that bin. Like we saw last week, we can model a binomial using `cbind(num_successes, num_failures)`, so here we can use `cbind(sumFix, N-sumFix)~ ...`
+
+The data (.rda format) is available at [https://uoepsy.github.io/msmr/data/TargetFix.rda](https://uoepsy.github.io/msmr/data/TargetFix.rda)  
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(lme4)
+source("https://uoepsy.github.io/msmr/functions/code_poly.R")
+```
+
+```{r}
+load(url("https://uoepsy.github.io/msmr/data/TargetFix.rda"))
+#make 3rd-order orth poly
+TargetFix <- code_poly(TargetFix, predictor="timeBin", poly.order=3, draw.poly=F)
+# fit logisitc GCA model
+m.log <- glmer(cbind(sumFix, N-sumFix) ~ (poly1+poly2+poly3)*Condition +
+                 (poly1+poly2+poly3 | Subject) +
+                 (poly1+poly2 | Subject:Condition),
+               data=TargetFix, family=binomial, control = glmerControl(optimizer = "bobyqa"))
+summary(m.log)
+```
+
+Simpler random effects: note that the correlations between Subject-level random effects are all +1.00 or -1.00, so can simplify the structure by removing them:  
+
+```{r}
+m.log_zc <- glmer(cbind(sumFix, N-sumFix) ~ (poly1+poly2+poly3)*Condition +
+                 (poly1+poly2+poly3 || Subject) +
+                 (poly1+poly2 | Subject:Condition),
+               data=TargetFix, family=binomial, control = glmerControl(optimizer = "bobyqa"))
+summary(m.log_zc)
+```
+
+Plot model fit:  
+
+```{r fig.height=4, fig.width=6}
+ggplot(TargetFix, aes(Time, meanFix, color=Condition)) +
+  stat_summary(fun.data=mean_se, geom="pointrange") +
+  stat_summary(aes(y=fitted(m.log)), fun=mean, geom="line") +
+  stat_summary(aes(y=fitted(m.log_zc)), fun=mean, geom="line", linetype="dashed") +
+  theme_bw() + expand_limits(y=c(0,1)) + 
+  labs(y="Fixation Proportion", x="Time since word onset (ms)")
+```
+
+

@@ -1,0 +1,3871 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Week 4: Other Random Effect Structures</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Dan Mirman" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# <b>Week 4: Other Random Effect Structures</b>
+]
+.subtitle[
+## Multivariate Statistics and Methodology using R (MSMR)<br><br>
+]
+.author[
+### Dan Mirman
+]
+.institute[
+### Department of Psychology<br>The University of Edinburgh
+]
+
+---
+
+
+
+
+
+
+---
+# Turtles all the way down
+
+.pull-left[
+MLM is useful for **nested data**. 
+
+So far, we've considered two levels of nesting:
+
+* Group level
+* Individual level
+
+It's also possible to have multiple nesting levels or crossed nesting structures.
+
+This is captured by the **random effect structure**.
+]
+
+.pull-right[
+&lt;img src="./figs/turtles_wikipedia.jpg" /&gt;
+
+image credit: wikipedia
+]
+
+---
+# 3-level nesting
+
+.left-column[
+**Sources of variability (random intercepts and time-slopes)**
+
+* Therapists 
+* Subjects
+]
+
+.right-column[
+&lt;img src="./figs/3lvl_rpsychologist.png" /&gt;
+
+image credit: Kristoffer Magnusson
+]
+
+---
+# Example: Math Active Learning
+**Simulated example: Testing whether a new (computer based) active learning method improves math test scores.** 
+
+* You measured students' math scores (DV) and the proportion of time (IV) they spent using the computer. 
+* The program was implemented in 3 schools
+* 8-12 classrooms in each school (total classrooms n=30)
+* 12-24 students per class (total students n=570)
+
+&lt;img src="./figs/3lvl_math.png" /&gt;
+
+image credit: Alexander P. Demos
+
+---
+# Math Active Learning: Read the data
+
+Do a little data wrangling: center some values relative to the grand mean and the school mean.
+
+
+``` r
+math &lt;- read_csv("./data/active_math_sim.csv") %&gt;%
+  mutate(Class = paste0(School, "cl", Classroom), #unique class ID
+         ActiveTime.GM = scale(ActiveTime, scale=F), #grand-mean centered
+         ClassSize.GM = scale(ClassSize, scale=F)) %&gt;% #grand-mean centered
+  group_by(School) %&gt;%
+  mutate(ClassSize.SM = scale(ClassSize, scale=F)) #school-mean centered
+```
+
+```
+## Rows: 570 Columns: 6
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: ","
+## chr (1): School
+## dbl (5): Math, ActiveTime, ClassSize, Classroom, StudentID
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+```
+
+---
+# Math Active Learning: Exploratory plot 1
+
+
+``` r
+p1a &lt;- ggplot(math, aes(ClassSize, Math)) + geom_point() + geom_smooth(method = "lm")
+p1b &lt;- ggplot(math, aes(ActiveTime, Math)) + geom_point() + geom_smooth(method = "lm")
+p1a + p1b # requires "patchwork" library
+```
+
+&lt;img src="msmr_lec04_RanEf_files/figure-html/unnamed-chunk-2-1.png" width="576" /&gt;
+
+Looks like math scores are better in **smaller classes** and for students who spend more time doing active learning (**higher active learning proportion**).
+
+---
+# Math Active Learning: Exploratory plot 2
+
+
+``` r
+p2a &lt;- ggplot(math, aes(Class, ClassSize, color=School)) + geom_point() + coord_flip()
+p2b &lt;- ggplot(math, aes(Class, ActiveTime, fill=School)) + geom_boxplot() + coord_flip()
+p2a + p2b
+```
+
+&lt;img src="msmr_lec04_RanEf_files/figure-html/unnamed-chunk-3-1.png" width="720" /&gt;
+
+* Classes differ in size, and this is unequal across schools
+* Students differ in proportion  of time spent on active learning, but each class has a big (similar) range
+
+---
+# Math Active Learning: 2-level model
+
+
+``` r
+m1 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 | Class),  
+          data=math, REML=FALSE)
+gt(tidy(m1)) # requires "broom.mixed" and "gt" packages
+```
+
+<div id="yffvptpqsk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#yffvptpqsk table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#yffvptpqsk thead, #yffvptpqsk tbody, #yffvptpqsk tfoot, #yffvptpqsk tr, #yffvptpqsk td, #yffvptpqsk th {
+  border-style: none;
+}
+
+#yffvptpqsk p {
+  margin: 0;
+  padding: 0;
+}
+
+#yffvptpqsk .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#yffvptpqsk .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#yffvptpqsk .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#yffvptpqsk .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#yffvptpqsk .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#yffvptpqsk .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yffvptpqsk .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#yffvptpqsk .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#yffvptpqsk .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#yffvptpqsk .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#yffvptpqsk .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#yffvptpqsk .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#yffvptpqsk .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#yffvptpqsk .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#yffvptpqsk .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#yffvptpqsk .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#yffvptpqsk .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#yffvptpqsk .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#yffvptpqsk .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yffvptpqsk .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#yffvptpqsk .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#yffvptpqsk .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#yffvptpqsk .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yffvptpqsk .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#yffvptpqsk .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#yffvptpqsk .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yffvptpqsk .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yffvptpqsk .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#yffvptpqsk .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yffvptpqsk .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#yffvptpqsk .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yffvptpqsk .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#yffvptpqsk .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yffvptpqsk .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#yffvptpqsk .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yffvptpqsk .gt_left {
+  text-align: left;
+}
+
+#yffvptpqsk .gt_center {
+  text-align: center;
+}
+
+#yffvptpqsk .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#yffvptpqsk .gt_font_normal {
+  font-weight: normal;
+}
+
+#yffvptpqsk .gt_font_bold {
+  font-weight: bold;
+}
+
+#yffvptpqsk .gt_font_italic {
+  font-style: italic;
+}
+
+#yffvptpqsk .gt_super {
+  font-size: 65%;
+}
+
+#yffvptpqsk .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#yffvptpqsk .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#yffvptpqsk .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#yffvptpqsk .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#yffvptpqsk .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#yffvptpqsk .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#yffvptpqsk .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#yffvptpqsk .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#yffvptpqsk div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="effect">effect</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="group">group</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="term">term</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="estimate">estimate</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="std.error">std.error</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="statistic">statistic</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="df">df</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="p.value">p.value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="group" class="gt_row gt_left">NA</td>
+<td headers="term" class="gt_row gt_left">(Intercept)</td>
+<td headers="estimate" class="gt_row gt_right">42.9645</td>
+<td headers="std.error" class="gt_row gt_right">1.5858</td>
+<td headers="statistic" class="gt_row gt_right">27.093</td>
+<td headers="df" class="gt_row gt_right">29.93</td>
+<td headers="p.value" class="gt_row gt_right">1.291e-22</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="group" class="gt_row gt_left">NA</td>
+<td headers="term" class="gt_row gt_left">ActiveTime.GM</td>
+<td headers="estimate" class="gt_row gt_right">14.9057</td>
+<td headers="std.error" class="gt_row gt_right">0.6044</td>
+<td headers="statistic" class="gt_row gt_right">24.662</td>
+<td headers="df" class="gt_row gt_right">540.66</td>
+<td headers="p.value" class="gt_row gt_right">1.509e-90</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="group" class="gt_row gt_left">NA</td>
+<td headers="term" class="gt_row gt_left">ClassSize.GM</td>
+<td headers="estimate" class="gt_row gt_right">-1.8662</td>
+<td headers="std.error" class="gt_row gt_right">0.4805</td>
+<td headers="statistic" class="gt_row gt_right">-3.884</td>
+<td headers="df" class="gt_row gt_right">30.05</td>
+<td headers="p.value" class="gt_row gt_right">5.244e-04</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="group" class="gt_row gt_left">NA</td>
+<td headers="term" class="gt_row gt_left">ActiveTime.GM:ClassSize.GM</td>
+<td headers="estimate" class="gt_row gt_right">0.3613</td>
+<td headers="std.error" class="gt_row gt_right">0.1939</td>
+<td headers="statistic" class="gt_row gt_right">1.863</td>
+<td headers="df" class="gt_row gt_right">540.59</td>
+<td headers="p.value" class="gt_row gt_right">6.300e-02</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">ran_pars</td>
+<td headers="group" class="gt_row gt_left">Class</td>
+<td headers="term" class="gt_row gt_left">sd__(Intercept)</td>
+<td headers="estimate" class="gt_row gt_right">8.5091</td>
+<td headers="std.error" class="gt_row gt_right">NA</td>
+<td headers="statistic" class="gt_row gt_right">NA</td>
+<td headers="df" class="gt_row gt_right">NA</td>
+<td headers="p.value" class="gt_row gt_right">NA</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">ran_pars</td>
+<td headers="group" class="gt_row gt_left">Residual</td>
+<td headers="term" class="gt_row gt_left">sd__Observation</td>
+<td headers="estimate" class="gt_row gt_right">4.1709</td>
+<td headers="std.error" class="gt_row gt_right">NA</td>
+<td headers="statistic" class="gt_row gt_right">NA</td>
+<td headers="df" class="gt_row gt_right">NA</td>
+<td headers="p.value" class="gt_row gt_right">NA</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+
+--
+
+As we work through this example, keep an eye on the effect of class size and its interaction with active learning time.
+
+---
+# Math Active Learning: 2-level model fit(s)
+
+``` r
+ggplot(augment(m1), aes(ActiveTime.GM, Math, color=Class)) +
+  geom_point() + geom_smooth(aes(y=.fitted), method = "lm") +
+  xlab("Active Learning Time") + ylab("Math Score") + theme(legend.position = "none")
+```
+
+&lt;img src="msmr_lec04_RanEf_files/figure-html/unnamed-chunk-5-1.png" width="504" /&gt;
+
+Note the parallel lines: Our model allows classrooms to differ in math scores (random intercept), but not in the effect of active learning, which is assumed to be the same in all classrooms.
+
+--
+
+Maybe classes differ in how strongly active learning influences math achievement? **Add random slopes**
+
+---
+# Math Active Learning: 2-level model, part 2
+
+``` r
+m2 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.GM + (1 + ActiveTime.GM | Class), data=math, REML=F)
+```
+<div id="etlajnclvb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#etlajnclvb table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#etlajnclvb thead, #etlajnclvb tbody, #etlajnclvb tfoot, #etlajnclvb tr, #etlajnclvb td, #etlajnclvb th {
+  border-style: none;
+}
+
+#etlajnclvb p {
+  margin: 0;
+  padding: 0;
+}
+
+#etlajnclvb .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#etlajnclvb .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#etlajnclvb .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#etlajnclvb .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#etlajnclvb .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#etlajnclvb .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#etlajnclvb .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#etlajnclvb .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#etlajnclvb .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#etlajnclvb .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#etlajnclvb .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#etlajnclvb .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#etlajnclvb .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#etlajnclvb .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#etlajnclvb .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#etlajnclvb .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#etlajnclvb .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#etlajnclvb .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#etlajnclvb .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#etlajnclvb .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#etlajnclvb .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#etlajnclvb .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#etlajnclvb .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#etlajnclvb .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#etlajnclvb .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#etlajnclvb .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#etlajnclvb .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#etlajnclvb .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#etlajnclvb .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#etlajnclvb .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#etlajnclvb .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#etlajnclvb .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#etlajnclvb .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#etlajnclvb .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#etlajnclvb .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#etlajnclvb .gt_left {
+  text-align: left;
+}
+
+#etlajnclvb .gt_center {
+  text-align: center;
+}
+
+#etlajnclvb .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#etlajnclvb .gt_font_normal {
+  font-weight: normal;
+}
+
+#etlajnclvb .gt_font_bold {
+  font-weight: bold;
+}
+
+#etlajnclvb .gt_font_italic {
+  font-style: italic;
+}
+
+#etlajnclvb .gt_super {
+  font-size: 65%;
+}
+
+#etlajnclvb .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#etlajnclvb .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#etlajnclvb .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#etlajnclvb .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#etlajnclvb .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#etlajnclvb .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#etlajnclvb .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#etlajnclvb .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#etlajnclvb div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="effect">effect</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="group">group</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="term">term</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="estimate">estimate</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="std.error">std.error</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="statistic">statistic</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="df">df</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="p.value">p.value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="group" class="gt_row gt_left">NA</td>
+<td headers="term" class="gt_row gt_left">(Intercept)</td>
+<td headers="estimate" class="gt_row gt_right">42.8612</td>
+<td headers="std.error" class="gt_row gt_right">1.5984</td>
+<td headers="statistic" class="gt_row gt_right">26.815</td>
+<td headers="df" class="gt_row gt_right">29.95</td>
+<td headers="p.value" class="gt_row gt_right">1.715e-22</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="group" class="gt_row gt_left">NA</td>
+<td headers="term" class="gt_row gt_left">ActiveTime.GM</td>
+<td headers="estimate" class="gt_row gt_right">14.8927</td>
+<td headers="std.error" class="gt_row gt_right">1.0450</td>
+<td headers="statistic" class="gt_row gt_right">14.251</td>
+<td headers="df" class="gt_row gt_right">30.32</td>
+<td headers="p.value" class="gt_row gt_right">5.614e-15</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="group" class="gt_row gt_left">NA</td>
+<td headers="term" class="gt_row gt_left">ClassSize.GM</td>
+<td headers="estimate" class="gt_row gt_right">-1.8703</td>
+<td headers="std.error" class="gt_row gt_right">0.4843</td>
+<td headers="statistic" class="gt_row gt_right">-3.862</td>
+<td headers="df" class="gt_row gt_right">30.04</td>
+<td headers="p.value" class="gt_row gt_right">5.561e-04</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left" style="background-color: #FFFF00;">fixed</td>
+<td headers="group" class="gt_row gt_left" style="background-color: #FFFF00;">NA</td>
+<td headers="term" class="gt_row gt_left" style="background-color: #FFFF00;">ActiveTime.GM:ClassSize.GM</td>
+<td headers="estimate" class="gt_row gt_right" style="background-color: #FFFF00;">0.3329</td>
+<td headers="std.error" class="gt_row gt_right" style="background-color: #FFFF00;">0.3263</td>
+<td headers="statistic" class="gt_row gt_right" style="background-color: #FFFF00;">1.020</td>
+<td headers="df" class="gt_row gt_right" style="background-color: #FFFF00;">33.11</td>
+<td headers="p.value" class="gt_row gt_right" style="background-color: #FFFF00;">3.150e-01</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">ran_pars</td>
+<td headers="group" class="gt_row gt_left">Class</td>
+<td headers="term" class="gt_row gt_left">sd__(Intercept)</td>
+<td headers="estimate" class="gt_row gt_right">8.5821</td>
+<td headers="std.error" class="gt_row gt_right">NA</td>
+<td headers="statistic" class="gt_row gt_right">NA</td>
+<td headers="df" class="gt_row gt_right">NA</td>
+<td headers="p.value" class="gt_row gt_right">NA</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">ran_pars</td>
+<td headers="group" class="gt_row gt_left">Class</td>
+<td headers="term" class="gt_row gt_left">cor__(Intercept).ActiveTime.GM</td>
+<td headers="estimate" class="gt_row gt_right">-0.3107</td>
+<td headers="std.error" class="gt_row gt_right">NA</td>
+<td headers="statistic" class="gt_row gt_right">NA</td>
+<td headers="df" class="gt_row gt_right">NA</td>
+<td headers="p.value" class="gt_row gt_right">NA</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">ran_pars</td>
+<td headers="group" class="gt_row gt_left">Class</td>
+<td headers="term" class="gt_row gt_left">sd__ActiveTime.GM</td>
+<td headers="estimate" class="gt_row gt_right">4.7109</td>
+<td headers="std.error" class="gt_row gt_right">NA</td>
+<td headers="statistic" class="gt_row gt_right">NA</td>
+<td headers="df" class="gt_row gt_right">NA</td>
+<td headers="p.value" class="gt_row gt_right">NA</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+
+* Adding `ActiveTime` random slopes substantially increased the SE and reduced estimated df for `ActiveTime` fixed effects. 
+* Interaction effect is not even marginal in this model: in the first model, omitting the random slope made the corresponding fixed effect anti-conservative.
+
+--
+
+Random slopes capture *random* classroom-level variation in effect of active learning instead of spuriously assigning it to class.
+
+---
+#  Math Active Learning: 2-level model, part 2 fit(s)
+
+``` r
+ggplot(augment(m2), aes(ActiveTime.GM, Math, color=Class)) +
+  geom_point() + geom_smooth(aes(y=.fitted), method = "lm") +
+  xlab("Active Learning Time") + ylab("Math Score") + theme(legend.position = "none")
+```
+
+&lt;img src="msmr_lec04_RanEf_files/figure-html/unnamed-chunk-8-1.png" width="504" /&gt;
+
+Model captures random class-level variation in math scores and strength of active learning effect.
+
+---
+#  Math Active Learning: a 3-level model?
+
+The 2-level model assumes that classrooms are independent, but this is not quite true. Classrooms are nested within schools and there may be school-level differences in math scores, effects of active learning, class size, etc.
+
+
+``` r
+ggplot(math, aes(ActiveTime.GM, Math, color=Class)) +
+  facet_wrap(~ School) +
+  geom_point() + geom_smooth(method = "lm", se=FALSE) +
+  xlab("Active Learning Time") + ylab("Math Score") + theme(legend.position = "none")
+```
+
+&lt;img src="msmr_lec04_RanEf_files/figure-html/unnamed-chunk-9-1.png" width="648" /&gt;
+
+---
+##  School and Class Size are confounded
+
+
+``` r
+unique(select(math, School, Class, ClassSize, ClassSize.GM, ClassSize.SM)) %&gt;%
+  pivot_longer(cols=starts_with("ClassSize"), names_to = "Type", values_to = "Size") %&gt;%
+  ggplot(aes(School, Size)) + facet_wrap(~ Type, scales="free_y") + geom_violin() + geom_jitter(width=0.1, height=0)
+```
+
+&lt;img src="msmr_lec04_RanEf_files/figure-html/unnamed-chunk-10-1.png" width="576" /&gt;
+
+* Class sizes are different across schools, this confounds differences between schools (random, not interesting) and effects of class size (systematic, interesting)
+* This is true for both raw and grand-mean-centered class sizes, but **school-mean-centered** class sizes allow testing effect of class size while controlling for school-level differences
+
+---
+# Sidebar: Simpson's Paradox
+
+.pull-left[
+&lt;img src="./figs/Simpsons_paradox.png" /&gt;
+]
+
+.pull-right[
+**Famous real-world example: gender bias in PG admissions at University of California - Berkeley in 1973**
+
+* Overall acceptance rate higher for males than females
+* But individual department acceptance rates higher for females than males
+
+This is usually because of a "lurking" (confounding) variable. In the Berkeley example there is a confound between gender differences in **application** rates and **department** differences in acceptance rates: departments with low admission rates had many more female applicants, departments with higher admission rates had many more male applicants. As a result, even though (almost) all departments had higher acceptance rates for females, the *overall* acceptance rate was higher for males.
+]
+
+--
+
+**Lesson**: watch out for sub-group (cluster-level) differences that might be confounded with your variables of interest.
+
+---
+#  Math Active Learning: 3-level model
+
+* Use school-mean-centered measure of class size to test effect of class size while controlling for school-level differences
+* Add random effect of School (intercept and slope)
+
+
+``` r
+m3 &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
+           (1 + ActiveTime.GM | School) +
+           (1 + ActiveTime.GM | Class),  
+           data=math, REML=FALSE)
+```
+
+---
+#  Math Active Learning: 3-level model
+
+<div id="ehigvhgefi" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ehigvhgefi table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#ehigvhgefi thead, #ehigvhgefi tbody, #ehigvhgefi tfoot, #ehigvhgefi tr, #ehigvhgefi td, #ehigvhgefi th {
+  border-style: none;
+}
+
+#ehigvhgefi p {
+  margin: 0;
+  padding: 0;
+}
+
+#ehigvhgefi .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#ehigvhgefi .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#ehigvhgefi .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#ehigvhgefi .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#ehigvhgefi .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ehigvhgefi .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ehigvhgefi .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ehigvhgefi .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#ehigvhgefi .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#ehigvhgefi .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#ehigvhgefi .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#ehigvhgefi .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#ehigvhgefi .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#ehigvhgefi .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#ehigvhgefi .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ehigvhgefi .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#ehigvhgefi .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#ehigvhgefi .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#ehigvhgefi .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ehigvhgefi .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#ehigvhgefi .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#ehigvhgefi .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#ehigvhgefi .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ehigvhgefi .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#ehigvhgefi .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#ehigvhgefi .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ehigvhgefi .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ehigvhgefi .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#ehigvhgefi .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ehigvhgefi .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#ehigvhgefi .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ehigvhgefi .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ehigvhgefi .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ehigvhgefi .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ehigvhgefi .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ehigvhgefi .gt_left {
+  text-align: left;
+}
+
+#ehigvhgefi .gt_center {
+  text-align: center;
+}
+
+#ehigvhgefi .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#ehigvhgefi .gt_font_normal {
+  font-weight: normal;
+}
+
+#ehigvhgefi .gt_font_bold {
+  font-weight: bold;
+}
+
+#ehigvhgefi .gt_font_italic {
+  font-style: italic;
+}
+
+#ehigvhgefi .gt_super {
+  font-size: 65%;
+}
+
+#ehigvhgefi .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#ehigvhgefi .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#ehigvhgefi .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#ehigvhgefi .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#ehigvhgefi .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#ehigvhgefi .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#ehigvhgefi .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#ehigvhgefi .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#ehigvhgefi div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="effect">effect</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="term">term</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="estimate">estimate</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="std.error">std.error</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="statistic">statistic</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="df">df</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="p.value">p.value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">(Intercept)</td>
+<td headers="estimate" class="gt_row gt_right">44.45181</td>
+<td headers="std.error" class="gt_row gt_right">4.6669</td>
+<td headers="statistic" class="gt_row gt_right">9.52488</td>
+<td headers="df" class="gt_row gt_right">3.046</td>
+<td headers="p.value" class="gt_row gt_right">0.002305</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">ActiveTime.GM</td>
+<td headers="estimate" class="gt_row gt_right">14.34849</td>
+<td headers="std.error" class="gt_row gt_right">1.8123</td>
+<td headers="statistic" class="gt_row gt_right">7.91745</td>
+<td headers="df" class="gt_row gt_right">3.232</td>
+<td headers="p.value" class="gt_row gt_right">0.003196</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left" style="background-color: #FFFF00;">fixed</td>
+<td headers="term" class="gt_row gt_left" style="background-color: #FFFF00;">ClassSize.SM</td>
+<td headers="estimate" class="gt_row gt_right" style="background-color: #FFFF00;">-0.03656</td>
+<td headers="std.error" class="gt_row gt_right" style="background-color: #FFFF00;">0.5729</td>
+<td headers="statistic" class="gt_row gt_right" style="background-color: #FFFF00;">-0.06381</td>
+<td headers="df" class="gt_row gt_right" style="background-color: #FFFF00;">27.971</td>
+<td headers="p.value" class="gt_row gt_right" style="background-color: #FFFF00;">0.949572</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left" style="background-color: #FFFF00;">fixed</td>
+<td headers="term" class="gt_row gt_left" style="background-color: #FFFF00;">ActiveTime.GM:ClassSize.SM</td>
+<td headers="estimate" class="gt_row gt_right" style="background-color: #FFFF00;">-0.78321</td>
+<td headers="std.error" class="gt_row gt_right" style="background-color: #FFFF00;">0.4133</td>
+<td headers="statistic" class="gt_row gt_right" style="background-color: #FFFF00;">-1.89502</td>
+<td headers="df" class="gt_row gt_right" style="background-color: #FFFF00;">32.517</td>
+<td headers="p.value" class="gt_row gt_right" style="background-color: #FFFF00;">0.067010</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+
+Effect of Class Size is no longer significant: it was a Simpson's paradox effect (differences between Schools, which are confounded with class size, not effects of class size)
+
+---
+#  Math Active Learning: 3-level model
+
+.pull-left[
+With only 3 schools, the school-level random effects are probably over-parameterized...
+
+``` r
+VarCorr(m3)
+```
+
+```
+##  Groups   Name          Std.Dev. Corr 
+##  Class    (Intercept)   6.74          
+##           ActiveTime.GM 3.60     0.12 
+##  School   (Intercept)   7.78          
+##           ActiveTime.GM 2.74     -1.00
+##  Residual               3.91
+```
+
+Yes, the slope-intercept correlation is -1.00
+
+]
+
+--
+
+.pull-right[
+Remove the by-school slope-intercept correlation:
+
+
+``` r
+m3a &lt;- lmer(Math ~ ActiveTime.GM * ClassSize.SM +
+           (1 + ActiveTime.GM || School) +
+           (1 + ActiveTime.GM | Class),  
+           data=math, REML=FALSE)
+VarCorr(m3a)
+```
+
+```
+##  Groups   Name          Std.Dev. Corr
+##  Class    (Intercept)   6.79         
+##           ActiveTime.GM 3.76     0.14
+##  School   ActiveTime.GM 2.56         
+##  School.1 (Intercept)   7.88         
+##  Residual               3.91
+```
+]
+---
+#  Math Active Learning: 3-level model
+<div id="eqbtnsczje" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#eqbtnsczje table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#eqbtnsczje thead, #eqbtnsczje tbody, #eqbtnsczje tfoot, #eqbtnsczje tr, #eqbtnsczje td, #eqbtnsczje th {
+  border-style: none;
+}
+
+#eqbtnsczje p {
+  margin: 0;
+  padding: 0;
+}
+
+#eqbtnsczje .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#eqbtnsczje .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#eqbtnsczje .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#eqbtnsczje .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#eqbtnsczje .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#eqbtnsczje .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#eqbtnsczje .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#eqbtnsczje .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#eqbtnsczje .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#eqbtnsczje .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#eqbtnsczje .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#eqbtnsczje .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#eqbtnsczje .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#eqbtnsczje .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#eqbtnsczje .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#eqbtnsczje .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#eqbtnsczje .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#eqbtnsczje .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#eqbtnsczje .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#eqbtnsczje .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#eqbtnsczje .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#eqbtnsczje .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#eqbtnsczje .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#eqbtnsczje .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#eqbtnsczje .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#eqbtnsczje .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#eqbtnsczje .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#eqbtnsczje .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#eqbtnsczje .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#eqbtnsczje .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#eqbtnsczje .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#eqbtnsczje .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#eqbtnsczje .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#eqbtnsczje .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#eqbtnsczje .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#eqbtnsczje .gt_left {
+  text-align: left;
+}
+
+#eqbtnsczje .gt_center {
+  text-align: center;
+}
+
+#eqbtnsczje .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#eqbtnsczje .gt_font_normal {
+  font-weight: normal;
+}
+
+#eqbtnsczje .gt_font_bold {
+  font-weight: bold;
+}
+
+#eqbtnsczje .gt_font_italic {
+  font-style: italic;
+}
+
+#eqbtnsczje .gt_super {
+  font-size: 65%;
+}
+
+#eqbtnsczje .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#eqbtnsczje .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#eqbtnsczje .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#eqbtnsczje .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#eqbtnsczje .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#eqbtnsczje .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#eqbtnsczje .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#eqbtnsczje .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#eqbtnsczje div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="effect">effect</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="group">group</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="term">term</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="estimate">estimate</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="std.error">std.error</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="statistic">statistic</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="df">df</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="p.value">p.value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="group" class="gt_row gt_left">NA</td>
+<td headers="term" class="gt_row gt_left">(Intercept)</td>
+<td headers="estimate" class="gt_row gt_right">44.35577</td>
+<td headers="std.error" class="gt_row gt_right">4.7261</td>
+<td headers="statistic" class="gt_row gt_right">9.38533</td>
+<td headers="df" class="gt_row gt_right">3.033</td>
+<td headers="p.value" class="gt_row gt_right">0.002451</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="group" class="gt_row gt_left">NA</td>
+<td headers="term" class="gt_row gt_left">ActiveTime.GM</td>
+<td headers="estimate" class="gt_row gt_right">14.32683</td>
+<td headers="std.error" class="gt_row gt_right">1.7365</td>
+<td headers="statistic" class="gt_row gt_right">8.25056</td>
+<td headers="df" class="gt_row gt_right">3.177</td>
+<td headers="p.value" class="gt_row gt_right">0.003003</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left" style="background-color: #FFFF00;">fixed</td>
+<td headers="group" class="gt_row gt_left" style="background-color: #FFFF00;">NA</td>
+<td headers="term" class="gt_row gt_left" style="background-color: #FFFF00;">ClassSize.SM</td>
+<td headers="estimate" class="gt_row gt_right" style="background-color: #FFFF00;">-0.02766</td>
+<td headers="std.error" class="gt_row gt_right" style="background-color: #FFFF00;">0.5772</td>
+<td headers="statistic" class="gt_row gt_right" style="background-color: #FFFF00;">-0.04792</td>
+<td headers="df" class="gt_row gt_right" style="background-color: #FFFF00;">27.226</td>
+<td headers="p.value" class="gt_row gt_right" style="background-color: #FFFF00;">0.962128</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left" style="background-color: #FFFF00;">fixed</td>
+<td headers="group" class="gt_row gt_left" style="background-color: #FFFF00;">NA</td>
+<td headers="term" class="gt_row gt_left" style="background-color: #FFFF00;">ActiveTime.GM:ClassSize.SM</td>
+<td headers="estimate" class="gt_row gt_right" style="background-color: #FFFF00;">-0.77926</td>
+<td headers="std.error" class="gt_row gt_right" style="background-color: #FFFF00;">0.4231</td>
+<td headers="statistic" class="gt_row gt_right" style="background-color: #FFFF00;">-1.84189</td>
+<td headers="df" class="gt_row gt_right" style="background-color: #FFFF00;">29.967</td>
+<td headers="p.value" class="gt_row gt_right" style="background-color: #FFFF00;">0.075409</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">ran_pars</td>
+<td headers="group" class="gt_row gt_left">Class</td>
+<td headers="term" class="gt_row gt_left">sd__(Intercept)</td>
+<td headers="estimate" class="gt_row gt_right">6.79290</td>
+<td headers="std.error" class="gt_row gt_right">NA</td>
+<td headers="statistic" class="gt_row gt_right">NA</td>
+<td headers="df" class="gt_row gt_right">NA</td>
+<td headers="p.value" class="gt_row gt_right">NA</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">ran_pars</td>
+<td headers="group" class="gt_row gt_left">Class</td>
+<td headers="term" class="gt_row gt_left">cor__(Intercept).ActiveTime.GM</td>
+<td headers="estimate" class="gt_row gt_right">0.13698</td>
+<td headers="std.error" class="gt_row gt_right">NA</td>
+<td headers="statistic" class="gt_row gt_right">NA</td>
+<td headers="df" class="gt_row gt_right">NA</td>
+<td headers="p.value" class="gt_row gt_right">NA</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">ran_pars</td>
+<td headers="group" class="gt_row gt_left">Class</td>
+<td headers="term" class="gt_row gt_left">sd__ActiveTime.GM</td>
+<td headers="estimate" class="gt_row gt_right">3.75530</td>
+<td headers="std.error" class="gt_row gt_right">NA</td>
+<td headers="statistic" class="gt_row gt_right">NA</td>
+<td headers="df" class="gt_row gt_right">NA</td>
+<td headers="p.value" class="gt_row gt_right">NA</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">ran_pars</td>
+<td headers="group" class="gt_row gt_left">School</td>
+<td headers="term" class="gt_row gt_left">sd__ActiveTime.GM</td>
+<td headers="estimate" class="gt_row gt_right">2.55827</td>
+<td headers="std.error" class="gt_row gt_right">NA</td>
+<td headers="statistic" class="gt_row gt_right">NA</td>
+<td headers="df" class="gt_row gt_right">NA</td>
+<td headers="p.value" class="gt_row gt_right">NA</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">ran_pars</td>
+<td headers="group" class="gt_row gt_left">School.1</td>
+<td headers="term" class="gt_row gt_left">sd__(Intercept)</td>
+<td headers="estimate" class="gt_row gt_right">7.88169</td>
+<td headers="std.error" class="gt_row gt_right">NA</td>
+<td headers="statistic" class="gt_row gt_right">NA</td>
+<td headers="df" class="gt_row gt_right">NA</td>
+<td headers="p.value" class="gt_row gt_right">NA</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">ran_pars</td>
+<td headers="group" class="gt_row gt_left">Residual</td>
+<td headers="term" class="gt_row gt_left">sd__Observation</td>
+<td headers="estimate" class="gt_row gt_right">3.91480</td>
+<td headers="std.error" class="gt_row gt_right">NA</td>
+<td headers="statistic" class="gt_row gt_right">NA</td>
+<td headers="df" class="gt_row gt_right">NA</td>
+<td headers="p.value" class="gt_row gt_right">NA</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+
+---
+# Interim summary
+
+Nested structure can extend to 3 (or more) levels and this should be captured in the random effects structure of a multilevel model
+
+This is particularly important when sub-group (cluster-level) differences might be confounded with variables of interest (Simpson's Paradox).
+
+--
+
+Omitting random slopes tends to make models anti-conservative (inflates rates of false positives). 
+
+**Recommendation:** start with a "full" or "maximal" random effect structure and reduce as needed
+
+--
+
+When there are only a few observational units (e.g., 3 schools), estimating random effects is very difficult (esp. random slopes) and can produce unreliable fixed effect estimates. Over-parameterised random effect structures should be simplified.
+
+--
+### Questions?
+
+---
+# Crossed random effects
+
+In most statistical tests, we are evaluating the reliability of some effect in the context of the variability in the data. The goal is to make an inference from the sample to the population from which from that sample was drawn.
+
+Usually, we want to make inferences about reliability/variability across **subjects**: i.e., in general, do participants tend to show this effect or is it just one or two people (or classrooms) showing it? That is, would we expect the rest of the participant population to also behave this way?
+
+--
+
+We might also ask about reliability/variability across **items**. This often comes up in laboratory experimental contexts where we ask participants to solve N problems, or answer N questions, or recognize N words, etc. There will be variability across those N "items" and we should test whether our effects of interest are reliable in the context of that variability. That is, would we expect the same outcome for other problems, questions, words, etc. from the same population?
+
+--
+
+Historically, this was done by conducting separate by-subjects ("F1") and by-items ("F2") analyses and journals sometimes even required this (a long time ago, I had a paper rejected because a key result was statistically significant by subjects but only marginal by items).
+
+--
+
+**Multilevel models provide a better solution to this problem.**
+
+---
+# Improving problem solving
+Made-up data on an intervention to improve problem solving ability
+
+``` r
+load("./data/problem_solving.Rdata")
+summary(problem_solving)
+```
+
+```
+##       Item      Prob_Type      Subject         Condition          RT       
+##  AC     : 115   Hard:1494   S101   :  30   Control  :1397   Min.   :  440  
+##  AV     : 109   Easy:1370   S109   :  30   Treatment:1467   1st Qu.: 1161  
+##  AE     : 107               S121   :  30                    Median : 1536  
+##  AB     : 105               S122   :  30                    Mean   : 1730  
+##  AH     : 102               S124   :  30                    3rd Qu.: 2040  
+##  AJ     : 102               S134   :  30                    Max.   :12753  
+##  (Other):2224               (Other):2684
+```
+
+* `Item`: word problem, can be *`Hard`* or *`Easy`*
+* `Prob_Type`: difficulty level of word problem (16 hard problems, 14 easy problems)
+* `Subject`: Participant ID (N=120)
+* `Condition`: whether the participant received the `Treatment` or not
+* `RT`: time to solve the problem
+
+Note: there is some missing data because trials where the participants failed to solve the problem are excluded.
+
+---
+# A traditional analysis approach
+
+.pull-left[
+Calculate subject-by-condition means
+
+
+``` r
+ps_subj &lt;- problem_solving %&gt;%
+  group_by(Subject, Condition, Prob_Type) %&gt;%
+  summarise(RT = mean(RT))
+```
+]
+
+.pull-right[
+&lt;img src="msmr_lec04_RanEf_files/figure-html/unnamed-chunk-18-1.png" width="432" /&gt;
+]
+
+--
+
+* Everyone solves `Easy` problems faster than `Hard` ones
+* `Treatment` group seems faster at problem solving, esp. for `Hard` problems
+
+---
+# Repeated-measures ANOVA
+
+``` r
+afex::aov_ez(id = "Subject", dv = "RT",
+  within = "Prob_Type", between = "Condition",
+  data = ps_subj)
+```
+
+```
+## Anova Table (Type 3 tests)
+## 
+## Response: RT
+##                Effect     df       MSE          F  ges p.value
+## 1           Condition 1, 118 255247.21       2.44 .015    .121
+## 2           Prob_Type 1, 118  98268.92 223.46 *** .345   &lt;.001
+## 3 Condition:Prob_Type 1, 118  98268.92       1.96 .005    .164
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
+```
+
+--
+
+Looks like there is an overall problem difficulty effect, and no effect(s) of the intervention.
+
+--
+
+But hang on: not all word problems are the same and we're going to make inferences about solving problems **of this type**, not just about solving these particular problems.
+
+---
+# By-items analysis
+Calculate item-by-condition means
+
+
+``` r
+ps_item &lt;- problem_solving %&gt;%
+  group_by(Item, Condition, Prob_Type) %&gt;%
+  summarise(RT = mean(RT))
+# plot the item-level data
+ggplot(ps_item, aes(Condition, RT, fill=Prob_Type)) + geom_boxplot()
+```
+
+&lt;img src="msmr_lec04_RanEf_files/figure-html/unnamed-chunk-20-1.png" width="432" /&gt;
+
+---
+# By-items repeated-measures ANOVA
+
+``` r
+afex::aov_ez(id = "Item", dv = "RT", 
+             between = "Prob_Type", within = "Condition", 
+             data = ps_item)
+```
+
+```
+## Anova Table (Type 3 tests)
+## 
+## Response: RT
+##                Effect    df       MSE         F  ges p.value
+## 1           Prob_Type 1, 28 342623.14 17.47 *** .374   &lt;.001
+## 2           Condition 1, 28  15095.59  12.46 ** .018    .001
+## 3 Prob_Type:Condition 1, 28  15095.59    5.26 * .008    .030
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
+```
+
+All effects significant, including effect of `Condition`, which was not significant in the by-subjects analysis. **Why the difference?**
+
+---
+# By-items repeated-measures ANOVA
+
+```
+## Anova Table (Type 3 tests)
+## 
+## Response: RT
+##                Effect    df       MSE         F  ges p.value
+## 1           Prob_Type 1, 28 342623.14 17.47 *** .374   &lt;.001
+## 2           Condition 1, 28  15095.59  12.46 ** .018    .001
+## 3 Prob_Type:Condition 1, 28  15095.59    5.26 * .008    .030
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
+```
+
+* Problem type (difficulty) has a large effect, it is significant in both analyses
+* Condition (intervention) effect and its interaction with problem type are small
+
+--
+
+Condition is between-subjects but within-items, so the between-subjects variability is strong in the by-subjects analysis but averaged away in the by-items analysis. 
+
+This makes the by-items analysis look overly strong (subject variability is missing) and the by-subjects analysis look overly weak (items consistency is missing).
+
+--
+
+Simulation studies suggest that it is overly conservative to require that effects should be significant in separate by-items and by-subjects analyses (aka F1 and F2).
+
+---
+# A multilevel modeling approach 
+
+Multilevel models provide a way to simultaneously model random variability at subject and item levels, as well as the group-level effects that we are interested in.
+
+These data are nested (clustered observations that are not independent), but, unlike prior examples, they are not **hierarchical**. Items are clustered within subjects (subjects solved multiple problems); but also subjects are clustered within items (same problems were presented to multiple subjects). This can be modeled with **crossed random effects**.
+
+
+``` r
+mod_ps &lt;- lmer(RT ~ Prob_Type*Condition + 
+                 (Prob_Type | Subject) + (Condition | Item), 
+                 data=problem_solving, REML=FALSE)
+```
+
+```
+## boundary (singular) fit: see help('isSingular')
+```
+
+Note the random slopes:
+
+* `Prob_Type` (hard and easy problems) was manipulated within-Subject but between-Item
+* `Condition` (problem-solving intervention) was manipulated between-Subject but within-Item
+
+---
+# A multilevel modeling approach 
+
+``` r
+gt(tidy(mod_ps, effects="fixed"))
+```
+
+<div id="qhyzxzobxm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#qhyzxzobxm table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#qhyzxzobxm thead, #qhyzxzobxm tbody, #qhyzxzobxm tfoot, #qhyzxzobxm tr, #qhyzxzobxm td, #qhyzxzobxm th {
+  border-style: none;
+}
+
+#qhyzxzobxm p {
+  margin: 0;
+  padding: 0;
+}
+
+#qhyzxzobxm .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#qhyzxzobxm .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#qhyzxzobxm .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#qhyzxzobxm .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#qhyzxzobxm .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#qhyzxzobxm .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qhyzxzobxm .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#qhyzxzobxm .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#qhyzxzobxm .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#qhyzxzobxm .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#qhyzxzobxm .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#qhyzxzobxm .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#qhyzxzobxm .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#qhyzxzobxm .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#qhyzxzobxm .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#qhyzxzobxm .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#qhyzxzobxm .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#qhyzxzobxm .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#qhyzxzobxm .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qhyzxzobxm .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#qhyzxzobxm .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#qhyzxzobxm .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#qhyzxzobxm .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qhyzxzobxm .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#qhyzxzobxm .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#qhyzxzobxm .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qhyzxzobxm .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qhyzxzobxm .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#qhyzxzobxm .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qhyzxzobxm .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#qhyzxzobxm .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qhyzxzobxm .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#qhyzxzobxm .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qhyzxzobxm .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#qhyzxzobxm .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qhyzxzobxm .gt_left {
+  text-align: left;
+}
+
+#qhyzxzobxm .gt_center {
+  text-align: center;
+}
+
+#qhyzxzobxm .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#qhyzxzobxm .gt_font_normal {
+  font-weight: normal;
+}
+
+#qhyzxzobxm .gt_font_bold {
+  font-weight: bold;
+}
+
+#qhyzxzobxm .gt_font_italic {
+  font-style: italic;
+}
+
+#qhyzxzobxm .gt_super {
+  font-size: 65%;
+}
+
+#qhyzxzobxm .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#qhyzxzobxm .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#qhyzxzobxm .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#qhyzxzobxm .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#qhyzxzobxm .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#qhyzxzobxm .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#qhyzxzobxm .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#qhyzxzobxm .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#qhyzxzobxm div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="effect">effect</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="term">term</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="estimate">estimate</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="std.error">std.error</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="statistic">statistic</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="df">df</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="p.value">p.value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">(Intercept)</td>
+<td headers="estimate" class="gt_row gt_right">1753.51</td>
+<td headers="std.error" class="gt_row gt_right">77.16</td>
+<td headers="statistic" class="gt_row gt_right">22.726</td>
+<td headers="df" class="gt_row gt_right">37.28</td>
+<td headers="p.value" class="gt_row gt_right">1.925e-23</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">Prob_Type1</td>
+<td headers="estimate" class="gt_row gt_right">325.24</td>
+<td headers="std.error" class="gt_row gt_right">73.50</td>
+<td headers="statistic" class="gt_row gt_right">4.425</td>
+<td headers="df" class="gt_row gt_right">30.88</td>
+<td headers="p.value" class="gt_row gt_right">1.115e-04</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">Condition1</td>
+<td headers="estimate" class="gt_row gt_right">58.34</td>
+<td headers="std.error" class="gt_row gt_right">29.43</td>
+<td headers="statistic" class="gt_row gt_right">1.982</td>
+<td headers="df" class="gt_row gt_right">111.65</td>
+<td headers="p.value" class="gt_row gt_right">4.989e-02</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">Prob_Type1:Condition1</td>
+<td headers="estimate" class="gt_row gt_right">36.14</td>
+<td headers="std.error" class="gt_row gt_right">17.73</td>
+<td headers="statistic" class="gt_row gt_right">2.038</td>
+<td headers="df" class="gt_row gt_right">86.75</td>
+<td headers="p.value" class="gt_row gt_right">4.462e-02</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+
+---
+# Plotting results
+
+Computing means and SE is a little tricky for trial-level data
+
+Conveniently, the `effects` package will do that based on the fitted model
+
+
+``` r
+library(effects)
+efx &lt;- effect("Prob_Type:Condition", mod_ps) %&gt;% as.data.frame(.)
+efx
+```
+
+```
+##   Prob_Type Condition  fit    se lower upper
+## 1      Hard   Control 2173 120.5  1937  2410
+## 2      Easy   Control 1450 120.4  1214  1686
+## 3      Hard Treatment 1984 104.2  1780  2188
+## 4      Easy Treatment 1406 101.4  1207  1605
+```
+
+---
+# Plotting results
+
+``` r
+ggplot(efx, aes(Condition, fit, color=Prob_Type)) + 
+  geom_point(size=3) + 
+  geom_linerange(aes(ymin=fit-se, ymax=fit+se), linewidth=2) +
+  geom_linerange(aes(ymin=lower, ymax=upper), linewidth=1) +
+  theme_bw() + labs(y="Response Time", color="Problem\nType")
+```
+
+&lt;img src="msmr_lec04_RanEf_files/figure-html/unnamed-chunk-26-1.png" width="360" /&gt;
+
+---
+# Outliers
+
+.pull_left[
+&lt;img src="msmr_lec04_RanEf_files/figure-html/unnamed-chunk-27-1.png" width="360" /&gt;
+]
+
+.pull_right[
+Traditional outlier detection methods rely on means and standard deviations calculated by-subject and/or by-item. As with by-subject and by-item ANOVAs, multilevel models offer a better solution.
+]
+
+---
+# Outliers
+
+`mod_ps` was our model of trial-level performance, including subject-level and item-level variability (random intercepts and slopes). Trial-level residual errors indicate how performance on each trial deviates from this model.
+
+
+``` r
+augment(mod_ps) %&gt;% select(2:8) %&gt;% summary(.)
+```
+
+```
+##        RT        Prob_Type       Condition       Subject          Item     
+##  Min.   :  440   Hard:1494   Control  :1397   S101   :  30   AC     : 115  
+##  1st Qu.: 1161   Easy:1370   Treatment:1467   S109   :  30   AV     : 109  
+##  Median : 1536                                S121   :  30   AE     : 107  
+##  Mean   : 1730                                S122   :  30   AB     : 105  
+##  3rd Qu.: 2040                                S124   :  30   AH     : 102  
+##  Max.   :12753                                S134   :  30   AJ     : 102  
+##                                               (Other):2684   (Other):2224  
+##     .fitted         .resid     
+##  Min.   : 746   Min.   :-2087  
+##  1st Qu.:1350   1st Qu.: -400  
+##  Median :1577   Median :  -81  
+##  Mean   :1730   Mean   :    0  
+##  3rd Qu.:1977   3rd Qu.:  268  
+##  Max.   :4281   Max.   : 9056  
+## 
+```
+
+---
+# Outliers
+
+These residual errors are expected to come from a normal distribution with mean = 0. Can define outliers as trials with residual errors that are excessively far from 0 (say, &gt;3 SD).
+
+.pull_left[
+&lt;img src="msmr_lec04_RanEf_files/figure-html/unnamed-chunk-29-1.png" width="360" /&gt;
+]
+
+.pull_right[
+
+For this dataset, observations with residual error &gt;3 SD are 1.4% of the data.
+]
+
+---
+# Refit model excluding outliers
+
+
+``` r
+mod_ps_excl &lt;- lmer(RT ~ Prob_Type*Condition + 
+                 (Prob_Type | Subject) + (Condition | Item), 
+                 # can specify outlier exclusion directly here
+                 data=subset(augment(mod_ps), abs(.resid) &lt; 3*sd(.resid)),
+               REML=FALSE)
+```
+
+<div id="wvrwdbcder" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#wvrwdbcder table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#wvrwdbcder thead, #wvrwdbcder tbody, #wvrwdbcder tfoot, #wvrwdbcder tr, #wvrwdbcder td, #wvrwdbcder th {
+  border-style: none;
+}
+
+#wvrwdbcder p {
+  margin: 0;
+  padding: 0;
+}
+
+#wvrwdbcder .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#wvrwdbcder .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#wvrwdbcder .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#wvrwdbcder .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#wvrwdbcder .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#wvrwdbcder .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wvrwdbcder .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#wvrwdbcder .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#wvrwdbcder .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#wvrwdbcder .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#wvrwdbcder .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#wvrwdbcder .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#wvrwdbcder .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#wvrwdbcder .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#wvrwdbcder .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#wvrwdbcder .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#wvrwdbcder .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#wvrwdbcder .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#wvrwdbcder .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wvrwdbcder .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#wvrwdbcder .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#wvrwdbcder .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#wvrwdbcder .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wvrwdbcder .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#wvrwdbcder .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#wvrwdbcder .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wvrwdbcder .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wvrwdbcder .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#wvrwdbcder .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wvrwdbcder .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#wvrwdbcder .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wvrwdbcder .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#wvrwdbcder .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wvrwdbcder .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#wvrwdbcder .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wvrwdbcder .gt_left {
+  text-align: left;
+}
+
+#wvrwdbcder .gt_center {
+  text-align: center;
+}
+
+#wvrwdbcder .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#wvrwdbcder .gt_font_normal {
+  font-weight: normal;
+}
+
+#wvrwdbcder .gt_font_bold {
+  font-weight: bold;
+}
+
+#wvrwdbcder .gt_font_italic {
+  font-style: italic;
+}
+
+#wvrwdbcder .gt_super {
+  font-size: 65%;
+}
+
+#wvrwdbcder .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#wvrwdbcder .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#wvrwdbcder .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#wvrwdbcder .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#wvrwdbcder .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#wvrwdbcder .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#wvrwdbcder .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#wvrwdbcder .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#wvrwdbcder div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="effect">effect</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="term">term</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="estimate">estimate</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="std.error">std.error</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="statistic">statistic</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="df">df</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="p.value">p.value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">(Intercept)</td>
+<td headers="estimate" class="gt_row gt_right">1695.99</td>
+<td headers="std.error" class="gt_row gt_right">61.06</td>
+<td headers="statistic" class="gt_row gt_right">27.776</td>
+<td headers="df" class="gt_row gt_right">39.45</td>
+<td headers="p.value" class="gt_row gt_right">1.628e-27</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">Prob_Type1</td>
+<td headers="estimate" class="gt_row gt_right">289.54</td>
+<td headers="std.error" class="gt_row gt_right">57.15</td>
+<td headers="statistic" class="gt_row gt_right">5.066</td>
+<td headers="df" class="gt_row gt_right">30.57</td>
+<td headers="p.value" class="gt_row gt_right">1.842e-05</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">Condition1</td>
+<td headers="estimate" class="gt_row gt_right">53.50</td>
+<td headers="std.error" class="gt_row gt_right">25.13</td>
+<td headers="statistic" class="gt_row gt_right">2.129</td>
+<td headers="df" class="gt_row gt_right">115.11</td>
+<td headers="p.value" class="gt_row gt_right">3.538e-02</td></tr>
+    <tr><td headers="effect" class="gt_row gt_left">fixed</td>
+<td headers="term" class="gt_row gt_left">Prob_Type1:Condition1</td>
+<td headers="estimate" class="gt_row gt_right">23.35</td>
+<td headers="std.error" class="gt_row gt_right">13.02</td>
+<td headers="statistic" class="gt_row gt_right">1.793</td>
+<td headers="df" class="gt_row gt_right">67.69</td>
+<td headers="p.value" class="gt_row gt_right">7.746e-02</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+
+Not a huge change in this case: main effects became a little statistically stronger, interaction became a little weaker (now marginal).
+
+---
+# Key points: Not so different after all
+
+Today we covered some more complex random effect structures
+
+* 3-level nesting
+* Crossed random effects
+
+These are just kinds of MLM and the principles from other lectures also apply to these analyses
+
+* p-value (df) estimation using Satterthwaite method; model comparisons would've been a good alternative
+* use full random effect structure, where "full" is defined by study design; can simplify if model doesn't converge by removing correlations and random slopes
+* be aware of how your categorical variables as coded; can conduct pairwise comparisons using a single model
+* use logistic regression for binary outcomes
+
+---
+# Short Break
+
+## Up next: Live R
+
+44 participants across 4 groups (between-subjects) were tested 5 times (waves) in 11 domains. In each wave of testing, each domain received a score on a 20-point scale and a set of several questions, which could be answered correctly or incorrectly.
+
+&lt;img src="msmr_lec04_RanEf_files/figure-html/unnamed-chunk-32-1.png" width="864" /&gt;
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

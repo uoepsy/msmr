@@ -1,0 +1,103 @@
+---
+title: "Untitled"
+---
+
+
+
+
+::: {.callout-caution collapse="true"}
+#### optional: orthogonal polynomials
+
+Using raw polynomials as predictors in our models can sometimes have its drawbacks. For one thing, they are highly correlated with one another.  
+This correlation happens by definition - as $x$ increases, $x^2$ will also increase!  
+
+For confirmation, here is the correlation between the three polynomials we created just now: 
+```{r}
+egdat |> 
+  select(poly1, poly2, poly3) |>
+  cor() |> 
+  round(2)
+```
+
+Including these highly correlated terms as predictors in a model can result in difficulty in determining their relative effect sizes. This is the idea of *multicollinearity* - as two predictors become more correlated, their standard errors will be inflated (and thus t-statistics will be smaller). Additionally, the inclusion of each new polynomial term changes the estimates of the other terms already in the model:  
+
+```{r}
+#| echo: false
+#| label: tbl-increm
+#| tbl-cap: "Incremental addition of raw polynomial terms"
+linmod <- lm(y~poly1,egdat)
+quadmod <- lm(y~poly1+poly2,egdat)
+cubicmod <- lm(y~poly1+poly2+poly3,egdat)
+full_join(
+ broom::tidy(linmod) |> 
+  transmute(term, `y~poly1`=round(estimate,3)),
+ broom::tidy(quadmod) |> 
+  transmute(term, `y~poly1+poly2`=round(estimate,3))
+) |>
+  full_join(
+    broom::tidy(cubicmod) |> 
+      transmute(term, `y~poly1+poly2+poly3`=round(estimate,3))
+  ) |>
+  mutate_all(~ifelse(is.na(.), "-", .)) |>
+  gt::gt()
+```
+
+"Orthogonal" polynomials are uncorrelated (hence the name). 
+We can get these for $x = 1,2,...,9,10$ using the following code:
+```{r}
+poly(1:10, degree = 3, raw = FALSE)
+```
+Notice that the first order term has been scaled, so instead of the values 1 to 10, we have values ranging from -0.5 to +0.5, centered on 0. The mean of each column above is 0 (i.e. they are mean-centered, which will affect our interpretation of coefficients)
+
+Think about what this means for $x^2$. It will be uncorrelated with $x$ (because $-0.5^2 = 0.5^2$)!  
+
+We can see these plotted:  
+```{r}
+matplot(poly(1:10, 3, raw=F), type="l", lwd=2)
+```
+The correlations are zero!
+```{r}
+cor(poly(1:10, 3, raw=F)) |> round(2)
+```
+
+We can then fit the same models `y~poly1`, `y~poly1+poly2`, and `y~poly1+poly2+poly3` as predictors (where `poly1`-`poly3` are now **orthogonal** polynomials), and see that estimated coefficients do not change between models: 
+```{r}
+#| echo: false
+#| label: tbl-incremorth
+#| tbl-cap: "Incremental addition of orthogonal polynomial terms"
+egdat <- 
+  egdat |> 
+    mutate(
+      poly1 = poly(x,3,raw=F)[,1],
+      poly2 = poly(x,3,raw=F)[,2],
+      poly3 = poly(x,3,raw=F)[,3],
+    )
+
+linmod <- lm(y~poly1,egdat)
+quadmod <- lm(y~poly1+poly2,egdat)
+cubicmod <- lm(y~poly1+poly2+poly3,egdat)
+full_join(
+ broom::tidy(linmod) |> 
+  transmute(term, `y~poly1`=round(estimate,3)),
+ broom::tidy(quadmod) |> 
+  transmute(term, `y~poly1+poly2`=round(estimate,3))
+) |>
+  full_join(
+    broom::tidy(cubicmod) |> 
+      transmute(term, `y~poly1+poly2+poly3`=round(estimate,3))
+  ) |>
+  mutate_all(~ifelse(is.na(.), "-", .)) |>
+  gt::gt()
+
+```
+
+
+:::sticky
+**Remember what zero is!** 
+
+With orthogonal polynomials, you need to be careful about interpreting coefficients. For raw polynomials the intercept remains the y-intercept (i.e., where the line hits the y-axis). The higher order terms can then be thought of from that starting point - e.g., "where $x$ is 2, $\widehat{y}$ is $\beta_0 + \beta_1 \cdot 2 + \beta_2 \cdot 2^2 + \beta_3 \cdot 2^3 ...$".  
+<br>
+For orthogonal polynomials, the interpretation becomes more tricky. The intercept is the overall average of y, the linear predictor is the linear change pivoting around the mean of $x$ (rather than $x = 0$), the quadratic term corresponds to the steepness of the quadratic curvature ("how curvy is it?"), the cubic term to the steepness at the inflection points ("how wiggly is it?"), and so on. 
+
+::: 
+:::

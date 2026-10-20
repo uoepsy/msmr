@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Week 5: Individual Differences, part 2</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Dan Mirman" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# <b>Week 5: Individual Differences, part 2</b>
+## Multivariate Statistics and Methodology using R (MSMR)<br><br>
+### Dan Mirman
+### Department of Psychology<br>The University of Edinburgh
+### AY 2020-2021
+
+---
+
+
+
+
+
+
+# "Internal" individual differences
+
+* No "external" measure that can be entered as a fixed effect 
+* Individual differences needed for a different analysis (e.g., LSM)
+
+.pull-left[
+### A simple example
+
+&lt;img src="./figs/IndivDiffsDemo.png" width="75%" /&gt;
+]
+
+.pull-right[
+**Random effects provide a way to quantify individual effect sizes in the context of a model of overall group performance**:
+
+Participant A: `\(\zeta_{A1} - \zeta_{A0} = 1 - (-1) = 2\)`
+
+Participant B: `\(\zeta_{B1} - \zeta_{B0} = (-1) - 1 = -2\)`
+]
+
+---
+# Example 
+Data (Made-up): Effect of school mental health services on educational achievement (`EducMH`)
+
+
+```r
+load("./data/EducMH.RData")
+summary(EducMH)
+```
+
+```
+##        ID           Condition        Year           SDQ            Math      
+##  101    :   6   Control  :540   Min.   :2009   Min.   : 6.6   Min.   : 81.7  
+##  102    :   6   Treatment:540   1st Qu.:2010   1st Qu.:16.2   1st Qu.:147.5  
+##  103    :   6                   Median :2012   Median :17.9   Median :165.1  
+##  104    :   6                   Mean   :2012   Mean   :17.9   Mean   :164.8  
+##  105    :   6                   3rd Qu.:2013   3rd Qu.:19.6   3rd Qu.:181.2  
+##  106    :   6                   Max.   :2014   Max.   :33.8   Max.   :259.3  
+##  (Other):1044                                  NA's   :540
+```
+
+* `Condition` = Treatment (students who received mental health services) vs. Control (academically matched group of students who did not receive services)
+* `SDQ` = Strengths and Difficulties Questionnaire: a brief behavioural screening for mental health, only available for Treatment group. Lower scores are better (Total difficulties).
+* `Math` = Score on standardised math test
+
+---
+
+
+```r
+ggplot(EducMH, aes(Year, Math, color=Condition, fill=Condition)) + 
+  stat_summary(fun=mean, geom="line") + 
+  stat_summary(fun.data=mean_se, geom="ribbon", color=NA, alpha=0.3) + 
+  labs(y="Math Achievement Score") + theme_bw(base_size=12) + 
+  scale_color_manual(values=c("red", "blue")) + 
+  scale_fill_manual(values=c("red", "blue"))
+```
+
+![](msmr_lec05-2_IndivDiffs_Int_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
+
+**Question 1**: Did the school mental health services improve academic achievement? That is, did the two groups differ on math achievement at baseline and over the 6 years of the study?
+
+**Question 2**: For the treatment group, was individual-level improvement in mental health associated with improvement in math scores?
+
+---
+# Question 1
+
+**Did the school mental health services improve academic achievement? That is, did the two groups differ on math achievement at baseline and over the 6 years of the study?**
+
+
+```r
+# adjust time variable to have a sensible intercept
+EducMH$Time &lt;- EducMH$Year - 2009
+# fit the models
+m.base &lt;- lmer(Math ~ Time + (Time | ID), data=EducMH, REML=F)
+m.0 &lt;- lmer(Math ~ Time + Condition + (Time | ID), data=EducMH, REML=F)
+m.1 &lt;- lmer(Math ~ Time*Condition + (Time | ID), data=EducMH, REML=F)
+```
+
+---
+# Question 1
+
+**Did the school mental health services improve academic achievement? That is, did the two groups differ on math achievement at baseline and over the 6 years of the study?**
+
+Compare the models
+
+
+```r
+anova(m.base, m.0, m.1)
+```
+
+```
+## Data: EducMH
+## Models:
+## m.base: Math ~ Time + (Time | ID)
+## m.0: Math ~ Time + Condition + (Time | ID)
+## m.1: Math ~ Time * Condition + (Time | ID)
+##        npar  AIC  BIC logLik deviance Chisq Df Pr(&gt;Chisq)   
+## m.base    6 7847 7876  -3917     7835                       
+## m.0       7 7848 7883  -3917     7834  0.15  1     0.6947   
+## m.1       8 7843 7883  -3914     7827  7.02  1     0.0081 **
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+
+There was no group difference at baseline, but there was a group difference on slope. That is, math achievement in the two groups started out the same, but increased more quickly in the Treatment group.
+
+---
+
+```r
+gt(tidy(m.1))
+```
+
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#njiaoykrcu .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#njiaoykrcu .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#njiaoykrcu .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#njiaoykrcu .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#njiaoykrcu .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#njiaoykrcu .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#njiaoykrcu .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#njiaoykrcu .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#njiaoykrcu .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#njiaoykrcu .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#njiaoykrcu .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#njiaoykrcu .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#njiaoykrcu .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#njiaoykrcu .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#njiaoykrcu .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#njiaoykrcu .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#njiaoykrcu .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#njiaoykrcu .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#njiaoykrcu .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#njiaoykrcu .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#njiaoykrcu .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#njiaoykrcu .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#njiaoykrcu .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#njiaoykrcu .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#njiaoykrcu .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#njiaoykrcu .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#njiaoykrcu .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#njiaoykrcu .gt_left {
+  text-align: left;
+}
+
+#njiaoykrcu .gt_center {
+  text-align: center;
+}
+
+#njiaoykrcu .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#njiaoykrcu .gt_font_normal {
+  font-weight: normal;
+}
+
+#njiaoykrcu .gt_font_bold {
+  font-weight: bold;
+}
+
+#njiaoykrcu .gt_font_italic {
+  font-style: italic;
+}
+
+#njiaoykrcu .gt_super {
+  font-size: 65%;
+}
+
+#njiaoykrcu .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="njiaoykrcu" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">effect</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">group</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">term</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">estimate</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">std.error</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">statistic</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">df</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">p.value</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_left">fixed</td>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_left">(Intercept)</td>
+      <td class="gt_row gt_right">149.29737</td>
+      <td class="gt_row gt_right">2.0295</td>
+      <td class="gt_row gt_right">73.5636</td>
+      <td class="gt_row gt_right">180</td>
+      <td class="gt_row gt_right">3.006e-136</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">fixed</td>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_left">Time</td>
+      <td class="gt_row gt_right">5.21577</td>
+      <td class="gt_row gt_right">0.3737</td>
+      <td class="gt_row gt_right">13.9560</td>
+      <td class="gt_row gt_right">180</td>
+      <td class="gt_row gt_right">1.776e-30</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">fixed</td>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_left">ConditionTreatment</td>
+      <td class="gt_row gt_right">1.33710</td>
+      <td class="gt_row gt_right">2.8701</td>
+      <td class="gt_row gt_right">0.4659</td>
+      <td class="gt_row gt_right">180</td>
+      <td class="gt_row gt_right">6.419e-01</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">fixed</td>
+      <td class="gt_row gt_left">NA</td>
+      <td class="gt_row gt_left">Time:ConditionTreatment</td>
+      <td class="gt_row gt_right">1.41412</td>
+      <td class="gt_row gt_right">0.5285</td>
+      <td class="gt_row gt_right">2.6755</td>
+      <td class="gt_row gt_right">180</td>
+      <td class="gt_row gt_right">8.149e-03</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">ran_pars</td>
+      <td class="gt_row gt_left">ID</td>
+      <td class="gt_row gt_left">sd__(Intercept)</td>
+      <td class="gt_row gt_right">18.86595</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">ran_pars</td>
+      <td class="gt_row gt_left">ID</td>
+      <td class="gt_row gt_left">cor__(Intercept).Time</td>
+      <td class="gt_row gt_right">0.09138</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">ran_pars</td>
+      <td class="gt_row gt_left">ID</td>
+      <td class="gt_row gt_left">sd__Time</td>
+      <td class="gt_row gt_right">3.31043</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">ran_pars</td>
+      <td class="gt_row gt_left">Residual</td>
+      <td class="gt_row gt_left">sd__Observation</td>
+      <td class="gt_row gt_right">5.31090</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+
+---
+# Question 2
+
+**For the treatment group, was individual-level improvement in mental health associated with improvement in math scores?**
+
+First make a plot of what we're interested in: the treatment group's change in the SDQ over time showing both group mean (black line with error bars) and individual variability (grey lines)
+
+![](msmr_lec05-2_IndivDiffs_Int_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+
+Within the treatment group, there is not an overall change in mental health (SDQ), but it looks like there is lots of variability in response to the mental health services. Some people responded really well (big decreases in difficulties on SDQ), some people didn't respond well (increased difficulties according to SDQ).
+
+--
+
+We want to know whether this variability is associated with variability in improved math achievement.
+
+---
+# Analysis strategy
+
+1. Build separate models for change in SDQ and change in Math scores over time
+2. Use random effects to quantify individual differences in change over time for the two scores
+3. Test the correlation between change in SDQ and in Math achievement (and make a scatterplot showing this).
+
+---
+# Analysis
+
+1. Build separate models for change in SDQ and change in Math scores over time
+
+
+```r
+m.math &lt;- lmer(Math ~ Time + (Time | ID), 
+               data=subset(EducMH, Condition == "Treatment"), REML=F)
+m.sdq &lt;- lmer(SDQ ~ Time + (Time | ID), 
+              data=subset(EducMH, Condition == "Treatment"), REML=F)
+```
+
+---
+# Analysis
+
+1. Build separate models for change in SDQ and change in Math scores over time
+2. Use random effects to quantify individual differences in change over time for the two scores
+
+
+```r
+source("get_ranef.R") # get_ranef() will extract the named random effect and clean them up a bit
+re.math &lt;- get_ranef(m.math, "ID")
+re.sdq &lt;- get_ranef(m.sdq, "ID")
+# merge() will combine those into one data frame, but needs some help because the variable names are all the same
+re &lt;- merge(re.math, re.sdq, by="ID", suffixes = c(".math", ".sdq"))
+summary(re)
+```
+
+```
+##       ID            Intercept.math     Time.math      Intercept.sdq    
+##  Length:90          Min.   :-59.50   Min.   :-3.372   Min.   :-2.0326  
+##  Class :character   1st Qu.: -9.85   1st Qu.:-0.733   1st Qu.:-0.7895  
+##  Mode  :character   Median : -0.01   Median : 0.118   Median : 0.0341  
+##                     Mean   :  0.00   Mean   : 0.000   Mean   : 0.0000  
+##                     3rd Qu.: 11.48   3rd Qu.: 0.694   3rd Qu.: 0.6024  
+##                     Max.   : 57.64   Max.   : 2.747   Max.   : 3.0828  
+##     Time.sdq      
+##  Min.   :-2.4951  
+##  1st Qu.:-0.7468  
+##  Median : 0.0989  
+##  Mean   : 0.0000  
+##  3rd Qu.: 0.5482  
+##  Max.   : 3.0944
+```
+
+```r
+head(re)
+```
+
+```
+##    ID Intercept.math Time.math Intercept.sdq Time.sdq
+## 1 201         0.8412 -1.542050       -0.9793   0.8381
+## 2 202         9.6071  0.029529        0.5728   0.3952
+## 3 203       -14.6657 -0.573849        0.5872   1.1176
+## 4 204        -3.5781 -0.290299       -0.8056   0.4423
+## 5 205         2.1411 -0.852670        0.4991   0.8463
+## 6 206        31.4592  0.006922        0.2029   0.6119
+```
+
+---
+# Analysis
+
+1. Build separate models for change in SDQ and change in Math scores over time
+2. Use random effects to quantify individual differences in change over time for the two scores
+3. Test the correlation between change in SDQ and in Math achievement (and make a scatterplot showing this).
+
+
+```r
+cor.test(re$Time.math, re$Time.sdq)
+```
+
+```
+## 
+## 	Pearson's product-moment correlation
+## 
+## data:  re$Time.math and re$Time.sdq
+## t = -11, df = 88, p-value &lt;2e-16
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.8455 -0.6749
+## sample estimates:
+##     cor 
+## -0.7739
+```
+
+Strong correlation ( `\(r = -0.77, p &lt; 0.0001\)` ) indicating that response to mental health intervention (decreased difficulties) was associated with larger increases in math achievement. Note that the key quantities here are **slopes**. That is, the **rate** of decreased mental health difficulties is associated with a higher **rate** of math achievement.
+
+---
+# Analysis
+
+1. Build separate models for change in SDQ and change in Math scores over time
+2. Use random effects to quantify individual differences in change over time for the two scores
+3. Test the correlation between change in SDQ and in Math achievement (and **make a scatterplot showing this**).
+
+
+```r
+ggplot(re, aes(Time.math, Time.sdq)) + geom_point() + stat_smooth(method="lm") + 
+  labs(x="Relative Rate of Increase in\nMath Score", 
+       y="Relative Rate of Decrease in\nSDQ Total Difficulties Score") + 
+  theme_bw(base_size=12)
+```
+
+![](msmr_lec05-2_IndivDiffs_Int_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
+
+---
+# Why use random effects instead of individual models?
+
+.pull-left[
+&lt;img src="./figs/shrinkage-plot-1.png" width="75%"/&gt;
+
+http://tjmahr.github.io/plotting-partial-pooling-in-mixed-effects-models/
+]
+
+.pull-right[
+An individual's performance (on the math test, on the SDQ) is their actual level plus some noise. 
+
+Individual models (no pooling) don't make that distinction, so you have a noisy estimate of individual differences. 
+
+Multilevel models reduce the noise component using the mean and variance of the rest of the group (partial pooling). **This produces a better estimate of true individual differences.**
+
+See also: Efron, B. &amp; Morris, C. (1977). Stein's Paradox in Statistics. Scientific American, 236:5, 119-127.
+]
+
+---
+# Key points
+
+* Individual differences provide additional insights into phenomena of interest. Can serve as further tests of a hypothesis
+* Random effects provide a useful way to quantify individual differences in the context of a group-level model
+* Partial pooling / shrinkage improves individual difference estimates
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
